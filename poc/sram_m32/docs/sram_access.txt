@@ -1,0 +1,61 @@
+Zustand 1 :
+  OE des RAMS auf 1
+  CE   "  "   auf 0
+  WE   "  "   auf 0
+  Datenbus mit Datenwort besetzen
+  Adressbus setzen
+  Zustand = 2
+
+Zustand 2 :
+  CE des RAMS auf 1
+  Zustand = 3
+
+Zustand 3:
+  CE des RAMS auf 0
+  Datenbus hochohmig (also Z) setzen
+  Zustand = 0 (idle)
+
+Beim Lesen passiert folgendes
+
+Zustand 1 :
+  OE des RAMS auf 0
+  CE   "  "   auf 0
+  WE   "  "   auf 1
+  Datenbus hochohmig (also Z) setzen
+  Adressbus setzen
+  Zustand = 2
+
+Zustand 2 :
+  CE des RAMS auf 1
+  Zustand = 3
+
+Zustand 3:
+  CE des RAMS auf 0
+  Datenwort am Datenbus einlesen
+  Zustand = 0 (idle)
+
+
+
+
+
+
+
+
+
+
+OE/ und WR/ dürfen nicht gleichzeitig aktiv sein. Du mußt also bei
+ansteuern.
+
+Der Ablauf zum Beschreiben:
+1. OE/ und WR/ inaktiv
+2. Adresse anlegen
+3. Daten anlegen
+4. WR/ aktiv
+5. WR/ inaktiv
+
+Der Ablauf zum Lesen:
+1. OE/ und WR/ inaktiv
+2. Adresse anlegen
+3. OE/ aktiv
+4. Daten einlesen
+5. OE/ inaktiv
