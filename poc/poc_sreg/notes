@@ -1,0 +1,2 @@
+#uisp -dprog=avr910 -dpart=ATmega8 -dserial=/dev/ttyUSB0 --rd_fuses
+#uisp -dprog=avr910 -dpart=ATmega8 -dserial=/dev/ttyUSB0 --erase --verify -v --upload if=blinky.hex
