@@ -1,0 +1,6 @@
+halt 
+wait_halt 
+sleep 10 
+poll 
+load_binary /Users/david/Devel/arch/arm/code/blink2148/main.bin 0x40000200
+resume 0x40000200
