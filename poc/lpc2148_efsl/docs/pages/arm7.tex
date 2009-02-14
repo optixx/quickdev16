@@ -1,0 +1,223 @@
+This section describes how the ARM7 port of EFSL works. This documentation was written
+by Martin Thomas, as is the port to the ARM7 and the examples included with EFSL.
+The examples are pretty large, so we will not print them here, they have their own
+subdirectory in the examples sections and should be quite understandable.
+
+Please note that the LPC2000 and AT91SAM7 interfaces are Copyright (c) by Martin Thomas, Kaiserslautern, Germany.
+
+\subsubsection{License}
+The LPC2000- and AT91SAM7-interface inherit the license from the main efsl-source.
+
+\subsubsection{General information about the ARM interfaces}
+	\begin{itemize}
+	
+\item The current version of the EFSL includes SD-interfaces
+for the LPC2000 ARM7TDMI-S controllers from NXP(Philips) and 
+the AT91SAM7 ARM7TDMI controllers from Atmel. The ARM-core 
+of these devices is basicly the same but the integrated
+SPI-hardware from NXP and Atmel is not compatible. So
+a different set of interface-functions is needed for each
+family.
+
+\item A GNU arm-elf toolchain/cross-compiler
+must be available to build the examples
+and the library.
+
+\item \code{\#define BYTE\_ALIGNMENT} is disabled
+for the LPC-interace in config.h 
+It didn't work with alignment enabled.
+
+\item Buffers can be configured as
+described in the efsl-manual.
+
+\item The hardware connection is similar 
+to the connection described
+in this manual for Atmel AVRs.
+(I (M.~Thomas) have mounted the pullups in some of my
+test-systems but tests have been done 
+successfully without pull-up resistors)
+	\end{itemize}
+
+\subsubsection{Additional information about the LPC2000 interface}
+	\begin{itemize}
+
+\item The interface supports SD-Cards
+connected to the LPC2000 SPI ("SPI0") 
+and SSP ("SPI1") interface. The SPI-
+interface is hardcoded by the value 
+defined in config.h and can not be 
+changed during runtime.
+
+\item Only some parts of the LPC2000-family
+have the fast SSP-Interface (i.e. LPC213x,
+LPC214x) others only provide the slower 
+SPI interface.
+
+\item To build the library create the file 
+conf/config.h based on the template 
+config-sample-lpc2000.h and use the 
+makefile Makefile-LPC2000 in the
+efsl-root-directory for LPC2000s 
+(ARM7TDMI-S).
+
+\item So far the interface has only been
+tested with LPC2138- and LPC2148-controllers
+and the SPI(0) and SSP-Interface.
+Other LPC2000-ARM7 controllers 
+should be supported too. Verify
+that the register-adresses in 
+inc/interfaces/LPC2000\_regs.h
+match the used controller and the
+maximum speed defined in lpc2000\_spi.c
+is available for the part.
+Verify the pin-connections in lpc2000\_spi.c.
+	\end{itemize}
+
+
+\subsubsection{Additional information about the AT91SAM7 interface}
+	\begin{itemize}
+	
+\item The interface supports SD-Cards connected 
+to the AT91SAM7 SPI interface. 
+
+\item To build the library create a file 
+conf/config.h based on the template 
+config-sample-at91.h and use the 
+makefile Makefile-AT91 in the
+efsl-root-directory for AT91 (ARM7TDMI).
+
+\item The AT91SAM7 offers 4 chip-select
+signals which can be mapped to
+different pins. Chip-select is done
+by the hardware. See at91_spi.c
+for configuration options.
+Chip-Select can be fixed or variable
+(Fixed or variable peripheral select - see 
+option in AT91\_spi.c, further information 
+in the datasheet).
+
+\item I have tested the interface with  AT91SAM7S256 
+and SAM7S64 controllers. Other AT91-ARM7 controllers 
+should be supported too.
+To adapt the code for another AT91 with SPI:
+		\begin{itemize}
+\item check if the register-defintions in AT91SAM7S\_regs.h 
+are valid for the target. The file can be replaced
+by header file provided by Atmel for the used part 
+(see at91.com)
+\item verify the maximum speed in at91_spi.c
+\item verfiy the pin-connections in at91_spi.c
+\item Check the memory-settings in the linker-script of
+the example.
+		\end{itemize}
+	\end{itemize}
+
+
+\subsubsection{Example code}
+
+For each interface an example application is provided in the 
+examples-directory. The examples can be build with the library 
+libefsl.a or with the efsl source-code.
+
+\begin{enumerate}
+
+\item using the EFSL source-code in the project:
+
+	\begin{itemize}
+
+\item Verfiy that conf/config.h is present
+and the settings match the used 
+interfaces (see templates).
+
+\item Modify the line in the example's 
+Makefile to: EFSL_AS_LIB = 0
+
+\item "make all" in the example's directory.
+
+	\end{itemize}
+
+
+\item using the EFSL library (libefsl.a) in the project:
+
+	\begin{itemize}
+
+\item Verfiy that conf/config.h is present
+and the settings match the used 
+interfaces (see templates).
+
+\item Build the library libefsl.a with
+the Makefile from the efsl root-
+directory for the used interface.
+(i.e. "make --makefile=Makefile-AT91 lib" 
+or "make --makefile=Makefile-LPC2000 lib" )
+
+\item Modify the line in the example's 
+Makefile to: EFSL\_AS\_LIB = 1
+
+\item "make all" in the example's directory
+	\end{itemize}
+
+\end{enumerate}
+
+
+The example-applications demonstrate:
+	\begin{itemize}
+\item Init of the EFSL ARM debug-system
+\item Init of the EFSL
+\item List contents of the SD-Card's
+root directory
+\item Open a file and type the content
+\item Append a line of text to a file
+\item "cat/type" the file's content again
+	\end{itemize}
+
+The example applications print status- and 
+debug-messages to the UART1 on LPC2000 or DBGU on AT91SAM7
+(115200,8,N,1,no FC).
+
+
+\subsubsection{Test Hard- and Software}
+	\begin{itemize}
+
+\item Keil (keil.com) MCB2130 board with LPC2138
+with additional SD/MMC-connector (from Buerklin.de)
+
+\item Atmel AT91SAM7S-EK board with AT91SAM7S64
+with additional SD/MMC-connector
+
+\item SAM7-P board with AT91SAM7S256
+with on-board SD/MMC-connector
+
+\item SanDisk "standard" SD-Card 256MB
+(not the "highspeed"-version)
+
+\item WinARM (arm-elf GNU toolchain)
+
+\item Bray++ Terminal
+
+	\end{itemize}
+
+
+\subsubsection{Credits}
+
+\begin{itemize}
+
+\item The code in efsl_debug_printf_arm.c is 
+based on code from Holger Klabunde
+and has been modified to support
+a "fdevopen"-function (efsl_debug_devopen_arm). 
+The original code has no copyright-notice and
+is derived from an free code by Volker Oth.
+
+\item Register-definitions for LPC213x are 
+based on a header-file from Keil (an ARM-company) 
+(supplied with the DKARM trial-version).
+
+\item Register-definitions for AT91SAM7 are from 
+at91.com (provided by Atmel).
+
+\item The basic method to handle the SPI interface
+on AT91 has been found in a free example from 
+olimex.com.
+
+\end{itemize}
