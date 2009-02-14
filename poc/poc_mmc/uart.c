@@ -10,7 +10,7 @@
 // Folgende Zeile einkommentieren, falls FIFO verwendet werden soll 
 // #include "fifo.h" 
 
-#define BAUDRATE 9600
+#define BAUDRATE 38400
 #define F_CPU 8000000
 
 #define nop() __asm volatile ("nop")

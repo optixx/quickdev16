@@ -108,10 +108,11 @@ int main(void)
 {
 	uint8_t read, buf[10], i=0;
  	uint8_t Buffer[512];
+    uint8_t rbuf[24];
 	uint16_t Clustervar;	
 
-        uint8_t Dir_Attrib = 0;
-        uint32_t Size = 0;	
+    uint8_t Dir_Attrib = 0;
+    uint32_t Size = 0;	
 
 
 	DDRD=0x00;
@@ -131,6 +132,10 @@ int main(void)
 	SRAM_Write(0x00000000,0x23);
 	SRAM_Write(0x00000001,0x42);
 	SRAM_Write(0x00000003,0xee);
+
+    for(uint8_t a=0; a<250;a++){
+        SRAM_Write(a,0x00);
+    }
 
 
 	//Initialisierung der MMC/SD-Karte ANFANG:
@@ -169,60 +174,37 @@ int main(void)
                	}
 	}
 	
-	for (uint8_t b=0;b<1;b++)
+	for (uint16_t b=0;b<65535;b++)
 	{
-		for(uint8_t a=0; a<50;a++)
+		
+		uart_puts("\r\n0x");
+		ltoa(b*24,buf,16);			
+		uart_puts(buf);
+        uart_putc(' ');
+        uart_putc(' ');
+        for(uint8_t a=0; a<24;a++)
 		{
-			uart_puts("\r\nRead RAM Addr 0x");
-			ltoa(0x00023420+a,buf,16);			
-			uart_puts(buf);
-			uart_puts(": ");
-			uart_putc(SRAM_Read(0x00023420+a));
+            rbuf[a]=SRAM_Read(b*24+a);
 		}
-	}
+        for(uint8_t a=0; a<24;a++)
+        {
+            itoa(rbuf[a],buf,16);
+            uart_putc(' ');
+            if(rbuf[a]<0x10)
+                uart_putc('0');
+            uart_puts(buf);
+        }
+        uart_puts("  |  ");
+        for(uint8_t a=0; a<24;a++)
+        {
+            if(0x20 <= rbuf[a] && rbuf[a] <= 0x7e)
+                uart_putc(rbuf[a]);
+            else
+                uart_putc('.');
+        }
+    }
 
-	uart_puts("\r\n\r\n");
-	while(1){
-		i++;
-
-		uart_puts("\r\nDump RAM Addr 0x00000-0x00004: ");
-
-		read = SRAM_Read(0x00000000);
-		itoa(read,buf,16);
-		uart_puts(buf);
-		uart_putc(0x20);
-
-		read = SRAM_Read(0x00000001);
-		itoa(read,buf,16);
-		uart_puts(buf);
-		uart_putc(0x20);
-
-		read = SRAM_Read(0x00000002);
-		itoa(read,buf,16);
-		uart_puts(buf);
-		uart_putc(0x20);
-
-		read = SRAM_Read(0x00000003);
-		itoa(read,buf,16);
-		uart_puts(buf);
-		uart_putc(0x20);
-
-		read = SRAM_Read(0x00000004);
-		itoa(read,buf,16);
-		uart_puts(buf);
-		uart_putc(0x20);
-
-		if(i==2){
-			uart_puts("\r\nWriting 0xBE,0xEF to 0x00002-0x00003..");
-			SRAM_Write(0x00000002,0xBE);
-			SRAM_Write(0x00000003,0xEF);
-		}
-		if(i==3){
-			while(1);
-		}
-
-	}
-
+    while(1);
 	return(0);
 }
 
