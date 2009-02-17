@@ -134,6 +134,8 @@ typedef struct {
 static TMemoryCmd	MemoryCmd;
 static U8			abVendorReqData[sizeof(TMemoryCmd)];
 
+static U8 buffer[8192];
+
 
 static void _HandleBulkIn(U8 bEP, U8 bEPStatus)
 {
@@ -156,17 +158,43 @@ static void _HandleBulkIn(U8 bEP, U8 bEPStatus)
 }
 
 
+void dump_packet(U32 addr,U32 len,U8 *packet){
+	U16 i,j;
+	U16 sum =0;
+	for (i=0;i<len;i+=16) {
+		sum = 0;
+		for (j=0;j<16;j++) {
+			sum +=packet[i+j];
+		}
+		if (!sum)
+			continue;
+		DBG("%08x:", addr + i);
+		for (j=0;j<16;j++) {
+			DBG(" %02x", packet[i+j]);
+		}
+		DBG(" |");
+		for (j=0;j<16;j++) {
+			if (packet[i+j]>=33 && packet[i+j]<=126 )
+				DBG("%c", packet[i+j]);
+			else
+				DBG(".");
+		}
+		DBG("|\n");
+		
+	}
+}
+
 static void _HandleBulkOut(U8 bEP, U8 bEPStatus)
 {
 	int iChunk;
 	
 	// get next part
-	iChunk = USBHwEPRead(bEP, NULL, 0);
+	iChunk = USBHwEPRead(bEP, buffer, 0);
 	
 	MemoryCmd.dwAddress += iChunk;
 	MemoryCmd.dwLength -= iChunk;	
-	DBG("_HandleBulkOut addr=%X, len=%d\n",MemoryCmd.dwAddress,MemoryCmd.dwLength);
-
+	//DBG("_HandleBulkOut addr=%X, len=%d\n",MemoryCmd.dwAddress,MemoryCmd.dwLength);
+	dump_packet(MemoryCmd.dwAddress,iChunk,buffer);
 	if (MemoryCmd.dwLength == 0) {
 		DBG("_HandleBulkOut done\n");
 	}
