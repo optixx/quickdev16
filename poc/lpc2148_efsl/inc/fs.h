@@ -166,7 +166,7 @@ struct FileRecord{
 	euint32 FileSize;
 };
 #else
-#warning "mt ATTR_PACKED active"
+//#warning "mt ATTR_PACKED active"
 struct FileRecord{
 	euint8 FileName[11];
 	euint8 Attribute;

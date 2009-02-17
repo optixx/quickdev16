@@ -18,6 +18,8 @@
 #include "efs.h"
 #include "ls.h"
 #include "mkfs.h"
+#include "types.h"
+#include "debug.h"
 #include "interfaces/efsl_dbg_printf_arm.h"
 
 #define rprintf efsl_debug_printf_arm
@@ -31,7 +33,7 @@
 #define LEDDIR      IODIR0
 #define LEDSET      IOSET0
 #define LEDCLR      IOCLR0
-static char LogFileName[] = "dummy.log";
+static char rom_filename[] = "SPRITE.SMC";
 
 static void gpioInit(void)
 {
@@ -52,6 +54,17 @@ EmbeddedFile filer, filew;
 DirList list;
 unsigned short e;
 unsigned char buf[513];
+
+void cleanup_name(filename,sfn){
+	
+	while(*filename != '\0'){
+		if(*filename=='.' && !dot){
+			dot=1;
+			c=8;
+		}else{
+	
+	
+}
 
 void list_roms(){
 	uint8_t cnt = 0;	
@@ -78,13 +91,41 @@ uint8_t * get_filename(uint8_t idx){
 	return NULL;	
 }
 
+void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet){
+	uint16_t i,j;
+	uint16_t sum =0;
+	for (i=0;i<len;i+=16) {
+		sum = 0;
+		for (j=0;j<16;j++) {
+			sum +=packet[i+j];
+		}
+		if (!sum)
+			continue;
+		DBG((TXT("%08x:"), addr + i));
+		for (j=0;j<16;j++) {
+			DBG((TXT(" %02x"), packet[i+j]));
+		}
+		DBG((TXT(" |")));
+		for (j=0;j<16;j++) {
+			if (packet[i+j]>=33 && packet[i+j]<=126 )
+				DBG((TXT("%c"), packet[i+j]));
+			else
+				DBG((TXT(".")));
+		}
+		DBG((TXT("|\n")));
+		
+	}
+}
+
 void dump_filename(uint8_t * filename){
+	uint32_t cnt = 0;
     if (file_fopen(&filer, &efs.myFs, filename, 'r') == 0) {
         rprintf("File %s open. Content:\n", filename);
         while ((e = file_read(&filer, 512, buf)) != 0) {
-            buf[e] = '\0';
-            uart0Puts((char *) buf);
+			dump_packet(cnt,e,buf);
+			cnt+=e;
         } 
+		DBG((TXT("Len %08x(%li)\n"), cnt,cnt));
 		rprintf("\n");
         file_fclose(&filer);
 	} else {
@@ -100,6 +141,7 @@ int main(void)
     int ch;
     int8_t res;
     uint8_t * filename;
+    uint8_t fatfilename[12];
 
     Initialize();
     gpioInit();
@@ -120,21 +162,21 @@ int main(void)
             uart0Puts("You pressed : ");
             uart0Putch(ch);
             uart0Puts("\r\n");
-            if (ch == 'r') {
-                if (file_fopen(&filer, &efs.myFs, LogFileName, 'r') == 0) {
-                    rprintf("File %s open. Content:\n", LogFileName);
-                    while ((e = file_read(&filer, 512, buf)) != 0) {
-                        buf[e] = '\0';
-                        uart0Puts((char *) buf);
-                    } rprintf("\n");
-                    file_fclose(&filer);
-                }
-            }
 			if (ch >='1' && ch <='9'){
 				
 				filename = get_filename(ch - 48);
-				rprintf("Dump: %s\n",filename);
+				file_normalToFatName(filename,fatfilename);
+				rprintf("Filename: '%s'\n",filename);
 				dump_filename(filename);
+				rprintf("Fatfilename: '%s'\n",fatfilename);
+				dump_filename(fatfilename);
+				file_normalToFatName("sprite.smc",fatfilename);
+				rprintf("Fatfilename: '%s'\n",fatfilename);
+				dump_filename(fatfilename);
+				file_normalToFatName("sprite .smc",fatfilename);
+				rprintf("Fatfilename: '%s'\n",fatfilename);
+				dump_filename(fatfilename);
+				//dump_filename(rom_filename);
 			}
 			  
             ledToggle();
