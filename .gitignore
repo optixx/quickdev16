@@ -9,4 +9,10 @@
 *.elf
 *.eep
 *.dep
+*.dmp
 *.smc
+*.bin
+.depend
+.DS_Store
+*.a
+*.prj
