@@ -1,0 +1,14 @@
+# Currently none of these codes are active, because they are all built in
+# uCON64. They have been put here for your convenience and as a reference
+# so that you don't have to look at the source code. Read the FAQ for the
+# format.
+#
+# 04 0d 42:          03: 04: 9c: -2: 8c 8d 8e 8f
+# 01 0d 42:          03: 04: 00: -2
+# a9 01 85 0d:       03: 04: 00: -2
+# a2 01 86 0d:       03: 04: 00: -2
+# a0 01 84 0d:       03: 04: 00: -2
+#
+# 04 01 04 0d 42:    03: 04: 00: -3: a9 a2: 8d 8e
+# a9 01 00 8d 0d 42: 03: 04: 00: -4
+# a9 01 8f 0d 42 00: 03: 04: 00: -4

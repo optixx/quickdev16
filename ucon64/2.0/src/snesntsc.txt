@@ -1,0 +1,34 @@
+# Currently none of these codes are active, because they are all built in
+# uCON64. They have been put here for your convenience and as a reference
+# so that you don't have to look at the source code. See the document
+# "NTSC-PAL notes.txt" for more detailed information. Read the FAQ for the
+# format.
+#
+# 3f 21 02 10 f0:                   01: 02:  80:        0: 29 89
+# ad 3f 21 29 10 d0:                01: 02:  ea ea:     0
+# ad 3f 21 89 10 d0:                01: 02:  ea ea:     0
+# The next code could be the alternative for the previous one. Leave it
+# disabled until we find a game that needs it.
+# ad 3f 21 89 10 d0:                01: 02:  80:        0
+# 3f 21 02 10 00 f0:                01: 02:  80:        0: 29 89
+# 3f 21 02 10 00 d0:                01: 02:  ea ea:     0: 29 89
+# 3f 21 89 10 c2 01 d0:             01: 02:  ea ea:     0
+# 3f 21 89 10 c2 01 f0:             01: 02:  80:        0
+# 3f 21 02 10 c9 10 f0:             01: 02:  80:        0: 29 89
+# ad 3f 21 29 10 c9 00 f0:          01: 02:  ea ea:     0
+# ad 3f 21 29 10 c9 00 d0:          01: 02:  80:        0
+# ad 3f 21 29 10 c9 10 d0:          01: 02:  ea ea:     0
+# 3f 21 29 10 cf 01 01 80 f0:       01: 02:  80:        0
+# ad 3f 21 8d 01 01 29 10 8d:       01: 02:  00:       -1
+# 3f 21 00 02 10 f0:                01: 02:  80:        0: 29 89
+# af 3f 21 00 02 10 d0:             01: 02:  ea ea:     0: 29 89
+# af 3f 21 00 02 10 00 f0:          01: 02:  80:        0: 29 89
+# af 3f 21 00 29 01 c9 01 f0:       01: 02:  80:        0
+# af 3f 21 00 29 10 80 2d 00 1b:    01: 02:  00:       -4
+# 3f 21 00 89 10 c2 01 f0:          01: 02:  80:        0
+# af 3f 21 00 01 01 29 10 00 d0:    01: 02:  ea ea:     0
+# 3f 21 c2 01 29 10 00 f0:          01: 02:  80:        0
+# 3f 21 c2 01 29 10 00 d0:          01: 02:  ea ea:     0
+# af 3f 21 ea 89 10 00 d0:          01: 02:  a9 00 00: -7
+# a2 18 01 bd 27 20 89 10 00 d0 01: 03: 04:  ea ea:    -1
+# 29 10 00 a2 00 00 c9 10 00 d0:    01: 02:  80:        0

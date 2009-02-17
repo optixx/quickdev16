@@ -1,0 +1,1 @@
+# Put your NTSC protection search-and-defeat "codes" (patterns) here

@@ -1,0 +1,223 @@
+DLOPEN=1
+#USE_ZLIB=1
+USE_DISCMAGE=1
+#USE_USB=1
+USE_LIBCD64=1
+
+CC=cl.exe
+CFLAGS=/nologo /I. /W3 /O2 /DHAVE_CONFIG_H
+LDFLAGS=/NOLOGO setargv.obj
+TARGETS=
+
+!ifdef USE_DISCMAGE
+LIBNAME_DM=discmage
+!endif
+
+!ifdef USE_DISCMAGE
+FULLLIBNAME_DM=$(LIBNAME_DM).dll
+!ifndef DLOPEN
+LDFLAGS=$(LDFLAGS) libdiscmage/$(LIBNAME_DM).lib
+!endif
+!endif
+
+TARGETS=$(TARGETS) libdiscmage/$(FULLLIBNAME_DM)
+
+
+!ifdef USE_LIBCD64
+LDFLAGS=$(LDFLAGS) backup/libcd64/cd64.lib
+TARGETS=$(TARGETS) backup/libcd64/cd64.lib
+!endif
+
+
+OBJECTS=ucon64.obj ucon64_dat.obj ucon64_misc.obj ucon64_opts.obj \
+        misc/chksum.obj misc/file.obj misc/getopt.obj misc/getopt2.obj \
+        misc/misc.obj misc/parallel.obj misc/property.obj misc/string.obj \
+        misc/dlopen.obj \
+        patch/aps.obj patch/bsl.obj patch/gg.obj patch/ips.obj \
+        patch/pal4u.obj patch/ppf.obj patch/xps.obj \
+        console/dc.obj console/gb.obj console/gba.obj console/genesis.obj \
+        console/jaguar.obj console/lynx.obj console/n64.obj \
+        console/neogeo.obj console/nes.obj console/ngp.obj console/pce.obj \
+        console/psx.obj console/sms.obj console/snes.obj console/swan.obj \
+        backup/cd64.obj backup/cmc.obj backup/dex.obj backup/doctor64.obj \
+        backup/doctor64jr.obj backup/f2a.obj backup/fal.obj backup/ffe.obj \
+        backup/fig.obj backup/gbx.obj backup/gd.obj backup/interceptor.obj \
+        backup/lynxit.obj backup/mccl.obj backup/mcd.obj backup/md-pro.obj \
+        backup/mgd.obj backup/msg.obj backup/pce-pro.obj backup/pl.obj \
+        backup/psxpblib.obj backup/sflash.obj backup/smc.obj backup/smd.obj \
+        backup/smsgg-pro.obj backup/ssc.obj backup/swc.obj backup/tototek.obj \
+        backup/ufo.obj backup/yoko.obj backup/z64.obj
+!ifdef USE_ZLIB
+LDFLAGS=$(LDFLAGS) zlib.lib
+OBJECTS=$(OBJECTS) misc/map.obj misc/archive.obj misc/unzip.obj
+!endif
+!ifdef USE_USB
+LDFLAGS=$(LDFLAGS) usb.lib
+OBJECTS=$(OBJECTS) misc/usb.obj
+!endif
+
+
+TARGET=ucon64.exe
+TARGETS=$(TARGETS) $(TARGET)
+
+all: $(TARGETS)
+
+
+clean:
+	del *.obj
+	del patch\*.obj
+	del console\*.obj
+	del backup\*.obj
+	del misc\*.obj
+	del $(TARGET)
+	cd libdiscmage
+	$(MAKE) /NOLOGO /f Makefile.vc6 clean
+	cd ..\backup\libcd64
+	$(MAKE) /NOLOGO /f Makefile.vc6 clean
+	cd ..\..
+
+
+distclean: clean
+	del config.h
+	cd libdiscmage
+	$(MAKE) /NOLOGO /f Makefile.vc6 distclean
+	cd ..\backup\libcd64
+# libcd64 Makefile has no distclean target
+	$(MAKE) /NOLOGO /f Makefile.vc6 clean
+	cd ..\..
+
+
+.c.obj:
+	$(CC) $(CFLAGS) /c $< /Fo$@
+
+backup/cd64.obj:
+	$(CC) $(CFLAGS) /Ibackup/libcd64 /c $*.c /Fo$@
+
+
+!ifdef USE_DISCMAGE
+libdiscmage/$(FULLLIBNAME_DM):
+	cd libdiscmage
+	$(MAKE) /NOLOGO /f Makefile.vc6
+	cd ..
+!endif
+
+!ifdef USE_LIBCD64
+backup/libcd64/cd64.lib:
+	cd backup/libcd64
+	$(MAKE) /NOLOGO /f Makefile.vc6
+	cd ../..
+!endif
+
+
+$(TARGET): $(OBJECTS)
+	link.exe $(OBJECTS) $(LDFLAGS) /OUT:$@
+
+
+install:
+	cd libdiscmage
+	$(MAKE) /NOLOGO /f Makefile.vc6 install
+	cd ..
+
+
+uninstall:
+	cd libdiscmage
+	$(MAKE) /NOLOGO /f Makefile.vc6 uninstall
+	cd ..
+
+
+# Dependencies
+
+# Most source files include these
+UCON64_STD_H=ucon64.h ucon64_misc.h misc/misc.h config.h ucon64_defines.h
+
+misc/archive.obj: misc/archive.h misc/map.h config.h
+misc/chk.obj: misc/chksum.h config.h
+misc/dlopen.obj: misc/dlopen.h misc/dxedll_pub.h config.h
+misc/getopt.obj: misc/getopt.h
+misc/map.obj: misc/map.h config.h
+misc/misc.obj: misc/misc.h misc/archive.h config.h
+misc/parallel.obj: misc/parallel.h config.h
+misc/usb.obj: misc/usb.h config.h
+misc/unzip.obj: misc/unzip.h config.h
+ucon64.obj: misc/dlopen.h misc/getopt.h ucon64_dat.h ucon64_opts.h \
+            console/dc.h console/gb.h console/gba.h console/genesis.h \
+            console/jaguar.h console/lynx.h console/n64.h console/neogeo.h \
+            console/nes.h console/ngp.h console/pce.h console/psx.h \
+            console/sms.h console/snes.h console/swan.h \
+            backup/cd64.h backup/dex.h backup/doctor64.h backup/doctor64jr.h \
+            backup/f2a.h backup/fal.h backup/ffe.h backup/fig.h backup/gbx.h \
+            backup/gd.h backup/interceptor.h backup/lynxit.h backup/mccl.h \
+            backup/mcd.h backup/md-pro.h backup/mgd.h backup/msg.h \
+            backup/pce-pro.h backup/pl.h backup/smc.h backup/smd.h \
+            backup/smsgg-pro.h backup/ssc.h backup/swc.h backup/tototek.h \
+            backup/ufo.h backup/yoko.h backup/z64.h \
+            patch/aps.h patch/bsl.h patch/gg.h patch/ips.h patch/pal4u.h \
+            patch/ppf.h patch/xps.h $(UCON64_STD_H)
+ucon64_dat.obj: ucon64_dat.h $(UCON64_STD_H)
+ucon64_misc.obj: misc/dlopen.h $(UCON64_STD_H)
+ucon64_opts.obj: misc/dlopen.h misc/getopt.h ucon64_dat.h ucon64_opts.h \
+                 console/dc.h console/gb.h console/gba.h console/genesis.h \
+                 console/jaguar.h console/lynx.h console/n64.h \
+                 console/neogeo.h console/nes.h console/ngp.h console/pce.h \
+                 console/psx.h console/sms.h console/snes.h console/swan.h \
+                 backup/cd64.h backup/dex.h backup/doctor64.h \
+                 backup/doctor64jr.h backup/f2a.h backup/fal.h backup/ffe.h \
+                 backup/fig.h backup/gbx.h backup/gd.h backup/interceptor.h \
+                 backup/lynxit.h backup/mccl.h backup/mcd.h backup/md-pro.h \
+                 backup/mgd.h backup/msg.h backup/pce-pro.h backup/pl.h \
+                 backup/smc.h backup/smd.h backup/smsgg-pro.h backup/ssc.h \
+                 backup/swc.h backup/tototek.h backup/ufo.h backup/yoko.h \
+                 backup/z64.h \
+                 patch/aps.h patch/bsl.h patch/gg.h patch/ips.h patch/pal4u.h \
+                 patch/ppf.h patch/xps.h $(UCON64_STD_H)
+console/dc.obj: console/dc.h $(UCON64_STD_H)
+console/gb.obj: console/gb.h backup/mgd.h $(UCON64_STD_H)
+console/gba.obj: console/gba.h $(UCON64_STD_H)
+console/genesis.obj: console/genesis.h backup/smd.h backup/mgd.h $(UCON64_STD_H)
+console/jaguar.obj: console/jaguar.h $(UCON64_STD_H)
+console/lynx.obj: console/lynx.h $(UCON64_STD_H)
+console/n64.obj: console/n64.h $(UCON64_STD_H)
+console/neogeo.obj: console/neogeo.h $(UCON64_STD_H)
+console/nes.obj: console/nes.h $(UCON64_STD_H)
+console/ngp.obj: console/ngp.h $(UCON64_STD_H)
+console/pce.obj: console/pce.h backup/mgd.h $(UCON64_STD_H)
+console/psx.obj: console/psx.h $(UCON64_STD_H)
+console/sms.obj: console/sms.h backup/smd.h backup/mgd.h $(UCON64_STD_H)
+console/snes.obj: console/snes.h backup/mgd.h $(UCON64_STD_H)
+console/swan.obj: console/swan.h $(UCON64_STD_H)
+backup/cd64.obj: backup/cd64.h $(UCON64_STD_H)
+backup/cmc.obj: backup/cmc.h $(UCON64_STD_H)
+backup/dex.obj: backup/dex.h backup/psxpblib.h $(UCON64_STD_H)
+backup/doctor64.obj: backup/doctor64.h $(UCON64_STD_H)
+backup/doctor64jr.obj: backup/doctor64jr.h $(UCON64_STD_H)
+backup/f2a.obj: backup/f2a.h $(UCON64_STD_H)
+backup/fal.obj: backup/fal.h backup/cartlib.c $(UCON64_STD_H)
+backup/ffe.obj: backup/ffe.h $(UCON64_STD_H)
+backup/fig.obj: backup/fig.h console/snes.h $(UCON64_STD_H)
+backup/gd.obj: backup/gd.h console/snes.h $(UCON64_STD_H)
+backup/gbx.obj: backup/gbx.h $(UCON64_STD_H)
+backup/lynxit.obj: backup/lynxit.h $(UCON64_STD_H)
+backup/mcd.obj: backup/mcd.h $(UCON64_STD_H)
+backup/mccl.obj: backup/mccl.h $(UCON64_STD_H)
+backup/md-pro.obj: backup/md-pro.h backup/tototek.h $(UCON64_STD_H)
+backup/mgd.obj: backup/mgd.h $(UCON64_STD_H)
+backup/msg.obj: backup/msg.h backup/ffe.h $(UCON64_STD_H)
+backup/pce-pro.obj: backup/pce-pro.h backup/tototek.h $(UCON64_STD_H)
+backup/pl.obj: backup/pl.h $(UCON64_STD_H)
+backup/psxpblib.obj: backup/psxpblib.h $(UCON64_STD_H)
+backup/sflash.obj: backup/sflash.h backup/tototek.h $(UCON64_STD_H)
+backup/smc.obj: backup/smc.h backup/ffe.h $(UCON64_STD_H)
+backup/smd.obj: backup/smd.h backup/ffe.h $(UCON64_STD_H)
+backup/smsgg-pro.obj: backup/smsgg-pro.h backup/tototek.h $(UCON64_STD_H)
+backup/swc.obj: backup/swc.h backup/ffe.h console/snes.h $(UCON64_STD_H)
+backup/tototek.obj: backup/tototek.h $(UCON64_STD_H)
+backup/ufo.obj: backup/ufo.h $(UCON64_STD_H)
+backup/yoko.obj: backup/yoko.h $(UCON64_STD_H)
+backup/z64.obj: backup/z64.h $(UCON64_STD_H)
+patch/aps.obj: patch/aps.h $(UCON64_STD_H)
+patch/bsl.obj: patch/bsl.h $(UCON64_STD_H)
+patch/gg.obj: patch/gg.h $(UCON64_STD_H)
+patch/ips.obj: patch/ips.h $(UCON64_STD_H)
+patch/pal4u.obj: patch/pal4u.h $(UCON64_STD_H)
+patch/ppf.obj: patch/ppf.h $(UCON64_STD_H)
+patch/xps.obj: patch/xps.h $(UCON64_STD_H)
