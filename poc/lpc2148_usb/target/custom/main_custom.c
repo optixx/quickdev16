@@ -165,6 +165,7 @@ static void _HandleBulkOut(U8 bEP, U8 bEPStatus)
 	
 	MemoryCmd.dwAddress += iChunk;
 	MemoryCmd.dwLength -= iChunk;	
+	DBG("_HandleBulkOut addr=%X, len=%d\n",MemoryCmd.dwAddress,MemoryCmd.dwLength);
 
 	if (MemoryCmd.dwLength == 0) {
 		DBG("_HandleBulkOut done\n");

@@ -26,6 +26,7 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/timeb.h>
 
@@ -39,8 +40,8 @@ typedef unsigned int U32;
 typedef unsigned char U8;
 
 #define MAX_TIME 3000
-
-static unsigned char abData[16384];
+#define BLOCKSIZE 8192
+static unsigned char abData[BLOCKSIZE];
 
 // USB device specific definitions
 #define VENDOR_ID	0xFFFF
@@ -89,6 +90,14 @@ static int stoptimer(void)
 	return 1000 * (now.time - start.time) + now.millitm - start.millitm;
 }
 
+int get_filesize(FILE *input)
+{
+	int s;
+    fseek(input, 0, SEEK_END);
+    s = ftell(input);
+    fseek(input, 0, SEEK_SET);
+    return s;
+}
 
 int main(int argc, char *argv[])
 {
@@ -121,70 +130,46 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "usb_claim_interface failed %d\n", i);
 		return -1;
 	}
-
-
-	// read some data
-	for (j = 6; j < 15; j++) {
-		dwBlockSize = (1 << j);
-		fprintf(stderr, "Testing blocksize %5d\n", dwBlockSize);
-
-		fprintf(stderr, "* read :");
-		// send a vendor request for a read
-		MemCmd.dwAddress = 0;
-		MemCmd.dwLength = 1024 * 1024;
-		i = usb_control_msg(hdl, BM_REQUEST_TYPE, 0x01, 0, 0, (char *)&MemCmd, sizeof(MemCmd), 1000);
-		if (i < 0) {
-			fprintf(stderr, "usb_control_msg failed %d\n", i);
-		}
-		dwBytes = 0;
-		starttimer();
-		while (MemCmd.dwLength > 0) {
-			dwChunk = MIN(dwBlockSize, MemCmd.dwLength);
-			i = usb_bulk_read(hdl, 0x82, (char *)abData, dwBlockSize, 2000);
-			if (i < 0) {
-				fprintf(stderr, "usb_bulk_read failed %d\n", i);
-				break;
-			}
-			MemCmd.dwLength -= dwChunk;
-			dwBytes += dwBlockSize;
-			if (stoptimer() > MAX_TIME) {
-				break;
-			}
-		}
-		iTimer = stoptimer();
-		fprintf(stderr, " %7d bytes in %d ms = %d kB/s\n", dwBytes, iTimer, dwBytes / iTimer);
-		// stdout
-		printf("%d,%d,%d,", dwBlockSize, dwBytes, iTimer);
-
-		fprintf(stderr, "* write:");
-		// send a vendor request for a write
-		MemCmd.dwAddress = 0;
-		MemCmd.dwLength = 1024 * 1024;
-		i = usb_control_msg(hdl, BM_REQUEST_TYPE, 0x02, 0, 0, (char *)&MemCmd, sizeof(MemCmd), 1000);
-		if (i < 0) {
-			fprintf(stderr, "usb_control_msg failed %d\n", i);
-		}
-		dwBytes = 0;
-		starttimer();
-		while (MemCmd.dwLength > 0) {
-			dwChunk = MIN(dwBlockSize, MemCmd.dwLength);
-			i = usb_bulk_write(hdl, 0x05, (char *)abData, dwBlockSize, 2000);
-			if (i < 0) {
-				fprintf(stderr, "usb_bulk_read failed %d\n", i);
-				break;
-			}
-			MemCmd.dwLength -= dwChunk;
-			dwBytes += dwBlockSize;
-			if (stoptimer() > MAX_TIME) {
-				break;
-			}
-		}
-		fprintf(stderr, " %7d bytes in %d ms = %d kB/s\n", dwBytes, iTimer, dwBytes / iTimer);
-		// stdout
-		printf("%d,%d,%d\n", dwBlockSize, dwBytes, iTimer);
+	FILE * file;
+	file = fopen( argv[1] ,"r");
+	if (file == NULL)
+	{
+		fprintf(stderr, "cannt open file %s\n",argv[1]);
+		return -1;
 	}
+	MemCmd.dwLength = get_filesize(file);
+	MemCmd.dwAddress = 0;
+	dwBlockSize = BLOCKSIZE;		
+	fprintf(stderr, "open file %s (%i bytes)\n",argv[1],MemCmd.dwLength);
+	fprintf(stderr, "* write:");
+	// send a vendor request for a write
+	i = usb_control_msg(hdl, BM_REQUEST_TYPE, 0x02, 0, 0, (char *)&MemCmd, sizeof(MemCmd), 1000);
+	if (i < 0) {
+		fprintf(stderr, "usb_control_msg failed %d\n", i);
+	}
+	dwBytes = 0;
+	starttimer();
+	while (MemCmd.dwLength > 0) {
+		fread(abData,dwBlockSize, 1, file);
+		dwChunk = MIN(dwBlockSize, MemCmd.dwLength);
+		i = usb_bulk_write(hdl, 0x05, (char *)abData, dwBlockSize, 2000);
+		if (i < 0) {
+			fprintf(stderr, "usb_bulk_read failed %d\n", i);
+			break;
+		}
+		MemCmd.dwLength -= dwChunk;
+		dwBytes += dwBlockSize;
+		iTimer = stoptimer();
+		
+		if (stoptimer() > MAX_TIME) {
+			break;
+		}
+	}
+	fprintf(stderr, " %7d bytes in %d ms = %d kB/s\n", dwBytes, iTimer, dwBytes / iTimer);
+	// stdout
+	printf("%d,%d,%d\n", dwBlockSize, dwBytes, iTimer);
 
-
+	fclose(file);
 	usb_release_interface(hdl, 0);
 	usb_close(hdl);
 

@@ -55,13 +55,9 @@ DirList list;
 unsigned short e;
 unsigned char buf[513];
 
-void cleanup_name(filename,sfn){
+void cleanup_name(uint8_t * filename,uint8_t *sfn){
 	
-	while(*filename != '\0'){
-		if(*filename=='.' && !dot){
-			dot=1;
-			c=8;
-		}else{
+	while(*filename != '\0');
 	
 	
 }
@@ -176,7 +172,7 @@ int main(void)
 				file_normalToFatName("sprite .smc",fatfilename);
 				rprintf("Fatfilename: '%s'\n",fatfilename);
 				dump_filename(fatfilename);
-				//dump_filename(rom_filename);
+				dump_filename(rom_filename);
 			}
 			  
             ledToggle();

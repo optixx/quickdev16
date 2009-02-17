@@ -1,5 +1,4 @@
 # app defs
-EXE = custom_client
 ifndef LIBUSB
 		LIBUSB = "/opt/local/"
 endif
@@ -8,12 +7,16 @@ endif
 CFLAGS = -W -Wall -g -I$(LIBUSB)/include
 LIBS =  -L$(LIBUSB)/lib -lusb
 
-all: $(EXE)
+all: custom_client uploader
 
-$(EXE): main.o
-	$(CC) -o $(EXE) $< $(LIBS)
+custom_client: custom_client.o
+	$(CC) -o $@ $< $(LIBS)
+
+
+uploader: uploader.o
+	$(CC) -o $@ $< $(LIBS)
 
 clean:
-	$(RM) $(EXE) main.o 
+	$(RM) custom_client uploader  *.o 
 	
 	
