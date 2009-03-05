@@ -165,7 +165,7 @@ EXTMEMOPTS =
 #    --cref:    add cross reference to  map file
 LDFLAGS = -Wl,-Map=$(TARGET).map,--cref
 LDFLAGS += $(EXTMEMOPTS)
-LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
+LDFLAGS += $(PRINTF_LIB_MIN) $(SCANF_LIB) $(MATH_LIB)
 
 
 
