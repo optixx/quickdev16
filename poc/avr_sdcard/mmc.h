@@ -14,15 +14,13 @@ Copyright (C) 2004 Ulrich Radig
 
 #define MMC_Write			PORTC	//Port an der die MMC/SD-Karte angeschlossen ist also des SPI 
 #define MMC_Read			PINC
-#define MMC_Direction_REG		DDRC	
+#define MMC_Direction_REG	DDRC	
 
-#if defined (__AVR_ATmega8__)
-#define MMC_CS  PC0
-#define MMC_DO  PC1
-#define MMC_DI  PC2
+#define MMC_CS  PC7
+#define MMC_DO  PC5
+#define MMC_DI  PC6
 #define MMC_CLK PC3
-        #define SPI_SS                          4               //Nicht Benutz muﬂ aber definiert werden
-#endif
+#define SPI_SS  PC4               //Nicht Benutz muﬂ aber definiert werden
 
 
 //Prototypes

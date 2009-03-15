@@ -38,11 +38,11 @@
 
 
 # MCU name
-MCU = atmega8
+MCU = atmega16
 
 # Main Oscillator Frequency
 # This is only used to define F_OSC in all assembler and c-sources.
-F_OSC = 8000000
+F_OSC = 16000000
 
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
@@ -112,7 +112,7 @@ CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
 CFLAGS += -DF_OSC=$(F_OSC)
-CFLAGS +=  -DF_CPU=8000000UL   
+CFLAGS +=  -DF_CPU=16000000UL   
 #CFLAGS += -DF_CPU=3686400UL
 
 
@@ -181,7 +181,7 @@ LDFLAGS += $(PRINTF_LIB_MIN) $(SCANF_LIB) $(MATH_LIB)
 AVRDUDE_PROGRAMMER = stk500v2
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
-AVRDUDE_PORT = /dev/ttyUSB0    # programmer connected to serial device
+AVRDUDE_PORT = /dev/tty.PL2303-00002006   # programmer connected to serial device
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
@@ -194,26 +194,22 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 
 # Uncomment the following if you do /not/ wish a verification to be
 # performed after programming the device.
-#AVRDUDE_NO_VERIFY = -V
+AVRDUDE_NO_VERIFY = -V
 
 # Increase verbosity level.  Please use this when submitting bug
 # reports about avrdude. See <http://savannah.nongnu.org/projects/avrdude> 
 # to submit bug reports.
-#AVRDUDE_VERBOSE = -v -v
+AVRDUDE_VERBOSE = -v -v
 
 AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 
-#
-# Mega8 set to  internal 4mhz
-# avrdude -p atmega8 -P /dev/ttyUSB0  -c stk500v2 -U lfuse:w:0xe3:m 
-#
+#flash_fuse:
+#	avrdude -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -U lfuse:w:0xfe:m
+#	avrdude -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -U hfuse:w:0xd9:m
 
-
-#flashmac:
-#	uisp  -dprog=avr910 -dpart=ATmega8 -dserial=/dev/cu.PL2303-00002326  --erase -v --upload if=$(TARGET).hex 
 
 
 

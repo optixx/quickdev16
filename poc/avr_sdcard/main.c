@@ -1,4 +1,3 @@
-#define F_CPU 8000000
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -9,36 +8,46 @@
 #include "fat.h"
 
 //SREG defines
-#define S_MOSI 	PB3
-#define S_MISO	PB4
-#define S_SCK  	PB5
-#define S_LATCH	PB2
+#define S_MOSI 	PB5
+#define S_MISO	PB6
+#define S_SCK  	PB7
+#define S_LATCH	PB4
 
 //DEBUG defines
-#define D_LED0	PC5
+#define D_LED0	PD6
 
 //SRAM defines
-#define R_WR	PB6
-#define R_RD	PB7
-#define R_DATA	PORTD
-#define R_DIR	DDRD
+#define R_WR		PB1
+#define R_RD		PB0
+
+#define RAM_PORT	PORTA
+#define RAM_DIR		DDRA
+#define RAM_REG		PINA
 
 
-#define DEBUG_BUFFER_SIZE 128
+#define CTRL_PORT	PORTB
+#define CTR_DIR		DDRB
+
+
+#define LATCH_PORT	PORTB
+#define LATCH_DIR	DDRB
+
+#define SPI_PORT	PORTB
+#define SPI_DIR		DDRB
+
+
+#define LED_PORT	PORTD
+#define LED_DIR		DDRD
+
+
 #define READ_BUFFER_SIZE 512
+#define BLOCKS 512
 
-uint8_t debug_buffer[DEBUG_BUFFER_SIZE];
+#define debug(x, fmt) printf("%s:%u: %s=" fmt, __FILE__, __LINE__, #x, x)
+
+extern FILE uart_stdout;
+
 uint8_t read_buffer[READ_BUFFER_SIZE];
-
-void dprintf(const uint8_t * fmt, ...) {
-
-	va_list args;
-    va_start(args, fmt);
-    vsprintf(debug_buffer, fmt, args);
-    va_end(args);
-    uart_puts(debug_buffer);
-}
-
 
 void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet){
 	uint16_t i,j;
@@ -48,21 +57,22 @@ void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet){
 		for (j=0;j<16;j++) {
 			sum +=packet[i+j];
 		}
-		if (!sum)
+		if (!sum){
+			//printf(".");
 			continue;
-
-		dprintf("%08x:", addr + i);
-		for (j=0;j<16;j++) {
-			dprintf(" %02x", packet[i+j]);
 		}
-		dprintf(" |");
+		printf("%08lx:", addr + i);
+		for (j=0;j<16;j++) {
+			printf(" %02x", packet[i+j]);
+		}
+		printf(" |");
 		for (j=0;j<16;j++) {
 			if (packet[i+j]>=33 && packet[i+j]<=126 )
-				dprintf("%c", packet[i+j]);
+				printf("%c", packet[i+j]);
 			else
-				dprintf(".");
+				printf(".");
 		}
-		dprintf("|\n");
+		printf("|\n");
 	}
 }
 
@@ -70,9 +80,9 @@ void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet){
 void spi_init(void)
 {
 	/* Set MOSI and SCK output, all others input */
-	DDRB |= ((1<<S_MOSI) | (1<<S_SCK) | (1<<S_LATCH));
-	DDRB &= ~(1<<S_MISO);
-	PORTB |= (1<<S_MISO);
+	SPI_DIR |= ((1<<S_MOSI) | (1<<S_SCK) | (1<<S_LATCH));
+	SPI_DIR &= ~(1<<S_MISO);
+	SPI_PORT |= (1<<S_MISO);
 	/* Enable SPI, Master*/
 	SPCR = ((1<<SPE) | (1<<MSTR));
 }
@@ -90,64 +100,70 @@ uint8_t sram_read(uint32_t addr)
 {
 	uint8_t byte;
 
-	DDRD=0x00;
-	PORTD=0xff;
+	RAM_DIR = 0x00;
+	RAM_PORT = 0xff;
 
-	PORTB |= (1<<R_RD);
-	PORTB |= (1<<R_WR);
+	CTRL_PORT |= (1<<R_RD);
+	CTRL_PORT |= (1<<R_WR);
 
 	spi_master_transmit((uint8_t)(addr>>16));
 	spi_master_transmit((uint8_t)(addr>>8));
 	spi_master_transmit((uint8_t)(addr>>0));
 
-	PORTB |= (1<<S_LATCH);
-    PORTB &= ~(1<<S_LATCH);
-    PORTB &= ~(1<<R_RD);
+	LATCH_PORT |= (1<<S_LATCH);
+    LATCH_PORT &= ~(1<<S_LATCH);
+    CTRL_PORT &= ~(1<<R_RD);
+	
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
 
-	asm volatile ("nop");
-	asm volatile ("nop");
-	asm volatile ("nop");
-
-	byte = PIND;
-	PORTB |= (1<<R_RD);
-	DDRD=0x00;
-	PORTD=0x00;
+	byte = RAM_REG;
+	CTRL_PORT |= (1<<R_RD);
+	RAM_DIR =0x00;
+	RAM_PORT =0x00;
 	return byte;
 }
 
 void sram_write(uint32_t addr, uint8_t data)
 {
-	DDRD=0xff;
+	RAM_DIR = 0xff;
 
-	PORTB |= (1<<R_RD);
-	PORTB |= (1<<R_WR);
+	CTRL_PORT |= (1<<R_RD);
+	CTRL_PORT |= (1<<R_WR);
 
 	spi_master_transmit((uint8_t)(addr>>16));
 	spi_master_transmit((uint8_t)(addr>>8));
 	spi_master_transmit((uint8_t)(addr>>0));
 
-	PORTB |= (1<<S_LATCH);
-	PORTB &= ~(1<<S_LATCH);
+	LATCH_PORT |= (1<<S_LATCH);
+	LATCH_PORT &= ~(1<<S_LATCH);
+	
 
-	PORTB &= ~(1<<R_WR);
+	CTRL_PORT &= ~(1<<R_WR);
 
-	PORTD=data;
+	RAM_PORT = data;
+	CTRL_PORT |= (1<<R_WR);
 
-	PORTB |= (1<<R_WR);
-
-	DDRD=0x00;
-	PORTD=0x00;
+	RAM_DIR = 0x00;
+	RAM_PORT = 0x00;
 }
 
 void  sram_init(void){
-	DDRD=0x00;
-	PORTD=0x00;
+	
+	RAM_DIR  = 0x00;
+	RAM_PORT = 0x00;
 
-	DDRB |= ((1<<R_WR) | (1<<R_RD));
-	PORTB |= (1<<R_RD);
-	PORTB |= (1<<R_WR);
+	CTR_DIR 	|= ((1<<R_WR) | (1<<R_RD));
+	CTRL_PORT  	|= (1<<R_RD);
+	CTRL_PORT 	|= (1<<R_WR);
 
-	DDRC |= (1<<D_LED0);
+	LED_PORT |= (1<<D_LED0);
 }
 
 
@@ -163,7 +179,7 @@ void sram_copy(uint32_t addr,uint8_t *src, uint32_t len){
 	uint32_t i;
 	uint8_t *ptr = src;
 	for (i=addr; i<(addr + len);i++ )
-		sram_write(addr, *ptr++);
+		sram_write(i, *ptr++);
 }
 
 void sram_read_buffer(uint32_t addr,uint8_t *dst, uint32_t len){
@@ -171,7 +187,7 @@ void sram_read_buffer(uint32_t addr,uint8_t *dst, uint32_t len){
 	uint32_t i;
 	uint8_t *ptr = dst;
 	for (i=addr; i<(addr + len);i++ ){
-		*ptr = sram_read(addr);
+		*ptr = sram_read(i);
 		ptr++;
 	}
 }
@@ -187,27 +203,35 @@ int main(void)
 
 
     uart_init();
-
+    stdout = &uart_stdout;
+	
     sram_init();
-	dprintf("sram_init\n");
+	printf("sram_init\n");
 
 	spi_init();
-	dprintf("spi_init\n");
-
+	printf("spi_init\n");
+/*
 	sram_clear(0x000000, 0x400000);
-	dprintf("sram_clear\n");
+	printf("sram_clear\n");
+*/
+
+	//printf("read 0x0f0f\n");
+	//sram_read(0x0f0f);
+	//printf("write 0x0f0f\n");
+	//sram_write(0x0f0f,0xaa);
+	//while(1);
 
 	while ( mmc_init() !=0) {
-		dprintf("no sdcard..\n\r");
+		printf("no sdcard..\n");
     }
-    dprintf("mmc_init\n\r");
+    printf("mmc_init\n");
 
     fat_init(read_buffer);
-    dprintf("fat_init\n\r");
+    printf("fat_init\n");
 
 
     rom_addr = 0x000000;
-    dprintf("look for sprite.smc\n\r");
+    printf("look for sprite.smc\n");
 
     if (fat_search_file((uint8_t*)"sprite.smc",
 						&fat_cluster,
@@ -215,17 +239,19 @@ int main(void)
 						&fat_attrib,
 						read_buffer) == 1) {
 
-        for (uint16_t block_cnt=0; block_cnt<512; block_cnt++) {
+        for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
         	fat_read_file (fat_cluster,read_buffer,block_cnt);
-        	dprintf("Read Block %i addr 0x%06\n",block_cnt,rom_addr);
+        	printf("Read Block %i addr 0x%06lx\n",block_cnt,rom_addr);
+	    	//dump_packet(rom_addr,512,read_buffer);
         	sram_copy(rom_addr,read_buffer,512);
 			rom_addr += 512;
         }
 	}
 
     rom_addr = 0x000000;
-    for (uint16_t block_cnt=0; block_cnt<512; block_cnt++) {
+    for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
     	sram_read_buffer(rom_addr,read_buffer,512);
+		printf("Block %i\n",block_cnt);
     	dump_packet(rom_addr,512,read_buffer);
 		rom_addr += 512;
     }
