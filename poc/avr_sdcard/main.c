@@ -1,4 +1,4 @@
-#define F_CPU 8000000
+//#define F_CPU 8000000
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -24,19 +24,23 @@
 #define R_DIR	DDRD
 
 
-#define DEBUG_BUFFER_SIZE 128
 #define READ_BUFFER_SIZE 512
+#define DEBUG_BUFFER_SIZE 256
 
-uint8_t debug_buffer[DEBUG_BUFFER_SIZE];
+#define BLOCK_CNT 512
+
+//uint8_t debug_buffer[DEBUG_BUFFER_SIZE];
 uint8_t read_buffer[READ_BUFFER_SIZE];
 
 void dprintf(const uint8_t * fmt, ...) {
 
-	va_list args;
-    va_start(args, fmt);
-    vsprintf(debug_buffer, fmt, args);
-    va_end(args);
-    uart_puts(debug_buffer);
+	//va_list args;
+    //va_start(args, fmt);
+    //vsnprintf(debug_buffer,DEBUG_BUFFER_SIZE-1, fmt, args);
+    //va_end(args);
+    //uart_puts(debug_buffer);
+    uart_puts(fmt);
+
 }
 
 
@@ -44,14 +48,15 @@ void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet){
 	uint16_t i,j;
 	uint16_t sum =0;
 	for (i=0;i<len;i+=16) {
+		
 		sum = 0;
 		for (j=0;j<16;j++) {
 			sum +=packet[i+j];
 		}
 		if (!sum)
 			continue;
-
-		dprintf("%08x:", addr + i);
+		
+		dprintf("%08lx:", addr + i);
 		for (j=0;j<16;j++) {
 			dprintf(" %02x", packet[i+j]);
 		}
@@ -62,7 +67,7 @@ void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet){
 			else
 				dprintf(".");
 		}
-		dprintf("|\n");
+		dprintf("|\r\n");
 	}
 }
 
@@ -154,8 +159,11 @@ void  sram_init(void){
 void sram_clear(uint32_t addr, uint32_t len){
 
 	uint32_t i;
-	for (i=addr; i<(addr + len);i++ )
+	for (i=addr; i<(addr + len);i++ ){
+		if (0==i%0xfff)
+	    	dprintf("sram_clear %lx\n\r",i);
 		sram_write(i, 0x00);
+	}
 }
 
 void sram_copy(uint32_t addr,uint8_t *src, uint32_t len){
@@ -183,20 +191,25 @@ int main(void)
     uint8_t 	fat_attrib = 0;
     uint32_t 	fat_size = 0;
     uint32_t 	rom_addr = 0;
+    uint8_t 	done = 0;
 
 
 
     uart_init();
+	dprintf("uart_init\n\r");
 
     sram_init();
-	dprintf("sram_init\n");
+	dprintf("sram_init\n\r");
 
 	spi_init();
-	dprintf("spi_init\n");
+	dprintf("spi_init\n\r");
 
+/*
+#ifdef 0
 	sram_clear(0x000000, 0x400000);
-	dprintf("sram_clear\n");
-
+	dprintf("sram_clear\n\r");
+#endif
+*/	
 	while ( mmc_init() !=0) {
 		dprintf("no sdcard..\n\r");
     }
@@ -207,24 +220,32 @@ int main(void)
 
 
     rom_addr = 0x000000;
-    dprintf("look for sprite.smc\n\r");
+	while (!done){
+	    dprintf("Look for sprite.smc\n\r");
+	    if (fat_search_file((uint8_t*)"sprite.smc",
+							&fat_cluster,
+							&fat_size,
+							&fat_attrib,
+							read_buffer) == 1) {
+			dprintf("Start loading sprite.smc\n\r");
 
-    if (fat_search_file((uint8_t*)"sprite.smc",
-						&fat_cluster,
-						&fat_size,
-						&fat_attrib,
-						read_buffer) == 1) {
-
-        for (uint16_t block_cnt=0; block_cnt<512; block_cnt++) {
-        	fat_read_file (fat_cluster,read_buffer,block_cnt);
-        	dprintf("Read Block %i addr 0x%06\n",block_cnt,rom_addr);
-        	sram_copy(rom_addr,read_buffer,512);
-			rom_addr += 512;
-        }
+	        for (uint16_t block_cnt=0; block_cnt<BLOCK_CNT; block_cnt++) {
+	        	fat_read_file (fat_cluster,read_buffer,block_cnt);
+	        	dprintf("Read Block %i addr 0x%lx\n\r",block_cnt,rom_addr);
+	        	sram_copy(rom_addr,read_buffer,512);
+		   		//dump_packet(rom_addr,512,read_buffer);
+				rom_addr += 512;
+	        }
+			dprintf("Done 0x%lx\n\r",rom_addr);
+			done = 1;
+		}
 	}
+	
+    dprintf("Dump memory\n\r");
 
     rom_addr = 0x000000;
-    for (uint16_t block_cnt=0; block_cnt<512; block_cnt++) {
+    for (uint16_t block_cnt=0; block_cnt<BLOCK_CNT; block_cnt++) {
+	    dprintf("Read memory addr %lx\n\r",rom_addr);
     	sram_read_buffer(rom_addr,read_buffer,512);
     	dump_packet(rom_addr,512,read_buffer);
 		rom_addr += 512;

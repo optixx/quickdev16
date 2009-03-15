@@ -212,8 +212,8 @@ AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 #
 
 
-#flashmac:
-#	uisp  -dprog=avr910 -dpart=ATmega8 -dserial=/dev/cu.PL2303-00002326  --erase -v --upload if=$(TARGET).hex 
+#flash_mac: $(TARGET).hex
+#	uisp  -dprog=avr910 -dpart=ATmega8 -dserial=/dev/tty.PL2303-00001004   --erase -v --upload if=$(TARGET).hex 
 
 
 
@@ -331,13 +331,12 @@ gccversion :
 
 # Program the device.  
 
-flash_avrdude: flash
 
-flash: $(TARGET).hex $(TARGET).eep
-	sudo $(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
+#flash: $(TARGET).hex $(TARGET).eep
+#	sudo $(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
 
-flash_uisp:
-	sudo uisp -dprog=avr910 -dpart=ATmega8 -dserial=/dev/ttyUSB0  --verify --erase -v --upload if=$(TARGET).hex
+#flash_uisp:
+#	sudo uisp -dprog=avr910 -dpart=ATmega8 -dserial=/dev/ttyUSB0  --verify --erase -v --upload if=$(TARGET).hex
 
 
 
