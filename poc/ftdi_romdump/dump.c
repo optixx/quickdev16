@@ -155,7 +155,6 @@ int main(int argc, char **argv)
     	fprintf(stderr, "Malloc failed",f);
     	exit(-1);
 	}
-	put(&ftdica,0x00);
 	for ( addr = 0; addr<ROMSIZE; addr+=1){
 		byte = data_read(&ftdica);
 		printf("0x%08x: %x\n",addr,byte);
