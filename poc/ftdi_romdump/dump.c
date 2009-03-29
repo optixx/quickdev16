@@ -151,7 +151,6 @@ int main(int argc, char **argv)
 	unsigned char *buffer;
 	unsigned char dummy[10];
 	buffer = (unsigned char*)malloc(ROMSIZE);
-	memset(buffer,0,ROMSIZE);
 	if (NULL == buffer){
     	fprintf(stderr, "Malloc failed",f);
     	exit(-1);
@@ -165,8 +164,11 @@ int main(int argc, char **argv)
 		counter_clock(&ftdicb);
 	} 
 	dump_packet(0x000,ROMSIZE,buffer);
-
-
+	
+	FILE *fp;
+	fp=fopen("dump.rom", "wb");
+	fwrite(buffer, ROMSIZE, 1, fp);		
+	fclose(fp);
  
 	ftdi_disable_bitbang(&ftdica);
   	ftdi_usb_close(&ftdica);
