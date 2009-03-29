@@ -26,8 +26,8 @@ int put(struct ftdi_context *ftdic,unsigned char *buf){
 
 #define CLK 0
 #define RST 1
-#define DELAY 0
-#define ROMSIZE 0x10000
+#define DELAY 1
+#define ROMSIZE 0x10
 
 void dump_packet(unsigned int addr,unsigned int len,unsigned char  *packet){
 	int i,j;
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
     	exit(-1);
 	}
 	printf("A: ftdi open succeeded: %d\n",f);
-	r= ftdi_enable_bitbang(&ftdica, 0x00);
+	r= ftdi_enable_bitbang(&ftdica, 0xFF);
 	printf("A: enabling bitbang mode: %d\n",r);
 
 	// Open B
@@ -134,9 +134,8 @@ int main(int argc, char **argv)
   	r= ftdi_enable_bitbang(&ftdicb, 0xFF);
   	printf("B: enabling bitbang mode: %d\n",r);
 
-	counter_init(&ftdicb);
-	unsigned int addr = 0;
 	
+	/*
 	for ( addr = 0; addr<=0xfffff; addr+=1){
 		counter_clock(&ftdicb);
 		//byte = data_read(&ftdica);
@@ -144,21 +143,26 @@ int main(int argc, char **argv)
 			printf("0x%08x:\n",addr);
 	} 
 	exit(0);
+	*/
 	
-	
-	
+	counter_init(&ftdicb);
+	unsigned int addr = 0;
 	unsigned char byte;
 	unsigned char *buffer;
+	unsigned char dummy[10];
 	buffer = (unsigned char*)malloc(ROMSIZE);
+	memset(buffer,0,ROMSIZE);
 	if (NULL == buffer){
     	fprintf(stderr, "Malloc failed",f);
     	exit(-1);
 	}
-	for ( addr = 0; addr<0x1000; addr+=1){
-		counter_clock(&ftdicb);
+	put(&ftdica,0x00);
+	for ( addr = 0; addr<ROMSIZE; addr+=1){
 		byte = data_read(&ftdica);
 		printf("0x%08x: %x\n",addr,byte);
 		buffer[addr] = byte;
+		usleep(1);
+		counter_clock(&ftdicb);
 	} 
 	dump_packet(0x000,ROMSIZE,buffer);
 
