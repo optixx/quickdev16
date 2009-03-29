@@ -1,23 +1,18 @@
 #ifndef _UART_H_
 #define _UART_H_
 
-#define SUART_TXD
-#define SUART_RXD
+#define CR "\r\n"
+
 
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include <stdio.h>
 
-void uart_init();
+void uart_init(void);
+void uart_putc(const uint8_t);
+void uart_puts(const char *s);
+void uart_puts_P(PGM_P s);
+static int uart_stream(char c, FILE *stream);
 
-#ifdef SUART_TXD
-    void uart_putc(uint8_t byte);
-    void uart_puts(uint8_t *buf);
-#endif // SUART_RXD
 
-#ifdef SUART_RXD
-    uint8_t uart_getc_wait();
-    uint8_t uart_getc_nowait();
-#endif // SUART_RXD
-
-#endif /* _UART_H_ */
-
+#endif                          /* _UART_H_ */
