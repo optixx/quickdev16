@@ -181,7 +181,7 @@ LDFLAGS += $(PRINTF_LIB_MIN) $(SCANF_LIB) $(MATH_LIB)
 AVRDUDE_PROGRAMMER = stk500v2
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
-AVRDUDE_PORT = /dev/tty.PL2303-00002006   # programmer connected to serial device
+AVRDUDE_PORT = /dev/tty.PL2303-00001324   # programmer connected to serial device
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep

@@ -6,16 +6,20 @@ AS=wla-65816
 LD=wlalink
 
 OBJS=sprite.o
-APP=sprite.smc
+APP=sprite.raw
+SWC=sprite.swc
 GFX=biker.pic
 EMU=/Applications/ZSNES.app/Contents/MacOS/ZSNES
 
-all: clean $(APP)
+all: clean $(APP) raw
 
 run:  
 	$(EMU) $(APP)
 
 
+raw: $(APP)
+    dd if=$(APP) of=raw bs=512 skip=1
+    
 linkfile:
 	echo "[objects]" > linkerfile.prj
 
@@ -25,6 +29,6 @@ linkfile:
 
 $(APP):  linkfile $(GFX) $(OBJS) $(GFX)
 	$(LD) -vr linkerfile.prj  $@
-
+	ucon64 $(APP) -swc $(SWC)     
 clean:
-	rm -vf $(APP) *.prj *.o
+	rm -vf $(SWC) $(APP) *.prj *.o

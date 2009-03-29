@@ -41,7 +41,7 @@
 
 
 #define READ_BUFFER_SIZE 512
-#define BLOCKS 512
+#define BLOCKS 510
 
 #define debug(x, fmt) printf("%s:%u: %s=" fmt, __FILE__, __LINE__, #x, x)
 
@@ -238,23 +238,30 @@ int main(void)
 						&fat_size,
 						&fat_attrib,
 						read_buffer) == 1) {
+	   
 
-        for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
+        for (uint16_t block_cnt=0; block_cnt<BLOCKS+1; block_cnt++) {
         	fat_read_file (fat_cluster,read_buffer,block_cnt);
-        	printf("Read Block %i addr 0x%06lx\n",block_cnt,rom_addr);
-	    	//dump_packet(rom_addr,512,read_buffer);
+        	if (block_cnt==0){
+	    		// Skip Copier Header
+				printf("Copier Header \n",block_cnt,rom_addr);
+				dump_packet(rom_addr,512,read_buffer);
+				printf("Read Blocks ");
+			}
+			printf(".",block_cnt,rom_addr);
         	sram_copy(rom_addr,read_buffer,512);
 			rom_addr += 512;
         }
+		printf("\nDone %lx\n",rom_addr);
 	}
 
     rom_addr = 0x000000;
     for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
     	sram_read_buffer(rom_addr,read_buffer,512);
-		printf("Block %i\n",block_cnt);
     	dump_packet(rom_addr,512,read_buffer);
 		rom_addr += 512;
     }
+	printf("Done\n",rom_addr);
 
 
 	while(1);
