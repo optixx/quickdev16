@@ -181,11 +181,10 @@ LDFLAGS += $(PRINTF_LIB_MIN) $(SCANF_LIB) $(MATH_LIB)
 AVRDUDE_PROGRAMMER = stk500v2
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
-AVRDUDE_PORT = /dev/tty.PL2303-00001324   # programmer connected to serial device
+
+AVRDUDE_PORT = /dev/tty.PL2303-00002006    
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
-#AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
-
 
 # Uncomment the following if you want avrdude's erase cycle counter.
 # Note that this counter needs to be initialized first using -Yn,
@@ -209,15 +208,6 @@ AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 #flash_fuse:
 #	avrdude -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -U lfuse:w:0xfe:m
 #	avrdude -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -U hfuse:w:0xd9:m
-
-<<<<<<< HEAD:poc/avr_sdcard/Makefile
-#flash_mac: $(TARGET).hex
-#	uisp  -dprog=avr910 -dpart=ATmega8 -dserial=/dev/tty.PL2303-00001004   --erase -v --upload if=$(TARGET).hex 
-=======
->>>>>>> sdcard_m32:poc/avr_sdcard/Makefile
-
-
-
 
 
 # ---------------------------------------------------------------------------
@@ -333,13 +323,8 @@ gccversion :
 # Program the device.  
 
 
-#flash: $(TARGET).hex $(TARGET).eep
-#	sudo $(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
-
-#flash_uisp:
-#	sudo uisp -dprog=avr910 -dpart=ATmega8 -dserial=/dev/ttyUSB0  --verify --erase -v --upload if=$(TARGET).hex
-
-
+flash: $(TARGET).hex $(TARGET).eep
+	sudo $(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
 
 # Convert ELF to COFF for use in debugging / simulating in AVR Studio or VMLAB.
 COFFCONVERT=$(OBJCOPY) --debugging \

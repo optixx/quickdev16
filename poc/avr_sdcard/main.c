@@ -1,7 +1,3 @@
-<<<<<<< HEAD:poc/avr_sdcard/main.c
-//#define F_CPU 8000000
-=======
->>>>>>> sdcard_m32:poc/avr_sdcard/main.c
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -10,6 +6,10 @@
 #include "uart.h"
 #include "mmc.h"
 #include "fat.h"
+
+// Debug
+#define debug(x, fmt) printf("%s:%u: %s=" fmt, __FILE__, __LINE__, #x, x)
+extern FILE uart_stdout;
 
 //SREG defines
 #define S_MOSI 	PB5
@@ -28,55 +28,30 @@
 #define RAM_DIR		DDRA
 #define RAM_REG		PINA
 
-<<<<<<< HEAD:poc/avr_sdcard/main.c
-#define READ_BUFFER_SIZE 512
-#define DEBUG_BUFFER_SIZE 256
-
-#define BLOCK_CNT 512
-
-//uint8_t debug_buffer[DEBUG_BUFFER_SIZE];
-uint8_t read_buffer[READ_BUFFER_SIZE];
-=======
-
 #define CTRL_PORT	PORTB
 #define CTR_DIR		DDRB
->>>>>>> sdcard_m32:poc/avr_sdcard/main.c
-
-
-<<<<<<< HEAD:poc/avr_sdcard/main.c
-	//va_list args;
-    //va_start(args, fmt);
-    //vsnprintf(debug_buffer,DEBUG_BUFFER_SIZE-1, fmt, args);
-    //va_end(args);
-    //uart_puts(debug_buffer);
-    uart_puts(fmt);
-
-}
-=======
 #define LATCH_PORT	PORTB
 #define LATCH_DIR	DDRB
 
 #define SPI_PORT	PORTB
 #define SPI_DIR		DDRB
 
-
 #define LED_PORT	PORTD
 #define LED_DIR		DDRD
->>>>>>> sdcard_m32:poc/avr_sdcard/main.c
 
+#define FILENAME	"sprite.raw"
+#define BUFFER_SIZE 512
+#define BLOCKS 512
+#define MEMSIZE 	0x80000
 
-#define READ_BUFFER_SIZE 512
-#define BLOCKS 510
+uint8_t read_buffer[BUFFER_SIZE];
 
-#define debug(x, fmt) printf("%s:%u: %s=" fmt, __FILE__, __LINE__, #x, x)
-
-extern FILE uart_stdout;
-
-uint8_t read_buffer[READ_BUFFER_SIZE];
 
 void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet){
 	uint16_t i,j;
-	uint16_t sum =0;
+	uint16_t sum = 0;
+	uint8_t clear=0;
+	
 	for (i=0;i<len;i+=16) {
 		
 		sum = 0;
@@ -84,15 +59,14 @@ void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet){
 			sum +=packet[i+j];
 		}
 		if (!sum){
-			//printf(".");
+			clear=1;
 			continue;
-<<<<<<< HEAD:poc/avr_sdcard/main.c
-		
-		dprintf("%08lx:", addr + i);
-=======
 		}
+		if (clear){
+			printf("*\n");
+			clear = 0;
+		}	
 		printf("%08lx:", addr + i);
->>>>>>> sdcard_m32:poc/avr_sdcard/main.c
 		for (j=0;j<16;j++) {
 			printf(" %02x", packet[i+j]);
 		}
@@ -103,11 +77,7 @@ void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet){
 			else
 				printf(".");
 		}
-<<<<<<< HEAD:poc/avr_sdcard/main.c
-		dprintf("|\r\n");
-=======
 		printf("|\n");
->>>>>>> sdcard_m32:poc/avr_sdcard/main.c
 	}
 }
 
@@ -201,13 +171,17 @@ void  sram_init(void){
 	LED_PORT |= (1<<D_LED0);
 }
 
+void sram_snes_mode(void){
+	CTRL_PORT |= (1<<R_WR);
+    CTRL_PORT &= ~(1<<R_RD);
+}
 
 void sram_clear(uint32_t addr, uint32_t len){
 
 	uint32_t i;
 	for (i=addr; i<(addr + len);i++ ){
 		if (0==i%0xfff)
-	    	dprintf("sram_clear %lx\n\r",i);
+	    	printf("sram_clear %lx\n\r",i);
 		sram_write(i, 0x00);
 	}
 }
@@ -229,7 +203,13 @@ void sram_read_buffer(uint32_t addr,uint8_t *dst, uint32_t len){
 		ptr++;
 	}
 }
+uint8_t sram_check(uint8_t *buffer, uint32_t len){
 
+	for (uint16_t cnt=0; cnt<len; cnt++) 
+		if (buffer[cnt])
+			return 1;
+	return 0;
+}
 int main(void)
 {
 
@@ -237,120 +217,71 @@ int main(void)
     uint8_t 	fat_attrib = 0;
     uint32_t 	fat_size = 0;
     uint32_t 	rom_addr = 0;
-    uint8_t 	done = 0;
-
-
-
+    uint32_t 	skip_block = 0;
+ 
     uart_init();
-<<<<<<< HEAD:poc/avr_sdcard/main.c
-	dprintf("uart_init\n\r");
-
-    sram_init();
-	dprintf("sram_init\n\r");
-
-	spi_init();
-	dprintf("spi_init\n\r");
-
-/*
-#ifdef 0
-	sram_clear(0x000000, 0x400000);
-	dprintf("sram_clear\n\r");
-#endif
-*/	
-=======
     stdout = &uart_stdout;
 	
     sram_init();
-	printf("sram_init\n");
+	printf("SRAM Init\n");
 
 	spi_init();
-	printf("spi_init\n");
-/*
-	sram_clear(0x000000, 0x400000);
-	printf("sram_clear\n");
-*/
+	printf("SPI Init\n");
+
+	
+	//sram_clear(0x000000, 0x400000);
+	//printf("sram_clear\n");
 
 	//printf("read 0x0f0f\n");
 	//sram_read(0x0f0f);
 	//printf("write 0x0f0f\n");
 	//sram_write(0x0f0f,0xaa);
 	//while(1);
-
->>>>>>> sdcard_m32:poc/avr_sdcard/main.c
 	while ( mmc_init() !=0) {
-		printf("no sdcard..\n");
+		printf("No sdcard...\n");
     }
-    printf("mmc_init\n");
-
+    printf("MMC Init sone\n");
     fat_init(read_buffer);
-    printf("fat_init\n");
-
-
+    printf("FAT Init done.\n");
     rom_addr = 0x000000;
-<<<<<<< HEAD:poc/avr_sdcard/main.c
-	while (!done){
-	    dprintf("Look for sprite.smc\n\r");
-	    if (fat_search_file((uint8_t*)"sprite.smc",
-							&fat_cluster,
-							&fat_size,
-							&fat_attrib,
-							read_buffer) == 1) {
-			dprintf("Start loading sprite.smc\n\r");
+    printf("Look for %s\n",FILENAME);
 
-	        for (uint16_t block_cnt=0; block_cnt<BLOCK_CNT; block_cnt++) {
-	        	fat_read_file (fat_cluster,read_buffer,block_cnt);
-	        	dprintf("Read Block %i addr 0x%lx\n\r",block_cnt,rom_addr);
-	        	sram_copy(rom_addr,read_buffer,512);
-		   		//dump_packet(rom_addr,512,read_buffer);
-				rom_addr += 512;
-	        }
-			dprintf("Done 0x%lx\n\r",rom_addr);
-			done = 1;
-		}
-=======
-    printf("look for sprite.smc\n");
-
-    if (fat_search_file((uint8_t*)"sprite.smc",
+    if (fat_search_file((uint8_t*)FILENAME,
 						&fat_cluster,
 						&fat_size,
 						&fat_attrib,
 						read_buffer) == 1) {
 	   
 
-        for (uint16_t block_cnt=0; block_cnt<BLOCKS+1; block_cnt++) {
+        for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
         	fat_read_file (fat_cluster,read_buffer,block_cnt);
-        	if (block_cnt==0){
-	    		// Skip Copier Header
-				printf("Copier Header \n",block_cnt,rom_addr);
-				dump_packet(rom_addr,512,read_buffer);
-				printf("Read Blocks ");
-			}
-			printf(".",block_cnt,rom_addr);
-        	sram_copy(rom_addr,read_buffer,512);
+			if (block_cnt % 16 == 0)
+				printf("Write Ram 0x%lx Skipped %li\n",rom_addr,skip_block);
+			
+			if (sram_check(read_buffer,512))
+				sram_copy(rom_addr,read_buffer,512);
+			else
+				skip_block +=1;
 			rom_addr += 512;
         }
-		printf("\nDone %lx\n",rom_addr);
->>>>>>> sdcard_m32:poc/avr_sdcard/main.c
+		printf("Done 0x%lx Skipped %li\n",rom_addr,skip_block);
 	}
-	
-    dprintf("Dump memory\n\r");
-
+    printf("Dump Memory\n\r");
     rom_addr = 0x000000;
-<<<<<<< HEAD:poc/avr_sdcard/main.c
-    for (uint16_t block_cnt=0; block_cnt<BLOCK_CNT; block_cnt++) {
-	    dprintf("Read memory addr %lx\n\r",rom_addr);
-=======
     for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
->>>>>>> sdcard_m32:poc/avr_sdcard/main.c
     	sram_read_buffer(rom_addr,read_buffer,512);
     	dump_packet(rom_addr,512,read_buffer);
 		rom_addr += 512;
     }
-	printf("Done\n",rom_addr);
-
-
+	printf("\nDone 0x%lx\n",rom_addr);
+	sram_snes_mode();
+	printf("\nEnter Snes mode\n");
 	while(1);
-
-	return(0);
+	return 0 ;
+	
 }
+
+
+
+
 

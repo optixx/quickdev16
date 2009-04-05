@@ -10,11 +10,14 @@ APP=sprite.raw
 SWC=sprite.swc
 GFX=biker.pic
 EMU=/Applications/ZSNES.app/Contents/MacOS/ZSNES
-
+DEBUG=wine /Users/david/Devel/arch/snes/tools/snes9x1/Snes9X1.43.ep9r8.exe
 all: clean $(APP) raw
 
 run:  
 	$(EMU) $(APP)
+
+debug:
+	$(DEBUG) $(APP)
 
 
 raw: $(APP)
