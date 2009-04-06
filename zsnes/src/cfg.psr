@@ -1,0 +1,1011 @@
+;Copyright (C) 1997-2007 ZSNES Team ( zsKnight, _Demo_, pagefault, Nach )
+;
+;http://www.zsnes.com
+;http://sourceforge.net/projects/zsnes
+;https://zsnes.bountysource.com
+;
+;This program is free software; you can redistribute it and/or
+;modify it under the terms of the GNU General Public License
+;version 2 as published by the Free Software Foundation.
+;
+;This program is distributed in the hope that it will be useful,
+;but WITHOUT ANY WARRANTY; without even the implied warranty of
+;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;GNU General Public License for more details.
+;
+;You should have received a copy of the GNU General Public License
+;along with this program; if not, write to the Free Software
+;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+@ PSR-produced config file (stock default in CAPS)
+@
+@ Note, if you're worried you messed up a setting, removing the line will have
+@ ZSNES use the default settings for that option.
+@ The next time ZSNES is run, the line will reappear with the default settings.
+
+@
+@  ----
+@ -- Input --
+@  ----
+
+@
+@ For other input settings see zinput.cfg
+
+@
+@ Enable Game-Specific Key Combos (0 = NO, 1 = Yes)
+GUIComboGameSpec db 0
+
+@
+@ Enable Game-Specific Key Input (0 = NO, 1 = Yes)
+GameSpecificInput db 0
+
+@
+@  ----
+@ -- Options --
+@  ----
+
+@
+@ Allow MMX Support (0 = No, 1 = YES)
+@ Disable this only if you actually do NOT have a processor that supports MMX.
+@ Disabling this option will prevent you from using some of the more advanced
+@ video/sound filters.
+AllowMMX db 1
+
+%ifdef __WIN32__
+@
+@ Pause Emulation when ZSNES is Out of Focus (0 = NO, 1 = Yes)
+PauseFocusChange db 0
+
+@
+@ Increase Priority of ZSNES (0 = NO, 1 = Yes)
+@ Enable this if it improves performance. This option is not for everyone.
+@ This may cause other background apps to be sluggish.
+@ The priority in Win9x will be High, Win2k will be Above Normal.
+HighPriority db 0
+
+@
+@ Disable Power Management while ZSNES Runs (0 = No, 1 = YES)
+@ This is very necessary for gamepad users.
+DisableScreenSaver db 1
+%endif
+
+@
+@ Enable New Graphics Engine (0 = No, 1 = YES)
+@ Toggle off when there are graphical problems in the new graphics engine
+newengen db 1
+
+@
+@ Enable Older Graphics Engine Tweak for Mode 2 (0 = NO, 1 = Yes)
+@ Enable this to see if it helps with rendering problems
+@ Only works with old graphic engine
+bgfixer db 0
+
+@
+%ifndef NO_PNG
+@ Snapshot Format (0 = BMP, 1 = PNG)
+%ifdef __MSDOS__
+@ Note: in 8 bit video modes PNG is not selectable
+%endif
+%else
+@ Snapshot Format (0 = BMP)
+%endif
+ScreenShotFormat db 0
+
+@
+@ Auto-Patch ROM with IPS (0 = No, 1 = YES)
+AutoPatch db 1
+
+@
+@ Display ROM Info on Load (0 = No, 1 = YES)
+DisplayInfo db 1
+
+@
+@ Log Info About the Last ROM Loaded to rominfo.txt (0 = No, 1 = YES)
+RomInfo db 1
+
+@
+@ Enable FPS Counter when ZSNES is Started (0 = NO, 1 = Yes)
+@ This option is disabled when manual frameskip is in use.
+FPSAtStart db 0
+
+@
+@ Display Clock (0 = NO, 1 = Yes)
+TimerEnable db 0
+
+@
+@ Change Clock Mode (0 = 24 HOUR, 1 = 12 Hour)
+TwelveHourClock db 0
+
+@
+@ Display Black Box Around Clock (0 = No, 1 = YES)
+ClockBox db 1
+
+@
+@ Use Small Font for Messages (0 = NO, 1 = Yes)
+SmallMsgText db 0
+
+@
+@ Transparent Messages - doesn't work with small font (0 = NO, 1 = Yes)
+GUIEnableTransp db 0
+
+@
+@  ----
+@ -- Video --
+@  ----
+
+%ifdef __MSDOS__
+@
+@ Force Black Background (0 = NO, 1 = Yes)
+@ This is necessary to get a black background.
+@ This can cause rendering problems in certain games.
+@ Only applicable for 8-bit modes.
+Palette0 db 0
+%endif
+
+@
+#ifdef __WIN32__
+@ Video Mode [0..42]
+@   0 = 256x224      R WIN     1 = 256x224        R FULL
+@   2 = 512x448      R WIN     3 = 512x448       DR WIN
+@   4 = 640x480      S WIN     5 = 640x480       DS WIN
+@   6 = 640x480     DR FULL    7 = 640x480       DS FULL
+@   8 = 640x480      S FULL    9 = 768x672        R WIN
+@  10 = 768x672     DR WIN    11 = 800x600        S WIN
+@  12 = 800x600     DS WIN    13 = 800x600        S FULL
+@  14 = 800x600     DR FULL   15 = 800x600       DS FULL
+@  16 = 1024x768     S WIN    17 = 1024x768      DS WIN
+@  18 = 1024x768     S FULL   19 = 1024x768      DR FULL
+@  20 = 1024x768    DS FULL   21 = 1024x896       R WIN
+@  22 = 1024x896    DR WIN    23 = 1280x960       S WIN
+@  24 = 1280x960    DS WIN    25 = 1280x960       S FULL
+@  26 = 1280x960    DR FULL   27 = 1280x960      DS FULL
+@  28 = 1280x1024    S WIN    29 = 1280x1024     DS WIN
+@  30 = 1280x1024    S FULL   31 = 1280x1024     DR FULL
+@  32 = 1280x1024   DS FULL   33 = 1600x1200      S WIN
+@  34 = 1600x1200   DS WIN    35 = 1600x1200     DR FULL
+@  36 = 1600x1200   DS FULL   37 = 1600x1200      S FULL
+@  38 = CUSTOM      D  WIN    39 = CUSTOM        DS FULL
+@  40 = CUSTOM         WIN    41 = CUSTOM         S FULL
+@  42 = CUSTOM      DR FULL
+@ You need to select one of the custom video modes and modify CustomResX/Y to
+@ properly use custom res support.
+@ WARNING: Custom resolutions are only valid if they are supported by your system!
+@ ZSNES will hang if an invalid fullscreen resolution is used.
+cvidmode db 2
+@ Last windowed & fullscreen modes (used when alt-tabbing)
+PrevWinMode db 2
+PrevFSMode db 6
+
+#elifdef __UNIXSDL__
+
+%ifndef __OPENGL__
+@ Video Mode [0..4]
+%else
+@ Video Mode [0..22]
+%endif
+@   0 = 256x224      R WIN     1 = 256x224      R FULL
+@   2 = 512x448     DR WIN     3 = 512x448     DR FULL
+@   4 = 640x480     DR FULL
+%ifdef __OPENGL__
+@   5 = 256x224    O R WIN     6 = 512x448    ODR WIN
+@   7 = 640x480    ODS FULL    8 = 640x480    ODS WIN
+@   9 = 640x560    ODR WIN    10 = 768x672    ODR WIN
+@  11 = 800x600    ODS FULL   12 = 800x600    ODS WIN
+@  13 = 896x784    ODR WIN    14 = 1024x768   ODS FULL
+@  15 = 1024x768   ODS WIN    16 = 1024x896   ODR WIN
+@  17 = 1280x960   ODS FULL   18 = 1280x1024  ODS FULL
+@  19 = 1600x1200  ODS FULL   20 = VARIABLE   ODR WIN
+@  21 = VARIABLE   ODS WIN    22 = CUSTOM     OD  FULL
+@ You need to select the custom video mode and modify CustomResX/Y to properly
+@ use custom res support.
+%endif
+cvidmode db 2
+@ Last windowed & fullscreen modes (used when alt-tabbing)
+PrevWinMode db 2
+PrevFSMode db 3
+
+#elifdef __MSDOS__
+@ Video Mode [0..18]
+@   0 = 256x224x8B   MODEQ     1 = 256x240x8B MODEQ
+@   2 = 256x256x8B   MODEQ     3 = 320x224x8B MODEX
+@   4 = 320x240x8B   MODEX     5 = 320x256x8B MODEX
+@   6 = 640x480x16B  VESA1     7 = 320x240x8B VESA2
+@   8 = 320x240x16B  VESA2     9 = 320x480x8B VESA2
+@  10 = 320x480x16B  VESA2    11 = 512x384x8B VESA2
+@  12 = 512x384x16B  VESA2    13 = 640x400x8B VESA2
+@  14 = 640x400x16B  VESA2    15 = 640x480x8B VESA2
+@  16 = 640x480x16B  VESA2    17 = 800x600x8B VESA2
+@  18 = 800x600x16B  VESA2
+cvidmode db 4
+#endif
+
+%ifndef __MSDOS__
+@
+@ Custom Resolution X and Y for Custom Video Modes [256x224..2048x1536]
+CustomResX dd 640
+CustomResY dd 480
+%endif
+
+@
+%ifdef __OPENGL__
+@ Enable Video Interpolation, Bilinear Filtering (0 = NO, 1 = Yes)
+@ Bilinear Filtering is compatible with all filters except NTSC.
+@ Bilinear Filtering replaces Interpolation and is OpenGL only.
+%else
+@ Enable Video Interpolation (0 = NO, 1 = Yes)
+%endif
+@ Video Interpolation is compatible with scanlines.
+@ Blends the neighboring pixels on the screen to eliminate pixelation.
+%ifdef __MSDOS__
+@ Available in most VESA2 16-bit modes
+@ Note: This option enables the Eagle filter in the VESA2 640x480 8-bit mode.
+%endif
+antienab db 0
+%ifdef __OPENGL__
+BilinearFilter db 0
+%endif
+
+@
+%ifndef __MSDOS__
+@ Enable NTSC Filter (0 = NO, 1 = Yes)
+@ Enable Blargg's wonderful NTSC filter which simulates the artifacts of an
+@ NTSC TV set - it is probably not a good idea to use with TV-out
+@ Recommended to use a minimum res of 602x448
+%else
+@ The NTSC filter is not available for DOS at the moment, sorry.
+%endif
+NTSCFilter db 0
+%ifndef __MSDOS__
+@ Blend Frames, Refresh Screen (0 = OFF, 1 = On)
+@ Blend Frames allows smoother transitions between frames for non-60Hz refresh rates.
+@ Refresh Screen allows the screen to be updated while changing the filter's parameters.
+%endif
+NTSCBlend db 0
+NTSCRef db 0
+%ifndef __MSDOS__
+@ NTSC TV Attributes [-100..100]
+%endif
+NTSCHue sb 0
+NTSCSat sb 0
+NTSCCont sb 0
+NTSCBright sb 0
+NTSCSharp sb 0
+NTSCGamma sb 0
+NTSCRes sb 0
+NTSCArt sb 0
+NTSCFringe sb 0
+NTSCBleed sb 0
+NTSCWarp sb 0
+
+@
+@ Enable Kreed's 2x Filters (0 = NONE, 1 = 2xSaI, 2 = Super Eagle, 3 = Super 2xSaI)
+@ These are Kreed's various 2x filters. They do not exhibit the same level of
+@ blurring than interpolation/bilinear. MMX support is required.
+@ This is disabled when other filters are used.
+En2xSaI db 0
+
+@
+%ifndef __MSDOS__
+@ Use HQ*x Filter (0 = NO, 1 = Yes)
+@ This is a filter MaxSt has created. These are very CPU intensive filters that
+@ do very awesome blending to remove the pixelation.
+@ This is disabled when other filters are used. MMX support is required.
+%else
+@ The HQ*x filter is not available for DOS at the moment, sorry.
+%endif
+hqFilter db 0
+%ifndef __MSDOS__
+@ Set HQ*x level [2..4]
+@ Recommended min resolutions
+@ HQ2x = 512x448
+@ HQ3x = 768x672
+@ HQ4x = 1024x896
+%ifdef __OPENGL_
+@ HQ2x is only available for OpenGL.
+%endif
+hqFilterlevel db 2
+%endif
+
+@
+@ Enable Scanlines (0 = NONE, 1 = Full, 2 = 25%, 3 = 50%) - simulate TV scanlines
+@ This is compatible with interpolation.
+#ifdef __MSDOS__
+@ 256x256 or 640x480 8bit modes only (25% and 50% in 640x480 16bit mode only)
+#endif
+scanlines db 0
+
+@
+@ Enable Grayscale Mode (0 = NO, 1 = Yes) - don't enable this for other than nostalgia
+@ The whole screen is displayed in monochrome color.
+GrayscaleMode db 0
+
+@
+@ Enable High-Res Mode 7 (0 = NO, 1 = Yes)
+@ Doubles the internal resolution of the image when Mode 7 is in use
+@ However this disables most filters, except for interpolation.
+@ This is only useful in certain games and is not useful in general.
+@ Requires a minimum res of 512x448
+Mode7HiRes16b dd 0
+
+#ifndef __UNIXSDL__
+@
+@ Sync Frames to Monitor Refresh Rate (0 = NO, 1 = Yes)
+@ Do not enable if you cannot normally sustain 60fps
+vsyncon db 0
+
+@
+@ Use Triple Buffering (0 = NO, 1 = Yes) - replaces vsync
+@ This is usually more beneficial than VSync.
+#endif
+#ifdef __WIN32__
+@ This is not available in Windowed modes.
+TripleBufferWin db 0
+#elifdef __MSDOS__
+Triplebufen db 0
+#endif
+
+%ifdef __WIN32__
+@
+@ Force Refresh Rate (0 = NO, 1 = Yes)
+@ Enable this if you are experiencing visual tearing
+@ WARNING: Setting a refresh rate that your monitor cannot handle will have
+@ consequences! The DX Refresh Rate Override in dxdiag must be set to default
+@ in order for this to work! The refresh rate is only valid if it is supported
+@ by your system! This option is only useful in fullscreen modes.
+ForceRefreshRate db 0
+SetRefreshRate db 60
+
+@
+@ Enable KitchenSync/KitchenSyncPAL (0 = NO, 1 = Yes)
+@ When enabled, ZSNES will use double the refresh rate of the game and use
+@ half of it to sync with the game to reduce/prevent visual tearing.
+@ You can enable this if your video card/monitor AND current ZSNES resolution
+@ supports 100Hz (for PAL games) and 120Hz (for NTSC games)
+@ KitchenSyncPAL applies to PAL games only, use KitchenSync for PAL+NTSC games.
+@ WARNING: The DX Refresh Rate Override in dxdiag must be set to default in
+@ order for this to work!
+@ This option is completely useless in a non-fullscreen mode.
+KitchenSync db 0
+KitchenSyncPAL db 0
+%endif
+
+%ifndef __MSDOS__
+@
+@ Keep 4:3 Ratio (0 = No, 1 = YES)
+@ This is particularly handy for those that use laptops/LCDs+non 4:3 resolutions.
+%ifdef __WIN32__
+@ This can be used for any S/DS mode and any Custom Windowed mode.
+%elifdef __UNIXSDL__
+@ This can be used for Variable ODS Windowed and Custom Res OD Fullscreen.
+%endif
+@ It is not recommended to enable this while under 298x224.
+@ Disable this if you want to use the non-standard ratio instead.
+Keep4_3Ratio db 1
+
+%else
+@
+@ Small Screen, Stretch Screen (0 = NO, 1 = Yes)
+@ Enabling small screen will render in 256x224 res (probably not a good idea).
+@ Enabling stretch screen will stretch the image to fill the screen.
+smallscreenon dd 0
+ScreenScale db 0
+%endif
+
+@
+@ Set Gamma Level [0..15]
+gammalevel db 0
+
+@
+@  ----
+@ -- Sound --
+@  ----
+
+%ifdef __UNIXSDL__
+@
+@ libAO driver to use. Use zsnes --help to see valid list.
+@ However "auto" (to automatically pick best one), and "sdl" should
+@ always be available.
+libAoDriver times 10 db "auto"
+%endif
+
+@
+@ Disable SPC Emulation (0 = NO, 1 = Yes)
+@ Disabling SPC emulation can improve performance, but at the expense of
+@ emulation accuracy. There will be no sound output and games might crash.
+SPCDisable db 0
+
+@
+@ Enable Sound Emulation (0 = Off, 1 = ON) - disable if you need the performance
+@ If SPC emulation is disabled, there will be no sound output.
+soundon db 1
+
+@
+@ Enable Stereo Sound (0 = Off, 1 = ON) - disable if you need the performance
+StereoSound db 1
+
+@
+@ Swap Left Audio Channel w/Right (0 = NO, 1 = Yes)
+RevStereo db 0
+
+@
+@ Simulate Surround Sound (0 = NO, 1 = Yes)
+@ Enable a simulated 2 speaker surround sound effect.
+@ Do not enable if playing a game that has its own surround sound effects.
+@ Stereo Sound must be enabled for this to work.
+Surround db 0
+
+%ifdef __WIN32__
+@
+@ Use Primary Sound Buffer (0 = NO, 1 = Yes)
+@ Enable this if you are experiencing sound playback/static problems.
+PrimaryBuffer db 0
+%endif
+
+#ifdef __MSDOS__
+@
+@ Force 8-bit Sound (0 = NO, 1 = Yes)
+@ Enable this option if your sound card is producing nothing or static.
+@ This will limit the max frequency while using Stereo sound to 22KHz
+Force8b db 0
+#endif
+
+@
+@ Sampling Rate: (0 = 8000Hz, 1 = 11025Hz, 2 = 22050Hz, 3 = 44100Hz,
+@                            4 = 16000Hz, 5 = 32000Hz, 6 = 48000Hz)
+@ Using any other sound frequencies other than the default 32000Hz
+@ is COMPLETELY UNACCEPTABLE in use for sound bug reports.
+#ifdef __MSDOS__
+@ Forcing 8-bit sound will limit the max sampling rate while using Stereo sound
+@ to 22KHz
+#endif
+SoundQuality dd 5
+
+@
+@ Sound Volume Level [0..100]
+MusicRelVol db 100
+
+@
+@ Enable Sound Interpolation (0 = None, 1 = GAUSSIAN, 2 = Cubic, 3 = 8-point)
+@ Sound interpolation smooths out the waveform of lower frequency sounds.
+@ Using any other setting other than the default Gaussian interpolation is
+@ COMPLETELY UNACCEPTABLE in sound bug reports.
+SoundInterpType db 1
+
+@
+@ Enable Low-Pass Filter (0 = NONE, 1 = Simple, 2 = Dynamic, 3 = Hi-quality)
+@ A low-pass filter improves the bass in the sounds.
+@ This is useful if you have a Subwoofer.
+LowPassFilterType db 0
+
+#ifdef __MSDOS__
+@
+@ Display ZSNES Sound Detection Info (0 = NO, 1 = Yes)
+DisplayS db 0
+#endif
+
+@
+@ Disable Echo (0 = NO, 1 = Yes)
+@ Disables the echo effect in the sound.
+EchoDis db 0
+
+@
+@  ----
+@ -- Saves --
+@  ----
+
+@
+@ Number of Rewind States [0..99]
+RewindStates db 8
+@ Delay between rewinds [1..99] - (1 = 200ms, 5 = 1s, 10 = 2s)
+RewindFrames db 15
+
+@
+@ Don't Save SRAM (0 = NO, 1 = Yes)
+@ Only enable this if you don't want to Save SRAM at any given time.
+@ This option will make Update SRAM in Real-Time useless.
+nosaveSRAM db 0
+
+@
+@ Update SRAM in Real-Time (0 = NO, 1 = Yes)
+@ This is useful if you fear something will prevent ZSNES from exiting normally.
+@ It is required to play games that store important values directly to SRAM.
+@ ZSNES normally updates SRAM on exit.
+@ If Don't Save SRAM is enabled, this option is useless.
+SRAMSave5Sec db 0
+
+@
+@ Load SRAM w/Savestates (0 = No, 1 = YES)
+@ Enable this when you want to use the SRM that is stored within the savestate.
+@ Warning: You will overwrite the existing SRM that you are currently using.
+@ It is required to properly use states with games storing important values
+@ directly in SRM.
+SRAMState db 1
+
+@
+@ Select Latest Save State Slot on Game Load (0 = NO, 1 = Yes)
+@ Enable this if you want to load the last saved savestate quickly
+@ (via the load savestate button/GUI option) after loading the game.
+LatestSave db 0
+
+@
+@ Auto Increment State Slot First, then Save State (0 = NO, 1 = Yes)
+@ Enable this if you have a tendency in saving accidentally to an existing
+@ savestate.
+AutoIncSaveSlot db 0
+
+@
+@ Save in 10 save block (0 = NO, 1 = Yes)
+@ This may be handy if you want to save within a block (0-9, 10-19, etc.)
+AutoIncSaveSlotBlock db 0
+
+@
+@ Auto State Save/Load (0 = NO, 1 = Yes) - uses a special state
+@ Enable this if you wish a special state to be saved on a visit to the GUI.
+@ This state will automatically be loaded when you load a game.
+AutoState db 0
+
+@
+@ Pause Emulation After Loading a Save State (0 = NO, 1 = Yes)
+PauseLoad db 0
+@ Pause Emulation After Using Rewind (0 = NO, 1 = Yes)
+PauseRewind db 0
+
+@
+@  ----
+@ -- Emulation --
+@  ----
+
+@
+@ Percent to Execute [50..150] - only modify if you know what you are doing
+@ Changing this value may help certain games run.
+per2exec dd 100
+
+@
+@ Disable Hacks (0 = NO, 1 = Yes)
+@ Set this to 1 if you want to disable game specific hacks
+HacksDisable db 0
+
+@
+@ Frameskip: [0..10] (0 = AUTO, 1-10 = Manual 0-9)
+frameskip db 0
+
+@
+@ Max Frameskip Allowed for Auto Frameskip [0..9]
+maxskip db 9
+
+@
+@ Fastforward/Slowdown Keys Behaviour (0 = HELD, 1 = Toggle)
+FastFwdToggle db 0
+@ Fastforward/Slowdown Factors [0..28] (0 = factor 2, 28 = factor 30)
+FFRatio db 8
+SDRatio db 0
+
+@
+@ Emulation Speed Throttle [0..58] (0 = speed/30, 29 = 1x, 58 = 30x)
+@ Fast-forward multiplicator is currently inaccurate
+EmuSpeed db 29
+
+@
+@  ----
+@ -- Paths --
+@  ----
+
+@ It is suggested to go to GUI->Paths and modify the paths from there.
+%ifndef __UNIXSDL__
+@ ROMs drive + directory
+@
+@ Note, when entering a path, make sure every backslash is doubled
+@ "C:\Games\SNES" for example is incorrect.
+@ "C:\\Games\\SNES" is correct.
+@
+%else
+@ ROMs directory
+%endif
+%ifdef __MSDOS__
+ROMPath times 256 db ""
+@ Save states & SRAMs, snapshots, SPCs
+SRAMPath times 256 db ""
+SnapPath times 256 db ""
+SPCPath times 256 db ""
+@ BIOS/base carts (BS-X, Sufami Turbo, Same Game & SD Gundam G-Next)
+BSXPath times 256 db ""
+STPath times 256 db ""
+SGPath times 256 db ""
+GNextPath times 256 db ""
+@ SPC7110 graphic packs
+FEOEZPath times 256 db ""
+SJNSPath times 256 db ""
+MDHPath times 256 db ""
+SPL4Path times 256 db ""
+%else
+ROMPath times 1024 db ""
+@ Save states & SRAMs, snapshots, SPCs
+SRAMPath times 1024 db ""
+SnapPath times 1024 db ""
+SPCPath times 1024 db ""
+@ BIOS/base carts (BS-X, Sufami Turbo, Same Game & SD Gundam G-Next)
+BSXPath times 1024 db ""
+STPath times 1024 db ""
+SGPath times 1024 db ""
+GNextPath times 1024 db ""
+@ SPC7110 graphic packs
+FEOEZPath times 1024 db ""
+SJNSPath times 1024 db ""
+MDHPath times 1024 db ""
+SPL4Path times 1024 db ""
+%endif
+
+@
+@  ----
+@ -- GUI --
+@  ----
+
+@
+@ Disable GUI (0 = NO, 1 = Yes)
+guioff db 0
+
+@
+@ Show All Files in 'Load Game' Menu (0 = NO, 1 = Yes)
+showallext db 0
+
+@
+%ifdef __MSDOS__
+@ Filename Display Mode (0 = Win9x Long filename, 1 = Internal header name, 2 = DOS 8.3)
+GUIloadfntype db 2
+%else
+@ Filename Display Mode (0 = LONG FILENAME, 1 = Internal header name)
+GUIloadfntype db 0
+%endif
+
+@
+@ Recent games played, you shouldn't edit this manually (8.3 / Paths / LFN)
+prevloadiname packed 280 db 0
+prevloaddnamel packed 5120 db 0
+prevloadfnamel packed 5120 db 0
+
+@
+@ Freeze Recent Games List (0 = NO, 1 = Yes)
+prevlfreeze db 0
+
+@
+@ Right Mouse Click Enters/Exits GUI (0 = NO, 1 = Yes)
+GUIRClick db 0
+
+@
+@ Left Handed Mouse Behavior for GUI (0 = NO SWAP, 1 = Swap)
+@ (swap left and right buttons)
+lhguimouse db 0
+
+@
+@ Show Mouse Cursor Shadow (0 = No, 1 = YES)
+@ Displays a shadow under the mouse cursor.
+mouseshad db 1
+
+@
+@ Wrap Mouse Cursor (0 = NO, 1 = Yes)
+@ If enabled, the cursor will wrap around to the other side.
+%ifndef __MSDOS__
+@ Only useful for Fullscreen modes.
+%endif
+mousewrap db 0
+
+%ifdef __WIN32__
+@
+@ Trap Mouse Cursor in Window (0 = NO, 1 = Yes)
+@ Only useful in Windowed modes.
+TrapMouseCursor db 0
+
+@
+@ Use Mouse Wheel to Scroll (0 = No, 1 = YES)
+MouseWheel db 1
+%endif
+
+@
+@ ESC to Game Menu (0 = No, 1 = YES)
+@ If yes, visiting the GUI will have the Game Menu automatically selected.
+@ It will also enable the main menu keyboard shortcuts.
+esctomenu db 1
+
+@
+@ Control the GUI Using Gamepad 1 (0 = NO, 1 = Yes)
+JoyPad1Move db 0
+
+@
+@ Filter GUI Display (0 = No, 1 = YES)
+@ If enabled, the current filter you are using will also filter the GUI.
+FilteredGUI db 1
+
+@
+@ Use Custom Font (0 = NO, 1 = Yes)
+@ The font currently reads off a format as defined by zfile.txt
+newfont db 0
+
+@
+@ Save GUI Window Positions (0 = NO, 1 = Yes)
+savewinpos db 0
+
+@
+@ GUI windows X/Y coordinates - GUI setup showing windows #
+@
+@    Game          Config        Cheat      Netplay       Misc
+@ -------------------------------------------------------------------
+@  1:Load         3:Input      7:Add Code  [Internet]   9:Misc Keys
+@    Run          -------      7:Browse                10:GUI Opts
+@ 12:Reset       17:Devices   13:Search                15:Movie Opt
+@  -------       18:Chip Cfg                           16:Key Comb.
+@ 14:Save State   -------                                 Save Cfg
+@  2:Open State   4:Options                             -------
+@ 14:Pick State   5:Video                              11:About
+@  -------        6:Sound
+@    Quit        19:Paths
+@                20:Saves
+@                21:Speed
+@
+@ X positions [-233..254] (windows #0 to #22)
+GUIwinposx sd 0, 6,65,33,42, 2,34, 6,64, 8, 8,33,56,64,56, 5, 3,28,48, 6,28,53,0
+@ Y positions [8..221] (windows #0 to #22)
+GUIwinposy sd 0,20,70,30,20,20,20,20,30,30,20,20,60,30,60,20,20,60,60,20,30,20,0
+
+@
+@ GUI Background Effect
+@ (0 = NONE, 1 = Snow, 2 = Water A, 3 = Water B, 4 = Burn, 5 = Smoke)
+GUIEffect db 1
+
+@
+@ GUI Palette Mods:
+@ Background RGB Tint [0..31]
+GUIRAdd db 15
+GUIGAdd db 10
+GUIBAdd db 31
+@ Titlebar RGB Tint [0..31]
+GUITRAdd db 0
+GUITGAdd db 10
+GUITBAdd db 31
+@ Windows RGB Tint [0..31]
+GUIWRAdd db 8
+GUIWGAdd db 8
+GUIWBAdd db 25
+
+%ifdef __WIN32__
+@
+@ Main Window Always on Top (0 = NO, 1 = Yes)
+AlwaysOnTop db 0
+
+@
+@ Save Main Window Position (0 = No, 1 = YES) and X/Y coordinates
+SaveMainWindowPos db 1
+MainWindowX sw -1
+MainWindowY sw -1
+
+@
+@ Allow Multiple ZSNES Instances at Once (0 = No, 1 = YES)
+AllowMultipleInst db 1
+%endif
+
+@
+@  ----
+@ -- Cheats --
+@  ----
+
+@
+@ Autoload .CHT files (0 = NO, 1 = Yes)
+@ Enable the use of stored cheat files on load.
+AutoLoadCht db 0
+
+@
+@ Selected Size Search (0 = 1 BYTE, 1 = 2B, 2 = 3B, 3 = 4B)
+CheatSrcByteSize db 0
+
+@
+@ Selected Numerical Base (0 = DECIMAL, 1 = Hexadecimal)
+CheatSrcByteBase db 0
+
+@
+@ Search Type (0 = EXACT VALUE, 1 = Comparative)
+CheatSrcSearchType db 0
+
+@
+@ Add Code for Most Significant Byte Only (0 = NO, 1 = Yes)
+CheatUpperByteOnly db 0
+
+@
+@  ----
+@ -- Movies --
+@  ----
+
+@
+@ For other input settings see zmovie.cfg
+
+@
+@ Display Movie Frame # During Record/Replay (0 = NO, 1 = Yes)
+MovieDisplayFrame db 0
+
+@
+@ Movie Default Start Method (0 = NOW, 1 = Power-On,
+@                             2 = Reset, 3 = Power-On without SRAM)
+MovieStartMethod db 0
+
+@
+@ Switch Modes when Loading a Movie State (0 = NO, 1 = Switch to Record, 2 = Switch to Playback)
+MZTForceRTR db 0
+
+@
+@ ZMV -> AVI Conversion Mode: (0 = No Video, 1 = Raw Video, 2 = Ffv1, 3 = x264,
+@                              4 = XVID, 5 = Custom)
+@ The compression codecs can only be used if you provide them yourself.
+@ See zmovie.cfg for details.
+MovieVideoMode db 4
+
+@
+@ Dump Audio Along w/Video (0 = No, 1 = YES)
+MovieAudio db 1
+
+@
+@ Compress Audio Stream On-The-Fly (0 = No, 1 = YES)
+@ The compression codecs can only be used if you provide them yourself.
+@ See zmovie.cfg for details.
+MovieAudioCompress db 1
+
+@
+@ Merge Audio and Video Streams Upon Conversion End (0 = No, 1 = YES)
+MovieVideoAudio db 1
+
+@
+@  ----
+@ -- Keyboard Hotkeys --
+@  ----
+@ (you shouldn't edit these directly unless you know what you're doing)
+
+@
+@ Super Scope Keys:
+@ Extra Device in Port 1/2 Cycle
+KeyExtraEnab1 dd 0
+KeyExtraEnab2 dd 0
+
+@
+@ State Keys:
+@ Save State / Select Slot Menu / Load State
+KeySaveState dd 60
+KeyStateSelct dd 61
+KeyLoadState dd 62
+@ Increase / Decrease Slot # / Direct Slot # Select
+KeyIncStateSlot dd 0
+KeyDecStateSlot dd 0
+KeyStateSlc0 dd 0
+KeyStateSlc1 dd 0
+KeyStateSlc2 dd 0
+KeyStateSlc3 dd 0
+KeyStateSlc4 dd 0
+KeyStateSlc5 dd 0
+KeyStateSlc6 dd 0
+KeyStateSlc7 dd 0
+KeyStateSlc8 dd 0
+KeyStateSlc9 dd 0
+@ Rewind
+KeyRewind dd 0
+
+@
+@ Speed Keys:
+@ Fast-Forward, Slow-Motion
+KeyFastFrwrd dd 41
+KeySlowDown dd 0
+@ Frame Rate Up/Down (Manual Frameskip)
+KeyFRateUp dd 0
+KeyFRateDown dd 0
+@ Speed Throttle Up/Down/Reset to Normal (Auto Frameskip)
+KeyEmuSpeedUp dd 0
+KeyEmuSpeedDown dd 0
+KeyResetSpeed dd 0
+
+@
+@ Pause Emulation, Frame Advance Keys
+EMUPauseKey dd 25
+INCRFrameKey dd 0
+
+@
+@ Shortcuts:
+@ BG 0-3, Sprite Layer Display Toggles
+KeyBGDisble0 dd 2
+KeyBGDisble1 dd 3
+KeyBGDisble2 dd 4
+KeyBGDisble3 dd 5
+KeySprDisble dd 6
+
+@
+@ Sound Channel 0-7 Output Toggles
+KeyDisableSC0 dd 63
+KeyDisableSC1 dd 64
+KeyDisableSC2 dd 65
+KeyDisableSC3 dd 66
+KeyDisableSC4 dd 67
+KeyDisableSC5 dd 68
+KeyDisableSC6 dd 87
+KeyDisableSC7 dd 88
+
+@
+@ Sound Volume Up/Down
+KeyVolUp dd 0
+KeyVolDown dd 0
+
+@
+@ Quit ZSNES / Load Menu / Reset Game / Panic Key
+KeyQuickExit dd 0
+KeyQuickLoad dd 0
+KeyQuickRst dd 0
+KeyResetAll dd 7
+
+@
+@ Clock Display Toggle
+KeyQuickClock dd 0
+
+@
+@ Netplay In-Game Chat
+KeyQuickChat dd 20
+
+@
+@ Screenshot Hotkey
+KeyQuickSnapShot dd 0
+
+@
+@ Capture SPC Hotkey
+KeyQuickSaveSPC dd 0
+
+@
+@ Use Player 3/4 Input as Player 1/2's Toggle
+KeyUsePlayer1234 dd 0
+
+@
+@ FPS Display Toggle
+KeyDisplayFPS dd 0
+
+@
+@ Laptop Battery Display Toggle
+KeyDisplayBatt dd 0
+
+@
+@ Video Engine: Old/New Graphic Engine | Windowing | Offset Effects Toggles
+KeyNewGfxSwt dd 9
+KeyWinDisble dd 10
+KeyOffsetMSw dd 11
+
+@
+@ Gamma Correction Up/Down
+KeyIncreaseGamma dd 0
+KeyDecreaseGamma dd 0
+
+@
+@ Movie Chapters: Insert / Go to Previous / Go to Next
+KeyInsrtChap dd 0
+KeyPrevChap dd 0
+KeyNextChap dd 0
+
+@
+@ Movie state load mode cycle
+KeyRTRCycle dd 0
+
+@
+@  ----
+@ -- Misc --
+@  ----
+
+@
+@ Calculated Checksum & Hash: Don't Edit by Hand !
+TimeChecker db 0
+PrevBuildNum dd 0
+
+@
+@ Display First-Time Use Reminder (0 = YES, 1 = No)
+FirstTimeData db 0
+
+%ifndef NO_DEBUGGER
+@
+@ Enable Debugger (0 = NO, 1 = Yes)
+debuggeron db 0
+%endif
+
+@
+@ Prevent ZSNES from Saving the Configuration on Exit (0 = NO, 1 = Yes)
+cfgdontsave db 0
+
+@
+@ - EOF -
