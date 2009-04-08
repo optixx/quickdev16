@@ -16,3 +16,8 @@
 .DS_Store
 *.a
 *.prj
+*.bak
+*.smc
+*.swc
+*.rom
+*.usage
