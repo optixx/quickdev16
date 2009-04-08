@@ -11,11 +11,12 @@ GFXDATA = optixx_logo.bmp
 
 all: $(OFILES) Makefile  
 	$(LD) $(LDFLAGS) linkfile ascii.rom
-	ucon64 -chk -swc ascii.rom
+	ucon64 -chk -swc ascii.rom 
 
-run: 
-	/Applications/ZSNES.app/Contents/MacOS/ZSNES ascii.rom
-
+zsnes: 
+	/Applications/ZSNES.app/Contents/MacOS/ZSNES ascii.swc
+bsnes:
+	open /Applications/BSNES.app  ascii.swc
 
 main.o: colorlist sine gfx main.asm
 	$(CC) $(CFLAGS) main.asm main.o

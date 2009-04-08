@@ -1,31 +1,10 @@
-.EMPTYFILL 0
-.LOROM
-		  
+;============================================================================
+; Includes
+;============================================================================
 
-.MEMORYMAP
-SLOTSIZE 	$8000
-DEFAULTSLOT 0
-SLOT 		0 $0000	; ram , direct page   
-SLOT 		1 $2000 ; PPU1, APU 
-SLOT 		2 $3000 ; SFX, DSP
-SLOT		3 $4000 ; Controller
-SLOT		4 $4200 ; PPU2, DMA 
-SLOT		5 $6000 ; RESERVED
-SLOT		6 $8000 ; code segment 
-.ENDME
+;== Include MemoryMap, Vector Table, and HeaderInfo ==
+.INCLUDE "header.inc"
 
-.ROMBANKMAP
-BANKSTOTAL 	$8
-BANKSIZE 	$8000
-BANKS 		$8
-.ENDRO
-
-
-.NAME "optixx"
-
-.BANK $00 SLOT 6
-;.ORG	$0000 
-;.ORGA	$8000
 
 
 

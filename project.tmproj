@@ -117,7 +117,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>119</integer>
+			<integer>13</integer>
 		</dict>
 		<key>zsnes/src/chips/dsp4emu.c</key>
 		<dict>
@@ -253,50 +253,6 @@
 					<true/>
 					<key>subItems</key>
 					<dict/>
-				</dict>
-				<key>zsnes</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict>
-						<key>docs</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict/>
-						</dict>
-						<key>src</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict>
-								<key>cpu</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-								<key>mmlib</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-								<key>tools</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-							</dict>
-						</dict>
-					</dict>
 				</dict>
 			</dict>
 		</dict>
