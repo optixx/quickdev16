@@ -6,8 +6,6 @@
 .INCLUDE "header.inc"
 
 
-
-
 .SECTION "MAIN" 
 
 .define	dp					$0000 
@@ -758,7 +756,6 @@ text_0:
  	.db		"                                "
 
 
-
 .INCLUDE "vsine_1.s"
 
 .INCLUDE "vsine_2.s"
@@ -772,16 +769,25 @@ text_0:
 .INCLUDE "colbar_3.s" 
 
 
-.INCLUDE "colbarsine_1.s" 
-
-
-
-
 
 .INCLUDE "optixx_logo.s" 
 
-.ENDS
 
+.INCLUDE "colbarsine_1.s" 
+.ends
+
+
+
+.bank 1
+
+.SECTION "GFX" 
+
+
+
+
+
+
+.ends
 
 
 ;.BANK $04 SLOT 6

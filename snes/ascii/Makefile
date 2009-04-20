@@ -10,8 +10,8 @@ OFILES = main.o
 GFXDATA = optixx_logo.bmp
 
 all: $(OFILES) Makefile  
-	$(LD) $(LDFLAGS) linkfile ascii.rom
-	ucon64 -chk -swc ascii.rom 
+	$(LD) $(LDFLAGS) linkfile ascii.smc
+	ucon64 -chk -swc ascii.smc
 
 zsnes: 
 	/Applications/ZSNES.app/Contents/MacOS/ZSNES ascii.swc

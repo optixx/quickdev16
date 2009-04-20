@@ -182,7 +182,7 @@ AVRDUDE_PROGRAMMER = stk500v2
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
 
-AVRDUDE_PORT = /dev/tty.PL2303-00002006    
+AVRDUDE_PORT = /dev/tty.PL2303-00001124
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 

@@ -8,8 +8,8 @@
 # Revision: $Id: checksize 83 2006-01-05 22:20:53Z cs $
 
 error=0
-codelimit=8192  # default value
-datalimit=992  # default value; leave 32 bytes for stack
+codelimit=2048  # default value
+datalimit=96    # default value; leave 32 bytes for stack
 
 if [ $# -gt 1 ]; then
 	codelimit="$2"

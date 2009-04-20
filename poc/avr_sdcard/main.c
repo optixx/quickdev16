@@ -39,9 +39,17 @@ extern FILE uart_stdout;
 #define LED_PORT	PORTD
 #define LED_DIR		DDRD
 
-#define FILENAME	"sprite.raw"
+//#define FILENAME	"sprite.raw"
+//#define FILENAME	"ascii.smc"
+#define FILENAME	"rom.smc"
+//#define FILENAME	"supert.smc"
+//#define FILENAME	"vortex.smc"
+//#define FILENAME	"mrdo.smc"
+//#define FILENAME	"hungry.smc"
+
+#define DUMPNAME	"dump256.smc"
 #define BUFFER_SIZE 512
-#define BLOCKS 512
+#define BLOCKS 		512
 #define MEMSIZE 	0x80000
 
 uint8_t read_buffer[BUFFER_SIZE];
@@ -99,6 +107,17 @@ void spi_master_transmit(unsigned char cData)
 
 	/* Wait for transmission complete */
 	while(!(SPSR & (1<<SPIF)));
+}
+
+
+void sram_set_addr(uint32_t addr)
+{
+	spi_master_transmit((uint8_t)(addr>>16));
+	spi_master_transmit((uint8_t)(addr>>8));
+	spi_master_transmit((uint8_t)(addr>>0));
+
+	LATCH_PORT |= (1<<S_LATCH);
+    LATCH_PORT &= ~(1<<S_LATCH);
 }
 
 uint8_t sram_read(uint32_t addr)
@@ -218,6 +237,7 @@ int main(void)
     uint32_t 	fat_size = 0;
     uint32_t 	rom_addr = 0;
     uint32_t 	skip_block = 0;
+    uint8_t 	bank_cnt = 0;
  
     uart_init();
     stdout = &uart_stdout;
@@ -228,19 +248,27 @@ int main(void)
 	spi_init();
 	printf("SPI Init\n");
 
-	
-	//sram_clear(0x000000, 0x400000);
-	//printf("sram_clear\n");
-
+#if 0                 
+	sram_clear(0x000000, 0x80000);
+	printf("sram_clear\n");
+#endif
 	//printf("read 0x0f0f\n");
 	//sram_read(0x0f0f);
 	//printf("write 0x0f0f\n");
 	//sram_write(0x0f0f,0xaa);
-	//while(1);
+	
+#if 0	
+	rom_addr = 0x4aaaa;
+	printf("write %lx\n",rom_addr);
+	sram_set_addr(rom_addr);
+	while(1);
+#endif
+	
+	
 	while ( mmc_init() !=0) {
 		printf("No sdcard...\n");
     }
-    printf("MMC Init sone\n");
+    printf("MMC Init done\n");
     fat_init(read_buffer);
     printf("FAT Init done.\n");
     rom_addr = 0x000000;
@@ -255,9 +283,10 @@ int main(void)
 
         for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
         	fat_read_file (fat_cluster,read_buffer,block_cnt);
-			if (block_cnt % 16 == 0)
-				printf("Write Ram 0x%lx Skipped %li\n",rom_addr,skip_block);
-			
+			if (block_cnt % 64 == 0){
+				bank_cnt++;
+				printf("Write Ram Bank: 0x%x Addr: 0x%lx Skipped: %li\n",bank_cnt,rom_addr,skip_block);
+			}
 			if (sram_check(read_buffer,512))
 				sram_copy(rom_addr,read_buffer,512);
 			else
@@ -266,14 +295,51 @@ int main(void)
         }
 		printf("Done 0x%lx Skipped %li\n",rom_addr,skip_block);
 	}
+
+#if 0
     printf("Dump Memory\n\r");
     rom_addr = 0x000000;
-    for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
+    for (uint16_t block_cnt=0; block_cnt < 64; block_cnt++) {
     	sram_read_buffer(rom_addr,read_buffer,512);
     	dump_packet(rom_addr,512,read_buffer);
 		rom_addr += 512;
     }
 	printf("\nDone 0x%lx\n",rom_addr);
+#endif	
+
+#if 0
+	
+    printf("Look for %s\n",DUMPNAME);
+
+	fat_cluster = 0;
+    fat_attrib = 0;
+    fat_size = 0;
+	
+    if (fat_search_file((uint8_t*)DUMPNAME,
+						&fat_cluster,
+						&fat_size,
+						&fat_attrib,
+						read_buffer) == 1) {
+	   
+
+		printf("Found %s\n",DUMPNAME);
+		rom_addr = 0x000000;
+		bank_cnt =0;
+        for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
+			printf("Write 1");
+	    	sram_read_buffer(rom_addr,read_buffer,512);
+			printf("Write 2");
+			fat_write_file (fat_cluster,read_buffer,block_cnt);
+			if (block_cnt % 64 == 0){
+				bank_cnt++;
+			}
+			printf("Write File Bank: 0x%x Addr: 0x%lx Skipped: %li\n",bank_cnt,rom_addr,skip_block);
+			rom_addr += 512;
+        }
+		printf("Done 0x%lx Skipped %li\n",rom_addr,skip_block);
+	}
+#endif	
+	
 	sram_snes_mode();
 	printf("\nEnter Snes mode\n");
 	while(1);
