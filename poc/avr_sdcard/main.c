@@ -39,13 +39,20 @@ extern FILE uart_stdout;
 #define LED_PORT	PORTD
 #define LED_DIR		DDRD
 
-//#define FILENAME	"sprite.raw"
-//#define FILENAME	"ascii.smc"
-#define FILENAME	"rom.smc"
+//#define FILENAME	"sprite.raw" ok
+//#define FILENAME	"ascii.smc"  ok
+//#define FILENAME	"rom.smc"    ok
 //#define FILENAME	"supert.smc"
 //#define FILENAME	"vortex.smc"
 //#define FILENAME	"mrdo.smc"
 //#define FILENAME	"hungry.smc"
+//#define FILENAME	"bank01.smc" ok
+//#define FILENAME	"bank02.smc" ok
+//#define FILENAME	"bank03.smc" ok
+//#define FILENAME	"bank04.smc"
+//#define FILENAME	"bank05.smc"
+//#define FILENAME	"bank06.smc"
+#define FILENAME	"bank07.smc"
 
 #define DUMPNAME	"dump256.smc"
 #define BUFFER_SIZE 512
@@ -283,9 +290,10 @@ int main(void)
 
         for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
         	fat_read_file (fat_cluster,read_buffer,block_cnt);
-			if (block_cnt % 64 == 0){
-				bank_cnt++;
+			if (block_cnt && block_cnt % 64 == 0){
 				printf("Write Ram Bank: 0x%x Addr: 0x%lx Skipped: %li\n",bank_cnt,rom_addr,skip_block);
+				bank_cnt++;
+				skip_block=0;
 			}
 			if (sram_check(read_buffer,512))
 				sram_copy(rom_addr,read_buffer,512);
@@ -293,8 +301,15 @@ int main(void)
 				skip_block +=1;
 			rom_addr += 512;
         }
-		printf("Done 0x%lx Skipped %li\n",rom_addr,skip_block);
+		printf("Write Ram Bank: 0x%x Addr: 0x%lx Skipped: %li\n",bank_cnt,rom_addr,skip_block);
+		printf("Done\n");
 	}
+
+
+    printf("Dump Headern\r");
+    rom_addr = 0x8000-512;
+    sram_read_buffer(rom_addr,read_buffer,512);
+	dump_packet(rom_addr,512,read_buffer);
 
 #if 0
     printf("Dump Memory\n\r");
