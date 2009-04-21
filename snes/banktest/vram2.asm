@@ -26,18 +26,21 @@ Start:
 
     ; Load Tile data to VRAM
 	;LoadBlockToVRAM TilesData, $0000, $0020	; 2 tiles, 2bpp, = 32 bytes
-	LoadBlockToVRAM OptixxData, $0000, 0xa00	; 160 tiles, 2bpp, = 2560 bytes
+	;LoadBlockToVRAM OptixxData, $0000, 0xa00	; 160 tiles, 2bpp, = 2560 bytes
+	;LoadBlockToVRAM OptixxData, $0000, 0x1e00	; 480 tiles, 2bpp, = 7680 bytes
+	LoadBlockToVRAM OptixxData, $0000, 0x3c00	; 960 tiles, 2bpp, = 15360 bytes
 
     lda #$80
     sta $2115
-    ldx #$0800	; 5AF
+    ;ldx #$0800	; 5AF
+    ldx #$4000	; 5AF
     stx $2116
     
 	ldx #$0
 Start_do:    
 	stx $2118
 	inx
-	cpx #160
+	cpx #960
 	bne Start_do 
    
     ; Setup Video modes and other stuff, then turn on the screen
@@ -60,7 +63,8 @@ SetupVideo:
     lda #$00
     sta $2105           ; Set Video mode 0, 8x8 tiles, 4 color BG1/BG2/BG3/BG4
 
-    lda #$08            ; Set BG1's Tile Map offset to $0400 (Word address)
+    ;lda #$08            ; Set BG1's Tile Map offset to $0800 (Word address)
+    lda #$40            ; Set BG1's Tile Map offset to $2000 (Word address)
     sta $2107           ; And the Tile Map size to 32x32
 
     stz $210B           ; Set BG1's Character VRAM offset to $0000 (word address)
@@ -84,8 +88,7 @@ SetupVideo:
 ; Character Data
 ;============================================================================
 
-.BANK 7 SLOT 0
-.ORG 0
-.SECTION "CharacterData01"
+.BANK 0 SLOT 0
+.SECTION "CharacterData02"
     .INCLUDE "optixx.inc"
 .ENDS
