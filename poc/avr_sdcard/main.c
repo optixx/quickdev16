@@ -44,7 +44,7 @@ extern FILE uart_stdout;
 //#define FILENAME	"rom.smc"    //ok
 //#define FILENAME	"supert.smc"
 //#define FILENAME	"vortex.smc"
-//#define FILENAME	"mrdo.smc"
+#define FILENAME	"mrdo.smc"
 //#define FILENAME	"spacei.smc"
 //#define FILENAME	"bank01.smc" //ok
 //#define FILENAME	"bank02.smc" //ok
@@ -55,7 +55,7 @@ extern FILE uart_stdout;
 //#define FILENAME	"bank07.smc" //ok
 //#define FILENAME	"banklo.smc" //ok
 //#define FILENAME	"bankhi.smc" //ok
-#define FILENAME	"vram2.smc"  //ok
+//#define FILENAME	"vram2.smc"  //ok
 
 #define DUMPNAME	"dump256.smc"
 #define BUFFER_SIZE 512
@@ -63,6 +63,42 @@ extern FILE uart_stdout;
 #define MEMSIZE 	0x80000
 
 uint8_t read_buffer[BUFFER_SIZE];
+
+
+uint16_t crc_xmodem_update (uint16_t crc, uint8_t data)
+{
+    int i;
+    crc = crc ^ ((uint16_t)data << 8);
+    for (i=0; i<8; i++)
+    {
+        if (crc & 0x8000)
+            crc = (crc << 1) ^ 0x1021;
+        else
+            crc <<= 1;
+    }
+
+    return crc;
+}
+
+uint16_t do_crc(uint8_t * data,uint16_t size)
+{
+	uint16_t crc =0;
+	uint16_t i;
+	for (i=0; i<size; i++){
+		crc = crc_xmodem_update(crc,data[i]);
+		//printf("%x : %x\n",crc,data[i]);	
+	}
+  	return crc;
+}
+
+
+uint16_t do_crc_update(uint16_t crc,uint8_t * data,uint16_t size)
+{
+  uint16_t i;
+  for (i=0; i<size; i++)
+	crc = crc_xmodem_update(crc,data[i]);
+  return crc;
+}
 
 
 void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet){
@@ -246,9 +282,9 @@ int main(void)
     uint8_t 	fat_attrib = 0;
     uint32_t 	fat_size = 0;
     uint32_t 	rom_addr = 0;
-    uint32_t 	skip_block = 0;
     uint8_t 	bank_cnt = 0;
- 
+ 	uint16_t 	crc = 0;
+	uint16_t 	block_cnt;
     uart_init();
     stdout = &uart_stdout;
 	
@@ -259,13 +295,23 @@ int main(void)
 	printf("SPI Init\n");
 
 #if 0                 
+    uint8_t t[] = "david";
+	printf("Test CRC %x\n",do_crc(t,5));
+	while(1);
+#endif
+
+
+#if 0                 
 	sram_clear(0x000000, 0x80000);
 	printf("sram_clear\n");
 #endif
-	//printf("read 0x0f0f\n");
-	//sram_read(0x0f0f);
-	//printf("write 0x0f0f\n");
-	//sram_write(0x0f0f,0xaa);
+
+#if 0                 
+	printf("read 0x0f0f\n");
+	sram_read(0x0f0f);
+	printf("write 0x0f0f\n");
+	sram_write(0x0f0f,0xaa);
+#endif
 	
 #if 0	
 	rom_addr = 0x4aaaa;
@@ -291,20 +337,19 @@ int main(void)
 						read_buffer) == 1) {
 	   
 
-        for (uint16_t block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
+        for (block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
         	fat_read_file (fat_cluster,read_buffer,block_cnt);
+			
 			if (block_cnt && block_cnt % 64 == 0){
-				printf("Write Ram Bank: 0x%x Addr: 0x%lx Skipped: %li\n",bank_cnt,rom_addr,skip_block);
 				bank_cnt++;
-				skip_block=0;
+				printf("Write Ram Bank: 0x%x Addr: 0x%lx Block: %x CRC: %x\n",bank_cnt,rom_addr,block_cnt,crc);
+				crc = 0;
 			}
-			//if (sram_check(read_buffer,512))
-				sram_copy(rom_addr,read_buffer,512);
-			//else
-			//	skip_block +=1;
+			crc = do_crc_update(crc,read_buffer,512);
+			sram_copy(rom_addr,read_buffer,512);
 			rom_addr += 512;
         }
-		printf("Write Ram Bank: 0x%x Addr: 0x%lx Skipped: %li\n",bank_cnt,rom_addr,skip_block);
+		printf("Write Ram Bank: 0x%x Addr: 0x%lx Block: %x CRC: %x\n",bank_cnt,rom_addr,block_cnt,crc);
 		printf("Done\n");
 	}
 
@@ -324,6 +369,24 @@ int main(void)
     }
 	printf("\nDone 0x%lx\n",rom_addr);
 #endif	
+
+#if 1
+	block_cnt = 0;
+	crc = 0;
+	rom_addr = 0x000000;
+    for (block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
+    	sram_read_buffer(rom_addr,read_buffer,512);
+		if (block_cnt && block_cnt % 64 == 0){
+			bank_cnt++;
+			printf("Read Ram Bank: 0x%x Addr: 0x%lx Block: %x CRC: %x\n",bank_cnt,rom_addr,block_cnt,crc);
+			crc = 0;
+		}
+		crc = do_crc_update(crc,read_buffer,512);
+		rom_addr += 512;
+    }
+	printf("Read Ram Bank: 0x%x Addr: 0x%lx Block: %x CRC: %x\n",bank_cnt,rom_addr,block_cnt,crc);
+#endif	
+
 
 #if 0
 	
