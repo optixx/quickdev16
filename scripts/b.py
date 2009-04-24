@@ -18,8 +18,10 @@ for i in range(bits-1,-1,-1):
     else:
         sys.stdout.write("0")
     if i and not i%8:
-       sys.stdout.write(" ")
-		
+        sys.stdout.write(" ")
+
+        
+    
 print 
 print "0x%x"%  v
 print v

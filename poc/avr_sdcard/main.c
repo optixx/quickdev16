@@ -42,7 +42,7 @@ extern FILE uart_stdout;
 //#define FILENAME	"sprite.raw" //ok
 //#define FILENAME	"ascii.smc"  //ok
 //#define FILENAME	"rom.smc"    //ok
-#define FILENAME	"supert.smc"
+//#define FILENAME	"supert.smc"
 //#define FILENAME	"vortex.smc"
 //#define FILENAME	"mrdo.smc"
 //#define FILENAME	"spacei.smc"
@@ -56,8 +56,10 @@ extern FILE uart_stdout;
 //#define FILENAME	"banklo.smc" //ok
 //#define FILENAME	"bankhi.smc" //ok
 //#define FILENAME	"vram2.smc"  //ok
+//#define FILENAME	"super02.smc"
+#define FILENAME	"crc.smc"
 
-#define ROMSIZE      4
+#define ROMSIZE      2
 #define DUMPNAME	"dump256.smc"
 #define BUFFER_SIZE 512
 #define BLOCKS 		(ROMSIZE << 8)

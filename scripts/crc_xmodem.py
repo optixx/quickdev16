@@ -34,6 +34,7 @@ def test_performance():
 
 def test_algo():
     data='david'
+    data='d'
     print "%x" % do_crc(data)
   
 
@@ -59,6 +60,7 @@ def main():
     #print result
 
 if __name__ == '__main__':
+    test_algo()
     main()
 
 
