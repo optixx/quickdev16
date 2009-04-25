@@ -1,0 +1,183 @@
+;:ts=8
+R0	equ	1
+R1	equ	5
+R2	equ	9
+R3	equ	13
+	code
+	xdef	__initInternalRegisters
+	func
+__initInternalRegisters:
+	longa	on
+	longi	on
+	tsc
+	sec
+	sbc	#L2
+	tcs
+	phd
+	tcd
+	stz	|__characterLocation
+	stz	|__characterLocation+2
+	stz	|__characterLocation+4
+	stz	|__characterLocation+6
+	jsr	__initDebugMap
+L4:
+	pld
+	tsc
+	clc
+	adc	#L2
+	tcs
+	rts
+L2	equ	0
+L3	equ	1
+	ends
+	efunc
+	code
+	xdef	__preInit
+	func
+__preInit:
+	longa	on
+	longi	on
+	tsc
+	sec
+	sbc	#L5
+	tcs
+	phd
+	tcd
+L7:
+	pld
+	tsc
+	clc
+	adc	#L5
+	tcs
+	rts
+L5	equ	0
+L6	equ	1
+	ends
+	efunc
+	code
+	xdef	__main
+	func
+__main:
+	longa	on
+	longi	on
+	tsc
+	sec
+	sbc	#L8
+	tcs
+	phd
+	tcd
+	jsr	__initInternalRegisters
+	pea	#<$0
+	pea	#<$0
+	pea	#<$1000
+	jsr	__setTileMapLocation
+	pea	#<$0
+	pea	#<$2000
+	jsr	__setCharacterLocation
+	pea	#<$100
+	pea	#<$0
+	lda	#<__title_pal
+	pha
+	jsr	__CGRAMLoad
+	sep	#$20
+	longa	off
+	lda	#$1
+	sta	|8453
+	rep	#$20
+	longa	on
+	sep	#$20
+	longa	off
+	lda	#$1
+	sta	|8492
+	rep	#$20
+	longa	on
+	sep	#$20
+	longa	off
+	lda	#$0
+	sta	|8493
+	rep	#$20
+	longa	on
+	sep	#$20
+	longa	off
+	lda	#$f
+	sta	|8448
+	rep	#$20
+	longa	on
+	stz	|__currentScrollEvent
+	stz	|__scrollValue
+	jsr	__debug
+L10001:
+	brl	L10001
+L8	equ	0
+L9	equ	1
+	ends
+	efunc
+	code
+	xdef	__IRQHandler
+	func
+__IRQHandler:
+	longa	on
+	longi	on
+	tsc
+	sec
+	sbc	#L10
+	tcs
+	phd
+	tcd
+L12:
+	pld
+	tsc
+	clc
+	adc	#L10
+	tcs
+	rts
+L10	equ	0
+L11	equ	1
+	ends
+	efunc
+	code
+	xdef	__NMIHandler
+	func
+__NMIHandler:
+	longa	on
+	longi	on
+	tsc
+	sec
+	sbc	#L13
+	tcs
+	phd
+	tcd
+L15:
+	pld
+	tsc
+	clc
+	adc	#L13
+	tcs
+	rts
+L13	equ	0
+L14	equ	1
+	ends
+	efunc
+	xref	__debug
+	xref	__initDebugMap
+	xref	__CGRAMLoad
+	xref	__setCharacterLocation
+	xref	__setTileMapLocation
+	udata
+	xdef	__scrollValue
+__scrollValue
+	ds	2
+	ends
+	udata
+	xdef	__currentScrollEvent
+__currentScrollEvent
+	ds	2
+	ends
+	udata
+	xdef	__pad1
+__pad1
+	ds	2
+	ends
+	xref	__characterLocation
+	xref	__title_pal
+	end
