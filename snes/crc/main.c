@@ -33,7 +33,6 @@ void main(void) {
 	char line_header[32] = "BANK CRC  ADDR   123456789ABCDEF";
     char line[32] = "                             ";	
 	char test_buffer[] = "da";
-	char far *  pointer;
     unsigned long addr; 
 	initInternalRegisters();
 
@@ -47,20 +46,14 @@ void main(void) {
     writeln(line_header,0);
 
 	while(1){
-		pointer = (void*)0x008000;
 		addr = 0x008000;
-		
 		crc02 = crc_update(test_buffer,2);
-		//crc01 = crc_update(pointer,255);
 		for(j=0; j<16; j++) {
-    		//crc01 = crc_update(pointer,0x8000);
     		crc01 = crc_update_mem(addr,0x8000);
-    		
 			int2hex((unsigned long)j,&line[0],4);
 			int2hex((unsigned long)crc01,&line[5],4);
 			int2hex((unsigned long)addr,&line[10],6);
             writeln(line,j+1);
-    		pointer += 0x010000;
     		addr += 0x010000;
 		}
 		while(!pad1.start) {

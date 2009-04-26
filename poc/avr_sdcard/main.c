@@ -58,8 +58,9 @@ extern FILE uart_stdout;
 //#define FILENAME	"vram2.smc"  //ok
 //#define FILENAME	"super02.smc"
 #define FILENAME	"crc.smc"
+//#define FILENAME	"banks.smc"
 
-#define ROMSIZE      2
+#define ROMSIZE      4
 #define DUMPNAME	"dump256.smc"
 #define BUFFER_SIZE 512
 #define BLOCKS 		(ROMSIZE << 8)
@@ -344,8 +345,8 @@ int main(void)
         	fat_read_file (fat_cluster,read_buffer,block_cnt);
 			
 			if (block_cnt && block_cnt % 64 == 0){
-				bank_cnt++;
 				printf("Write Ram Bank: 0x%x Addr: 0x%lx Block: %x CRC: %x\n",bank_cnt,rom_addr,block_cnt,crc);
+				bank_cnt++;
 				crc = 0;
 			}
 			crc = do_crc_update(crc,read_buffer,512);
@@ -376,12 +377,13 @@ int main(void)
 #if 1
 	block_cnt = 0;
 	crc = 0;
+    bank_cnt=0x00;
 	rom_addr = 0x000000;
     for (block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
     	sram_read_buffer(rom_addr,read_buffer,512);
 		if (block_cnt && block_cnt % 64 == 0){
-			bank_cnt++;
 			printf("Read Ram Bank: 0x%x Addr: 0x%lx Block: %x CRC: %x\n",bank_cnt,rom_addr,block_cnt,crc);
+			bank_cnt++;
 			crc = 0;
 		}
 		crc = do_crc_update(crc,read_buffer,512);

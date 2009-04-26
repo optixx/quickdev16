@@ -43,10 +43,24 @@ debugger:
 	$(EMU_DEBUG) $(APP)
 
 upload:
-	ucon64 $(APP)
+	ucon64 -chk $(APP)
 	cp -rv $(APP) /Volumes/SNES
 	sync
 	diskutil unmount /Volumes/SNES
+
+rand:
+	dd if=/dev/urandom of=tmp.rand bs=32k count=6 
+	dd if=$(APP) of=tmp.app bs=32k count=2
+	cat tmp.app tmp.rand > $(APP)
+	rm tmp.rand tmp.app   
+	ucon64 -chk $(APP)
+
+rand16:
+	dd if=/dev/urandom of=tmp.rand bs=32k count=14 
+	dd if=$(APP) of=tmp.app bs=32k count=2
+	cat tmp.app tmp.rand > $(APP)
+	rm tmp.rand tmp.app   
+	ucon64 -chk $(APP)
 
 crc:
 	python ../../scripts/crc_xmodem.py $(APP)
