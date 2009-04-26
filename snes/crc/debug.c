@@ -12,17 +12,33 @@ void initDebugMap(void) {
 	}
 }
 
-void int2hex(word i, char *buf)
+char hex_chars[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
+void int2hex(unsigned long number, char *buf,word size)
 {
-    word a;
-    for (a = 0; a < 4; ++a) {
-        buf[a] = (i >> (4 * (2 * 2 - 1 - a))) & 0xf;
+    /*
+    long a;
+    for (a = 0; a < size; ++a) {
+        buf[a] = (i >> ((long)size * (2 * 2 - 1 - a))) & 0xf;
         if (buf[a] < 10)
             buf[a] += '0';
         else
             buf[a] += 'A' - 10;
     }
-    buf[a] = 0;
+    */
+    //buf[a] = 0;
+    
+    
+    unsigned long n;
+    unsigned char i;
+    //unsigned char x;
+    for (i = 0; i < size; i++) {
+        n = number >> 4;
+        //x = (number - (n << 4));
+        buf[size-i-1] = hex_chars[(number - (n << 4))]; 
+        number = n;    
+    }
+
 }
 
 void writeln(char *buffer,word y){
