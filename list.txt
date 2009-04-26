@@ -1,0 +1,92 @@
+/Volumes/MEDIA/games/snes/All-American Championship Football (E) [!].smc
+/Volumes/MEDIA/games/snes/Arcade's Greatest Hits (E) [!].smc
+/Volumes/MEDIA/games/snes/Arkanoid - Doh It Again (E) [!].smc
+/Volumes/MEDIA/games/snes/Arkanoid - Doh it Again (E) [T+Ger1.00_Star].smc
+/Volumes/MEDIA/games/snes/Asterix (E) [!].smc
+/Volumes/MEDIA/games/snes/Beethoven's 2nd (E).smc
+/Volumes/MEDIA/games/snes/Blazing Skies (E).smc
+/Volumes/MEDIA/games/snes/Blues Brothers, The (Beta) [h1].smc
+/Volumes/MEDIA/games/snes/Blues Brothers, The (Beta).smc
+/Volumes/MEDIA/games/snes/Blues Brothers, The (E) [!].smc
+/Volumes/MEDIA/games/snes/Blues Brothers, The (E) [h1].smc
+/Volumes/MEDIA/games/snes/Blues Brothers, The (E) [t1].smc
+/Volumes/MEDIA/games/snes/Brainies, The (E).smc
+/Volumes/MEDIA/games/snes/Chessmaster, The (E).smc
+/Volumes/MEDIA/games/snes/Choplifter III (E).smc
+/Volumes/MEDIA/games/snes/Congo's Caper (E).smc
+/Volumes/MEDIA/games/snes/Dragon's Lair (E) [o1][h1].smc
+/Volumes/MEDIA/games/snes/Dragon's Lair (E).smc
+/Volumes/MEDIA/games/snes/Eric Cantona Football Challenge (E).smc
+/Volumes/MEDIA/games/snes/Euro Football Champ (E).smc
+/Volumes/MEDIA/games/snes/First Samurai (E) [!].smc
+/Volumes/MEDIA/games/snes/First Samurai (E) [a1].smc
+/Volumes/MEDIA/games/snes/Goof Troop (E).smc
+/Volumes/MEDIA/games/snes/Gunforce - Battle Fire Engulfed Terror Island (E) [f1].smc
+/Volumes/MEDIA/games/snes/Gunforce - Battle Fire Engulfed Terror Island (E) [t1].smc
+/Volumes/MEDIA/games/snes/Gunforce - Battle Fire Engulfed Terror Island (E).smc
+/Volumes/MEDIA/games/snes/Hanna Barbera's Turbo Toons (E).smc
+/Volumes/MEDIA/games/snes/Harley's Humongous Adventure (E).smc
+/Volumes/MEDIA/games/snes/Hebereke's Popoitto (E) [f1].smc
+/Volumes/MEDIA/games/snes/Hebereke's Popoitto (E) [hI].smc
+/Volumes/MEDIA/games/snes/Hebereke's Popoitto (E).smc
+/Volumes/MEDIA/games/snes/Home Alone (E) [!].smc
+/Volumes/MEDIA/games/snes/Home Alone 2 - Lost in New York (E) [!].smc
+/Volumes/MEDIA/games/snes/Home Alone 2 - Lost in New York (E) [T+Spa].smc
+/Volumes/MEDIA/games/snes/Hunt for Red October, The (E) [f1].smc
+/Volumes/MEDIA/games/snes/Hunt for Red October, The (E).smc
+/Volumes/MEDIA/games/snes/Hunt for Red October, The (U) [T+Ita].smc
+/Volumes/MEDIA/games/snes/HyperZone (E) [!].smc
+/Volumes/MEDIA/games/snes/Incantation (E) [!].smc
+/Volumes/MEDIA/games/snes/James Bond Jr (E) [!].smc
+/Volumes/MEDIA/games/snes/James Pond's Crazy Sports (E).smc
+/Volumes/MEDIA/games/snes/Jimmy Connors Pro Tennis Tour (E) [!].smc
+/Volumes/MEDIA/games/snes/King Arthur's World (E) [!].smc
+/Volumes/MEDIA/games/snes/Krusty's Super Fun House (E) [a1].smc
+/Volumes/MEDIA/games/snes/Lamborghini - American Challenge (E) [!].smc
+/Volumes/MEDIA/games/snes/Magic Boy (Beta).smc
+/Volumes/MEDIA/games/snes/Magic Boy (E).smc
+/Volumes/MEDIA/games/snes/Micro Machines (E).smc
+/Volumes/MEDIA/games/snes/NHLPA Hockey '93 (E) [!].smc
+/Volumes/MEDIA/games/snes/Oscar (E) [!].smc
+/Volumes/MEDIA/games/snes/Pac-Attack (E).smc
+/Volumes/MEDIA/games/snes/Paperboy 2 (E).smc
+/Volumes/MEDIA/games/snes/Pilotwings (E) [!].smc
+/Volumes/MEDIA/games/snes/Pit Fighter (E) [!].smc
+/Volumes/MEDIA/games/snes/Populous (E).smc
+/Volumes/MEDIA/games/snes/Push-Over (E).smc
+/Volumes/MEDIA/games/snes/Puzzle Bobble (E).smc
+/Volumes/MEDIA/games/snes/Race Drivin' (E) [!].smc
+/Volumes/MEDIA/games/snes/Road Riot 4WD (E).smc
+/Volumes/MEDIA/games/snes/Sink or Swim (E) [t1].smc
+/Volumes/MEDIA/games/snes/Sink or Swim (E).smc
+/Volumes/MEDIA/games/snes/Spanky's Quest (E).smc
+/Volumes/MEDIA/games/snes/Striker (E) [!].smc
+/Volumes/MEDIA/games/snes/Super Air Diver (E) [!].smc
+/Volumes/MEDIA/games/snes/Super Air Diver (E) [b1].smc
+/Volumes/MEDIA/games/snes/Super Air Diver (E) [b2].smc
+/Volumes/MEDIA/games/snes/Super Battleship (E).smc
+/Volumes/MEDIA/games/snes/Super Battletank (E).smc
+/Volumes/MEDIA/games/snes/Super Bomberman (E) [f1].smc
+/Volumes/MEDIA/games/snes/Super Bomberman (E).smc
+/Volumes/MEDIA/games/snes/Super James Pond II (E) [!].smc
+/Volumes/MEDIA/games/snes/Super Off Road (E) [!].smc
+/Volumes/MEDIA/games/snes/Super Pang (E) [T+Spa100_Ereza].smc
+/Volumes/MEDIA/games/snes/Super Pang (E) [T+Spa].smc
+/Volumes/MEDIA/games/snes/Super Pang (E).smc
+/Volumes/MEDIA/games/snes/Super Smash T.V. (E).smc
+/Volumes/MEDIA/games/snes/Super Soccer (E) [!].smc
+/Volumes/MEDIA/games/snes/Super Soccer (E) [T+Spa].smc
+/Volumes/MEDIA/games/snes/Super Solitaire (E).smc
+/Volumes/MEDIA/games/snes/Super Tennis (E) (V1.0).smc
+/Volumes/MEDIA/games/snes/Super Tennis (E) (V1.1) [!].smc
+/Volumes/MEDIA/games/snes/Super Troll Islands (E) [!].smc
+/Volumes/MEDIA/games/snes/Super Turrican (E) [!].smc
+/Volumes/MEDIA/games/snes/TKO Super Championship Boxing (E).smc
+/Volumes/MEDIA/games/snes/Top Gear (E) [!].smc
+/Volumes/MEDIA/games/snes/Top Gear (E) [T+Spa100%_Tanero].smc
+/Volumes/MEDIA/games/snes/Troddlers (Beta).smc
+/Volumes/MEDIA/games/snes/Troddlers (E) [!].smc
+/Volumes/MEDIA/games/snes/Ultraman - Towards the Future (E) [!].smc
+/Volumes/MEDIA/games/snes/World Class Rugby (E) [!].smc
+/Volumes/MEDIA/games/snes/X Zone (E).smc
+/Volumes/MEDIA/games/snes/Yoshi's Cookie (E).smc
