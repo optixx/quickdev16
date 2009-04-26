@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>poc/avr_sdcard/main.c</string>
+	<string>poc/avr_sdcard/mmc.c</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,70 +21,14 @@
 	<integer>200</integer>
 	<key>metaData</key>
 	<dict>
-		<key>bsnes/cpu/cpu.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>bsnes/cpu/cpu.hpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>23</integer>
-		</dict>
-		<key>bsnes/cpu/scpu/scpu.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>10</integer>
-		</dict>
-		<key>bsnes/cpu/scpu/timing/timing.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
 		<key>poc/avr_sdcard/fat.c</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>3</integer>
+				<integer>9</integer>
 				<key>line</key>
-				<integer>281</integer>
+				<integer>307</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -110,9 +54,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>9</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>62</integer>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -124,14 +68,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>23</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>38</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>4</integer>
 		</dict>
 		<key>poc/avr_sdcard/mmc.h</key>
 		<dict>
@@ -166,9 +110,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>7</integer>
+				<integer>4</integer>
 				<key>line</key>
-				<integer>24</integer>
+				<integer>23</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -183,64 +127,6 @@
 				<integer>16</integer>
 				<key>line</key>
 				<integer>46</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>scripts/rom.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>25</integer>
-				<key>line</key>
-				<integer>144</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>140</integer>
-		</dict>
-		<key>snes/ascii/header.inc</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>13</integer>
-				<key>line</key>
-				<integer>55</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>14</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>12</integer>
-				<key>line</key>
-				<integer>55</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>13</integer>
-				<key>line</key>
-				<integer>55</integer>
-			</dict>
-		</dict>
-		<key>snes/ascii/main.asm</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>8</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -303,37 +189,7 @@
 			<key>firstVisibleLine</key>
 			<integer>43</integer>
 		</dict>
-		<key>snes/simpletest/sprite.asm</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>166</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>158</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>162</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>166</integer>
-			</dict>
-		</dict>
-		<key>zsnes/docs/README.LINUX</key>
+		<key>snes/crc/PPU.c</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -347,7 +203,7 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>zsnes/docs/README.SVN</key>
+		<key>snes/crc/PPU.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -361,7 +217,21 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>zsnes/docs/authors.txt</key>
+		<key>snes/crc/crc.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>22</integer>
+				<key>line</key>
+				<integer>10</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>snes/crc/crc.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -375,21 +245,7 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>zsnes/docs/install.txt</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>132</integer>
-		</dict>
-		<key>zsnes/docs/license.txt</key>
+		<key>snes/crc/data.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -403,7 +259,21 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>zsnes/docs/opengl.txt</key>
+		<key>snes/crc/debug.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>2</integer>
+				<key>line</key>
+				<integer>48</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>22</integer>
+		</dict>
+		<key>snes/crc/debug.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -417,21 +287,49 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>zsnes/src/chips/dsp4emu.c</key>
+		<key>snes/crc/event.c</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>24</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>113</integer>
+			<integer>2</integer>
 		</dict>
-		<key>zsnes/src/chips/seta10.c</key>
+		<key>snes/crc/main.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>17</integer>
+				<key>line</key>
+				<integer>54</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>20</integer>
+		</dict>
+		<key>snes/crc/pad.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>35</integer>
+				<key>line</key>
+				<integer>8</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>snes/crc/rom.map</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -443,31 +341,26 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>453</integer>
+			<integer>11</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>snes/simpletest/sprite.asm</string>
-		<string>snes/ascii/main.asm</string>
-		<string>snes/ascii/header.inc</string>
-		<string>scripts/rom.py</string>
-		<string>poc/avr_sdcard/main.c</string>
-		<string>scripts/crc_xmodem.py</string>
-		<string>bsnes/cpu/cpu.cpp</string>
-		<string>bsnes/cpu/cpu.hpp</string>
-		<string>bsnes/cpu/scpu/scpu.cpp</string>
-		<string>bsnes/cpu/scpu/timing/timing.cpp</string>
+		<string>snes/crc/debug.h</string>
+		<string>snes/crc/debug.c</string>
+		<string>snes/crc/rom.map</string>
 		<string>scripts/b.py</string>
-		<string>snes/banktest/vram2.asm</string>
-		<string>poc/avr_sdcard/mmc.h</string>
-		<string>snes/banktest/header.inc</string>
-		<string>snes/banktest/init.inc</string>
-		<string>snes/banktest/LoadGraphics.asm</string>
-		<string>poc/avr_sdcard/fat.h</string>
 		<string>poc/avr_sdcard/fat.c</string>
-		<string>poc/avr_sdcard/uart.c</string>
+		<string>snes/crc/PPU.h</string>
+		<string>snes/crc/PPU.c</string>
+		<string>snes/crc/data.h</string>
+		<string>snes/crc/crc.h</string>
+		<string>snes/crc/crc.c</string>
+		<string>snes/crc/event.c</string>
+		<string>snes/crc/main.c</string>
 		<string>poc/avr_sdcard/mmc.c</string>
+		<string>poc/avr_sdcard/main.c</string>
+		<string>snes/crc/pad.c</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -480,10 +373,56 @@
 			<key>isExpanded</key>
 			<true/>
 			<key>subItems</key>
-			<dict/>
+			<dict>
+				<key>poc</key>
+				<dict>
+					<key>isExpanded</key>
+					<true/>
+					<key>subItems</key>
+					<dict>
+						<key>avr_sdcard</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict/>
+						</dict>
+					</dict>
+				</dict>
+				<key>scripts</key>
+				<dict>
+					<key>isExpanded</key>
+					<true/>
+					<key>subItems</key>
+					<dict/>
+				</dict>
+				<key>snes</key>
+				<dict>
+					<key>isExpanded</key>
+					<true/>
+					<key>subItems</key>
+					<dict>
+						<key>crc</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict>
+								<key>tools</key>
+								<dict>
+									<key>isExpanded</key>
+									<true/>
+									<key>subItems</key>
+									<dict/>
+								</dict>
+							</dict>
+						</dict>
+					</dict>
+				</dict>
+			</dict>
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{2, 60}, {738, 818}}</string>
+	<string>{{4, 60}, {738, 818}}</string>
 </dict>
 </plist>

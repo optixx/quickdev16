@@ -1,31 +1,25 @@
 # SDK Config
 
-# Linux Wine 
-SDK=/home/david/.wine/drive_c/65xx_FreeSDK
-WINE=wine
-EMU=zsnes
-EMU_DEBUG=/home/david/Devel/arch/snes/tools/zsnes_linux_debug151/src/zsnesd -d 
 
+PLATFORM=mac
 
-# OSX Crossover Office
-SDK=/Users/david/.wine/drive_c/65xx_FreeSDK
-CC=/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wineloader winewrapper.exe --wait-children --start -- C:/65xx_FreeSDK/bin/WDC816CC.exe
-AS=/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wineloader winewrapper.exe --wait-children --start -- C:/65xx_FreeSDK/bin/WDC816AS.exe
-LD=/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wineloader winewrapper.exe --wait-children --start -- C:/65xx_FreeSDK/bin/WDCLN.exe
-EMU=zsnes
+ifeq ($(PLATFORM),linux)
 
-# Mac Wine 
-SDK=/Users/david/.wine/drive_c/65xx_FreeSDK
-WINE=wine
-EMU=zsnes
+    # Linux Wine 
+    SDK=/home/david/.wine/drive_c/65xx_FreeSDK
+    WINE=wine
+    EMU=zsnes
+    EMU_DEBUG=/home/david/Devel/arch/snes/tools/zsnes_linux_debug151/src/zsnesd -d 
+else
+    # Mac Wine 
+    SDK=/Users/david/.wine/drive_c/65xx_FreeSDK
+    WINE=wine
+    EMU=zsnes
+endif
+
 CC=$(WINE) $(SDK)/bin/WDC816CC.exe
 AS=$(WINE) $(SDK)/bin/WDC816AS.exe
 LD=$(WINE) $(SDK)/bin/WDCLN.exe
-
-
-
-
-
 PADBIN=$(WINE) tools/padbin.exe
 PCX2SNES=$(WINE) tools/Pcx2Snes.exe
 
@@ -33,7 +27,7 @@ PCX2SNES=$(WINE) tools/Pcx2Snes.exe
 INC=$(SDK)/include
 LIBS=$(SDK)/lib/cs
 #OBJS=StartupSnes.obj main.obj pad.obj event.obj myEvents.obj PPU.obj debug.obj ressource.obj
-OBJS=StartupSnes.obj main.obj pad.obj  PPU.obj debug.obj ressource.obj crc.obj
+OBJS=StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj crc.obj
 APP=crc.smc
 GFX=kungfu debugfont
 
@@ -51,6 +45,8 @@ upload:
 	sync
 	diskutil unmount /Volumes/SNES
 
+crc:
+	python ../../scripts/crc_xmodem.py $(APP)
 
 kungfu:
 		$(PCX2SNES) ressource/kungfu -n -c16 -screen
