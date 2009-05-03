@@ -16,21 +16,10 @@
 #ifndef __REQUESTS_H_INCLUDED__
 #define __REQUESTS_H_INCLUDED__
 
-#define CUSTOM_RQ_UPLOAD        0
-/* Request that the device sends back wValue and wIndex. This is used with
- * random data to test the reliability of the communication.
- */
-#define CUSTOM_RQ_DOWNLOAD     1
-/* Set the LED status. Control-OUT.
- * The requested status is passed in the "wValue" field of the control
- * transfer. No OUT data is sent. Bit 0 of the low byte of wValue controls
- * the LED.
- */
-
-#define CUSTOM_RQ_CRC_CHECK    2
-/* Get the current LED status. Control-IN.
- * This control transfer involves a 1 byte data phase where the device sends
- * the current status to the host. The status is in bit 0 of the byte.
- */
+#define USB_UPLOAD_INIT       0
+#define USB_UPLOAD_ADDR       1
+#define USB_DOWNLOAD_INIT     2
+#define USB_DOWNLOAD_ADDR     3
+#define USB_CRC_CHECK         4
 
 #endif /* __REQUESTS_H_INCLUDED__ */

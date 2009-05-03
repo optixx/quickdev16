@@ -14,9 +14,9 @@
 #include "crc.h"
 
 
-#define STATE_IDLE 0
-#define STATE_WRITE 1
-#define BUFFER_SIZE 512
+#define STATE_IDLE      0
+#define STATE_UPLOAD    1
+#define BUFFER_SIZE 256
 
 extern FILE uart_stdout;
 
@@ -27,45 +27,59 @@ uint16_t    sync_errors = 0;
 uint8_t     read_buffer[BUFFER_SIZE];
 uint8_t     dataBuffer[4];  /* buffer must stay valid when usbFunctionSetup returns */
 uint8_t     state = STATE_IDLE;
+uint8_t     bank;  /* buffer must stay valid when usbFunctionSetup returns */
 
 usbMsgLen_t usbFunctionSetup(uchar data[8]){
     
     usbRequest_t    *rq = (void *)data;
  	uint16_t crc = 0;
     uint8_t len = 0;
-    if(rq->bRequest == CUSTOM_RQ_UPLOAD){ /* echo -- used for reliability tests */
+    if(rq->bRequest == USB_UPLOAD_INIT){
+        printf("USB_UPLOAD_INIT: reset values\n");
+        bank=0;
+        bytes_remaining=0;
+        crc=0;
+        sync_errors=0;
+    }else if(rq->bRequest == USB_UPLOAD_ADDR){ /* echo -- used for reliability tests */
+        state = STATE_UPLOAD;
         rom_addr = rq->wValue.word;
         rom_addr = rom_addr << 16;
         rom_addr = rom_addr | rq->wIndex.word;
         if (bytes_remaining){
             sync_errors++;
-            printf("CUSTOM_RQ_UPLOAD Out of sync Addr=0x%lx remain=%i packet=%i sync_error=%i\n",rom_addr,bytes_remaining,rq->wLength.word,sync_errors );  
+            printf("USB_UPLOAD_ADDR: Out of sync Addr=0x%lx remain=%i packet=%i sync_error=%i\n",rom_addr,bytes_remaining,rq->wLength.word,sync_errors );  
             len=0;
         }    
         bytes_remaining  = rq->wLength.word;
-        //printf("CUSTOM_RQ_UPLOAD Addr=0x%lx Len=%i\n", rom_addr,bytes_remaining);  
-        state = STATE_WRITE;
         len = 0xff;
-    }else if(rq->bRequest == CUSTOM_RQ_DOWNLOAD){
-        printf("CUSTOM_RQ_DOWNLOAD\n");
-    }else if(rq->bRequest == CUSTOM_RQ_CRC_CHECK){
+        if (rom_addr && rom_addr%32768 == 0){
+		    printf("USB_UPLOAD_ADDR: Bank: 0x%x Addr: 0x%08lx \n",bank,rom_addr);
+            bank++;
+		}
+        len=0xff;
+    }else if(rq->bRequest == USB_DOWNLOAD_INIT){
+        printf("USB_DOWNLOAD_INIT\n");
+    }else if(rq->bRequest == USB_DOWNLOAD_ADDR){
+        printf("USB_DOWNLOAD_ADDR\n");
+    }else if(rq->bRequest ==USB_CRC_CHECK){
         rom_addr = rq->wValue.word;
         rom_addr = rom_addr << 16;
         rom_addr = rom_addr | rq->wIndex.word;
-        printf("CUSTOM_RQ_CRC_CHECK Addr 0x%lx \n", rom_addr);  
-    	crc = 0;
+        bank = 0;
+       	crc = 0;
+        printf("USB_CRC_CHECK: Addr 0x%lx \n", rom_addr);  
         cli();
         for (addr=0x000000; addr<rom_addr; addr+=BUFFER_SIZE) {
         	sram_read_buffer(addr,read_buffer,BUFFER_SIZE);
     		crc = do_crc_update(crc,read_buffer,BUFFER_SIZE);
-            //dump_packet(rom_addr,BUFFER_SIZE,read_buffer);
     		if (addr && addr%32768 == 0){
-    		    printf("Addr: 0x%08lx CRC: %04x\n",addr,crc);
+    		    printf("USB_CRC_CHECK: Bank: 0x%x Addr: 0x%lx CRC: %x\n",bank,addr,crc);
+                bank++;
     			crc = 0;
     		}
         }
-	    printf("Addr: 0x%08lx CRC: %04x\n",addr,crc);
         sei();
+        
     }
     usbMsgPtr = dataBuffer;
     return len;   /* default for not implemented requests: return no data back to host */
@@ -74,27 +88,51 @@ usbMsgLen_t usbFunctionSetup(uchar data[8]){
 
 uint8_t usbFunctionWrite(uint8_t *data, uint8_t len)
 {
-    if (len > bytes_remaining)
-        len = bytes_remaining;
-    bytes_remaining -= len;
-
-    //printf("usbFunctionWrite addr=%lx len=%i remain=%i\n",rom_addr,len,bytes_remaining);
-    cli();
-    sram_copy(rom_addr,data,len);
-    sei();
-    rom_addr +=len;
-    //printf("usbFunctionWrite %lx %x\n",rom_addr,len);
-    //state=STATE_IDLE;
+    if (len > bytes_remaining){
+         printf("usbFunctionWrite more data than expected remain: %i len: %i\n",bytes_remaining,len);
+         len = bytes_remaining;
+     }
+     if (state==STATE_UPLOAD){
+    
+        bytes_remaining -= len;
+        #if 0    
+        printf("Addr: 0x%08lx Len: %i\n",rom_addr,len);
+        #endif    
+        cli();
+        sram_copy(rom_addr,data,len);
+        sei();
+        rom_addr +=len;
+    }
     return len;
 }
 
+uint8_t usbFunctionRead(uint8_t *data, uint8_t len)
+{
+    if(len > bytes_remaining)
+        len = bytes_remaining;
+    bytes_remaining -= len;
+
+    for (uint8_t i = 0; i < len; i++) {
+        if(request == USBASP_FUNC_READEEPROM)
+            *data = eeprom_read_byte((void *)flash_address.word);
+        else
+            *data = pgm_read_byte_near((void *)flash_address.word);
+        data++;
+        flash_address.word++;
+    }
+
+    /* flash led on activity */
+    DLED_TGL;
+
+    return len;
+}
 
 /* ------------------------------------------------------------------------- */
 
 int main(void)
 {
     uint8_t i;
-    //wdt_enable(WDTO_1S);
+    wdt_enable(WDTO_1S);
     uart_init();
     stdout = &uart_stdout;
     sram_init();
@@ -115,7 +153,7 @@ int main(void)
     sei();
  	printf("USB poll\n");
     for(;;){                /* main event loop */
-        //wdt_reset();
+        wdt_reset();
         usbPoll();
     }
     return 0;
