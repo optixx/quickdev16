@@ -29,7 +29,7 @@ extern FILE uart_stdout;
 #define RAM_REG		PINA
 
 #define CTRL_PORT	PORTB
-#define CTR_DIR		DDRB
+#define CTRL_DIR    DDRB
 #define LATCH_PORT	PORTB
 #define LATCH_DIR	DDRB
 
@@ -42,10 +42,10 @@ extern FILE uart_stdout;
 //#define FILENAME	"sprite.raw" //ok
 //#define FILENAME	"ascii.smc"  //ok
 //#define FILENAME	"rom.smc"    //ok
-//#define FILENAME	"supert.smc"
-//#define FILENAME	"vortex.smc"
-//#define FILENAME	"mrdo.smc"
-//#define FILENAME	"spacei.smc"
+//#define FILENAME	"supert.smc" //ok
+//#define FILENAME	"vortex.smc" //failed
+//#define FILENAME	"mrdo.smc"   //failed
+//#define FILENAME	"spacei.smc" //ok ntsc
 //#define FILENAME	"bank01.smc" //ok
 //#define FILENAME	"bank02.smc" //ok
 //#define FILENAME	"bank03.smc" //ok
@@ -56,9 +56,14 @@ extern FILE uart_stdout;
 //#define FILENAME	"banklo.smc" //ok
 //#define FILENAME	"bankhi.smc" //ok
 //#define FILENAME	"vram2.smc"  //ok
-//#define FILENAME	"super02.smc"
-#define FILENAME	"crc.smc"
-//#define FILENAME	"banks.smc"
+//#define FILENAME	"super02.smc" //ok
+//#define FILENAME	"super01.smc"//ok
+//#define FILENAME	"crc.smc"    //ok
+//#define FILENAME	"banks.smc"  //ok
+//#define FILENAME	"hungry.smc" //ok
+//#define FILENAME	"arkanoid.smc"//ok  
+//#define FILENAME	"eric.smc"  
+#define FILENAME	"turrican.smc"  
 
 #define ROMSIZE      4
 #define DUMPNAME	"dump256.smc"
@@ -233,17 +238,27 @@ void  sram_init(void){
 	RAM_DIR  = 0x00;
 	RAM_PORT = 0x00;
 
-	CTR_DIR 	|= ((1<<R_WR) | (1<<R_RD));
+	CTRL_DIR 	|= ((1<<R_WR) | (1<<R_RD));
 	CTRL_PORT  	|= (1<<R_RD);
 	CTRL_PORT 	|= (1<<R_WR);
 
 	LED_PORT |= (1<<D_LED0);
 }
 
-void sram_snes_mode(void){
+void sram_snes_mode01(void){
 	CTRL_PORT |= (1<<R_WR);
     CTRL_PORT &= ~(1<<R_RD);
 }
+
+void sram_snes_mode02(void){
+    CTRL_DIR  |= (1<<R_WR);
+	CTRL_PORT |= (1<<R_WR);
+    //CTRL_PORT &= ~(1<<R_RD);
+    CTRL_DIR  &= ~(1<<R_RD);
+    CTRL_PORT &= ~(1<<R_RD);
+    
+}
+
 
 void sram_clear(uint32_t addr, uint32_t len){
 
@@ -426,8 +441,17 @@ int main(void)
 	}
 #endif	
 	
-	sram_snes_mode();
-	printf("\nEnter Snes mode\n");
+#if 0
+	sram_snes_mode01();
+	printf("\nEnter Snes mode 02\n");
+#endif	
+#if 0
+	sram_snes_mode02();
+	printf("\nEnter Snes mode 02\n");
+#endif	
+	
+	printf("\nUpload done.\n");
+	
 	while(1);
 	return 0 ;
 	

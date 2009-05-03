@@ -22,7 +22,7 @@ EXE_SUFFIX =
 #USBLIBS = -L/usr/local/lib -lusb
 #EXE_SUFFIX = .exe
 
-NAME = set-led
+NAME = snesuploader
 
 OBJECTS = opendevice.o $(NAME).o
 

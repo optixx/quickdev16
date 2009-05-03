@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>poc/avr_sdcard/mmc.c</string>
+	<string>poc/avr_usbload/main.c</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -54,6 +54,20 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
+				<integer>28</integer>
+				<key>line</key>
+				<integer>91</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>poc/avr_sdcard/main.eep</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
 				<integer>0</integer>
@@ -61,7 +75,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>21</integer>
+			<integer>0</integer>
 		</dict>
 		<key>poc/avr_sdcard/mmc.c</key>
 		<dict>
@@ -75,7 +89,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>4</integer>
+			<integer>0</integer>
 		</dict>
 		<key>poc/avr_sdcard/mmc.h</key>
 		<dict>
@@ -103,7 +117,251 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>28</integer>
+			<integer>27</integer>
+		</dict>
+		<key>poc/avr_usbload/commandline/Makefile</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>poc/avr_usbload/commandline/opendevice.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>poc/avr_usbload/commandline/snesuploader.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>45</integer>
+				<key>line</key>
+				<integer>98</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>52</integer>
+		</dict>
+		<key>poc/avr_usbload/crc.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>6</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>43</integer>
+			</dict>
+		</dict>
+		<key>poc/avr_usbload/crc.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>66</integer>
+				<key>line</key>
+				<integer>6</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>poc/avr_usbload/debug.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>10</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>9</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>10</integer>
+			</dict>
+		</dict>
+		<key>poc/avr_usbload/debug.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>2</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>poc/avr_usbload/main.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>22</integer>
+				<key>line</key>
+				<integer>55</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>15</integer>
+		</dict>
+		<key>poc/avr_usbload/requests.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>27</integer>
+				<key>line</key>
+				<integer>29</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>poc/avr_usbload/sram.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>5</integer>
+				<key>line</key>
+				<integer>151</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>105</integer>
+		</dict>
+		<key>poc/avr_usbload/sram.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>44</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>43</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>44</integer>
+			</dict>
+		</dict>
+		<key>poc/avr_usbload/uart.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>5</integer>
+				<key>line</key>
+				<integer>70</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>27</integer>
+		</dict>
+		<key>poc/avr_usbload/uart.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>15</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>poc/avr_usbload/usbconfig.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>41</integer>
+				<key>line</key>
+				<integer>143</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>scripts/b.py</key>
 		<dict>
@@ -124,14 +382,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>16</integer>
+				<integer>14</integer>
 				<key>line</key>
-				<integer>46</integer>
+				<integer>47</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>14</integer>
 		</dict>
 		<key>snes/banktest/LoadGraphics.asm</key>
 		<dict>
@@ -271,14 +529,14 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>22</integer>
+			<integer>7</integer>
 		</dict>
 		<key>snes/crc/debug.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>10</integer>
 				<key>line</key>
 				<integer>0</integer>
 			</dict>
@@ -329,7 +587,21 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>snes/crc/rom.map</key>
+		<key>tools/bsnes/cart/cart.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>95</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>44</integer>
+		</dict>
+		<key>tools/bsnes/cart/cart.hpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -341,15 +613,509 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>11</integer>
+			<integer>24</integer>
+		</dict>
+		<key>tools/bsnes/memory/smemory/mapper/chip.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/memory/smemory/mapper/generic.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>42</integer>
+				<key>line</key>
+				<integer>93</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>39</integer>
+		</dict>
+		<key>tools/bsnes/memory/smemory/mapper/system.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/memory/smemory/smemory.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/usbload/avr.mk</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/usbload/config.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/usbload/usbconfig.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/usbload/usbdrv/usbdrv.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>646</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>175</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>643</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>646</integer>
+			</dict>
+		</dict>
+		<key>tools/usbload/usbload.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>269</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>221</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>224</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>269</integer>
+			</dict>
+		</dict>
+		<key>tools/vusb/examples/custom-class/Readme.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/custom-class/commandline/set-led.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>79</integer>
+		</dict>
+		<key>tools/vusb/examples/custom-class/firmware/Makefile</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/custom-class/firmware/main.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>30</integer>
+		</dict>
+		<key>tools/vusb/examples/custom-class/firmware/requests.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/custom-class/firmware/usbconfig.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-custom-rq/Readme.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-custom-rq/commandline/Makefile</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-custom-rq/commandline/opendevice.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>130</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-custom-rq/commandline/opendevice.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>66</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>25</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-custom-rq/commandline/set-led.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>26</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-custom-rq/firmware/main.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>8</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-data/commandline/Makefile</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-data/commandline/Makefile.windows</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-data/commandline/hiddata.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>22</integer>
+				<key>line</key>
+				<integer>19</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>272</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-data/commandline/hiddata.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>19</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-data/commandline/hidsdi.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-data/commandline/hidtool.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>75</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-data/firmware/main.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>55</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-data/firmware/usbconfig.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>155</integer>
+		</dict>
+		<key>tools/vusb/examples/hid-mouse/Readme.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/usbtool/Readme.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/vusb/examples/usbtool/opendevice.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>151</integer>
+		</dict>
+		<key>tools/vusb/examples/usbtool/opendevice.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>snes/crc/debug.h</string>
 		<string>snes/crc/debug.c</string>
-		<string>snes/crc/rom.map</string>
 		<string>scripts/b.py</string>
+		<string>scripts/crc_xmodem.py</string>
 		<string>poc/avr_sdcard/fat.c</string>
 		<string>snes/crc/PPU.h</string>
 		<string>snes/crc/PPU.c</string>
@@ -359,7 +1125,58 @@
 		<string>snes/crc/event.c</string>
 		<string>snes/crc/main.c</string>
 		<string>poc/avr_sdcard/mmc.c</string>
+		<string>tools/bsnes/cart/cart.cpp</string>
+		<string>tools/bsnes/memory/smemory/mapper/chip.cpp</string>
+		<string>tools/bsnes/memory/smemory/mapper/generic.cpp</string>
+		<string>tools/bsnes/memory/smemory/mapper/system.cpp</string>
+		<string>tools/bsnes/memory/smemory/smemory.cpp</string>
+		<string>tools/bsnes/cart/cart.hpp</string>
 		<string>poc/avr_sdcard/main.c</string>
+		<string>poc/avr_usbload/crc.c</string>
+		<string>poc/avr_usbload/crc.h</string>
+		<string>poc/avr_usbload/debug.c</string>
+		<string>poc/avr_usbload/debug.h</string>
+		<string>poc/avr_usbload/sram.c</string>
+		<string>poc/avr_usbload/commandline/opendevice.c</string>
+		<string>poc/avr_usbload/requests.h</string>
+		<string>poc/avr_usbload/usbconfig.h</string>
+		<string>tools/vusb/examples/usbtool/Readme.txt</string>
+		<string>tools/vusb/examples/usbtool/opendevice.h</string>
+		<string>tools/vusb/examples/usbtool/opendevice.c</string>
+		<string>tools/vusb/examples/custom-class/firmware/requests.h</string>
+		<string>tools/vusb/examples/custom-class/firmware/Makefile</string>
+		<string>poc/avr_usbload/sram.h</string>
+		<string>tools/vusb/examples/hid-mouse/Readme.txt</string>
+		<string>tools/vusb/examples/custom-class/firmware/main.c</string>
+		<string>tools/vusb/examples/hid-custom-rq/firmware/main.c</string>
+		<string>tools/vusb/examples/hid-data/firmware/main.c</string>
+		<string>tools/vusb/examples/hid-data/commandline/hiddata.h</string>
+		<string>tools/vusb/examples/hid-data/commandline/hidsdi.h</string>
+		<string>tools/vusb/examples/hid-data/commandline/hidtool.c</string>
+		<string>tools/vusb/examples/hid-data/commandline/hiddata.c</string>
+		<string>tools/vusb/examples/hid-data/firmware/usbconfig.h</string>
+		<string>tools/vusb/examples/hid-data/commandline/Makefile.windows</string>
+		<string>tools/vusb/examples/hid-data/commandline/Makefile</string>
+		<string>tools/vusb/examples/hid-custom-rq/commandline/Makefile</string>
+		<string>tools/vusb/examples/hid-custom-rq/commandline/opendevice.c</string>
+		<string>tools/vusb/examples/hid-custom-rq/commandline/opendevice.h</string>
+		<string>tools/vusb/examples/hid-custom-rq/commandline/set-led.c</string>
+		<string>tools/vusb/examples/custom-class/firmware/usbconfig.h</string>
+		<string>tools/vusb/examples/custom-class/commandline/set-led.c</string>
+		<string>tools/vusb/examples/custom-class/Readme.txt</string>
+		<string>poc/avr_usbload/main.c</string>
+		<string>poc/avr_usbload/uart.h</string>
+		<string>poc/avr_usbload/commandline/Makefile</string>
+		<string>poc/avr_usbload/commandline/snesuploader.c</string>
+		<string>poc/avr_sdcard/uart.c</string>
+		<string>poc/avr_sdcard/main.eep</string>
+		<string>tools/usbload/usbconfig.h</string>
+		<string>tools/usbload/usbdrv/usbdrv.h</string>
+		<string>tools/usbload/usbload.c</string>
+		<string>tools/usbload/config.h</string>
+		<string>tools/usbload/avr.mk</string>
+		<string>poc/avr_usbload/uart.c</string>
+		<string>tools/vusb/examples/hid-custom-rq/Readme.txt</string>
 		<string>snes/crc/pad.c</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
@@ -380,12 +1197,20 @@
 					<true/>
 					<key>subItems</key>
 					<dict>
-						<key>avr_sdcard</key>
+						<key>avr_usbload</key>
 						<dict>
 							<key>isExpanded</key>
 							<true/>
 							<key>subItems</key>
-							<dict/>
+							<dict>
+								<key>commandline</key>
+								<dict>
+									<key>isExpanded</key>
+									<true/>
+									<key>subItems</key>
+									<dict/>
+								</dict>
+							</dict>
 						</dict>
 					</dict>
 				</dict>
@@ -401,19 +1226,100 @@
 					<key>isExpanded</key>
 					<true/>
 					<key>subItems</key>
+					<dict/>
+				</dict>
+				<key>tools</key>
+				<dict>
+					<key>isExpanded</key>
+					<true/>
+					<key>subItems</key>
 					<dict>
-						<key>crc</key>
+						<key>vusb</key>
 						<dict>
 							<key>isExpanded</key>
 							<true/>
 							<key>subItems</key>
 							<dict>
-								<key>tools</key>
+								<key>examples</key>
 								<dict>
 									<key>isExpanded</key>
 									<true/>
 									<key>subItems</key>
-									<dict/>
+									<dict>
+										<key>custom-class</key>
+										<dict>
+											<key>isExpanded</key>
+											<true/>
+											<key>subItems</key>
+											<dict>
+												<key>commandline</key>
+												<dict>
+													<key>isExpanded</key>
+													<true/>
+													<key>subItems</key>
+													<dict/>
+												</dict>
+												<key>firmware</key>
+												<dict>
+													<key>isExpanded</key>
+													<true/>
+													<key>subItems</key>
+													<dict/>
+												</dict>
+											</dict>
+										</dict>
+										<key>hid-custom-rq</key>
+										<dict>
+											<key>isExpanded</key>
+											<true/>
+											<key>subItems</key>
+											<dict>
+												<key>firmware</key>
+												<dict>
+													<key>isExpanded</key>
+													<true/>
+													<key>subItems</key>
+													<dict/>
+												</dict>
+											</dict>
+										</dict>
+										<key>hid-data</key>
+										<dict>
+											<key>isExpanded</key>
+											<true/>
+											<key>subItems</key>
+											<dict>
+												<key>commandline</key>
+												<dict>
+													<key>isExpanded</key>
+													<true/>
+													<key>subItems</key>
+													<dict/>
+												</dict>
+												<key>firmware</key>
+												<dict>
+													<key>isExpanded</key>
+													<true/>
+													<key>subItems</key>
+													<dict/>
+												</dict>
+											</dict>
+										</dict>
+										<key>hid-mouse</key>
+										<dict>
+											<key>isExpanded</key>
+											<true/>
+											<key>subItems</key>
+											<dict/>
+										</dict>
+										<key>usbtool</key>
+										<dict>
+											<key>isExpanded</key>
+											<true/>
+											<key>subItems</key>
+											<dict/>
+										</dict>
+									</dict>
 								</dict>
 							</dict>
 						</dict>
@@ -423,6 +1329,6 @@
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{4, 60}, {738, 818}}</string>
+	<string>{{4, 56}, {733, 822}}</string>
 </dict>
 </plist>
