@@ -24,18 +24,18 @@ FILE uart_stdout = FDEV_SETUP_STREAM(uart_stream, NULL, _FDEV_SETUP_WRITE);
 
 void uart_init(void)
 {
-    UCSRA = _BV(U2X);     /* improves baud rate error @ F_CPU = 1 MHz */
-    UCSRB = _BV(TXEN)|_BV(RXEN)|_BV(RXCIE); /* tx/rx enable, rx complete intr */
-    UBRRL = (F_CPU / (8 * 115200UL)) - 1;  /* 9600 Bd */
+    UCSR0A = _BV(U2X0);     /* improves baud rate error @ F_CPU = 1 MHz */
+    UCSR0B = _BV(TXEN0)|_BV(RXEN0)|_BV(RXCIE0); /* tx/rx enable, rx complete intr */
+    UBRR0L = (F_CPU / (8 * 115200UL)) - 1;  /* 9600 Bd */
 
 }
 
 
-ISR(USART_RXC_vect)
+ISR(USART_RX_vect)
 {
     uint8_t c;
-    c = UDR;
-    if (bit_is_clear(UCSRA, FE)){
+    c = UDR0;
+    if (bit_is_clear(UCSR0A, FE0)){
         rxbuff = c;
         intflags.rx_int = 1;
     }
@@ -44,8 +44,8 @@ ISR(USART_RXC_vect)
 
 void  uart_putc(uint8_t c)
 {
-    loop_until_bit_is_set(UCSRA, UDRE);
-    UDR = c;
+    loop_until_bit_is_set(UCSR0A, UDRE0);
+    UDR0 = c;
 }
 
 
@@ -72,8 +72,8 @@ static int uart_stream(char c, FILE *stream)
 {
     if (c == '\n')
         uart_putc('\r');
-    loop_until_bit_is_set(UCSRA, UDRE);
-    UDR = c;
+    loop_until_bit_is_set(UCSR0A, UDRE0);
+    UDR0 = c;
     return 0;
 }
 

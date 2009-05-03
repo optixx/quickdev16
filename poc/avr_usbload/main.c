@@ -9,7 +9,7 @@
 #include "oddebug.h"        /* This is also an example for using debug macros */
 #include "requests.h"       /* The custom request numbers we use */
 #include "uart.h"
-#include "sram.h"
+//#include "sram.h"
 #include "debug.h"
 #include "crc.h"
 
@@ -56,7 +56,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8]){
     	crc = 0;
         cli();
         for (addr=0x000000; addr<rom_addr; addr+=BUFFER_SIZE) {
-        	sram_read_buffer(addr,read_buffer,BUFFER_SIZE);
+        	//sram_read_buffer(addr,read_buffer,BUFFER_SIZE);
     		crc = do_crc_update(crc,read_buffer,BUFFER_SIZE);
             //dump_packet(rom_addr,BUFFER_SIZE,read_buffer);
     		if (addr && addr%32768 == 0){
@@ -80,7 +80,7 @@ uint8_t usbFunctionWrite(uint8_t *data, uint8_t len)
 
     //printf("usbFunctionWrite addr=%lx len=%i remain=%i\n",rom_addr,len,bytes_remaining);
     cli();
-    sram_copy(rom_addr,data,len);
+    //sram_copy(rom_addr,data,len);
     sei();
     rom_addr +=len;
     //printf("usbFunctionWrite %lx %x\n",rom_addr,len);
@@ -97,10 +97,10 @@ int main(void)
     //wdt_enable(WDTO_1S);
     uart_init();
     stdout = &uart_stdout;
-    sram_init();
- 	printf("SRAM Init\n");
- 	spi_init();
- 	printf("SPI Init\n");
+    //sram_init();
+ 	//printf("SRAM Init\n");
+ 	//spi_init();
+ 	//printf("SPI Init\n");
     usbInit();
  	printf("USB Init\n");
     usbDeviceDisconnect();  /* enforce re-enumeration, do this while interrupts are disabled! */

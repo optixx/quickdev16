@@ -19,7 +19,7 @@ respectively.
 */
 
 
-#define BUFFER_SIZE     4
+#define BUFFER_SIZE     (128)
 #define BUFFER_CRC      (1024 * 64)
 #define BANK_SIZE       (1<<15)
 

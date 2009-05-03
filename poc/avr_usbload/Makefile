@@ -7,14 +7,14 @@
 # License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
 # This Revision: $Id: Makefile 692 2008-11-07 15:07:40Z cs $
 
-DEVICE  = atmega16
-F_CPU   = 16000000	# in Hz
+DEVICE  = atmega88
+F_CPU   = 20000000	# in Hz
 FUSE_L  = # see below for fuse values for particular devices
 FUSE_H  = 
-AVRDUDE = avrdude -c stk500v2 -p $(DEVICE) -P /dev/tty.PL2303-00002006 
+AVRDUDE = avrdude -c usbasp -p $(DEVICE) 
 
 CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0
-OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o main.o uart.o fifo.o sram.o crc.o debug.o
+OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o main.o uart.o fifo.o  crc.o debug.o
 
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 
