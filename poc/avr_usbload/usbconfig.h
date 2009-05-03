@@ -97,7 +97,7 @@ section at the end of this file).
  * it is required by the standard. We have made it a config option because it
  * bloats the code considerably.
  */
-#define USB_CFG_SUPPRESS_INTR_CODE      0
+#define USB_CFG_SUPPRESS_INTR_CODE      1
 /* Define this to 1 if you want to declare interrupt-in endpoints, but don't
  * want to send any data over them. If this macro is defined to 1, functions
  * usbSetInterrupt() and usbSetInterrupt3() are omitted. This is useful if
