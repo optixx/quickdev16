@@ -16,10 +16,11 @@
 #ifndef __REQUESTS_H_INCLUDED__
 #define __REQUESTS_H_INCLUDED__
 
-#define USB_UPLOAD_INIT       0
-#define USB_UPLOAD_ADDR       1
-#define USB_DOWNLOAD_INIT     2
-#define USB_DOWNLOAD_ADDR     3
-#define USB_CRC_CHECK         4
+#define USB_UPLOAD_INIT         0
+#define USB_UPLOAD_ADDR         1
+#define USB_DOWNLOAD_INIT       2
+#define USB_DOWNLOAD_ADDR       3
+#define USB_CRC                 4
+#define USB_CRC_ADDR            5
 
 #endif /* __REQUESTS_H_INCLUDED__ */

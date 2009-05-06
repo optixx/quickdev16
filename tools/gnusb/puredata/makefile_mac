@@ -1,0 +1,7 @@
+all:
+	gcc `libusb-config --cflags` -c gnusb.c -o gnusb.o 
+	gcc -bundle -undefined suppress -flat_namespace -o gnusb.pd_darwin gnusb.o `libusb-config --libs` -framework CoreFoundation
+	mv gnusb.pd_darwin ../gnusb.pd_darwin
+	
+clean:
+	rm *.o
