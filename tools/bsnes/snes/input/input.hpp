@@ -75,11 +75,6 @@ public:
       ) ppu.latch_counters();
     }
   }
-
-private:
-  bool iobit;
-  uint16_t latchx, latchy;
-
   struct port_t {
     unsigned device;
     unsigned counter0;  //read counters
@@ -110,5 +105,11 @@ private:
     } justifier;
   } port[2];
 
+
+private:
+  bool iobit;
+  uint16_t latchx, latchy;
+
   friend class SNES;
+
 } input;

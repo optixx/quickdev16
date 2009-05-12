@@ -4,13 +4,28 @@
 
 objects := main $(if $(call streq,$(platform),win),resource) $(objects)
 
-moc = moc-qt4
-rcc = rcc
+ifeq ($(platform),mac)  
+    moc = moc
+    rcc = rcc
+    link +=-F/Developer/SDKs/Qt/lib \
+	   -L/Developer/SDKs/Qt/lib \
+	   -framework QtOpenGL \
+	   -framework QtGui \
+	   -framework Carbon \
+	   -framework AppKit \
+	   -framework QtCore 
+    qtflags= -I/Developer/SDKs/Qt/include/ \
+             -I/Developer/SDKs/Qt/include/Qt \
+             -I/Developer/SDKs/Qt/include/QtCore \
+             -I/Developer/SDKs/Qt/include/QtGui
 
+endif
 ifeq ($(platform),x) # X11
-  link += $(call mklib,Xtst)
-  link += `pkg-config --libs QtCore QtGui`
-  qtflags = `pkg-config --cflags QtCore QtGui`
+    moc = moc-qt4
+    rcc = rcc
+    link += $(call mklib,Xtst)
+    link += `pkg-config --libs QtCore QtGui`
+    qtflags = `pkg-config --cflags QtCore QtGui`
 else ifeq ($(platform),win) # Windows
   qtdir = c:/qt450
 

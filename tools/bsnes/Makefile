@@ -6,13 +6,12 @@ ui = ui_qt
 ### compiler ###
 ################
 
-platform=x
+platform=mac
 compiler=gcc
-enable_gzip=true
+enable_gzip=false
 
 ifneq ($(findstring gcc,$(compiler)),) # GCC family
   flags = -O2 -fomit-frame-pointer -Ilib
-  # note: libco *requires* -fomit-frame-pointer on i386 arch
   libcoflags := $(flags) -static
   c = $(compiler)
   cpp = $(subst cc,++,$(compiler))
@@ -24,7 +23,6 @@ ifneq ($(findstring gcc,$(compiler)),) # GCC family
   mkincpath = -I$1
   mklib = -l$1
   mklibpath = -L$1
-
   # profile-guided optimization:
   #flags += -fprofile-generate
   #link += -lgcov
@@ -51,16 +49,46 @@ endif
 ### os ###
 ##########
 
+
+ifeq ($(platform),mac) #Mac
+    ruby = video.glx video.xv video.sdl audio.alsa audio.openal audio.oss audio.pulseaudio audio.ao input.sdl input.x
+    mkbin = -o $1
+    delete = rm -f $1
+    link += 	-L/opt/local/lib \
+		-lSDL -framework,Cocoa \
+		-lX11 \
+    		-lm  \
+		-framework Foundation\
+		-framework Cocoa \
+		-framework AGL \
+    		-framework OpenAL\
+		-framework ApplicationServices \
+		-framework Foundation\
+    		-framework OpenGL\
+    		-framework GLUT \
+		-lz \
+		-lgl \
+		-lao
+    	
+
+    flags +=-I/opt/local/include \
+	-I/System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/\
+	-DVIDEO_SDL \
+	-DINPUT_SDL \
+	-DVIDEO_GLX \
+	-DAUDIO_AO  \
+	-DAUDIO_OPENAL 
+endif
+
 ifeq ($(platform),x) # X11
   ruby = video.glx video.xv video.sdl audio.alsa audio.openal audio.oss audio.pulseaudio audio.ao input.sdl input.x
   delete = rm -f $1
+
 else ifeq ($(platform),win) # Windows
   mingw_link_flags = -mwindows
   # mingw_links_flags = -mconsole
-
   # enable static linking to Qt for Windows build
   mingw_link_flags += -enable-stdcall-fixup -Wl,-s -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
-
   ruby = video.direct3d video.wgl video.directdraw video.gdi audio.directsound input.rawinput input.directinput
   delete = $(if $(findstring i586-mingw-gcc,$(compiler)),rm -f $1,del $(subst /,\,$1))
   link += $(if $(findstring mingw,$(compiler)),$(mingw_link_flags))
@@ -69,8 +97,6 @@ else ifeq ($(platform),win) # Windows
   link += $(call mklib,user32)
   link += $(call mklib,gdi32)
   link += $(call mklib,shell32)
-else
-  unknown_platform: help;
 endif
 
 ############
@@ -78,20 +104,20 @@ endif
 ############
 
 rubyflags = $(if $(findstring .sdl,$(ruby)),`sdl-config --cflags`)
-link += $(if $(findstring .sdl,$(ruby)),`sdl-config --libs`)
+#link += $(if $(findstring .sdl,$(ruby)),`sdl-config --libs`)
 
-link += $(if $(findstring video.direct3d,$(ruby)),$(call mklib,d3d9))
-link += $(if $(findstring video.directdraw,$(ruby)),$(call mklib,ddraw))
-link += $(if $(findstring video.glx,$(ruby)),$(call mklib,GL))
-link += $(if $(findstring video.wgl,$(ruby)),$(call mklib,opengl32))
-link += $(if $(findstring video.xv,$(ruby)),$(call mklib,Xv))
-link += $(if $(findstring audio.alsa,$(ruby)),$(call mklib,asound))
-link += $(if $(findstring audio.ao,$(ruby)),$(call mklib,ao))
-link += $(if $(findstring audio.directsound,$(ruby)),$(call mklib,dsound))
-link += $(if $(findstring audio.openal,$(ruby)),$(if $(call streq,$(platform),x),$(call mklib,openal),$(call mklib,openal32)))
-link += $(if $(findstring audio.pulseaudio,$(ruby)),$(call mklib,pulse-simple))
-link += $(if $(findstring input.directinput,$(ruby)),$(call mklib,dinput8) $(call mklib,dxguid))
-link += $(if $(findstring input.rawinput,$(ruby)),$(call mklib,xinput) $(call mklib,dinput8) $(call mklib,dxguid))
+#link += $(if $(findstring video.direct3d,$(ruby)),$(call mklib,d3d9))
+#link += $(if $(findstring video.directdraw,$(ruby)),$(call mklib,ddraw))
+#link += $(if $(findstring video.glx,$(ruby)),$(call mklib,GL))
+#link += $(if $(findstring video.wgl,$(ruby)),$(call mklib,opengl32))
+#link += $(if $(findstring video.xv,$(ruby)),$(call mklib,Xv))
+#link += $(if $(findstring audio.alsa,$(ruby)),$(call mklib,asound))
+#link += $(if $(findstring audio.ao,$(ruby)),$(call mklib,ao))
+#link += $(if $(findstring audio.directsound,$(ruby)),$(call mklib,dsound))
+#link += $(if $(findstring audio.openal,$(ruby)),$(if $(call streq,$(platform),x),$(call mklib,openal),$(call mklib,openal32)))
+#link += $(if $(findstring audio.pulseaudio,$(ruby)),$(call mklib,pulse-simple))
+#link += $(if $(findstring input.directinput,$(ruby)),$(call mklib,dinput8) $(call mklib,dxguid))
+#link += $(if $(findstring input.rawinput,$(ruby)),$(call mklib,xinput) $(call mklib,dinput8) $(call mklib,dxguid))
 
 ####################
 ### core objects ###
@@ -103,13 +129,13 @@ objects = libco ruby libfilter string \
   bsx srtc sdd1 spc7110 cx4 dsp1 dsp2 dsp3 dsp4 obc1 st010
 
 ifeq ($(enable_gzip),true)
-  objects += adler32 compress crc32 deflate gzio inffast inflate inftrees ioapi trees unzip zip zutil
-  flags += $(call mkdef,GZIP_SUPPORT)
+  #objects += adler32 compress crc32 deflate gzio inffast inflate inftrees ioapi trees unzip zip zutil
+  #flags += $(call mkdef,GZIP_SUPPORT)
 endif
 
 ifeq ($(enable_jma),true)
-  objects += jma jcrc32 lzmadec 7zlzma iiostrm inbyte lzma winout
-  flags += $(call mkdef,JMA_SUPPORT)
+  #objects += jma jcrc32 lzmadec 7zlzma iiostrm inbyte lzma winout
+  #flags += $(call mkdef,JMA_SUPPORT)
 endif
 
 ######################
@@ -131,8 +157,9 @@ compile = \
 all: build;
 
 include $(ui)/Makefile
+
 objects := $(patsubst %,obj/%.$(obj),$(objects))
-rubydef := $(foreach c,$(subst .,_,$(call strupper,$(ruby))),$(call mkdef,$c))
+#rubydef := $(foreach c,$(subst .,_,$(call strupper,$(ruby))),$(call mkdef,$c))
 
 #################
 ### libraries ###
@@ -246,7 +273,7 @@ obj/winout.$(obj) : reader/jma/winout.cpp reader/jma/*
 ###############
 
 build: ui_build $(objects)
-	gcc $(call mkbin,bsnes) $(objects) $(link)
+	g++ $(call mkbin,bsnes) $(objects) $(link)
 
 install:
 	install -D -m 755 ../bsnes $(DESTDIR)$(prefix)/bin/bsnes

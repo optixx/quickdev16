@@ -8,7 +8,7 @@
 #include "inflate.h"
 #include "inffast.h"
 
-#ifdef __i386__
+#ifdef __FALSE__ 
 
 void inflate_fast(strm, start)
 z_streamp strm;

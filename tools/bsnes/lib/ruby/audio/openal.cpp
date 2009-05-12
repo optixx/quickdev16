@@ -1,6 +1,11 @@
-#include <AL/al.h>
-#include <AL/alc.h>
 
+#ifdef __APPLE__
+    #include <al.h>
+    #include <alc.h>
+#else
+    #include <AL/al.h>
+    #include <AL/alc.h>
+#endif
 namespace ruby {
 
 #include "openal.hpp"

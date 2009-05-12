@@ -93,7 +93,7 @@
     //keycode of 255 does not map to any actual key,
     //but it will block screensaver and power management.
     Display *display = XOpenDisplay(0);
-    XTestFakeKeyEvent(display, 255, True,  0);
-    XTestFakeKeyEvent(display, 255, False, 0);
+    //XTestFakeKeyEvent(display, 255, True,  0);
+    //XTestFakeKeyEvent(display, 255, False, 0);
   }
 #endif
