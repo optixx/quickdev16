@@ -1,5 +1,7 @@
 #include <../base.hpp>
+
 #define MEMORY_CPP
+namespace SNES {
 
 namespace memory {
   MMIOAccess mmio;
@@ -24,18 +26,11 @@ void MMIOAccess::map(unsigned addr, MMIO &access) {
   mmio[(addr - 0x2000) & 0x3fff] = &access;
 }
 
-MMIO* MMIOAccess::get(unsigned addr) {
-  return mmio[(addr - 0x2000) & 0x3fff];
-}
-
 uint8 MMIOAccess::read(unsigned addr) {
-	printf("MMIOAccess::read 0x%x\n",addr);
-
-	return mmio[(addr - 0x2000) & 0x3fff]->mmio_read(addr);
+  return mmio[(addr - 0x2000) & 0x3fff]->mmio_read(addr);
 }
 
 void MMIOAccess::write(unsigned addr, uint8 data) {
-  printf("MMIOAccess::write 0x%x %x\n",addr,data);
   mmio[(addr - 0x2000) & 0x3fff]->mmio_write(addr, data);
 }
 
@@ -70,7 +65,6 @@ void Bus::map(
 ) {
   assert(bank_lo <= bank_hi);
   assert(addr_lo <= addr_hi);
-
   if(access.size() == -1U) return;
 
   uint8 page_lo = addr_lo >> 8;
@@ -79,8 +73,6 @@ void Bus::map(
 
   switch(mode) {
     case MapDirect: {
-      printf("Bus::map MapDirect bank_lo=0x%02x bank_hi=0x%02x addr_lo=0x%04x addr_hi=0x%04x\n",
-    		  bank_lo,bank_hi,addr_lo,addr_hi);
       for(unsigned bank = bank_lo; bank <= bank_hi; bank++) {
         for(unsigned page = page_lo; page <= page_hi; page++) {
           map((bank << 16) + (page << 8), access, (bank << 16) + (page << 8));
@@ -89,8 +81,6 @@ void Bus::map(
     } break;
 
     case MapLinear: {
-      printf("Bus::map MapLinear bank_lo=0x%02x bank_hi=0x%02x addr_lo=0x%04x addr_hi=0x%04x\n",
-      		  bank_lo,bank_hi,addr_lo,addr_hi);
       for(unsigned bank = bank_lo; bank <= bank_hi; bank++) {
         for(unsigned page = page_lo; page <= page_hi; page++) {
           map((bank << 16) + (page << 8), access, mirror(offset + index, access.size()));
@@ -101,8 +91,6 @@ void Bus::map(
     } break;
 
     case MapShadow: {
-      printf("Bus::map MapShadow bank_lo=0x%02x bank_hi=0x%02x addr_lo=0x%04x addr_hi=0x%04x\n",
-        		  bank_lo,bank_hi,addr_lo,addr_hi);
       for(unsigned bank = bank_lo; bank <= bank_hi; bank++) {
         index += page_lo * 256;
         if(size) index %= size;
@@ -119,3 +107,6 @@ void Bus::map(
     } break;
   }
 }
+
+};
+

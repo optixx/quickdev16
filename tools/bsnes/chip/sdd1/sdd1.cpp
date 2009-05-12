@@ -1,8 +1,10 @@
 #include <../base.hpp>
-#include <../cart/cart.hpp>
-#define SDD1_CPP
 
-#include "sdd1.hpp"
+#define SDD1_CPP
+namespace SNES {
+
+SDD1 sdd1;
+
 #include "sdd1emu.cpp"
 
 void SDD1::init() {}
@@ -11,7 +13,7 @@ void SDD1::enable() {
   //hook S-CPU DMA MMIO registers to gather information for struct dma[];
   //buffer address and transfer size information for use in SDD1::read()
   for(unsigned i = 0x4300; i <= 0x437f; i++) {
-    cpu_mmio[i & 0x7f] = memory::mmio.get(i);
+    cpu_mmio[i & 0x7f] = memory::mmio.mmio[i - 0x2000];
     memory::mmio.map(i, *this);
   }
 
@@ -156,3 +158,5 @@ SDD1::SDD1() {
 SDD1::~SDD1() {
   delete[] buffer.data;
 }
+};
+

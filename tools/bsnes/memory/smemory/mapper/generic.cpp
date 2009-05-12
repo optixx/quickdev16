@@ -3,14 +3,12 @@
 void sBus::map_generic() {
   switch(cartridge.mapper()) {
     case Cartridge::LoROM: {
-      printf("sBus::map_generic Cartridge::LoROM\n");
       map(MapLinear, 0x00, 0x7f, 0x8000, 0xffff, memory::cartrom);
       map(MapLinear, 0x80, 0xff, 0x8000, 0xffff, memory::cartrom);
       map_generic_sram();
     } break;
 
     case Cartridge::HiROM: {
-      printf("sBus::map_generic Cartridge::HiROM\n");
       map(MapShadow, 0x00, 0x3f, 0x8000, 0xffff, memory::cartrom);
       map(MapLinear, 0x40, 0x7f, 0x0000, 0xffff, memory::cartrom);
       map(MapShadow, 0x80, 0xbf, 0x8000, 0xffff, memory::cartrom);
@@ -19,7 +17,6 @@ void sBus::map_generic() {
     } break;
 
     case Cartridge::ExLoROM: {
-      printf("sBus::map_generic Cartridge::ExLoROM\n");
       map(MapLinear, 0x00, 0x3f, 0x8000, 0xffff, memory::cartrom);
       map(MapLinear, 0x40, 0x7f, 0x0000, 0xffff, memory::cartrom);
       map(MapLinear, 0x80, 0xbf, 0x8000, 0xffff, memory::cartrom);
@@ -28,7 +25,6 @@ void sBus::map_generic() {
     } break;
 
     case Cartridge::ExHiROM: {
-      printf("sBus::map_generic Cartridge::ExHiROM\n");
       map(MapShadow, 0x00, 0x3f, 0x8000, 0xffff, memory::cartrom, 0x400000);
       map(MapLinear, 0x40, 0x7f, 0x0000, 0xffff, memory::cartrom, 0x400000);
       map(MapShadow, 0x80, 0xbf, 0x8000, 0xffff, memory::cartrom, 0x000000);
@@ -36,8 +32,11 @@ void sBus::map_generic() {
       map_generic_sram();
     } break;
 
+    case Cartridge::SA1ROM: {
+      //mapped via SA1Bus::init();
+    } break;
+
     case Cartridge::SPC7110ROM: {
-      printf("sBus::map_generic Cartridge::SPC7110ROM\n");
       map(MapDirect, 0x00, 0x00, 0x6000, 0x7fff, spc7110);          //save RAM w/custom logic
       map(MapShadow, 0x00, 0x0f, 0x8000, 0xffff, memory::cartrom);  //program ROM
       map(MapDirect, 0x30, 0x30, 0x6000, 0x7fff, spc7110);          //save RAM w/custom logic
@@ -48,7 +47,6 @@ void sBus::map_generic() {
     } break;
 
     case Cartridge::BSXROM: {
-      printf("sBus::map_generic Cartridge::BSXROM\n");
       //full map is dynamically mapped by:
       //src/chip/bsx/bsx_cart.cpp : BSXCart::update_memory_map();
       map(MapLinear, 0x00, 0x3f, 0x8000, 0xffff, memory::cartrom);
@@ -56,7 +54,6 @@ void sBus::map_generic() {
     } break;
 
     case Cartridge::BSCLoROM: {
-      printf("sBus::map_generic Cartridge::BSCLoROM\n");
       map(MapLinear, 0x00, 0x1f, 0x8000, 0xffff, memory::cartrom, 0x000000);
       map(MapLinear, 0x20, 0x3f, 0x8000, 0xffff, memory::cartrom, 0x100000);
       map(MapLinear, 0x70, 0x7f, 0x0000, 0x7fff, memory::cartram, 0x000000);
@@ -67,7 +64,6 @@ void sBus::map_generic() {
     } break;
 
     case Cartridge::BSCHiROM: {
-      printf("sBus::map_generic Cartridge::BSCHiROM\n");
       map(MapShadow, 0x00, 0x1f, 0x8000, 0xffff, memory::cartrom);
       map(MapLinear, 0x20, 0x3f, 0x6000, 0x7fff, memory::cartram);
       map(MapShadow, 0x20, 0x3f, 0x8000, 0xffff, bsxflash);
@@ -81,7 +77,6 @@ void sBus::map_generic() {
     } break;
 
     case Cartridge::STROM: {
-        printf("sBus::map_generic Cartridge::STROM\n");
       map(MapLinear, 0x00, 0x1f, 0x8000, 0xffff, memory::cartrom);
       map(MapLinear, 0x20, 0x3f, 0x8000, 0xffff, memory::stArom);
       map(MapLinear, 0x40, 0x5f, 0x8000, 0xffff, memory::stBrom);
@@ -99,21 +94,15 @@ void sBus::map_generic() {
 void sBus::map_generic_sram() {
   if(memory::cartram.size() == 0 || memory::cartram.size() == -1U) { return; }
 
-  printf("sBus::map_generic_sram\n");
   map(MapLinear, 0x20, 0x3f, 0x6000, 0x7fff, memory::cartram);
   map(MapLinear, 0xa0, 0xbf, 0x6000, 0x7fff, memory::cartram);
+
   //research shows only games with very large ROM/RAM sizes require MAD-1 memory mapping of SRAM
   //otherwise, default to safer, larger SRAM address window
   uint16 addr_hi = (memory::cartrom.size() > 0x200000 || memory::cartram.size() > 32 * 1024) ? 0x7fff : 0xffff;
-  printf("sBus::map_generic_sram cart_size=%x addr_hi=0x%x\n",memory::cartram.size(),addr_hi);
   map(MapLinear, 0x70, 0x7f, 0x0000, addr_hi, memory::cartram);
-  if(cartridge.mapper() != Cartridge::LoROM){
-		  printf("sBus::map_generic_sram done\n");
-		  return;
-  }
+  if(cartridge.mapper() != Cartridge::LoROM) return;
   map(MapLinear, 0xf0, 0xff, 0x0000, addr_hi, memory::cartram);
-  printf("sBus::map_generic_sram done\n");
-
 }
 
 #endif

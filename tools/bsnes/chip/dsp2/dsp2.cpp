@@ -1,7 +1,10 @@
 #include <../base.hpp>
-#define DSP2_CPP
 
-#include "dsp2.hpp"
+#define DSP2_CPP
+namespace SNES {
+
+DSP2 dsp2;
+
 #include "dsp2_op.cpp"
 
 void DSP2::init() {}
@@ -134,3 +137,5 @@ void DSP2::write(unsigned addr, uint8 data) {
 
 DSP2::DSP2() {}
 DSP2::~DSP2() {}
+};
+

@@ -1,10 +1,10 @@
 #include <../base.hpp>
-#define CPU_CPP
 
-#include "dcpu.cpp"
+#define CPU_CPP
+namespace SNES {
 
 void CPU::power() {
-  cpu_version = snes.config.cpu.version;
+  cpu_version = config.cpu.version;
 }
 
 void CPU::reset() {
@@ -15,3 +15,5 @@ CPU::CPU() {
 
 CPU::~CPU() {
 }
+};
+

@@ -17,6 +17,10 @@ public:
   void updateControllers();
 
   //cartridge.cpp
+  struct Cartridge {
+    string name, baseName, slotAName, slotBName;
+  } cartridge;
+
   string selectCartridge();
   string selectFolder(const char *title);
   void loadCartridge(const char*);
@@ -24,10 +28,22 @@ public:
   bool loadCartridgeBsxSlotted(const char*, const char*);
   bool loadCartridgeBsx(const char*, const char*);
   bool loadCartridgeSufamiTurbo(const char*, const char *, const char*);
+  bool loadCartridgeSuperGameBoy(const char*, const char*);
+  void saveMemory();
   void unloadCartridge();
 
   enum system_state_t { LoadCartridge, UnloadCartridge, PowerOn, PowerOff, PowerCycle, Reset };
   void modifySystemState(system_state_t state);
+
+  bool loadCartridge(const char*, SNES::MappedRAM&);
+  bool loadMemory(const char*, const char*, SNES::MappedRAM&);
+  bool saveMemory(const char*, const char*, SNES::MappedRAM&);
+  void loadCheats();
+  void saveCheats();
+
+  string filepath(const char *filename, const char *pathname);
+  string basename(const char *filename);
+  string basepath(const char *filename);
 
   //window.cpp
   void showCentered(QWidget *window);

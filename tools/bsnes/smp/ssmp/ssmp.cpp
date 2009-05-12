@@ -1,17 +1,27 @@
 #include <../base.hpp>
-#define SSMP_CPP
 
-#include "core/core.cpp"
+#define SSMP_CPP
+namespace SNES {
+
 #include "memory/memory.cpp"
 #include "timing/timing.cpp"
 
-void sSMP::power() {
-  for(unsigned i = 0; i < memory::apuram.size(); i++) {
-    //SNES hardware APURAM contains pseudo-random data upon power up (exact formula is unknown.)
-    //memory::apuram.write(i, (i & 32) ? 0xff : 0x00);
-    memory::apuram.write(i, 0x00);
-  }
+void sSMP::enter() {
+  while(true) {
+    tracer.trace_smpop();  //traces SMP opcode (only if tracer is enabled)
 
+    (this->*opcode_table[op_readpc()])();
+
+    //forcefully sync S-CPU and S-SMP, in case chips are not communicating
+    static unsigned counter = 0;
+    if(++counter >= 128) {
+      counter = 0;
+      scheduler.sync_smpcpu();
+    }
+  }
+}
+
+void sSMP::power() {
   //targets not initialized/changed upon reset
   t0.target = 0;
   t1.target = 0;
@@ -27,6 +37,10 @@ void sSMP::reset() {
   regs.y  = 0x00;
   regs.sp = 0xef;
   regs.p  = 0x02;
+
+  for(unsigned i = 0; i < memory::apuram.size(); i++) {
+    memory::apuram.write(i, 0x00);
+  }
 
   status.clock_counter = 0;
   status.dsp_counter   = 0;
@@ -64,7 +78,10 @@ void sSMP::reset() {
 }
 
 sSMP::sSMP() {
+  initialize_opcode_table();
 }
 
 sSMP::~sSMP() {
 }
+};
+

@@ -1,7 +1,7 @@
 #include <../base.hpp>
-#include <../chip/chip.hpp>
-#include <../cart/cart.hpp>
+
 #define SMEMORY_CPP
+namespace SNES {
 
 #include "mapper/system.cpp"
 #include "mapper/generic.cpp"
@@ -9,12 +9,11 @@
 
 void sBus::power() {
   for(unsigned i = 0x2000; i <= 0x5fff; i++) memory::mmio.map(i, memory::mmio_unmapped);
-  for(unsigned i = 0; i < memory::wram.size(); i++) memory::wram[i] = snes.config.cpu.wram_init_value;
+  for(unsigned i = 0; i < memory::wram.size(); i++) memory::wram[i] = config.cpu.wram_init_value;
   reset();
 }
 
 void sBus::reset() {
-  set_speed(false);
 }
 
 bool sBus::load_cart() {
@@ -43,3 +42,6 @@ sBus::sBus() {
 
 sBus::~sBus() {
 }
+
+};
+

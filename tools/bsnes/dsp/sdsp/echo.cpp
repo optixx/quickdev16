@@ -106,7 +106,7 @@ void sDSP::echo_27() {
   }
 
   //output sample to DAC
-  snes.audio.update(outl, outr);
+  audio.sample(outl, outr);
 }
 
 void sDSP::echo_28() {

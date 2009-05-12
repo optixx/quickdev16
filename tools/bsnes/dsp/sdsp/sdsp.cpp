@@ -1,21 +1,21 @@
 /*
   S-DSP emulator
-  license: LGPLv2
-
   Note: this is basically a C++ cothreaded implementation of Shay Green's (blargg's) S-DSP emulator.
   The actual algorithms, timing information, tables, variable names, etc were all from him.
 */
 
 #include <../base.hpp>
+
 #define SDSP_CPP
+namespace SNES {
 
 #define REG(n) state.regs[r_##n]
 #define VREG(n) state.regs[v.vidx + v_##n]
 
-#if !defined(USE_STATE_MACHINE)
+#if !defined(DSP_STATE_MACHINE)
   #define phase_start() while(true) {
   #define phase(n)
-  #define tick()          scheduler.addclocks_dsp(3 * 8)
+  #define tick()          scheduler.addclocks_dsp(3 * 8); scheduler.sync_dspsmp()
   #define phase_end()   }
 #else
   #define phase_start() switch(phase_index) {
@@ -324,3 +324,6 @@ sDSP::sDSP() {
 
 sDSP::~sDSP() {
 }
+
+};
+

@@ -26,6 +26,9 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 
+//#include <gl.h >
+//#include <glu.h>
+
 namespace ruby {
 
 #include "glx.hpp"

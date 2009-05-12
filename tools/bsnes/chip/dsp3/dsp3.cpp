@@ -1,7 +1,10 @@
 #include <../base.hpp>
-#define DSP3_CPP
 
-#include "dsp3.hpp"
+#define DSP3_CPP
+namespace SNES {
+
+DSP3 dsp3;
+
 namespace DSP3i {
   #define bool8 uint8
   #include "dsp3emu.c"
@@ -33,3 +36,5 @@ void DSP3::write(unsigned addr, uint8 data) {
   DSP3i::dsp3_byte = data;
   DSP3i::DSP3SetByte();
 }
+};
+

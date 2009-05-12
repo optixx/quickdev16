@@ -10,15 +10,25 @@
 //Q_IMPORT_PLUGIN(QMngPlugin)
 
 #include <../base.hpp>
-#include <../cart/cart.hpp>
 
 #include <nall/config.hpp>
-#include <nall/function.hpp>
 #include <nall/input.hpp>
 using namespace nall;
 
 #include <ruby/ruby.hpp>
 using namespace ruby;
+
+#include <libreader/libreader.hpp>
+#include <libreader/filereader.hpp>
+
+#if defined(GZIP_SUPPORT)
+  #include <libreader/gzreader.hpp>
+  #include <libreader/zipreader.hpp>
+#endif
+
+#if defined(JMA_SUPPORT)
+  #include <libreader/jmareader.hpp>
+#endif
 
 #include <libfilter/libfilter.hpp>
 
@@ -39,6 +49,10 @@ public:
   bool power;
   bool pause;
   bool autopause;
+
+  clock_t clockTime;
+  clock_t autosaveTime;
+  clock_t screensaverTime;
 
   string configFilename;
   string styleSheetFilename;

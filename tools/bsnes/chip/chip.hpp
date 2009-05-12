@@ -1,3 +1,5 @@
+#include "sgb/sgb.hpp"
+#include "sa1/sa1.hpp"
 #include "bsx/bsx.hpp"
 #include "srtc/srtc.hpp"
 #include "sdd1/sdd1.hpp"

@@ -1,6 +1,9 @@
 #include <../base.hpp>
-#include <../cart/cart.hpp>
-#include "obc1.hpp"
+
+#define OBC1_CPP
+namespace SNES {
+
+OBC1 obc1;
 
 void OBC1::init() {}
 void OBC1::enable() {}
@@ -21,7 +24,7 @@ uint8 OBC1::read(unsigned addr) {
   addr &= 0x1fff;
   if((addr & 0x1ff8) != 0x1ff0) return ram_read(addr);
 
-  switch(addr) { default: //never used, avoids compiler warning
+  switch(addr) { default:  //never used, avoids compiler warning
     case 0x1ff0: return ram_read(status.baseptr + (status.address << 2) + 0);
     case 0x1ff1: return ram_read(status.baseptr + (status.address << 2) + 1);
     case 0x1ff2: return ram_read(status.baseptr + (status.address << 2) + 2);
@@ -70,3 +73,6 @@ void OBC1::ram_write(unsigned addr, uint8 data) {
 
 OBC1::OBC1() {}
 OBC1::~OBC1() {}
+
+};
+

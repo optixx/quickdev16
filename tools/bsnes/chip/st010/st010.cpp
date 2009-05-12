@@ -1,7 +1,10 @@
 #include <../base.hpp>
-#define ST010_CPP
 
-#include "st010.hpp"
+#define ST010_CPP
+namespace SNES {
+
+ST010 st010;
+
 #include "st010_data.hpp"
 #include "st010_op.cpp"
 
@@ -85,3 +88,5 @@ void ST010::write(unsigned addr, uint8 data) {
     ram[0x0021] &= ~0x80;
   }
 }
+};
+

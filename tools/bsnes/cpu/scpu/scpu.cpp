@@ -1,14 +1,53 @@
 #include <../base.hpp>
-#define SCPU_CPP
-
 #include <nall/priorityqueue.hpp>
+
+#define SCPU_CPP
+namespace SNES {
+
 priority_queue<unsigned> event(512, bind(&sCPU::queue_event, &cpu));
 
-#include "core/core.cpp"
 #include "dma/dma.cpp"
 #include "memory/memory.cpp"
 #include "mmio/mmio.cpp"
 #include "timing/timing.cpp"
+
+void sCPU::enter() {
+  regs.pc.l = bus.read(0xfffc);
+  regs.pc.h = bus.read(0xfffd);
+  add_clocks(186);
+
+  while(true) {
+    if(status.interrupt_pending) {
+      status.interrupt_pending = false;
+      if(status.nmi_pending) {
+        status.nmi_pending = false;
+        status.interrupt_vector = (regs.e == false ? 0xffea : 0xfffa);
+      } else if(status.irq_pending) {
+        status.irq_pending = false;
+        status.interrupt_vector = (regs.e == false ? 0xffee : 0xfffe);
+      }
+      op_irq();
+    }
+
+    tracer.trace_cpuop();  //traces CPU opcode (only if tracer is enabled)
+    (this->*opcode_table[op_readpc()])();
+  }
+}
+
+void sCPU::op_irq() {
+  op_read(regs.pc.d);
+  op_io();
+  if(!regs.e) op_writestack(regs.pc.b);
+  op_writestack(regs.pc.h);
+  op_writestack(regs.pc.l);
+  op_writestack(regs.e ? (regs.p & ~0x10) : regs.p);
+  rd.l = op_read(status.interrupt_vector + 0);
+  regs.pc.b = 0x00;
+  regs.p.i  = 1;
+  regs.p.d  = 0;
+  rd.h = op_read(status.interrupt_vector + 1);
+  regs.pc.w = rd.w;
+}
 
 void sCPU::power() {
   CPU::power();
@@ -26,11 +65,8 @@ void sCPU::power() {
 void sCPU::reset() {
   CPU::reset();
 
-  regs.pc.d = 0x000000;
-  regs.pc.l = bus.read(0xfffc);
-  regs.pc.h = bus.read(0xfffd);
-
   //note: some registers are not fully reset by SNES
+  regs.pc   = 0x000000;
   regs.x.h  = 0x00;
   regs.y.h  = 0x00;
   regs.s.h  = 0x01;
@@ -39,8 +75,9 @@ void sCPU::reset() {
   regs.p    = 0x34;
   regs.e    = 1;
   regs.mdr  = 0x00;
+  regs.wai  = false;
+  update_table();
 
-  status.wai_lock = false;
   status.interrupt_pending = false;
   status.interrupt_vector  = 0xfffc;  //reset vector address
 
@@ -59,3 +96,5 @@ sCPU::sCPU() {
 
 sCPU::~sCPU() {
 }
+};
+

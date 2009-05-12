@@ -1,45 +1,46 @@
 #include <../base.hpp>
+
 #define BPPU_CPP
+namespace SNES {
 
 #include "bppu_mmio.cpp"
 #include "bppu_render.cpp"
 
 void bPPU::enter() {
-  loop:
-  //H =    0 (initialize)
-  scanline();
-  if(ivcounter() == 0) frame();
-  add_clocks(10);
+  while(true) {
+    //H =    0 (initialize)
+    scanline();
+    if(ivcounter() == 0) frame();
+    add_clocks(10);
 
-  //H =   10 (OAM address reset)
-  if(ivcounter() == (!overscan() ? 225 : 240)) {
-    if(regs.display_disabled == false) {
-      regs.oam_addr = regs.oam_baseaddr << 1;
-      regs.oam_firstsprite = (regs.oam_priority == false) ? 0 : (regs.oam_addr >> 2) & 127;
+    //H =   10 (OAM address reset)
+    if(ivcounter() == (!overscan() ? 225 : 240)) {
+      if(regs.display_disabled == false) {
+        regs.oam_addr = regs.oam_baseaddr << 1;
+        regs.oam_firstsprite = (regs.oam_priority == false) ? 0 : (regs.oam_addr >> 2) & 127;
+      }
     }
+    add_clocks(502);
+
+    //H =  512 (render)
+    render_scanline();
+    add_clocks(640);
+
+    //H = 1152 (cache OBSEL)
+    cache.oam_basesize   = regs.oam_basesize;
+    cache.oam_nameselect = regs.oam_nameselect;
+    cache.oam_tdaddr     = regs.oam_tdaddr;
+    add_clocks(ilineclocks() - 1152);  //seek to start of next scanline
   }
-  add_clocks(502);
-
-  //H =  512 (render)
-  render_scanline();
-  add_clocks(640);
-
-  //H = 1152 (cache OBSEL)
-  cache.oam_basesize   = regs.oam_basesize;
-  cache.oam_nameselect = regs.oam_nameselect;
-  cache.oam_tdaddr     = regs.oam_tdaddr;
-  add_clocks(ilineclocks() - 1152);  //seek to start of next scanline
-
-  goto loop;
 }
 
 void bPPU::add_clocks(unsigned clocks) {
   tock(clocks);
   scheduler.addclocks_ppu(clocks);
+  scheduler.sync_ppucpu();
 }
 
 void bPPU::scanline() {
-  snes.scanline();
   line = ivcounter();
 
   if(line == 0) {
@@ -76,7 +77,7 @@ void bPPU::render_scanline() {
 
 void bPPU::frame() {
   PPU::frame();
-  snes.frame();
+  system.frame();
 
   if(ifield() == 0) {
     display.interlace = regs.interlace;
@@ -92,7 +93,7 @@ void bPPU::power() {
   for(unsigned i = 0; i < memory::cgram.size(); i++) memory::cgram[i] = 0x00;
   flush_tiledata_cache();
 
-  region = (snes.region() == SNES::NTSC ? 0 : 1);  //0 = NTSC, 1 = PAL
+  region = (system.region() == System::NTSC ? 0 : 1);  //0 = NTSC, 1 = PAL
 
   //$2100
   regs.display_disabled   = 1;
@@ -344,3 +345,5 @@ bPPU::bPPU() {
 bPPU::~bPPU() {
   free_tiledata_cache();
 }
+};
+

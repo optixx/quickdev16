@@ -93,7 +93,7 @@ void LoaderWindow::loadBsxSlottedCartridge(const char *filebase, const char *fil
   slot1File->setText(fileSlot1);
 
   syncUi();
-  mode = ModeBsxSlotted;
+  mode = SNES::Cartridge::ModeBsxSlotted;
   showWindow("Load BS-X Slotted Cartridge");
 }
 
@@ -109,7 +109,7 @@ void LoaderWindow::loadBsxCartridge(const char *fileBase, const char *fileSlot1)
   slot1File->setText(fileSlot1);
 
   syncUi();
-  mode = ModeBsx;
+  mode = SNES::Cartridge::ModeBsx;
   showWindow("Load BS-X Cartridge");
 }
 
@@ -127,8 +127,24 @@ void LoaderWindow::loadSufamiTurboCartridge(const char *fileBase, const char *fi
   slot2File->setText(fileSlot2);
 
   syncUi();
-  mode = ModeSufamiTurbo;
+  mode = SNES::Cartridge::ModeSufamiTurbo;
   showWindow("Load Sufami Turbo Cartridge");
+}
+
+void LoaderWindow::loadSuperGameBoyCartridge(const char *fileBase, const char *fileSlot1) {
+  window->hide();
+  baseLabel->show(),  baseFile->show(),  baseBrowse->show(),  baseClear->show();
+  slot1Label->show(), slot1File->show(), slot1Browse->show(), slot1Clear->show();
+  slot2Label->hide(), slot2File->hide(), slot2Browse->hide(), slot2Clear->hide();
+
+  slot1Label->setText("Game Boy cartridge:");
+
+  baseFile->setText(fileBase);
+  slot1File->setText(fileSlot1);
+
+  syncUi();
+  mode = SNES::Cartridge::ModeSuperGameBoy;
+  showWindow("Load Super Game Boy Cartridge");
 }
 
 void LoaderWindow::showWindow(const char *title) {
@@ -177,18 +193,23 @@ void LoaderWindow::onLoad() {
   string slot2 = slot2File->text().toUtf8().data();
 
   switch(mode) {
-    case ModeBsxSlotted: {
+    case SNES::Cartridge::ModeBsxSlotted: {
       utility.loadCartridgeBsxSlotted(base, slot1);
     } break;
 
-    case ModeBsx: {
-      snes.config.path.bsx = base;
+    case SNES::Cartridge::ModeBsx: {
+      config.path.bsx = base;
       utility.loadCartridgeBsx(base, slot1);
     } break;
 
-    case ModeSufamiTurbo: {
-      snes.config.path.st = base;
+    case SNES::Cartridge::ModeSufamiTurbo: {
+      config.path.st = base;
       utility.loadCartridgeSufamiTurbo(base, slot1, slot2);
+    } break;
+
+    case SNES::Cartridge::ModeSuperGameBoy: {
+      config.path.sgb = base;
+      utility.loadCartridgeSuperGameBoy(base, slot1);
     } break;
   }
 }

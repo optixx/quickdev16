@@ -51,30 +51,30 @@ void Application::initPaths(const char *basename) {
     }
 
     if(strend(temp, "/") == false) strcat(temp, "/");
-    snes.config.path.base = temp;
+    config.path.base = temp;
   } else {
-    snes.config.path.base = "";
+    config.path.base = "";
   }
 
   if(userpath(temp)) {
     strtr(temp, "\\", "/");
     if(strend(temp, "/") == false) strcat(temp, "/");
-    snes.config.path.user = temp;
+    config.path.user = temp;
   } else {
-    snes.config.path.user = "";
+    config.path.user = "";
   }
 
   char cwd[PATH_MAX];
-  snes.config.path.current = getcwd(cwd);
+  config.path.current = getcwd(cwd);
 }
 
 void Application::locateFile(string &filename, bool createDataDirectory) {
   //first, check if file exists in executable directory (single-user mode)
-  string temp = string() << snes.config.path.base << filename;
+  string temp = string() << config.path.base << filename;
 
   if(file::exists(temp) == false) {
     //if not, use user data path (multi-user mode)
-    temp = snes.config.path.user;
+    temp = config.path.user;
     temp << ".bsnes";
     if(createDataDirectory) mkdir(temp);  //ensure directory exists
     temp << "/" << filename;
@@ -104,7 +104,7 @@ int Application::main(int argc, char **argv) {
 
   config.load(configFilename);
   init();
-  snes.init();
+  SNES::system.init(&interface);
 
   if(argc == 2) {
     //if valid file was specified on the command-line, attempt to load it now
@@ -117,7 +117,8 @@ int Application::main(int argc, char **argv) {
     inputManager.refresh();
 
     if(config.input.focusPolicy == Configuration::Input::FocusPolicyPauseEmulation) {
-      bool inactive = (winMain->window->isActiveWindow() == false);
+      bool inactive  = (winMain->window->isActiveWindow() == false)
+                    || (winMain->window->isMinimized() == true);
       if(!autopause && inactive) {
         autopause = true;
         audio.clear();
@@ -128,15 +129,31 @@ int Application::main(int argc, char **argv) {
       autopause = false;
     }
 
-    if(cartridge.loaded() && !pause && !autopause) {
-      snes.runtoframe();
+    if(SNES::cartridge.loaded() && !pause && !autopause) {
+      SNES::system.runtoframe();
     } else {
       usleep(20 * 1000);
     }
 
-    supressScreenSaver();
+    clock_t currentTime = clock();
+    autosaveTime += currentTime - clockTime;
+    screensaverTime += currentTime - clockTime;
+    clockTime = currentTime;
+
+    if(autosaveTime >= CLOCKS_PER_SEC * 60) {
+      //auto-save RAM once per minute in case of emulator crash
+      autosaveTime = 0;
+      utility.saveMemory();
+    }
+
+    if(screensaverTime >= CLOCKS_PER_SEC * 30) {
+      //supress screen saver every 30 seconds so it will not trigger during gameplay
+      screensaverTime = 0;
+      supressScreenSaver();
+    }
   }
 
+  utility.unloadCartridge();
   config.save(configFilename);
   return 0;
 }
@@ -150,6 +167,10 @@ Application::Application() {
   power     = false;
   pause     = false;
   autopause = false;
+
+  clockTime       = clock();
+  autosaveTime    = 0;
+  screensaverTime = 0;
 }
 
 Application::~Application() {
