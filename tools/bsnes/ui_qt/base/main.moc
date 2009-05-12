@@ -1,0 +1,177 @@
+/****************************************************************************
+** Meta object code from reading C++ file 'main.mh'
+**
+** Created: Sun May 10 13:18:12 2009
+**      by: The Qt Meta Object Compiler version 59 (Qt 4.4.3)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#include "main.mh"
+#if !defined(Q_MOC_OUTPUT_REVISION)
+#error "The header file 'main.mh' doesn't include <QObject>."
+#elif Q_MOC_OUTPUT_REVISION != 59
+#error "This file was generated using the moc from 4.4.3. It"
+#error "cannot be used with the include files from this version of Qt."
+#error "(The moc has changed too much.)"
+#endif
+
+QT_BEGIN_MOC_NAMESPACE
+static const uint qt_meta_data_MainWindow[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+      44,   10, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+ // slots: signature, parameters, type, tag, flags
+      12,   11,   11,   11, 0x0a,
+      28,   11,   11,   11, 0x0a,
+      38,   11,   11,   11, 0x0a,
+      49,   11,   11,   11, 0x0a,
+      57,   11,   11,   11, 0x0a,
+      72,   11,   11,   11, 0x0a,
+      89,   11,   11,   11, 0x0a,
+     108,   11,   11,   11, 0x0a,
+     124,   11,   11,   11, 0x0a,
+     139,   11,   11,   11, 0x0a,
+     156,   11,   11,   11, 0x0a,
+     175,   11,   11,   11, 0x0a,
+     191,   11,   11,   11, 0x0a,
+     212,   11,   11,   11, 0x0a,
+     232,   11,   11,   11, 0x0a,
+     253,   11,   11,   11, 0x0a,
+     260,   11,   11,   11, 0x0a,
+     277,   11,   11,   11, 0x0a,
+     294,   11,   11,   11, 0x0a,
+     311,   11,   11,   11, 0x0a,
+     328,   11,   11,   11, 0x0a,
+     346,   11,   11,   11, 0x0a,
+     371,   11,   11,   11, 0x0a,
+     390,   11,   11,   11, 0x0a,
+     405,   11,   11,   11, 0x0a,
+     419,   11,   11,   11, 0x0a,
+     436,   11,   11,   11, 0x0a,
+     454,   11,   11,   11, 0x0a,
+     468,   11,   11,   11, 0x0a,
+     488,   11,   11,   11, 0x0a,
+     507,   11,   11,   11, 0x0a,
+     523,   11,   11,   11, 0x0a,
+     539,   11,   11,   11, 0x0a,
+     551,   11,   11,   11, 0x0a,
+     569,   11,   11,   11, 0x0a,
+     584,   11,   11,   11, 0x0a,
+     601,   11,   11,   11, 0x0a,
+     616,   11,   11,   11, 0x0a,
+     634,   11,   11,   11, 0x0a,
+     646,   11,   11,   11, 0x0a,
+     658,   11,   11,   11, 0x0a,
+     677,   11,   11,   11, 0x0a,
+     697,   11,   11,   11, 0x0a,
+     711,   11,   11,   11, 0x0a,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_MainWindow[] = {
+    "MainWindow\0\0loadCartridge()\0powerOn()\0"
+    "powerOff()\0reset()\0setPort1None()\0"
+    "setPort1Joypad()\0setPort1Multitap()\0"
+    "setPort1Mouse()\0setPort2None()\0"
+    "setPort2Joypad()\0setPort2Multitap()\0"
+    "setPort2Mouse()\0setPort2SuperScope()\0"
+    "setPort2Justifier()\0setPort2Justifiers()\0"
+    "quit()\0setVideoMode1x()\0setVideoMode2x()\0"
+    "setVideoMode3x()\0setVideoMode4x()\0"
+    "setVideoModeMax()\0toggleAspectCorrection()\0"
+    "toggleFullscreen()\0setVideoNtsc()\0"
+    "setVideoPal()\0setPointFilter()\0"
+    "setLinearFilter()\0setNoFilter()\0"
+    "setScanlineFilter()\0setScale2xFilter()\0"
+    "setHq2xFilter()\0setNtscFilter()\0"
+    "muteAudio()\0setSpeedSlowest()\0"
+    "setSpeedSlow()\0setSpeedNormal()\0"
+    "setSpeedFast()\0setSpeedFastest()\0"
+    "syncVideo()\0syncAudio()\0showConfigWindow()\0"
+    "showDocumentation()\0showLicense()\0"
+    "showAbout()\0"
+};
+
+const QMetaObject MainWindow::staticMetaObject = {
+    { &QObject::staticMetaObject, qt_meta_stringdata_MainWindow,
+      qt_meta_data_MainWindow, 0 }
+};
+
+const QMetaObject *MainWindow::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *MainWindow::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_MainWindow))
+        return static_cast<void*>(const_cast< MainWindow*>(this));
+    return QObject::qt_metacast(_clname);
+}
+
+int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QObject::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: loadCartridge(); break;
+        case 1: powerOn(); break;
+        case 2: powerOff(); break;
+        case 3: reset(); break;
+        case 4: setPort1None(); break;
+        case 5: setPort1Joypad(); break;
+        case 6: setPort1Multitap(); break;
+        case 7: setPort1Mouse(); break;
+        case 8: setPort2None(); break;
+        case 9: setPort2Joypad(); break;
+        case 10: setPort2Multitap(); break;
+        case 11: setPort2Mouse(); break;
+        case 12: setPort2SuperScope(); break;
+        case 13: setPort2Justifier(); break;
+        case 14: setPort2Justifiers(); break;
+        case 15: quit(); break;
+        case 16: setVideoMode1x(); break;
+        case 17: setVideoMode2x(); break;
+        case 18: setVideoMode3x(); break;
+        case 19: setVideoMode4x(); break;
+        case 20: setVideoModeMax(); break;
+        case 21: toggleAspectCorrection(); break;
+        case 22: toggleFullscreen(); break;
+        case 23: setVideoNtsc(); break;
+        case 24: setVideoPal(); break;
+        case 25: setPointFilter(); break;
+        case 26: setLinearFilter(); break;
+        case 27: setNoFilter(); break;
+        case 28: setScanlineFilter(); break;
+        case 29: setScale2xFilter(); break;
+        case 30: setHq2xFilter(); break;
+        case 31: setNtscFilter(); break;
+        case 32: muteAudio(); break;
+        case 33: setSpeedSlowest(); break;
+        case 34: setSpeedSlow(); break;
+        case 35: setSpeedNormal(); break;
+        case 36: setSpeedFast(); break;
+        case 37: setSpeedFastest(); break;
+        case 38: syncVideo(); break;
+        case 39: syncAudio(); break;
+        case 40: showConfigWindow(); break;
+        case 41: showDocumentation(); break;
+        case 42: showLicense(); break;
+        case 43: showAbout(); break;
+        }
+        _id -= 44;
+    }
+    return _id;
+}
+QT_END_MOC_NAMESPACE

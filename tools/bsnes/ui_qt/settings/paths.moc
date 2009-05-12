@@ -1,0 +1,94 @@
+/****************************************************************************
+** Meta object code from reading C++ file 'paths.mh'
+**
+** Created: Sun May 10 13:18:13 2009
+**      by: The Qt Meta Object Compiler version 59 (Qt 4.4.3)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#include "paths.mh"
+#if !defined(Q_MOC_OUTPUT_REVISION)
+#error "The header file 'paths.mh' doesn't include <QObject>."
+#elif Q_MOC_OUTPUT_REVISION != 59
+#error "This file was generated using the moc from 4.4.3. It"
+#error "cannot be used with the include files from this version of Qt."
+#error "(The moc has changed too much.)"
+#endif
+
+QT_BEGIN_MOC_NAMESPACE
+static const uint qt_meta_data_PathSettingsWindow[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+      10,   10, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+ // slots: signature, parameters, type, tag, flags
+      20,   19,   19,   19, 0x0a,
+      37,   19,   19,   19, 0x0a,
+      55,   19,   19,   19, 0x0a,
+      72,   19,   19,   19, 0x0a,
+      90,   19,   19,   19, 0x0a,
+     108,   19,   19,   19, 0x0a,
+     127,   19,   19,   19, 0x0a,
+     145,   19,   19,   19, 0x0a,
+     164,   19,   19,   19, 0x0a,
+     181,   19,   19,   19, 0x0a,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_PathSettingsWindow[] = {
+    "PathSettingsWindow\0\0selectGamePath()\0"
+    "defaultGamePath()\0selectSavePath()\0"
+    "defaultSavePath()\0selectPatchPath()\0"
+    "defaultPatchPath()\0selectCheatPath()\0"
+    "defaultCheatPath()\0selectDataPath()\0"
+    "defaultDataPath()\0"
+};
+
+const QMetaObject PathSettingsWindow::staticMetaObject = {
+    { &QObject::staticMetaObject, qt_meta_stringdata_PathSettingsWindow,
+      qt_meta_data_PathSettingsWindow, 0 }
+};
+
+const QMetaObject *PathSettingsWindow::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *PathSettingsWindow::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_PathSettingsWindow))
+        return static_cast<void*>(const_cast< PathSettingsWindow*>(this));
+    return QObject::qt_metacast(_clname);
+}
+
+int PathSettingsWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QObject::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: selectGamePath(); break;
+        case 1: defaultGamePath(); break;
+        case 2: selectSavePath(); break;
+        case 3: defaultSavePath(); break;
+        case 4: selectPatchPath(); break;
+        case 5: defaultPatchPath(); break;
+        case 6: selectCheatPath(); break;
+        case 7: defaultCheatPath(); break;
+        case 8: selectDataPath(); break;
+        case 9: defaultDataPath(); break;
+        }
+        _id -= 10;
+    }
+    return _id;
+}
+QT_END_MOC_NAMESPACE
