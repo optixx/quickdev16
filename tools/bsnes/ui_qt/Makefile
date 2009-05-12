@@ -11,14 +11,16 @@ endif
 ifeq ($(platform),x)
   #qtflags = `pkg-config --cflags QtCore QtGui`
   link += `pkg-config --libs QtCore QtGui`
-  qtflags = -I/Developer/SDKs/Qt/include -I/Developer/SDKs/Qt/include/QtCore -I/Developer/SDKs/Qt/include/QtGui -I/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers -I/System/Library/Frameworks/AGL.framework/Headers -I/Developer/SDKs/Qt/include/QtOpenGL
-
-  link = -F/Developer/SDKs/Qt/lib -L/Developer/SDKs/Qt/lib -framework QtOpenGL -L/Developer/SDKs/Qt/lib -F/Developer/SDKs/Qt/lib -framework QtGui -framework Carbon -framework AppKit -framework QtCore -lz -lm -framework ApplicationServices -framework OpenGL -framework AGL -L/opt/local/lib -lSDLmain -lSDL -Wl,-framework,Cocoa  -lXext -lX11 -lz  
-
-  link = -F/Developer/SDKs/Qt/lib -L/Developer/SDKs/Qt/lib -framework QtOpenGL -L/Developer/SDKs/Qt/lib -F/Developer/SDKs/Qt/lib -framework QtGui -framework Carbon -framework AppKit -framework QtCore -lz -lm -framework ApplicationServices -framework OpenGL -framework AGL -L/opt/local/lib  -lSDL -Wl,-framework,Cocoa -lXext -lX11 -lz   -lgl
-
-
-
+else ifeq ($(platform),mac)
+    qtflags =   -I/Developer/SDKs/Qt/include \
+                -I/Developer/SDKs/Qt/include/QtCore \
+                -I/Developer/SDKs/Qt/include/QtGui  
+    link +=  -F/Developer/SDKs/Qt/lib \
+            -L/Developer/SDKs/Qt/lib \
+            -framework QtGui  \
+            -framework Carbon \
+            -framework AppKit \
+            -framework QtCore 
 else ifeq ($(platform),win)
   ifeq ($(qtpath),)
     # find Qt install directory from PATH environment variable

@@ -97,7 +97,7 @@ public:
   }
 
   bool init() {
-    display = XOpenDisplay(0);
+    //display = XOpenDisplay(0);
 
     char env[512];
     sprintf(env, "SDL_WINDOWID=%ld", settings.handle);

@@ -2,7 +2,7 @@ include lib/nall/Makefile
 ui = ui_qt
 
 
-platform=x
+platform=mac
 compiler=gcc
 enable_gzip=false
 
@@ -12,25 +12,45 @@ enable_gzip=false
 
 c     := $(compiler)
 cpp   := $(subst cc,++,$(compiler))
-flags := -ggdb -O3 -fomit-frame-pointer -Ilib \
--I/Developer/SDKs/Qt/include \
--I/Developer/SDKs/Qt/include/QtCore \
--I/Developer/SDKs/Qt/include/QtGui \
--I/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers \
--I/System/Library/Frameworks/AGL.framework/Headers  \
--I/Developer/SDKs/Qt/include/QtOpenGL -I/usr/X11R6/include 
+flags := -ggdb -O3 -fomit-frame-pointer -Ilib 
+
 link  := 
-
-# profile-guided instrumentation:
-# flags += -fprofile-generate
-# link += -lgcov
-
-# profile-guided optimization:
-#flags += -fprofile-use
 
 ################
 ### platform ###
 ################
+
+ifeq ($(platform),mac)
+ flags +=-I/Developer/SDKs/Qt/include \
+	-I/Developer/SDKs/Qt/include/QtCore \
+	-I/Developer/SDKs/Qt/include/QtGui \
+	-I/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers \
+	-I/System/Library/Frameworks/AGL.framework/Headers  \
+	-I/System/Library/Frameworks/OpenAL.framework/Versions/A/Headers \
+ 	-I/usr/X11R6/include \
+ 	-I/opt/local/include
+
+  link +=   -lz \
+            -lm \
+            -lao \
+  	    -framework ApplicationServices \
+            -framework OpenGL \
+            -framework OpenAL \
+            -framework AGL \
+            -L/opt/local/lib \
+            -lSDL -Wl,-framework,Cocoa \
+            -lXext \
+	    -lgl \
+            -lX11
+  #ruby := video.glx video.sdl
+  #ruby += audio.openal audio.ao
+  #ruby += input.sdl
+  #-DVIDEO_GLX -DVIDEO_XV -DVIDEO_SDL -DAUDIO_ALS 
+  #-DAUDIO_OPENAL -DAUDIO_OSS -DAUDIO_PULSEAUDIO
+  #-DAUDIO_AO -DINPUT_SDL -DINPUT_X
+   flags  += -DVIDEO_SDL -DINPUT_SDL -DVIDEO_GLX -DAUDIO_AO -DAUDIO_OPENAL
+
+endif
 
 ifeq ($(platform),x)
   ruby := video.glx video.xv video.sdl
@@ -42,12 +62,9 @@ else ifeq ($(platform),win)
   ruby += input.rawinput input.directinput
 
   link += -mwindows
-# link += -mconsole
   link += -luuid -lkernel32 -luser32 -lgdi32 -lshell32
   # statically link Qt for Windows build
   link += -enable-stdcall-fixup -Wl,-s -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
-else
-  unknown_platform: help;
 endif
 
 ############
@@ -110,8 +127,6 @@ all: build;
 include $(ui)/Makefile
 objects := $(patsubst %,obj/%.o,$(objects))
 rubydef := $(foreach c,$(subst .,_,$(call strupper,$(ruby))),-D$c)
-#-DVIDEO_GLX -DVIDEO_XV -DVIDEO_SDL -DAUDIO_ALSA -DAUDIO_OPENAL -DAUDIO_OSS -DAUDIO_PULSEAUDIO -DAUDIO_AO -DINPUT_SDL -DINPUT_X 
-rubydef =-DVIDEO_SDL -DINPUT_SDL 
 #################
 ### libraries ###
 #################
@@ -236,13 +251,7 @@ install:
 	install -D -m 644 data/bsnes.desktop $(DESTDIR)$(prefix)/share/applications/bsnes.desktop
 
 clean: ui_clean
-	-@$(call delete,obj/*.o)
-	-@$(call delete,*.res)
-	-@$(call delete,*.pgd)
-	-@$(call delete,*.pgc)
-	-@$(call delete,*.ilk)
-	-@$(call delete,*.pdb)
-	-@$(call delete,*.manifest)
+	rm obj/*.o
 
 help:
 	@echo "Usage: $(MAKE) platform=(os) compiler=(cc) [options]"
