@@ -53,7 +53,8 @@ void crc_check_memory(uint32_t top_addr)
 }
 
 
-void crc_check_memory_range(uint32_t start_addr, uint32_t size)
+void crc_check_memory_
+range(uint32_t start_addr, uint32_t size)
 {
     uint16_t crc = 0;
     uint32_t addr;

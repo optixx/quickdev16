@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>poc/avr_usbload/main.c</string>
+	<string>tools/bsnes/lib/nall/lzss.hpp</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -254,14 +254,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>22</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>55</integer>
+				<integer>56</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>15</integer>
+			<integer>4</integer>
 		</dict>
 		<key>poc/avr_usbload/requests.h</key>
 		<dict>
@@ -587,21 +587,21 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>tools/bsnes/cart/cart.cpp</key>
+		<key>tools/bsnes/Makefile</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>10</integer>
 				<key>line</key>
-				<integer>95</integer>
+				<integer>8</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>44</integer>
+			<integer>0</integer>
 		</dict>
-		<key>tools/bsnes/cart/cart.hpp</key>
+		<key>tools/bsnes/lib/nall/algorithm.hpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -613,7 +613,245 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>24</integer>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/nall/any.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/nall/config.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/nall/crc32.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/nall/endian.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/nall/lzss.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/nall/new.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/nall/static.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/nall/stdint.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/ruby/audio/ao.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/ruby/audio/ao.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/ruby/audio/openal.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>14</integer>
+				<key>line</key>
+				<integer>1</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/ruby/ruby.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>266</integer>
+		</dict>
+		<key>tools/bsnes/lib/ruby/ruby.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>55</integer>
+		</dict>
+		<key>tools/bsnes/lib/ruby/ruby_audio.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>68</integer>
+		</dict>
+		<key>tools/bsnes/lib/ruby/ruby_impl.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/ruby/video.hpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/lib/ruby/video/sdl.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>16</integer>
+				<key>line</key>
+				<integer>103</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>85</integer>
 		</dict>
 		<key>tools/bsnes/memory/smemory/mapper/chip.cpp</key>
 		<dict>
@@ -670,6 +908,64 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/ui_qt/Makefile</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>tools/bsnes/ui_qt/main.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>11</integer>
+				<key>line</key>
+				<integer>136</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>110</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>136</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>11</integer>
+				<key>line</key>
+				<integer>136</integer>
+			</dict>
+		</dict>
+		<key>tools/bsnes/ui_qt/platform.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>48</integer>
 		</dict>
 		<key>tools/usbload/avr.mk</key>
 		<dict>
@@ -1125,12 +1421,6 @@
 		<string>snes/crc/event.c</string>
 		<string>snes/crc/main.c</string>
 		<string>poc/avr_sdcard/mmc.c</string>
-		<string>tools/bsnes/cart/cart.cpp</string>
-		<string>tools/bsnes/memory/smemory/mapper/chip.cpp</string>
-		<string>tools/bsnes/memory/smemory/mapper/generic.cpp</string>
-		<string>tools/bsnes/memory/smemory/mapper/system.cpp</string>
-		<string>tools/bsnes/memory/smemory/smemory.cpp</string>
-		<string>tools/bsnes/cart/cart.hpp</string>
 		<string>poc/avr_sdcard/main.c</string>
 		<string>poc/avr_usbload/crc.c</string>
 		<string>poc/avr_usbload/crc.h</string>
@@ -1165,6 +1455,28 @@
 		<string>tools/vusb/examples/custom-class/commandline/set-led.c</string>
 		<string>tools/vusb/examples/custom-class/Readme.txt</string>
 		<string>poc/avr_usbload/main.c</string>
+		<string>tools/bsnes/Makefile</string>
+		<string>tools/bsnes/ui_qt/Makefile</string>
+		<string>tools/bsnes/lib/ruby/audio/openal.cpp</string>
+		<string>tools/bsnes/lib/ruby/video.hpp</string>
+		<string>tools/bsnes/lib/ruby/video/sdl.cpp</string>
+		<string>tools/bsnes/lib/ruby/ruby_impl.cpp</string>
+		<string>tools/bsnes/lib/ruby/ruby_audio.cpp</string>
+		<string>tools/bsnes/lib/ruby/ruby.hpp</string>
+		<string>tools/bsnes/lib/ruby/ruby.cpp</string>
+		<string>tools/bsnes/lib/nall/algorithm.hpp</string>
+		<string>tools/bsnes/lib/nall/any.hpp</string>
+		<string>tools/bsnes/lib/nall/config.hpp</string>
+		<string>tools/bsnes/lib/nall/crc32.hpp</string>
+		<string>tools/bsnes/lib/nall/endian.hpp</string>
+		<string>tools/bsnes/lib/nall/static.hpp</string>
+		<string>tools/bsnes/lib/nall/stdint.hpp</string>
+		<string>tools/bsnes/lib/nall/new.hpp</string>
+		<string>tools/bsnes/lib/nall/lzss.hpp</string>
+		<string>tools/bsnes/ui_qt/main.cpp</string>
+		<string>tools/bsnes/ui_qt/platform.cpp</string>
+		<string>tools/bsnes/lib/ruby/audio/ao.cpp</string>
+		<string>tools/bsnes/lib/ruby/audio/ao.hpp</string>
 		<string>poc/avr_usbload/uart.h</string>
 		<string>poc/avr_usbload/commandline/Makefile</string>
 		<string>poc/avr_usbload/commandline/snesuploader.c</string>
@@ -1191,37 +1503,7 @@
 			<true/>
 			<key>subItems</key>
 			<dict>
-				<key>poc</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict>
-						<key>avr_usbload</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict>
-								<key>commandline</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-							</dict>
-						</dict>
-					</dict>
-				</dict>
 				<key>scripts</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict/>
-				</dict>
-				<key>snes</key>
 				<dict>
 					<key>isExpanded</key>
 					<true/>
@@ -1234,92 +1516,48 @@
 					<true/>
 					<key>subItems</key>
 					<dict>
-						<key>vusb</key>
+						<key>bsnes</key>
 						<dict>
 							<key>isExpanded</key>
 							<true/>
 							<key>subItems</key>
 							<dict>
-								<key>examples</key>
+								<key>lib</key>
 								<dict>
 									<key>isExpanded</key>
 									<true/>
 									<key>subItems</key>
 									<dict>
-										<key>custom-class</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict>
-												<key>commandline</key>
-												<dict>
-													<key>isExpanded</key>
-													<true/>
-													<key>subItems</key>
-													<dict/>
-												</dict>
-												<key>firmware</key>
-												<dict>
-													<key>isExpanded</key>
-													<true/>
-													<key>subItems</key>
-													<dict/>
-												</dict>
-											</dict>
-										</dict>
-										<key>hid-custom-rq</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict>
-												<key>firmware</key>
-												<dict>
-													<key>isExpanded</key>
-													<true/>
-													<key>subItems</key>
-													<dict/>
-												</dict>
-											</dict>
-										</dict>
-										<key>hid-data</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict>
-												<key>commandline</key>
-												<dict>
-													<key>isExpanded</key>
-													<true/>
-													<key>subItems</key>
-													<dict/>
-												</dict>
-												<key>firmware</key>
-												<dict>
-													<key>isExpanded</key>
-													<true/>
-													<key>subItems</key>
-													<dict/>
-												</dict>
-											</dict>
-										</dict>
-										<key>hid-mouse</key>
+										<key>nall</key>
 										<dict>
 											<key>isExpanded</key>
 											<true/>
 											<key>subItems</key>
 											<dict/>
 										</dict>
-										<key>usbtool</key>
+										<key>ruby</key>
 										<dict>
 											<key>isExpanded</key>
 											<true/>
 											<key>subItems</key>
-											<dict/>
+											<dict>
+												<key>video</key>
+												<dict>
+													<key>isExpanded</key>
+													<true/>
+													<key>subItems</key>
+													<dict/>
+												</dict>
+											</dict>
 										</dict>
 									</dict>
+								</dict>
+								<key>ui_qt</key>
+								<dict>
+									<key>isExpanded</key>
+									<true/>
+									<key>subItems</key>
+									<dict/>
 								</dict>
 							</dict>
 						</dict>
@@ -1329,6 +1567,6 @@
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{4, 56}, {733, 822}}</string>
+	<string>{{0, 60}, {720, 818}}</string>
 </dict>
 </plist>

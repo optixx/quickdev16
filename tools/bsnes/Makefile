@@ -12,7 +12,7 @@ enable_gzip=false
 
 c     := $(compiler)
 cpp   := $(subst cc,++,$(compiler))
-flags := -ggdb -O3 -fomit-frame-pointer -Ilib 
+flags := -ggdb3 -O3 -fomit-frame-pointer -Ilib 
 
 link  := 
 

@@ -102,14 +102,18 @@ public:
     char env[512];
     sprintf(env, "SDL_WINDOWID=%ld", settings.handle);
     putenv(env);
-
+    printf("init sdl\n");
     SDL_InitSubSystem(SDL_INIT_VIDEO);
     //screen depth must be 32, as 24bpp with a 32-bit X window visual produces no output.
-    screen = SDL_SetVideoMode(2560, 1600, 32, SDL_HWSURFACE);
+    printf("init screen\n");
+    screen = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE);
+    //makescreen = SDL_SetVideoMode(2560, 1600, 32, SDL_HWSURFACE);
     //buffer depth must be 32, as this is the input format used by all ruby drivers.
+    printf("init surface\n");
     buffer = SDL_CreateRGBSurface(SDL_HWSURFACE,
       1024, 1024, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000
     );
+    printf("init done\n");
     return true;
   }
 
