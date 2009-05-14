@@ -159,7 +159,7 @@ all: build;
 include $(ui)/Makefile
 
 objects := $(patsubst %,obj/%.$(obj),$(objects))
-#rubydef := $(foreach c,$(subst .,_,$(call strupper,$(ruby))),$(call mkdef,$c))
+rubydef := $(foreach c,$(subst .,_,$(call strupper,$(ruby))),$(call mkdef,$c))
 
 #################
 ### libraries ###
