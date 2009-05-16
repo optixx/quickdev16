@@ -4,9 +4,9 @@ ui = ui_qt
 
 ################
 ### compiler ###
-################
+##########:######
 
-platform=mac
+platform=x
 compiler=gcc
 enable_gzip=false
 
@@ -104,20 +104,20 @@ endif
 ############
 
 rubyflags = $(if $(findstring .sdl,$(ruby)),`sdl-config --cflags`)
-#link += $(if $(findstring .sdl,$(ruby)),`sdl-config --libs`)
+link += $(if $(findstring .sdl,$(ruby)),`sdl-config --libs`)
 
-#link += $(if $(findstring video.direct3d,$(ruby)),$(call mklib,d3d9))
-#link += $(if $(findstring video.directdraw,$(ruby)),$(call mklib,ddraw))
-#link += $(if $(findstring video.glx,$(ruby)),$(call mklib,GL))
-#link += $(if $(findstring video.wgl,$(ruby)),$(call mklib,opengl32))
-#link += $(if $(findstring video.xv,$(ruby)),$(call mklib,Xv))
-#link += $(if $(findstring audio.alsa,$(ruby)),$(call mklib,asound))
-#link += $(if $(findstring audio.ao,$(ruby)),$(call mklib,ao))
-#link += $(if $(findstring audio.directsound,$(ruby)),$(call mklib,dsound))
-#link += $(if $(findstring audio.openal,$(ruby)),$(if $(call streq,$(platform),x),$(call mklib,openal),$(call mklib,openal32)))
-#link += $(if $(findstring audio.pulseaudio,$(ruby)),$(call mklib,pulse-simple))
-#link += $(if $(findstring input.directinput,$(ruby)),$(call mklib,dinput8) $(call mklib,dxguid))
-#link += $(if $(findstring input.rawinput,$(ruby)),$(call mklib,xinput) $(call mklib,dinput8) $(call mklib,dxguid))
+link += $(if $(findstring video.direct3d,$(ruby)),$(call mklib,d3d9))
+link += $(if $(findstring video.directdraw,$(ruby)),$(call mklib,ddraw))
+link += $(if $(findstring video.glx,$(ruby)),$(call mklib,GL))
+link += $(if $(findstring video.wgl,$(ruby)),$(call mklib,opengl32))
+link += $(if $(findstring video.xv,$(ruby)),$(call mklib,Xv))
+link += $(if $(findstring audio.alsa,$(ruby)),$(call mklib,asound))
+link += $(if $(findstring audio.ao,$(ruby)),$(call mklib,ao))
+link += $(if $(findstring audio.directsound,$(ruby)),$(call mklib,dsound))
+link += $(if $(findstring audio.openal,$(ruby)),$(if $(call streq,$(platform),x),$(call mklib,openal),$(call mklib,openal32)))
+link += $(if $(findstring audio.pulseaudio,$(ruby)),$(call mklib,pulse-simple))
+link += $(if $(findstring input.directinput,$(ruby)),$(call mklib,dinput8) $(call mklib,dxguid))
+link += $(if $(findstring input.rawinput,$(ruby)),$(call mklib,xinput) $(call mklib,dinput8) $(call mklib,dxguid))
 
 ####################
 ### core objects ###

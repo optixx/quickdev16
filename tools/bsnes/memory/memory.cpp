@@ -29,14 +29,13 @@ MMIO* MMIOAccess::get(unsigned addr) {
 }
 
 uint8 MMIOAccess::read(unsigned addr) {
-	printf("MMIOAccess::read 0x%x\n",addr);
-
-	return mmio[(addr - 0x2000) & 0x3fff]->mmio_read(addr);
+	//printf("MMIOAccess::read 0x%x\n",addr);
+    return mmio[(addr - 0x2000) & 0x3fff]->mmio_read(addr);
 }
 
 void MMIOAccess::write(unsigned addr, uint8 data) {
-  printf("MMIOAccess::write 0x%x %x\n",addr,data);
-  mmio[(addr - 0x2000) & 0x3fff]->mmio_write(addr, data);
+    //printf("MMIOAccess::write 0x%x %x\n",addr,data);
+    mmio[(addr - 0x2000) & 0x3fff]->mmio_write(addr, data);
 }
 
 unsigned Bus::mirror(unsigned addr, unsigned size) {
