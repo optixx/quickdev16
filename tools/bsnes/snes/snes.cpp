@@ -23,7 +23,7 @@ DSP3     dsp3;
 DSP4     dsp4;
 OBC1     obc1;
 ST010    st010;
-
+CMMIO    cmmio;
 #include "scheduler/scheduler.cpp"
 #include "tracer/tracer.cpp"
 
@@ -56,6 +56,7 @@ void SNES::init() {
   video.init();
   audio.init();
   input.init();
+  cmmio.init();
   snesinterface.init();
 }
 
@@ -94,6 +95,8 @@ void SNES::power() {
   if(cartridge.has_dsp4())    dsp4.power();
   if(cartridge.has_obc1())    obc1.power();
   if(cartridge.has_st010())   st010.power();
+ 
+  cmmio.power();
 
   for(unsigned i = 0x2100; i <= 0x213f; i++) memory::mmio.map(i, ppu);
   for(unsigned i = 0x2140; i <= 0x217f; i++) memory::mmio.map(i, cpu);
@@ -116,6 +119,8 @@ void SNES::power() {
   if(cartridge.has_dsp4())    dsp4.enable();
   if(cartridge.has_obc1())    obc1.enable();
   if(cartridge.has_st010())   st010.enable();
+
+  cmmio.enable();
 
   input.port_set_device(0, snes.config.controller_port1);
   input.port_set_device(1, snes.config.controller_port2);

@@ -1,9 +1,9 @@
 # SDK Config
 
 
-PLATFORM=mac
+PLATFORM=$(shell uname)
 
-ifeq ($(PLATFORM),linux)
+ifeq ($(PLATFORM),Linux)
     # Linux Wine 
     SDK=/home/david/.wine/drive_c/65xx_FreeSDK
     WINE=wine

@@ -29,10 +29,8 @@ void main(void) {
 	word crc01;
 	word crc02;
 	padStatus pad1;
-	char line_header[32] = "BANK CRC  ADDR   123456789ABCDEF";
-    char line[32] = "                             ";	
-	char test_buffer[] = "da";
-    unsigned long addr; 
+	char line_header[32] = "OK";
+	char packet[4] = "TEST";
 	initInternalRegisters();
 
 	*(byte*) 0x2105 = 0x01;	// MODE 1 value
@@ -41,9 +39,14 @@ void main(void) {
 	*(byte*) 0x2100 = 0x0f; // enable background
 
     enableDebugScreen();
-
     writeln(line_header,0);
 
+    for (i=0;i<4;i++){
+        *(byte*) 0x3000=packet[i];
+        *(byte*) 0x700010=packet[i];
+    }
+    //writeln(line_header,1);
+    
 	while(1){
 		while(!pad1.start) {
 			waitForVBlank();

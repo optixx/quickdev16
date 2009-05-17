@@ -14,12 +14,18 @@ namespace memory {
 };
 
 uint8 UnmappedMemory::read(unsigned) { return cpu.regs.mdr; }
-void UnmappedMemory::write(unsigned, uint8) {}
+void UnmappedMemory::write(unsigned addr, uint8 val) {
+    printf("UnmappedMemory::write 0x%x 0x%x\n",addr,val);
+}
 
 uint8 UnmappedMMIO::mmio_read(unsigned) { return cpu.regs.mdr; }
-void UnmappedMMIO::mmio_write(unsigned, uint8) {}
+void UnmappedMMIO::mmio_write(unsigned addr, uint8 val) {
+    printf("UnmappedMemory::write 0x%x 0x%x\n",addr,val);
+    
+}
 
 void MMIOAccess::map(unsigned addr, MMIO &access) {
+  //printf("MMIOAccess::map 0x%x\n",addr);
   //MMIO: $[00-3f]:[2000-5fff]
   mmio[(addr - 0x2000) & 0x3fff] = &access;
 }
@@ -34,7 +40,8 @@ uint8 MMIOAccess::read(unsigned addr) {
 }
 
 void MMIOAccess::write(unsigned addr, uint8 data) {
-    //printf("MMIOAccess::write 0x%x %x\n",addr,data);
+    
+    printf("MMIOAccess::write 0x%x %x\n",addr,data);
     mmio[(addr - 0x2000) & 0x3fff]->mmio_write(addr, data);
 }
 
