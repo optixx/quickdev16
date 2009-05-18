@@ -27,7 +27,7 @@ optixx.inc: optixx.pcx
 	$(AS) -o $?  $@
 
 $(APP):  linkfile $(GFX) $(OBJS) $(GFX)
-	$(LD) -vr linkerfile.prj  $@
+	$(LD) -vri linkerfile.prj  $@
 
 clean:
 	rm -vf $(APP) *.prj *.o

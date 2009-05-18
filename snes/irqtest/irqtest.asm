@@ -53,7 +53,14 @@ Start_do:
     lda  #67
     sta  $3000
     
-    printf
+    printf str_COP
+    
+    lda  #65
+    sta  $3000
+    lda  #66
+    sta  $3000
+    lda  #67
+    sta  $3000
     
 Infinity:
     jmp Infinity    ; bwa hahahahaha
@@ -93,15 +100,15 @@ SetupVideo:
 
 
 str_COP:
-    .db "COP\n"
+    .db "COP",10,0
 str_ABORT:
-    .db "ABORT\n"
+    .db "ABORT",10,0
 str_NMI:
-    .db "NMI\n"
+    .db "NMI",10,0
 str_RESET:
-    .db "RESET\n"
+    .db "RESET",10,0
 str_IRQBRK:
-    .db "IRQBRK\n"
+    .db "IRQBRK",10,0
 
 
 ;============================================================================

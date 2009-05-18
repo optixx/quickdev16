@@ -1,30 +1,22 @@
+.define	debug_pointer			$0080 
 
 .MACRO printf
-    REP #$38	; mem/A = 16 bit, X/Y = 16 bit
-    SEP #$20
-    lda.w str_NMI
-    sta.w debug_pointer
-    ldy #0
-    jsr do_printf
-    REP #$30	; mem/A = 16 bit, X/Y = 16 bit
-    SEP #$20
-    
+    ldy.w   #\1                 ; load add of the string
+    sty.w   debug_pointer       ; store address in defined mem area
+    ldy     #0                  ; zero y
+    jsr     do_printf           
 .ENDM
 
 
-.define	debug_pointer			$0000 
-
 
 .BANK 0
-.ORG 0
 .SECTION "debug" SEMIFREE
 
-
 do_printf:
-	lda     (debug_pointer),y       ; get ascii text data
-	sta     $3000
+    lda     (debug_pointer),y    ; get address of string
+	sta     $3000               ; write to MMIO debug reg
 	iny
-	cpy     #5
+	cmp     #0                  ; len 5
 	bne     do_printf
     rts
 .ENDs
