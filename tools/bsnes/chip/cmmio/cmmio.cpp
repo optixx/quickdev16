@@ -22,13 +22,19 @@ void CMMIO::reset() {
 
 uint8 CMMIO::mmio_read(unsigned addr) {
   addr &= 0xffff;
-  printf("CMMIO::mmio_read 0x%x",addr);
+  //printf("CMMIO::mmio_read 0x%x",addr);
   return cpu.regs.mdr;
 }
 
 void CMMIO::mmio_write(unsigned addr, uint8 data) {
   addr &= 0xffff;
-  printf("CMMIO::mmio_write 0x%x 0x%x",addr,data);
+  //printf("CMMIO::mmio_write 0x%04x 0x%02x (%i)\n",addr,data,data);
+  //fflush(stdout);
+  /* debug to stderr */
+  if (addr == 0x3000){
+      fprintf(stderr,"%c",data);
+      fflush(stderr);
+  }
 }
 
 CMMIO::CMMIO() {

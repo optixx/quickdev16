@@ -27,13 +27,18 @@ void int2hex(unsigned long number, char *buf,word size)
 
 }
 
-void writeln(char *buffer,word y){
+void printDebugScreen(char *buffer,word y){
     char i;
     waitForVBlank();
 	for(i=0; i<32; i++) {
 		waitForVBlank();
 		VRAMByteWrite((byte) (buffer[i]-32), (word) (0x4000+i+(y*0x20)));
 	}
+}
+
+void printf(char *buffer){
+	while(*buffer)
+	    *(byte*) 0x3000=*buffer++;
 }
 
 void enableDebugScreen(void){

@@ -29,7 +29,7 @@ void main(void) {
 	word crc01;
 	word crc02;
 	padStatus pad1;
-	char line_header[32] = "OK";
+	char line_header[32] = "OK2";
 	char packet[4] = "TEST";
 	initInternalRegisters();
 
@@ -39,13 +39,10 @@ void main(void) {
 	*(byte*) 0x2100 = 0x0f; // enable background
 
     enableDebugScreen();
-    writeln(line_header,0);
-
-    for (i=0;i<4;i++){
-        *(byte*) 0x3000=packet[i];
-        *(byte*) 0x700010=packet[i];
-    }
-    //writeln(line_header,1);
+    printDebugScreen(line_header,0);
+    printf("Debugging console  test\n");
+    printf("test me\n");
+    printDebugScreen(line_header,1);
     
 	while(1){
 		while(!pad1.start) {

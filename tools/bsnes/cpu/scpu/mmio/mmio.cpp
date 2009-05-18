@@ -483,11 +483,9 @@ void sCPU::mmio_write(unsigned addr, uint8 data) {
     port_write(addr & 3, data);
     return;
   }
-  printf("sCPU::mmio_write 0x%x 0x%x",addr,data);
   
   /*custom area*/
   if((addr & 0xff00) == 0x3000) { //$3000-$30ff
-    printf("sCPU::mmio_write 0x%x 0x%x",addr,data);
     return;
   }
 
