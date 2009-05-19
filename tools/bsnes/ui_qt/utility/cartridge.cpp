@@ -154,6 +154,15 @@ void Utility::modifySystemState(system_state_t state) {
 
       showMessage("System was reset.");
     } break;
+    
+    case Irq: {
+        if(cartridge.loaded() == false || application.power == false) break;
+
+        application.pause = false;
+        snes.irq();
+
+        showMessage("Irq was send.");
+    } break;
   }
 
   winMain->syncUi();

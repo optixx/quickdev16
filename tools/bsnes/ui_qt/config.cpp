@@ -54,6 +54,7 @@ public:
       string loadCartridge;
       string pauseEmulation;
       string resetSystem;
+      string triggerIrq;
       string powerCycleSystem;
       string lowerSpeed;
       string raiseSpeed;
@@ -204,6 +205,7 @@ public:
     attach(input.uiGeneral.loadCartridge     = "none",                "input.uiGeneral.loadCartridge");
     attach(input.uiGeneral.pauseEmulation    = "keyboard00.pause",    "input.uiGeneral.pauseEmulation");
     attach(input.uiGeneral.resetSystem       = "none",                "input.uiGeneral.resetSystem");
+    attach(input.uiGeneral.triggerIrq        = "none",                "input.uiGeneral.triggerIrq");
     attach(input.uiGeneral.powerCycleSystem  = "none",                "input.uiGeneral.powerCycleSystem");
     attach(input.uiGeneral.lowerSpeed        = "keyboard00.divide",   "input.uiGeneral.lowerSpeed");
     attach(input.uiGeneral.raiseSpeed        = "keyboard00.multiply", "input.uiGeneral.raiseSpeed");

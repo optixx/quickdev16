@@ -26,7 +26,7 @@ public:
   bool loadCartridgeSufamiTurbo(const char*, const char *, const char*);
   void unloadCartridge();
 
-  enum system_state_t { LoadCartridge, UnloadCartridge, PowerOn, PowerOff, PowerCycle, Reset };
+  enum system_state_t { LoadCartridge, UnloadCartridge, PowerOn, PowerOff, PowerCycle, Reset, Irq };
   void modifySystemState(system_state_t state);
 
   //window.cpp

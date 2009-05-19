@@ -14,6 +14,8 @@
 ; Main Code
 ;============================================================================
 
+.EQU PalNum $0000       ; Use some RAM
+
 .BANK 0 SLOT 0
 .ORG 0
 .SECTION "MainCode"
@@ -46,17 +48,17 @@ Start_do:
     ; Setup Video modes and other stuff, then turn on the screen
     jsr SetupVideo
 
-    sei
-    cop
     prints "Init done"
-    stz $3001
-    
-    cop
     
     lda #$81
     sta $4200
 
 Infinity:
+    lda PalNum
+    clc
+    adc #$01
+    and #$ff        ; If > palette starting color > 24 (00011100), make 0
+    sta PalNum
     jmp Infinity    ; bwa hahahahaha
 
 
@@ -111,6 +113,10 @@ NMIHandler:
     rti
 
 IRQHandler:
+    stz $2121
+    lda PalNum
+    sta $2122
+    sta $2122
     prints "IRQHandler"
     rti
 

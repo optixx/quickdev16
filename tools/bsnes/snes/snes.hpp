@@ -60,6 +60,7 @@ public:
   virtual void term();
   virtual void power();
   virtual void reset();
+  virtual void irq();
 
   virtual void frame();
   virtual void scanline();

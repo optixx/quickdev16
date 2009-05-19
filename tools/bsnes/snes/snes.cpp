@@ -64,6 +64,10 @@ void SNES::term() {
   snesinterface.term();
 }
 
+void SNES::irq() {
+  cpu.triggerIRQ();
+}
+
 void SNES::power() {
   snes_region = max(0, min(2, snes.config.region));
   snes_expansion = max(0, min(1, snes.config.expansion_port));

@@ -25,6 +25,7 @@ public:
         QAction *system_power_on;
         QAction *system_power_off;
       QAction *system_reset;
+      QAction *system_irq;
       QMenu *system_port1;
         QAction *system_port1_none;
         QAction *system_port1_joypad;
@@ -86,6 +87,7 @@ public slots:
   void powerOn();
   void powerOff();
   void reset();
+  void irq();
   void setPort1None();
   void setPort1Joypad();
   void setPort1Multitap();

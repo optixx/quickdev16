@@ -12,6 +12,7 @@ void MainWindow::setup() {
       system_power_off = system_power->addAction("Off");
       system_power_off->setCheckable(true);
     system_reset = system->addAction("&Reset");
+    system_irq = system->addAction("&Irq");
     system->addSeparator();
     system_port1 = system->addMenu("Controller Port 1");
       system_port1_none = system_port1->addAction("&None");
@@ -150,6 +151,7 @@ void MainWindow::setup() {
   connect(system_power_on, SIGNAL(triggered()), this, SLOT(powerOn()));
   connect(system_power_off, SIGNAL(triggered()), this, SLOT(powerOff()));
   connect(system_reset, SIGNAL(triggered()), this, SLOT(reset()));
+  connect(system_irq, SIGNAL(triggered()), this, SLOT(irq()));
   connect(system_port1_none, SIGNAL(triggered()), this, SLOT(setPort1None()));
   connect(system_port1_joypad, SIGNAL(triggered()), this, SLOT(setPort1Joypad()));
   connect(system_port1_multitap, SIGNAL(triggered()), this, SLOT(setPort1Multitap()));
@@ -251,6 +253,7 @@ void MainWindow::loadCartridge() {
 void MainWindow::powerOn()  { utility.modifySystemState(Utility::PowerOn); }
 void MainWindow::powerOff() { utility.modifySystemState(Utility::PowerOff); }
 void MainWindow::reset()    { utility.modifySystemState(Utility::Reset); }
+void MainWindow::irq()    { utility.modifySystemState(Utility::Irq); }
 
 void MainWindow::setPort1None()       { snes.config.controller_port1 = SNES::Input::DeviceNone;       utility.updateControllers(); syncUi(); }
 void MainWindow::setPort1Joypad()     { snes.config.controller_port1 = SNES::Input::DeviceJoypad;     utility.updateControllers(); syncUi(); }
