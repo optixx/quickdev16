@@ -45,23 +45,17 @@ Start_do:
    
     ; Setup Video modes and other stuff, then turn on the screen
     jsr SetupVideo
+
+    sei
+    cop
+    prints "Init done"
+    stz $3001
     
-    lda  #65
-    sta  $3000
-    lda  #66
-    sta  $3000
-    lda  #67
-    sta  $3000
+    cop
     
-    printf str_COP
-    
-    lda  #65
-    sta  $3000
-    lda  #66
-    sta  $3000
-    lda  #67
-    sta  $3000
-    
+    lda #$81
+    sta $4200
+
 Infinity:
     jmp Infinity    ; bwa hahahahaha
 
@@ -97,6 +91,28 @@ SetupVideo:
 
     plp
     rts
+
+;.ENDS
+
+;.SECTION "IRQHandlers" 
+
+COPHandler:
+    prints "COPHandler"
+    rti
+
+BRKHandler:
+    prints "BRKHandler"
+    rti
+ABRTHandler:
+    prints "ABRTHandler"
+    rti
+NMIHandler:
+    ;prints "NMIHandler"
+    rti
+
+IRQHandler:
+    prints "IRQHandler"
+    rti
 
 
 str_COP:

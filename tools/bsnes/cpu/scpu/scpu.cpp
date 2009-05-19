@@ -23,6 +23,10 @@ void sCPU::power() {
   reset();
 }
 
+void sCPU::triggerIRQ() {
+    status.irq_pending = true;
+}
+
 void sCPU::reset() {
   CPU::reset();
 

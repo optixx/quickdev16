@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>tools/bsnes/ppu/bppu/bppu_mmio.cpp</string>
+	<string>snes/irqtest/debug.asm</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -63,20 +63,6 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>snes/banktest/header.inc</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
 		<key>snes/banktest/init.inc</key>
 		<dict>
 			<key>caret</key>
@@ -91,54 +77,84 @@
 			<key>firstVisibleLine</key>
 			<integer>211</integer>
 		</dict>
-		<key>snes/banktest/vram2.asm</key>
+		<key>snes/irqtest/LoadGraphics.asm</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>91</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>43</integer>
-		</dict>
-		<key>snes/mmio/data.h</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
+				<integer>45</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>snes/mmio/debug.c</key>
+		<key>snes/irqtest/debug.asm</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>4</integer>
+				<integer>22</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>snes/mmio/debug.h</key>
+		<key>snes/irqtest/header.inc</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>10</integer>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>36</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>9</integer>
+		</dict>
+		<key>snes/irqtest/init.inc</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>248</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>211</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>246</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>248</integer>
+			</dict>
+		</dict>
+		<key>snes/irqtest/intro.asm</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
 				<key>line</key>
 				<integer>0</integer>
 			</dict>
@@ -147,19 +163,19 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>snes/mmio/main.c</key>
+		<key>snes/irqtest/irqtest.asm</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>7</integer>
+				<integer>67</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>5</integer>
+			<integer>49</integer>
 		</dict>
 		<key>tools/bsnes/cart/cart.cpp</key>
 		<dict>
@@ -189,149 +205,67 @@
 			<key>firstVisibleLine</key>
 			<integer>24</integer>
 		</dict>
-		<key>tools/bsnes/cc.sh</key>
+		<key>tools/bsnes/chip/cmmio/cmmio.cpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>tools/bsnes/memory/memory.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>4</integer>
-				<key>line</key>
-				<integer>37</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>4</integer>
-		</dict>
-		<key>tools/bsnes/memory/memory.hpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>tools/bsnes/memory/smemory/mapper/chip.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>tools/bsnes/memory/smemory/mapper/generic.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>42</integer>
-				<key>line</key>
-				<integer>93</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>39</integer>
-		</dict>
-		<key>tools/bsnes/memory/smemory/mapper/system.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>tools/bsnes/memory/smemory/smemory.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>tools/bsnes/ppu/bppu/bppu.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>67</integer>
-		</dict>
-		<key>tools/bsnes/ppu/bppu/bppu.hpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>13</integer>
-				<key>line</key>
-				<integer>166</integer>
+				<integer>17</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>134</integer>
+			<integer>0</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>9</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>166</integer>
+				<integer>17</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>13</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>166</integer>
+				<integer>17</integer>
 			</dict>
 		</dict>
-		<key>tools/bsnes/ppu/bppu/bppu_mmio.cpp</key>
+		<key>tools/bsnes/cpu/scpu/memory/memory.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>1</integer>
+				<key>line</key>
+				<integer>56</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>56</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>56</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>2</integer>
+				<key>line</key>
+				<integer>56</integer>
+			</dict>
+		</dict>
+		<key>tools/bsnes/cpu/scpu/memory/memory.hpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -343,30 +277,30 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>220</integer>
+			<integer>0</integer>
 		</dict>
-		<key>tools/bsnes/ppu/bppu/bppu_render_mode7.cpp</key>
+		<key>tools/bsnes/cpu/scpu/mmio/mmio.cpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>32</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>33</integer>
+				<integer>485</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>459</integer>
 		</dict>
-		<key>tools/bsnes/ppu/ppu.cpp</key>
+		<key>tools/bsnes/memory/memory.cpp</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>6</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>22</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -376,94 +310,21 @@
 	</dict>
 	<key>openDocuments</key>
 	<array>
+		<string>snes/irqtest/debug.asm</string>
+		<string>tools/bsnes/cpu/scpu/mmio/mmio.cpp</string>
+		<string>tools/bsnes/chip/cmmio/cmmio.cpp</string>
+		<string>tools/bsnes/cpu/scpu/memory/memory.cpp</string>
 		<string>tools/bsnes/memory/memory.cpp</string>
-		<string>tools/bsnes/ppu/ppu.cpp</string>
-		<string>tools/bsnes/ppu/bppu/bppu.cpp</string>
-		<string>tools/bsnes/ppu/bppu/bppu_mmio.cpp</string>
-		<string>tools/bsnes/ppu/bppu/bppu.hpp</string>
-		<string>tools/bsnes/ppu/bppu/bppu_render_mode7.cpp</string>
-		<string>tools/bsnes/cc.sh</string>
-		<string>snes/mmio/main.c</string>
-		<string>snes/mmio/data.h</string>
-		<string>snes/mmio/debug.h</string>
-		<string>snes/mmio/debug.c</string>
-		<string>tools/bsnes/memory/memory.hpp</string>
+		<string>tools/bsnes/cpu/scpu/memory/memory.hpp</string>
+		<string>snes/irqtest/irqtest.asm</string>
+		<string>snes/irqtest/intro.asm</string>
+		<string>snes/irqtest/LoadGraphics.asm</string>
+		<string>snes/irqtest/init.inc</string>
+		<string>snes/irqtest/header.inc</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
-	<key>showFileHierarchyPanel</key>
-	<true/>
-	<key>treeState</key>
-	<dict>
-		<key>snesram</key>
-		<dict>
-			<key>isExpanded</key>
-			<true/>
-			<key>subItems</key>
-			<dict>
-				<key>snes</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict/>
-				</dict>
-				<key>tools</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict>
-						<key>bsnes</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict>
-								<key>lib</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-								<key>memory</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-								<key>ppu</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict>
-										<key>bppu</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict/>
-										</dict>
-									</dict>
-								</dict>
-								<key>ui_qt</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-							</dict>
-						</dict>
-					</dict>
-				</dict>
-			</dict>
-		</dict>
-	</dict>
 	<key>windowFrame</key>
-	<string>{{0, 58}, {720, 820}}</string>
+	<string>{{0, 59}, {895, 819}}</string>
 </dict>
 </plist>

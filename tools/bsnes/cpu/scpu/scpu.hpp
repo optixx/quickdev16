@@ -88,6 +88,7 @@ public:
 
   void power();
   void reset();
+  void triggerIRQ();
 
   sCPU();
   ~sCPU();

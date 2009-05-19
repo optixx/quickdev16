@@ -35,6 +35,12 @@ void CMMIO::mmio_write(unsigned addr, uint8 data) {
       fprintf(stderr,"%c",data);
       fflush(stderr);
   }
+  if (addr == 0x3001){
+      fprintf(stderr,"Trigger IRQ\n");
+      fflush(stderr);
+      cpu.triggerIRQ();
+  }
+
 }
 
 CMMIO::CMMIO() {

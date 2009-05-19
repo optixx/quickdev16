@@ -34,19 +34,19 @@
 .ENDSNES
 
 .SNESNATIVEVECTOR               ; Define Native Mode interrupt vector table
-  COP EmptyHandler
-  BRK EmptyHandler
-  ABORT EmptyHandler
-  NMI EmptyHandler
-  IRQ EmptyHandler
+  COP       COPHandler
+  BRK       BRKHandler
+  ABORT     ABRTHandler
+  NMI       NMIHandler
+  IRQ       IRQHandler
 .ENDNATIVEVECTOR
 
 .SNESEMUVECTOR                  ; Define Emulation Mode interrupt vector table
-  COP EmptyHandler
-  ABORT EmptyHandler
-  NMI EmptyHandler
-  RESET Start
-  IRQBRK EmptyHandler
+  COP       EmptyHandler
+  ABORT     EmptyHandler
+  NMI       EmptyHandler
+  RESET     Start
+  IRQBRK    EmptyHandler
 .ENDEMUVECTOR
 
 .BANK 0 SLOT 0                  ; Defines the ROM bank and the slot it is inserted in memory.
