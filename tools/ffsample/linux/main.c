@@ -137,7 +137,7 @@ FRESULT scan_files (char* path)
 
 
 static
-void put_rc (FRESULT rc)
+void _put_rc (FRESULT rc)
 {
     const char* str[] = {
 		"OK",
@@ -160,7 +160,21 @@ void put_rc (FRESULT rc)
   printf("rc=%u FR_%s\n", (WORD)rc, str[rc]);
 }
 
+static
+void put_rc (FRESULT rc)
+{
+	const char *p;
+	static const char str[] =
+		"OK\0" "NOT_READY\0" "NO_FILE\0" "FR_NO_PATH\0" "INVALID_NAME\0" "INVALID_DRIVE\0"
+		"DENIED\0" "EXIST\0" "RW_ERROR\0" "WRITE_PROTECTED\0" "NOT_ENABLED\0"
+		"NO_FILESYSTEM\0" "INVALID_OBJECT\0" "MKFS_ABORTED\0";
+	FRESULT i;
 
+	for (p = str, i = 0; i != rc && *p; i++) {
+		while(*p++);
+	}
+	xprintf("rc=%u FR_%s\n", (WORD)rc, p);
+}
 
 
 static

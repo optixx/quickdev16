@@ -14,17 +14,56 @@ using 0xf8 media descriptor, with 8192 sectors;
 file system has 2 32-bit FATs and 1 sector per cluster.
 FAT size is 63 sectors, and provides 8034 clusters.
 Volume ID is 4a1424ec, no volume label.
+
+filesize 4194304
+
 */
+
+/* Interface
+
+** Scratch Buffer
+
+addr        3 byte            
+size        1 byte
+
+** Call Interface
+
+cmd         1 byte
+sector      4 bytes
+count       1 byte
+return      1 byte
+
+** Commands
+
+    * disk_init
+    * disk_read
+    * disk_write
+
+
+*/ 
 
 /*-----------------------------------------------------------------------*/
 /* Initialize Disk Drive                                                 */
 /*-----------------------------------------------------------------------*/
+
+#define IMAGE_NAME "disk00.vfat"
+
+int image_addr;  
 
 DSTATUS disk_initialize (BYTE drv) {
     if (drv) return STA_NOINIT;             /* Supports only single drive */
 
     Stat |= STA_NOINIT;
     /* map image */
+
+
+
+    int fd = open(IMAGE_NAME,);
+    int size = fseek(END);
+    fseek(0);
+    
+    image_addr = mmap(0,fd,)
+    
 
     Stat &= ~STA_NOINIT;                    /* When device goes ready, clear STA_NOINIT */
     return Stat;
@@ -55,7 +94,15 @@ DRESULT disk_read (
     BYTE c, iord_l, iord_h;
     if (drv || !count) return RES_PARERR;
     if (Stat & STA_NOINIT) return RES_NOTRDY;
+    
+    printf("disk_read: sector=%i count=%i\n",sector,count);
 
+    DWORD offset = sector * 512;
+    DWORD size = count * 512;
+    
+    printf("disk_read: addr=%p offset=%i size=%i\n",image_addr,offset,size);
+    memcpy(buff,image_addr + offset,size);
+    
     /* Issue Read Setor(s) command */
     /*
     write_ata(REG_COUNT, count);
@@ -82,7 +129,8 @@ DRESULT disk_write (
 )
 {
     BYTE s, c, iowr_l, iowr_h;
-
+    
+    
 
     if (drv || !count) return RES_PARERR;
     if (Stat & STA_NOINIT) return RES_NOTRDY;
@@ -120,29 +168,36 @@ DRESULT disk_ioctl (
 
     switch (ctrl) {
         case GET_SECTOR_COUNT : /* Get number of sectors on the disk (DWORD) */
+            printf("disk_ioctl: GET_SECTOR_COUNT\n");
             ofs = 60; w = 2; n = 0;
             break;
 
         case GET_SECTOR_SIZE :  /* Get sectors on the disk (WORD) */
+            printf("disk_ioctl: GET_SECTOR_SIZE\n");
             *(WORD*)buff = 512;
             return RES_OK;
 
         case GET_BLOCK_SIZE :   /* Get erase block size in sectors (DWORD) */
+            printf("disk_ioctl: GET_BLOCK_SIZE\n");
             *(DWORD*)buff = 32;
             return RES_OK;
 
         case CTRL_SYNC :        /* Nothing to do */
+            printf("disk_ioctl: CTRL_SIZE\n");
             return RES_OK;
 
         case ATA_GET_REV :      /* Get firmware revision (8 chars) */
+            printf("disk_ioctl: ATAL_GET_REV\n");
             ofs = 23; w = 4; n = 4;
             break;
 
         case ATA_GET_MODEL :    /* Get model name (40 chars) */
+            printf("disk_ioctl: ATAL_GET_MODEL\n");
             ofs = 27; w = 20; n = 20;
             break;
 
         case ATA_GET_SN :       /* Get serial number (20 chars) */
+            printf("disk_ioctl: ATAL_GET_SN\n");
             ofs = 10; w = 10; n = 10;
             break;
 
