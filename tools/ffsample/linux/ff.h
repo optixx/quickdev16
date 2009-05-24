@@ -25,7 +25,7 @@
 #ifndef _FATFS
 #define _FATFS
 
-#define _WORD_ACCESS	1
+#define _WORD_ACCESS	0
 /* The _WORD_ACCESS option defines which access method is used to the word
 /  data in the FAT structure.
 /
@@ -64,7 +64,7 @@
 /* To enable string functions, set _USE_STRFUNC to 1 or 2. */
 
 
-#define	_USE_MKFS	1
+#define	_USE_MKFS	0
 /* To enable f_mkfs function, set _USE_MKFS to 1 and set _FS_READONLY to 0 */
 
 
@@ -72,7 +72,7 @@
 /* To enable f_forward function, set _USE_FORWARD to 1 and set _FS_TINY to 1. */
 
 
-#define _DRIVES		2
+#define _DRIVES		1
 /* Number of volumes (logical drives) to be used. */
 
 
@@ -81,13 +81,13 @@
 /* 512 for memroy card and hard disk, 1024 for floppy disk, 2048 for MO disk */
 
 
-#define	_MULTI_PARTITION	0
+#define	_MULTI_PARTITION	1
 /* When _MULTI_PARTITION is set to 0, each volume is bound to the same physical
 / drive number and can mount only first primaly partition. When it is set to 1,
 / each volume is tied to the partitions listed in Drives[]. */
 
 
-#define _CODE_PAGE	932
+#define _CODE_PAGE	858
 /* The _CODE_PAGE specifies the OEM code page to be used on the target system.
 /  When it is non LFN configuration, there is no difference between SBCS code
 /  pages. When LFN is enabled, the code page must always be set correctly.

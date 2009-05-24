@@ -54,7 +54,8 @@ DWORD get_fattime ()
   struct tm * ptm;
   time ( &rawtime );
   ptm = gmtime ( &rawtime );
-	return	  ((DWORD)(ptm->tm_year - 80) << 25)
+  
+  return	  ((DWORD)(ptm->tm_year - 80) << 25)
 			| ((DWORD)(ptm->tm_mon +1) << 21)
 			| ((DWORD)ptm->tm_mday << 16)
 			| ((DWORD)ptm->tm_hour << 11)
@@ -114,9 +115,10 @@ FRESULT scan_files (char* path)
 	DIR dirs;
 	FRESULT res;
 	int i;
-
+    
 	if ((res = f_opendir(&dirs, path)) == FR_OK) {
 		i = strlen(path);
+        printf("Ok\n");
 		while (((res = f_readdir(&dirs, &finfo)) == FR_OK) && finfo.fname[0]) {
 			if (finfo.fattrib & AM_DIR) {
 				acc_dirs++;
@@ -130,7 +132,7 @@ FRESULT scan_files (char* path)
 			}
 		}
 	}
-
+    printf("scan_files ret\n");
 	return res;
 }
 
@@ -157,7 +159,7 @@ void _put_rc (FRESULT rc)
         "MKFS_ABORTED",
         "TIMEOUT"
   };
-  printf("rc=%u FR_%s\n", (WORD)rc, str[rc]);
+  printf("rc=%i FR_%s\n", (WORD)rc, str[rc]);
 }
 
 static
@@ -173,7 +175,7 @@ void put_rc (FRESULT rc)
 	for (p = str, i = 0; i != rc && *p; i++) {
 		while(*p++);
 	}
-	xprintf("rc=%u FR_%s\n", (WORD)rc, p);
+	printf("rc=%u FR_%s\n", (WORD)rc, p);
 }
 
 

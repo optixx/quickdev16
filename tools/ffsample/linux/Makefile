@@ -14,4 +14,5 @@ $(bin): $(objs)
 	gcc $(cflags) -c $< 
 
 
-
+clean:
+	rm $(bin) *.o

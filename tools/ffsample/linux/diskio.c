@@ -19,6 +19,18 @@ filesize 4194304
 
 */
 
+
+/*
+mkfs.vfat 3.0.1 (23 Nov 2008)
+disk00.vfat has 64 heads and 32 sectors per track,
+logical sector size is 512,
+using 0xf8 media descriptor, with 8192 sectors;
+file system has 2 12-bit FATs and 4 sectors per cluster.
+FAT size is 6 sectors, and provides 2036 clusters.
+Root directory contains 512 slots.
+Volume ID is 7b45fab8, no volume label.
+*/
+
 /* Interface
 
 ** Scratch Buffer
@@ -46,9 +58,18 @@ return      1 byte
 /* Initialize Disk Drive                                                 */
 /*-----------------------------------------------------------------------*/
 
-#define IMAGE_NAME "disk00.vfat"
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
-int image_addr;  
+
+#define IMAGE_NAME "disk01.vfat"
+
+int *image_addr;  
 
 DSTATUS disk_initialize (BYTE drv) {
     if (drv) return STA_NOINIT;             /* Supports only single drive */
@@ -57,13 +78,24 @@ DSTATUS disk_initialize (BYTE drv) {
     /* map image */
 
 
+    int fd = open(IMAGE_NAME, O_RDWR);
+    if (fd == -1) {
+   	    perror("Error opening file for writing");
+   	    exit(EXIT_FAILURE);
+      }
 
-    int fd = open(IMAGE_NAME,);
-    int size = fseek(END);
-    fseek(0);
+
+    int size = lseek(fd,0,SEEK_END);
+    lseek(fd,0,SEEK_SET);
+    printf("Open Image (size %i)\n",size);
     
-    image_addr = mmap(0,fd,)
-    
+    //image_addr = mmap(0,fd,)
+    image_addr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (image_addr == MAP_FAILED) {
+	    close(fd);
+	    perror("Error mmapping the file");
+	    exit(EXIT_FAILURE);
+    }
 
     Stat &= ~STA_NOINIT;                    /* When device goes ready, clear STA_NOINIT */
     return Stat;
@@ -94,24 +126,13 @@ DRESULT disk_read (
     BYTE c, iord_l, iord_h;
     if (drv || !count) return RES_PARERR;
     if (Stat & STA_NOINIT) return RES_NOTRDY;
-    
-    printf("disk_read: sector=%i count=%i\n",sector,count);
 
     DWORD offset = sector * 512;
-    DWORD size = count * 512;
+    int size = count * 512;
     
-    printf("disk_read: addr=%p offset=%i size=%i\n",image_addr,offset,size);
+    printf("disk_read: sector=%li count=%i addr=%p  size=%i\n",sector,count,image_addr + offset,size);
     memcpy(buff,image_addr + offset,size);
-    
-    /* Issue Read Setor(s) command */
-    /*
-    write_ata(REG_COUNT, count);
-    write_ata(REG_SECTOR, (BYTE)sector);
-    write_ata(REG_CYLL, (BYTE)(sector >> 8));
-    write_ata(REG_CYLH, (BYTE)(sector >> 16));
-    write_ata(REG_DEV, ((BYTE)(sector >> 24) & 0x0F) | LBA);
-    write_ata(REG_COMMAND, CMD_READ);
-    */
+    //printf("%x %x %x %x\n",buff[0],buff[1],buff[2],buff[3]);
 
     return RES_OK;
 }
