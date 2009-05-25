@@ -104,7 +104,7 @@ void get_line (char *buff, int len)
 				buff[idx++] = c;
 		}
 	}
-    printf("return %s\n",buff);
+    //printf("return %s\n",buff);
 	buff[idx] = 0;
 }
 

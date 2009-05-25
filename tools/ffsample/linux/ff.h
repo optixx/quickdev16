@@ -25,7 +25,7 @@
 #ifndef _FATFS
 #define _FATFS
 
-#define _WORD_ACCESS	0
+#define _WORD_ACCESS	1
 /* The _WORD_ACCESS option defines which access method is used to the word
 /  data in the FAT structure.
 /
@@ -54,13 +54,13 @@
 /   3: f_lseek is removed in addition to level 2. */
 
 
-#define	_FS_TINY	1
+#define	_FS_TINY	0
 /* When _FS_TINY is set to 1, FatFs uses the sector buffer in the file system
 /  object instead of the sector buffer in the individual file object for file
 /  data transfer. This reduces memory consumption 512 bytes each file object. */
 
 
-#define	_USE_STRFUNC	0
+#define	_USE_STRFUNC	1
 /* To enable string functions, set _USE_STRFUNC to 1 or 2. */
 
 
@@ -87,7 +87,7 @@
 / each volume is tied to the partitions listed in Drives[]. */
 
 
-#define _CODE_PAGE	858
+#define _CODE_PAGE	850
 /* The _CODE_PAGE specifies the OEM code page to be used on the target system.
 /  When it is non LFN configuration, there is no difference between SBCS code
 /  pages. When LFN is enabled, the code page must always be set correctly.

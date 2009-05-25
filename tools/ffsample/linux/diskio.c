@@ -6,29 +6,39 @@ static volatile
 DSTATUS Stat = STA_NOINIT;  /* Disk status */
 
 /*
-[david@slap]Transfer/ffsample/linux % sudo mkfs.vfat -F 32 -v disk00.vfat                                                                                                                                  [941]
+
+sudo losetup /dev/loop0 disk00.vfat
+sudo mkfs.vfat -f 2 -F 16 -v  /dev/loop0
 mkfs.vfat 2.11 (12 Mar 2005)
-disk00.vfat has 64 heads and 32 sectors per track,
+Loop device does not match a floppy size, using default hd params
+/dev/loop0 has 64 heads and 32 sectors per track,
 logical sector size is 512,
-using 0xf8 media descriptor, with 8192 sectors;
-file system has 2 32-bit FATs and 1 sector per cluster.
-FAT size is 63 sectors, and provides 8034 clusters.
-Volume ID is 4a1424ec, no volume label.
-
-filesize 4194304
-
-*/
-
-
-/*
-mkfs.vfat 3.0.1 (23 Nov 2008)
-disk00.vfat has 64 heads and 32 sectors per track,
-logical sector size is 512,
-using 0xf8 media descriptor, with 8192 sectors;
-file system has 2 12-bit FATs and 4 sectors per cluster.
-FAT size is 6 sectors, and provides 2036 clusters.
+using 0xf8 media descriptor, with 524288 sectors;
+file system has 2 16-bit FATs and 8 sectors per cluster.
+FAT size is 256 sectors, and provides 65467 clusters.
 Root directory contains 512 slots.
-Volume ID is 7b45fab8, no volume label.
+Volume ID is 4a1aab3d, no volume label.
+
+
+FAT type = 2
+Bytes/Cluster = 4096
+Number of FATs = 2
+Root DIR entries = 512
+Sectors/FAT = 256
+Number of clusters = 65467
+FAT start (lba) = 1
+DIR start (lba,clustor) = 513
+Data start (lba) = 545
+Ok
+disk_read: sector=513 count=1 addr=0xa8009800  size=512
+scan_files ret
+0 files, 0 bytes.
+0 folders.
+261868 KB total disk space.
+147456 KB available.
+
+
+
 */
 
 /* Interface
@@ -67,7 +77,7 @@ return      1 byte
 #include <sys/mman.h>
 
 
-#define IMAGE_NAME "disk01.vfat"
+#define IMAGE_NAME "disk00.vfat"
 
 int *image_addr;  
 
