@@ -38,7 +38,7 @@ return      1 byte
 
 #define IMAGE_NAME "disk00.vfat"
 
-char  *image_addr;
+BYTE  *image_addr;
 
 DSTATUS disk_initialize (BYTE drv) {
     if (drv) return STA_NOINIT;             /* Supports only single drive */
@@ -55,7 +55,7 @@ DSTATUS disk_initialize (BYTE drv) {
     lseek(fd,0,SEEK_SET);
     printf("Open Image (size %i)\n",size);
     
-    image_addr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    image_addr = (BYTE*)mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (image_addr == MAP_FAILED) {
 	    close(fd);
 	    perror("Error mmapping the file");
@@ -134,7 +134,7 @@ DRESULT disk_ioctl (
     void *buff      /* Buffer to send/receive data block */
 )
 {
-    BYTE n, w, ofs, dl, dh, *ptr = buff;
+    BYTE n, w, ofs, dl, dh, *ptr = (BYTE*)buff;
 
 
     if (drv) return RES_PARERR;

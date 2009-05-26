@@ -24,6 +24,7 @@ DSP4     dsp4;
 OBC1     obc1;
 ST010    st010;
 CMMIO    cmmio;
+FATFS    fatfs;
 #include "scheduler/scheduler.cpp"
 #include "tracer/tracer.cpp"
 
@@ -101,6 +102,7 @@ void SNES::power() {
   if(cartridge.has_st010())   st010.power();
  
   cmmio.power();
+  fatfs.power();
 
   for(unsigned i = 0x2100; i <= 0x213f; i++) memory::mmio.map(i, ppu);
   for(unsigned i = 0x2140; i <= 0x217f; i++) memory::mmio.map(i, cpu);
@@ -125,6 +127,7 @@ void SNES::power() {
   if(cartridge.has_st010())   st010.enable();
 
   cmmio.enable();
+  fatfs.enable();
 
   input.port_set_device(0, snes.config.controller_port1);
   input.port_set_device(1, snes.config.controller_port2);

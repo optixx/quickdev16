@@ -10,3 +10,4 @@
 #include "obc1/obc1.hpp"
 #include "st010/st010.hpp"
 #include "cmmio/cmmio.hpp"
+#include "fatfs/fatfs.hpp"

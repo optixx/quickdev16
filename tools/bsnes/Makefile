@@ -126,7 +126,7 @@ link += $(if $(findstring input.rawinput,$(ruby)),$(call mklib,xinput) $(call mk
 objects = libco ruby libfilter string \
   reader cart cheat \
   memory smemory cpu scpu smp ssmp sdsp ppu bppu snes \
-  bsx srtc sdd1 spc7110 cx4 dsp1 dsp2 dsp3 dsp4 obc1 st010 cmmio
+  bsx srtc sdd1 spc7110 cx4 dsp1 dsp2 dsp3 dsp4 obc1 st010 cmmio fatfs diskio
 
 ifeq ($(enable_gzip),true)
   #objects += adler32 compress crc32 deflate gzio inffast inflate inftrees ioapi trees unzip zip zutil
@@ -237,6 +237,10 @@ obj/dsp4.$(obj)   : chip/dsp4/dsp4.cpp chip/dsp4/*
 obj/obc1.$(obj)   : chip/obc1/obc1.cpp chip/obc1/*
 obj/st010.$(obj)  : chip/st010/st010.cpp chip/st010/*
 obj/cmmio.$(obj)  : chip/cmmio/cmmio.cpp chip/cmmio/*
+obj/fatfs.$(obj)  : chip/fatfs/fatfs.cpp chip/fatfs/*
+obj/diskio.$(obj)  : chip/fatfs/diskio.cpp chip/fatfs/*
+
+
 
 
 ############
