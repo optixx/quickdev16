@@ -25,7 +25,7 @@
 #ifndef _FATFS
 #define _FATFS
 
-#define _WORD_ACCESS	1
+#define _WORD_ACCESS	0
 /* The _WORD_ACCESS option defines which access method is used to the word
 /  data in the FAT structure.
 /
@@ -60,7 +60,7 @@
 /  data transfer. This reduces memory consumption 512 bytes each file object. */
 
 
-#define	_USE_STRFUNC	1
+#define	_USE_STRFUNC	0
 /* To enable string functions, set _USE_STRFUNC to 1 or 2. */
 
 

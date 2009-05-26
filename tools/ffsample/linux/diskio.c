@@ -75,11 +75,12 @@ return      1 byte
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <string.h>
 
 
 #define IMAGE_NAME "disk00.vfat"
 
-int *image_addr;  
+char  *image_addr;
 
 DSTATUS disk_initialize (BYTE drv) {
     if (drv) return STA_NOINIT;             /* Supports only single drive */
@@ -98,15 +99,15 @@ DSTATUS disk_initialize (BYTE drv) {
     int size = lseek(fd,0,SEEK_END);
     lseek(fd,0,SEEK_SET);
     printf("Open Image (size %i)\n",size);
+
     
-    //image_addr = mmap(0,fd,)
     image_addr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (image_addr == MAP_FAILED) {
 	    close(fd);
 	    perror("Error mmapping the file");
 	    exit(EXIT_FAILURE);
     }
-
+    
     Stat &= ~STA_NOINIT;                    /* When device goes ready, clear STA_NOINIT */
     return Stat;
 }
@@ -137,10 +138,10 @@ DRESULT disk_read (
     if (drv || !count) return RES_PARERR;
     if (Stat & STA_NOINIT) return RES_NOTRDY;
 
-    DWORD offset = sector * 512;
+    DWORD offset = sector  * 512;
     int size = count * 512;
     
-    printf("disk_read: sector=%li count=%i addr=%p  size=%i\n",sector,count,image_addr + offset,size);
+    printf("disk_read: sector=%li count=%i addr=%p off=%li size=%i\n",sector,count,image_addr + offset,offset,size);
     memcpy(buff,image_addr + offset,size);
     //printf("%x %x %x %x\n",buff[0],buff[1],buff[2],buff[3]);
 
@@ -166,16 +167,11 @@ DRESULT disk_write (
     if (drv || !count) return RES_PARERR;
     if (Stat & STA_NOINIT) return RES_NOTRDY;
 
-    /* Issue Write Setor(s) command */
-    /*
-    write_ata(REG_COUNT, count);
-    write_ata(REG_SECTOR, (BYTE)sector);
-    write_ata(REG_CYLL, (BYTE)(sector >> 8));
-    write_ata(REG_CYLH, (BYTE)(sector >> 16));
-    write_ata(REG_DEV, ((BYTE)(sector >> 24) & 0x0F) | LBA);
-    write_ata(REG_COMMAND, CMD_WRITE);
-    */
+    DWORD offset = sector  * 512;
+    int size = count * 512;
 
+    printf("disk_write: sector=%li count=%i addr=%p off=%li size=%i\n",sector,count,image_addr + offset,offset,size);
+    memcpy(image_addr + offset,buff,size);
     return RES_OK;
 }
 #endif /* _READONLY */

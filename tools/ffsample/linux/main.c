@@ -118,7 +118,7 @@ FRESULT scan_files (char* path)
     
 	if ((res = f_opendir(&dirs, path)) == FR_OK) {
 		i = strlen(path);
-        printf("Ok\n");
+        //printf("Ok\n");
 		while (((res = f_readdir(&dirs, &finfo)) == FR_OK) && finfo.fname[0]) {
 			if (finfo.fattrib & AM_DIR) {
 				acc_dirs++;
