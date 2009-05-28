@@ -39,6 +39,16 @@ scan_files ret
 
 
 
+
+Disk: /dev/disk1        geometry: 993/4/63 [250368 sectors]
+Signature: 0xAA55
+         Starting       Ending
+ #: id  cyl  hd sec -  cyl  hd sec [     start -       size]
+------------------------------------------------------------------------
+ 1: 0B    0   1   1 - 1023 254  63 [        63 -     250299] Win95 FAT-32
+ 2: 00    0   0   0 -    0   0   0 [         0 -          0] unused      
+ 3: 00    0   0   0 -    0   0   0 [         0 -          0] unused      
+ 4: 00    0   0   0 -    0   0   0 [         0 -          0] unused
 */
 
 /* Interface
