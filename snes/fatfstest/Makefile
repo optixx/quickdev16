@@ -25,7 +25,7 @@ LD=$(WINE) $(SDK)/bin/WDCLN.exe
 
 INC=$(SDK)/include
 LIBS=$(SDK)/lib/cc
-OBJS=StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj
+OBJS=StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj diskio.obj ff.obj
 APP=fatfs.smc
 GFX=debugfont
 
