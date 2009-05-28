@@ -18,12 +18,6 @@ $(bin): $(objs)
 clean:
 	rm -rf $(bin) *.o
 
-
-image32:
-	dd if=/dev/zero of=disk00.vfat bs=1M count=64
-	sudo mkfs.vfat -F 32 -v disk00.vfat
-
-
 image_parted:
 	dd if=/dev/zero of=disk00.vfat bs=1M count=256
 	fdisk -H 32 -S 32 -C 500 disk00.vfat
@@ -48,19 +42,11 @@ image_not_parted:
 	sudo umount disk
 	sudo losetup -d /dev/loop0
 
-
-image_no_fdisk:
-	dd if=/dev/zero of=disk00.vfat bs=1M count=256
-	sudo mkfs.vfat -I -f 2 -F 16 -v disk00.vfat
-	sudo mount -o loop disk00.vfat disk
-	sudo cp /var/log/*log disk/
-	sudo umount disk
-
-image_no_dd:
+image:
 	rm -fv disk00.vfat
-	mkfs.vfat   -F 32 -v -C disk00.vfat 256000 
-	sudo mount -o loop,check=s disk00.vfat disk
-	sudo cp -v /var/log/*log disk/
+	mkfs.vfat  -I -F 16 -v -C disk00.vfat 256000 
+	sudo mount -o loop disk00.vfat disk
+	sudo cp -v /var/log/*.log disk/
 	sudo umount disk
 
 mount:
@@ -71,3 +57,8 @@ umount:
 	sudo umount disk
 	sudo losetup -d /dev/loop0
 
+test:
+	echo "fi\nfs\nfl" | ./fftest   
+
+run:
+	rlwrap ./fftest

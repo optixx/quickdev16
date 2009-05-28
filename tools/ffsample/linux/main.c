@@ -118,7 +118,7 @@ FRESULT scan_files (char* path)
     
 	if ((res = f_opendir(&dirs, path)) == FR_OK) {
 		i = strlen(path);
-        printf("Ok\n");
+        //printf("Ok\n");
 		while (((res = f_readdir(&dirs, &finfo)) == FR_OK) && finfo.fname[0]) {
 			if (finfo.fattrib & AM_DIR) {
 				acc_dirs++;
@@ -241,22 +241,6 @@ int main (void)
 					{ printf("Sector size: %u\n", w1); }
 				if (disk_ioctl((BYTE)p1, GET_BLOCK_SIZE, &p2) == RES_OK)
 					{ printf("Erase block size: %lu sectors\n", p2); }
-				if (disk_ioctl((BYTE)p1, MMC_GET_TYPE, &b1) == RES_OK)
-					{ printf("Card type: %u\n", b1); }
-				if (disk_ioctl((BYTE)p1, MMC_GET_CSD, Buff) == RES_OK)
-					{ printf("CSD:\n"); put_dump(Buff, 0, 16); }
-				if (disk_ioctl((BYTE)p1, MMC_GET_CID, Buff) == RES_OK)
-					{ printf("CID:\n"); put_dump(Buff, 0, 16); }
-				if (disk_ioctl((BYTE)p1, MMC_GET_OCR, Buff) == RES_OK)
-					{ printf("OCR:\n"); put_dump(Buff, 0, 4); }
-				if (disk_ioctl((BYTE)p1, MMC_GET_SDSTAT, Buff) == RES_OK) {
-					printf("SD Status:\n");
-					for (s1 = 0; s1 < 64; s1 += 16) put_dump(Buff+s1, s1, 16);
-				}
-				if (disk_ioctl((BYTE)p1, ATA_GET_MODEL, line) == RES_OK)
-					{ line[40] = '\0'; printf("Model: %s\n", line); }
-				if (disk_ioctl((BYTE)p1, ATA_GET_SN, line) == RES_OK)
-					{ line[20] = '\0'; printf("S/N: %s\n", line); }
 				break;
 			}
 			break;

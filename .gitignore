@@ -21,3 +21,8 @@
 *.swc
 *.rom
 *.usage
+*.moc
+*.obj
+*.TMP
+*.vfat
+*.wla*

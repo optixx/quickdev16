@@ -25,7 +25,7 @@
 #ifndef _FATFS
 #define _FATFS
 
-#define _WORD_ACCESS	1
+#define _WORD_ACCESS	0
 /* The _WORD_ACCESS option defines which access method is used to the word
 /  data in the FAT structure.
 /
@@ -60,7 +60,7 @@
 /  data transfer. This reduces memory consumption 512 bytes each file object. */
 
 
-#define	_USE_STRFUNC	1
+#define	_USE_STRFUNC	0
 /* To enable string functions, set _USE_STRFUNC to 1 or 2. */
 
 
@@ -81,13 +81,13 @@
 /* 512 for memroy card and hard disk, 1024 for floppy disk, 2048 for MO disk */
 
 
-#define	_MULTI_PARTITION	1
+#define	_MULTI_PARTITION	0
 /* When _MULTI_PARTITION is set to 0, each volume is bound to the same physical
 / drive number and can mount only first primaly partition. When it is set to 1,
 / each volume is tied to the partitions listed in Drives[]. */
 
 
-#define _CODE_PAGE	850
+#define _CODE_PAGE	437
 /* The _CODE_PAGE specifies the OEM code page to be used on the target system.
 /  When it is non LFN configuration, there is no difference between SBCS code
 /  pages. When LFN is enabled, the code page must always be set correctly.

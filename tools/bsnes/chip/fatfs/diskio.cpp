@@ -5,54 +5,6 @@
 static volatile
 DSTATUS Stat = STA_NOINIT;  /* Disk status */
 
-<<<<<<< HEAD:tools/ffsample/linux/diskio.c
-/*
-
-sudo losetup /dev/loop0 disk00.vfat
-sudo mkfs.vfat -f 2 -F 16 -v  /dev/loop0
-mkfs.vfat 2.11 (12 Mar 2005)
-Loop device does not match a floppy size, using default hd params
-/dev/loop0 has 64 heads and 32 sectors per track,
-logical sector size is 512,
-using 0xf8 media descriptor, with 524288 sectors;
-file system has 2 16-bit FATs and 8 sectors per cluster.
-FAT size is 256 sectors, and provides 65467 clusters.
-Root directory contains 512 slots.
-Volume ID is 4a1aab3d, no volume label.
-
-
-FAT type = 2
-Bytes/Cluster = 4096
-Number of FATs = 2
-Root DIR entries = 512
-Sectors/FAT = 256
-Number of clusters = 65467
-FAT start (lba) = 1
-DIR start (lba,clustor) = 513
-Data start (lba) = 545
-Ok
-disk_read: sector=513 count=1 addr=0xa8009800  size=512
-scan_files ret
-0 files, 0 bytes.
-0 folders.
-261868 KB total disk space.
-147456 KB available.
-
-
-
-
-Disk: /dev/disk1        geometry: 993/4/63 [250368 sectors]
-Signature: 0xAA55
-         Starting       Ending
- #: id  cyl  hd sec -  cyl  hd sec [     start -       size]
-------------------------------------------------------------------------
- 1: 0B    0   1   1 - 1023 254  63 [        63 -     250299] Win95 FAT-32
- 2: 00    0   0   0 -    0   0   0 [         0 -          0] unused      
- 3: 00    0   0   0 -    0   0   0 [         0 -          0] unused      
- 4: 00    0   0   0 -    0   0   0 [         0 -          0] unused
-*/
-=======
->>>>>>> 660767c464c3d78d36436123eb2e717c3c85f6bc:tools/ffsample/linux/diskio.c
 
 /* Interface
 ** Scratch Buffer
@@ -86,7 +38,7 @@ return      1 byte
 
 #define IMAGE_NAME "disk00.vfat"
 
-char  *image_addr;
+BYTE  *image_addr;
 
 DSTATUS disk_initialize (BYTE drv) {
     if (drv) return STA_NOINIT;             /* Supports only single drive */
@@ -103,7 +55,7 @@ DSTATUS disk_initialize (BYTE drv) {
     lseek(fd,0,SEEK_SET);
     printf("Open Image (size %i)\n",size);
     
-    image_addr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    image_addr = (BYTE*)mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (image_addr == MAP_FAILED) {
 	    close(fd);
 	    perror("Error mmapping the file");
@@ -182,7 +134,7 @@ DRESULT disk_ioctl (
     void *buff      /* Buffer to send/receive data block */
 )
 {
-    BYTE n, w, ofs, dl, dh, *ptr = buff;
+    BYTE n, w, ofs, dl, dh, *ptr = (BYTE*)buff;
 
 
     if (drv) return RES_PARERR;
