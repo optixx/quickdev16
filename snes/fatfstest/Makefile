@@ -24,7 +24,10 @@ LD=$(WINE) $(SDK)/bin/WDCLN.exe
 # Project
 
 INC=$(SDK)/include
-LIBS=$(SDK)/lib/cc
+LIBS=-L$(SDK)/lib/cc 
+#-L$(SDK)/lib/c134
+
+
 OBJS=StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj diskio.obj ff.obj
 APP=fatfs.smc
 GFX=debugfont
@@ -62,7 +65,7 @@ $(APP): $(OBJS)
                 -Avectors=FFE4,7FE4 \
                 -Aregistration_data=FFB0,7FB0 \
                 -Aressource=18000,8000 \
-                -N $(OBJS) -L$(LIBS) -O $@
+                -N $(OBJS) $(LIBS) -O $@
 		ucon64 -snes -chk $(APP)
 
 clean:

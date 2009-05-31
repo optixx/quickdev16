@@ -67,7 +67,7 @@ void FATFS::mmio_write(unsigned addr, uint8 data) {
           case CMD_INIT:
               printf("FATFS::mmio_write CMD_INIT \n");
               command = CMD_INIT;
-              disk_initialize(0);
+              retval = disk_initialize(0);
               break;
           case CMD_READ:
               printf("FATFS::mmio_write CMD_READ \n");

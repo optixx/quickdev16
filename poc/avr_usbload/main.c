@@ -179,7 +179,7 @@ uint8_t usbFunctionRead(uint8_t * data, uint8_t len)
 int main(void)
 {
     uint8_t i;
-    wdt_enable(WDTO_1S);
+    //wdt_enable(WDTO_1S);
     uart_init();
     stdout = &uart_stdout;
     sram_init();

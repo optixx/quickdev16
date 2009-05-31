@@ -178,11 +178,16 @@ int main(int argc, char **argv)
             for (step = 0; step < READ_BUFFER_SIZE; step += SEND_BUFFER_SIZE) {
                 addr_lo = addr & 0xffff;
                 addr_hi = (addr >> 16) & 0xff;
-                usb_control_msg(handle,
+                cnt = usb_control_msg(handle,
                                 USB_TYPE_VENDOR | USB_RECIP_DEVICE |
                                 USB_ENDPOINT_OUT, USB_UPLOAD_ADDR, addr_hi,
                                 addr_lo, (char *) read_buffer + step,
                                 SEND_BUFFER_SIZE, 5000);
+
+                if (cnt < 0) {
+                    fprintf(stderr, "USB error: %s\n", usb_strerror());
+                    exit(-1);
+                } 
 #if 0
                 dump_packet(addr, SEND_BUFFER_SIZE, read_buffer + step);
 #endif

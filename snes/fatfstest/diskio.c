@@ -3,8 +3,9 @@
 #include "diskio.h"
 #include "config.h"
 #include "data.h"
+#include "debug.h"
 
-static 
+volatile static 
 DSTATUS Stat = STA_NOINIT;  /* Disk status */
 
 
@@ -38,6 +39,7 @@ BYTE  *image_addr;
 DSTATUS disk_initialize (BYTE drv) {
     
     byte retval;
+    print_console("disk_initialize\n");
     if (drv) return STA_NOINIT;             /* Supports only single drive */
 
 
@@ -46,7 +48,8 @@ DSTATUS disk_initialize (BYTE drv) {
     *(byte*) MMIO_CMD = CMD_INIT;    
     while(*(byte*) MMIO_RETVAL == STA_VOID);
     retval = *(byte*) MMIO_RETVAL;
-    Stat &= ~retval;                    /* When device goes ready, clear STA_NOINIT */
+    Stat &= ~STA_NOINIT;                    /* When device goes ready, clear STA_NOINIT */
+    print_console("disk_initialize done\n");
     return Stat;
 }
 
@@ -76,11 +79,12 @@ DRESULT disk_read (
     INT size;
     byte retval;
     word i;
-    for (i=0;i<(count*512);i++)
-        *(byte*)(SHARED_ADDR+i) = buff[i];
     
-    if (drv || !count) return RES_PARERR;
+    print_console("disk_read enter\n");
+    //if (drv || !count) return RES_PARERR;
+    print_console("drv ok\n");
     if (Stat & STA_NOINIT) return RES_NOTRDY;
+    print_console("sta ok\n");
 
     *(byte*) MMIO_RETVAL = STA_VOID;
     *(byte*) MMIO_CMD = CMD_READ;    
@@ -95,6 +99,9 @@ DRESULT disk_read (
     while(*(byte*) MMIO_RETVAL == STA_VOID);
     retval = *(byte*) MMIO_RETVAL;
     
+    print_console("copy buffer\n");
+    for (i=0;i<(count*512);i++)
+        *(byte*)(SHARED_ADDR+i) = buff[i];
 
     return retval;
 }

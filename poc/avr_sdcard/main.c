@@ -58,14 +58,15 @@ extern FILE uart_stdout;
 //#define FILENAME	"vram2.smc"  //ok
 //#define FILENAME	"super02.smc" //ok
 //#define FILENAME	"super01.smc"//ok
-//#define FILENAME	"crc.smc"    //ok
+#define FILENAME	"crc.smc"    //ok
 //#define FILENAME	"banks.smc"  //ok
 //#define FILENAME	"hungry.smc" //ok
 //#define FILENAME	"arkanoid.smc"//ok  
 //#define FILENAME	"eric.smc"  
-#define FILENAME	"turrican.smc"  
+//#define FILENAME	"super01.smc"  
 
-#define ROMSIZE      4
+#define ROMSIZE      2              // 4 == 4mbit == 512kb
+                                    // 2 == 2mbit == 256kb
 #define DUMPNAME	"dump256.smc"
 #define BUFFER_SIZE 512
 #define BLOCKS 		(ROMSIZE << 8)
@@ -213,20 +214,29 @@ void sram_write(uint32_t addr, uint8_t data)
 {
 	RAM_DIR = 0xff;
 
-	CTRL_PORT |= (1<<R_RD);
+    /* deactive RD and WR on ram  */
+	CTRL_PORT |= (1<<R_RD);   
 	CTRL_PORT |= (1<<R_WR);
 
+    /* setup  address */
 	spi_master_transmit((uint8_t)(addr>>16));
 	spi_master_transmit((uint8_t)(addr>>8));
 	spi_master_transmit((uint8_t)(addr>>0));
 
+	/* passthru address in sreg */
 	LATCH_PORT |= (1<<S_LATCH);
 	LATCH_PORT &= ~(1<<S_LATCH);
-	
 
+    /* write enable */ 
 	CTRL_PORT &= ~(1<<R_WR);
 
+    /* busdriver toggle */
+
+
+    /* write data */ 
 	RAM_PORT = data;
+	
+    /* disable write */ 
 	CTRL_PORT |= (1<<R_WR);
 
 	RAM_DIR = 0x00;

@@ -11,8 +11,8 @@ DEVICE  = atmega16
 F_CPU   = 16000000	# in Hz
 FUSE_L  = # see below for fuse values for particular devices
 FUSE_H  = 
-AVRDUDE = avrdude -c stk500v2 -p $(DEVICE) -P /dev/tty.PL2303-00002006 
-#AVRDUDE = avrdude -c stk500v2 -p $(DEVICE) -P /dev/tty.PL2303-00001424
+#AVRDUDE = avrdude -c stk500v2 -p $(DEVICE) -P /dev/tty.PL2303-00002006 
+AVRDUDE = sudo avrdude -c stk500v2 -p $(DEVICE) -P  /dev/tty.PL2303-00002126
 
 CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 
 #-std=gnu99 
