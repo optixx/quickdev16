@@ -32,9 +32,6 @@ return      1 byte
 
 #include <string.h>
 
-#define IMAGE_NAME "disk00.vfat"
-
-BYTE  *image_addr;
 
 DSTATUS disk_initialize (BYTE drv) {
     

@@ -20,7 +20,7 @@ DWORD acc_size;                 /* Work register for fs command */
 WORD acc_files, acc_dirs;
 
 FILINFO finfo;
-FATFS fatfs[2];                 /* File system object for each logical drive */
+FATFS fatfs[1];                 /* File system object for each logical drive */
 BYTE Buff[512];                 /* Working buffer */
 
 DWORD p1, p2, p3;
@@ -118,15 +118,15 @@ void main(void) {
     printfs(0,"FATFS ");
 
     printfc("Try to init disk\n");
-    put_rc(f_mount(0, &fatfs[p1]));
+    put_rc(f_mount(0, &fatfs[0]));
 
     res = f_getfree("/", &p2, &fs);
     if (res)
         put_rc(res);
 
-    printfs(0,"FAT type = %u\nBytes/Cluster = %lu\nNumber of FATs = %u\n"
-            "Root DIR entries = %u\nSectors/FAT = %lu\nNumber of clusters = %lu\n"
-            "FAT start (lba) = %lu\nDIR start (lba,clustor) = %lu\nData start (lba) = %lu\n",
+    printfs(0,"FAT TYPE = %u\nBYTES/CLUSTER = %lu\nNUMBER OF FATS = %u\n"
+            "ROOT DIR ENTRIES = %u\nSECTORS/FAT = %lu\nNUMBER OF CLUSTERS = %lu\n"
+            "FAT START = %lu\nDIR START LBA,CLUSTER = %lu\nDATA START LBA = %lu\n",
             (WORD)fs->fs_type, (DWORD)fs->csize * 512, (WORD)fs->n_fats,
             fs->n_rootdir, (DWORD)fs->sects_fat, (DWORD)fs->max_clust - 2,
             fs->fatbase, fs->dirbase, fs->database);
@@ -136,8 +136,8 @@ void main(void) {
     if (res)
         put_rc(res);
     
-    printfc("%u files, %lu bytes.\n%u folders.\n"
-           "%lu KB total disk space.\n%lu KB available.\n",
+    printfc("%u FILES, %lu BYTES\n%u FOLDERS\n"
+           "%lu KB TOTAK DISK SPACE\n%lu KB AVAILABLE\n",
            acc_files, acc_size, acc_dirs,
            (fs->max_clust - 2) * (fs->csize / 2), p2 * (fs->csize / 2));
   

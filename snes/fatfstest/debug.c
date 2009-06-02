@@ -37,6 +37,7 @@ void _print_screen(word y, char *buffer){
     char l;
     l = strlen(buffer);
     waitForVBlank();
+	
 	for(i=0; i<32; i++) {
         if (buffer[i] == '\n' ) {
           y++;
