@@ -25,7 +25,7 @@ LD=$(WINE) $(SDK)/bin/WDCLN.exe
 
 INC=$(SDK)/include
 LIBS=$(SDK)/lib/cc
-OBJS=StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj
+OBJS=StartupSnes.obj pad.obj main.obj PPU.obj debug.obj ressource.obj
 APP=fatfs.smc
 GFX=debugfont
 
@@ -66,4 +66,4 @@ $(APP): $(OBJS)
 		ucon64 -snes -chk $(APP)
 
 clean:
-		rm -vf $(APP) *.obj
+		rm -vf $(APP) *.obj *.TMP

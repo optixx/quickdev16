@@ -39,10 +39,10 @@ void main(void) {
 	*(byte*) 0x2100 = 0x0f; // enable background
 
     enableDebugScreen();
-    printDebugScreen(line_header,0);
-    printf("Debugging console  test\n");
-    printf("test me\n");
+    //printDebugScreen("FATFS TEST",0);
     printDebugScreen(line_header,1);
+
+
     
 	while(1){
 		while(!pad1.start) {
