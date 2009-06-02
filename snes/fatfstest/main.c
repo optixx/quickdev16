@@ -16,7 +16,7 @@ void initInternalRegisters(void) {
 	characterLocation[1] = 0x0000;
 	characterLocation[2] = 0x0000;
 	characterLocation[3] = 0x0000;
-	initDebugMap();
+	debug_init();
 }
 
 void preInit(void) {
@@ -30,7 +30,6 @@ void main(void) {
 	word crc02;
 	padStatus pad1;
 	char line_header[32] = "OK2";
-	char packet[4] = "TEST";
 	initInternalRegisters();
 
 	*(byte*) 0x2105 = 0x01;	// MODE 1 value
@@ -38,11 +37,10 @@ void main(void) {
 	*(byte*) 0x212d = 0x00;	// All subPlane disable
 	*(byte*) 0x2100 = 0x0f; // enable background
 
-    enableDebugScreen();
-    //printDebugScreen("FATFS TEST",0);
-    printDebugScreen(line_header,1);
-
-
+    debug_enable();
+    print_screen("FATFS TEST",0);
+    print_console("Debugging console  test\n");
+    print_console("test me\n");
     
 	while(1){
 		while(!pad1.start) {

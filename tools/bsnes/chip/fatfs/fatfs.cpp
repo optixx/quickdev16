@@ -4,14 +4,9 @@
 
 
 #include "diskio.h"
+#include "config.h"
 
-#define CMD_INIT        0x00
-#define CMD_READ        0x01
-#define CMD_WRITE       0x02
-#define CMD_NONE        0xff
 
-#define SHARED_SIZE     512
-#define SHARED_ADDR     0x3f0000
 
 void FATFS::init() {
   command = CMD_NONE;
@@ -23,16 +18,16 @@ void FATFS::init() {
 
 void FATFS::enable() {
   // command
-  memory::mmio.map(0x3010, *this);
+  memory::mmio.map(MMIO_CMD, *this);
   // sector
-  memory::mmio.map(0x3011, *this);
-  memory::mmio.map(0x3012, *this);
-  memory::mmio.map(0x3013, *this);
-  memory::mmio.map(0x3014, *this);
-  // offset
-  memory::mmio.map(0x3015, *this);
+  memory::mmio.map(MMIO_SECTOR01, *this);
+  memory::mmio.map(MMIO_SECTOR02, *this);
+  memory::mmio.map(MMIO_SECTOR03, *this);
+  memory::mmio.map(MMIO_SECTOR04, *this);
+  // count
+  memory::mmio.map(MMIO_COUNT, *this);
   // return value
-  memory::mmio.map(0x3016, *this);
+  memory::mmio.map(MMIO_RETVAL, *this);
 }
 
 void FATFS::power() {
@@ -57,7 +52,7 @@ void FATFS::pushMem() {
 
 uint8 FATFS::mmio_read(unsigned addr) {
   addr &= 0xffff;
-  if (addr == 0x3016){
+  if (addr == MMIO_RETVAL){
       printf("FATFS::mmio_read retal=%i\n",retval);
       return retval;
   }
@@ -89,13 +84,13 @@ void FATFS::mmio_write(unsigned addr, uint8 data) {
       }
       fflush(stderr);
   }
-  if (addr >= 0x3011 && addr <= 0x3014){
-      sector = data << ( (3 - ( addr - 0x3011))  << 3);
-      printf("FATFS::mmio_write set sector: byte=%i val=%i sector=%i \n",(3 - ( addr - 0x3011)),data,sector);
+  if (addr >= MMIO_SECTOR01 && addr <= MMIO_SECTOR04){
+      sector = data << ( (3 - ( addr - MMIO_SECTOR01))  << 3);
+      printf("FATFS::mmio_write set sector: byte=%i val=%i sector=%i \n",(3 - ( addr - MMIO_SECTOR01)),data,sector);
   }
-  if (addr == 0x3015){
+  if (addr == MMIO_COUNT){
       count = data;
-      printf("FATFS::mmio_write set offset: countr=%i \n",count);
+      printf("FATFS::mmio_write set count: countr=%i \n",count);
       if (command == CMD_READ) {
           retval = disk_read (0, (BYTE*)scratch_buffer, sector, count);
           if (!retval)
@@ -107,8 +102,9 @@ void FATFS::mmio_write(unsigned addr, uint8 data) {
             printf("FATFS::mmio_write set offset: no command to trigger \n");
       }
   }
-  if (addr == 0x3016){
-      printf("FATFS::mmio_write reg 0x3016 retav is RW\n");
+  if (addr == MMIO_RETVAL){
+      printf("FATFS::mmio_write reg 0x3016 reset\n");
+      retval = STA_VOID;
   }
 }
 

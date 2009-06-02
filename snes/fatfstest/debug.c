@@ -1,10 +1,13 @@
+#include <string.h>
 #include "data.h"
 #include "pad.h"
 #include "PPU.h"
 #include "ressource.h"
 
 word debugMap[0x400];
-void initDebugMap(void) {
+
+
+void debug_init(void) {
 	word i;
 	for(i=0; i<0x400; i++) {
 		debugMap[i] = 0x00;
@@ -27,21 +30,25 @@ void int2hex(unsigned long number, char *buf,word size)
 
 }
 
-void printDebugScreen(char *buffer,word y){
+void print_screen(char *buffer,word y){
     char i;
+    char l;
+    l = strlen(buffer);
     waitForVBlank();
 	for(i=0; i<32; i++) {
-		waitForVBlank();
-		VRAMByteWrite((byte) (buffer[i]-32), (word) (0x4000+i+(y*0x20)));
+		if (i<l)
+		    VRAMByteWrite((byte) (buffer[i]-32), (word) (0x4000+i+(y*0x20)));
+	    else
+	        VRAMByteWrite((byte) (' '-32), (word) (0x4000+i+(y*0x20)));
 	}
 }
 
-void printf(char *buffer){
+void print_console(char *buffer){
 	while(*buffer)
 	    *(byte*) 0x3000=*buffer++;
 }
 
-void enableDebugScreen(void){
+void debug_enable(void){
 	VRAMLoad((word) debugFont_pic, 0x5000, 2048);
 	CGRAMLoad((word) debugFont_pal, (byte) 0x00, (word) 16);
 	VRAMLoad((word) debugMap, 0x4000, 0x0800);

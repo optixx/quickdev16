@@ -25,7 +25,11 @@ LD=$(WINE) $(SDK)/bin/WDCLN.exe
 
 INC=$(SDK)/include
 LIBS=$(SDK)/lib/cc
+<<<<<<< HEAD:snes/fatfstest/Makefile
 OBJS=StartupSnes.obj pad.obj main.obj PPU.obj debug.obj ressource.obj
+=======
+OBJS=StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj diskio.obj ff.obj
+>>>>>>> d69d2bf39842c032ea4660a10556e78b14b6d71c:snes/fatfstest/Makefile
 APP=fatfs.smc
 GFX=debugfont
 
