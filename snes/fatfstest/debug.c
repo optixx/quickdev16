@@ -25,6 +25,10 @@ void _print_screen(word y, char *buffer){
     l = strlen(buffer);
     waitForVBlank();
 	for(i=0; i<32; i++) {
+        if (buffer[i] == '\n' ) {
+          y++;
+          continue;
+        }
 		if (i<l)
 		    VRAMByteWrite((byte) (buffer[i]-32), (word) (0x4000+i+(y*0x20)));
 	    else

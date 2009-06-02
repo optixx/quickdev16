@@ -125,13 +125,12 @@ void main(void) {
     if (res)
         put_rc(res);
 
-    printfc("FAT type = %u\nBytes/Cluster = %lu\nNumber of FATs = %u\n"
+    printfs(0,"FAT type = %u\nBytes/Cluster = %lu\nNumber of FATs = %u\n"
             "Root DIR entries = %u\nSectors/FAT = %lu\nNumber of clusters = %lu\n"
             "FAT start (lba) = %lu\nDIR start (lba,clustor) = %lu\nData start (lba) = %lu\n",
             (WORD)fs->fs_type, (DWORD)fs->csize * 512, (WORD)fs->n_fats,
             fs->n_rootdir, (DWORD)fs->sects_fat, (DWORD)fs->max_clust - 2,
-            fs->fatbase, fs->dirbase, fs->database
-    );
+            fs->fatbase, fs->dirbase, fs->database);
     acc_size = acc_files = acc_dirs = 0;
     res = scan_files("/");
     if (res)
@@ -139,9 +138,7 @@ void main(void) {
     printfc("%u files, %lu bytes.\n%u folders.\n"
            "%lu KB total disk space.\n%lu KB available.\n",
            acc_files, acc_size, acc_dirs,
-           (fs->max_clust - 2) * (fs->csize / 2), p2 * (fs->csize / 2)
-    );
-
+           (fs->max_clust - 2) * (fs->csize / 2), p2 * (fs->csize / 2));
   
 	while(1){
 		while(!pad1.start) {
