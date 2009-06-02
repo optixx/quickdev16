@@ -38,10 +38,11 @@ void main(void) {
 	*(byte*) 0x2100 = 0x0f; // enable background
 
     debug_enable();
-    print_screen("FATFS TEST",0);
-    print_console("Debugging console  test\n");
-    print_console("test me\n");
-    
+    printfs(0,"FATFS TEST %i",10);
+    printfc("Test me\n");
+    printfc("Test me %i\n",10);
+
+  
 	while(1){
 		while(!pad1.start) {
 			waitForVBlank();

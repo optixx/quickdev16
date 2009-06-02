@@ -88,7 +88,7 @@ DRESULT disk_read (
     *(byte*) MMIO_SECTOR01 = (sector >> 24) & 0xff;    
     *(byte*) MMIO_SECTOR02 = (sector >> 16) & 0xff;    
     *(byte*) MMIO_SECTOR03 = (sector >> 8) & 0xff;
-    *(byte*) MMIO_SECTOR04 = (sector >> 8) & 0xff;
+    *(byte*) MMIO_SECTOR04 = (sector) & 0xff;
     
     *(byte*) MMIO_COUNT = count;    
     

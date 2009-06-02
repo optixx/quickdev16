@@ -7,7 +7,7 @@ ifeq ($(PLATFORM),Linux)
     # Linux Wine 
     SDK=/home/david/.wine/drive_c/65xx_FreeSDK
     WINE=wine
-    EMU=zsnes
+    EMU=../../tools/bsnes/bsnes
     EMU_DEBUG=/home/david/Devel/arch/snes/tools/zsnes_linux_debug151/src/zsnesd -d 
 else
     # Mac Wine 
@@ -25,11 +25,7 @@ LD=$(WINE) $(SDK)/bin/WDCLN.exe
 
 INC=$(SDK)/include
 LIBS=$(SDK)/lib/cc
-<<<<<<< HEAD:snes/fatfstest/Makefile
-OBJS=StartupSnes.obj pad.obj main.obj PPU.obj debug.obj ressource.obj
-=======
 OBJS=StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj diskio.obj ff.obj
->>>>>>> d69d2bf39842c032ea4660a10556e78b14b6d71c:snes/fatfstest/Makefile
 APP=fatfs.smc
 GFX=debugfont
 

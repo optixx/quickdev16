@@ -1,10 +1,15 @@
 #include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
+
 #include "data.h"
 #include "pad.h"
 #include "PPU.h"
 #include "ressource.h"
 
+
 word debugMap[0x400];
+char debug_buffer[255];
 
 
 void debug_init(void) {
@@ -14,23 +19,7 @@ void debug_init(void) {
 	}
 }
 
-char hex_chars[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-
-void int2hex(unsigned long number, char *buf,word size)
-{
-    unsigned long n;
-    unsigned char i;
-    //unsigned char x;
-    for (i = 0; i < size; i++) {
-        n = number >> 4;
-        //x = (number - (n << 4));
-        buf[size-i-1] = hex_chars[(number - (n << 4))]; 
-        number = n;    
-    }
-
-}
-
-void print_screen(char *buffer,word y){
+void _print_screen(word y, char *buffer){
     char i;
     char l;
     l = strlen(buffer);
@@ -43,10 +32,27 @@ void print_screen(char *buffer,word y){
 	}
 }
 
-void print_console(char *buffer){
+void _print_console(char *buffer){
 	while(*buffer)
 	    *(byte*) 0x3000=*buffer++;
 }
+
+void printfc(char *fmt,...){
+  va_list ap;
+  va_start(ap,fmt);
+  vsprintf(debug_buffer,fmt,ap);
+  va_end(ap);
+  _print_console(debug_buffer);
+}
+
+void printfs(word y,char *fmt,...){
+  va_list ap;
+  va_start(ap,fmt);
+  vsprintf(debug_buffer,fmt,ap);
+  va_end(ap);
+  _print_screen(y,debug_buffer);
+}
+
 
 void debug_enable(void){
 	VRAMLoad((word) debugFont_pic, 0x5000, 2048);
@@ -55,4 +61,24 @@ void debug_enable(void){
 	setTileMapLocation(0x4000, (byte) 0x00, (byte) 0);
 	setCharacterLocation(0x5000, (byte) 0);
 	*(byte*) 0x2100 = 0x0f; // enable background
+}
+
+int unlink(const char *name){
+  printfc("unlink called");
+}
+
+int close(int fd){
+  printfc("close called");
+}
+
+int isatty(int fd){
+  printfc("isatty called");
+}
+
+int write(int fd,void * buffer, size_t len){
+  printfc("write called");
+}
+
+long lseek(int fd,long offset, int whence){
+  printfc("lseek called");
 }
