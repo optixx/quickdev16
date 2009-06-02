@@ -7,7 +7,7 @@ ifeq ($(PLATFORM),Linux)
     # Linux Wine 
     SDK=/home/david/.wine/drive_c/65xx_FreeSDK
     WINE=wine
-    EMU=zsnes
+    EMU=../../tools/bsnes/bsnes
     EMU_DEBUG=/home/david/Devel/arch/snes/tools/zsnes_linux_debug151/src/zsnesd -d 
 else
     # Mac Wine 
@@ -69,4 +69,4 @@ $(APP): $(OBJS)
 		ucon64 -snes -chk $(APP)
 
 clean:
-		rm -vf $(APP) *.obj
+		rm -vf $(APP) *.obj *.TMP

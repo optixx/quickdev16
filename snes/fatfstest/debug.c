@@ -7,9 +7,10 @@
 #include "PPU.h"
 #include "ressource.h"
 
+
 word debugMap[0x400];
 static char debug_buffer[255];
-char hex_chars[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
 
 void debug_init(void) {
 	word i;
@@ -18,6 +19,7 @@ void debug_init(void) {
 	}
     memset(debug_buffer,0,255);
 }
+
 
 void debug_enable(void){
 	VRAMLoad((word) debugFont_pic, 0x5000, 2048);
@@ -29,28 +31,17 @@ void debug_enable(void){
 }
 
 
-void int2hex(unsigned long number, char *buf,word size)
-{
-    unsigned long n;
-    unsigned char i;
-    //unsigned char x;
-    for (i = 0; i < size; i++) {
-        n = number >> 4;
-        //x = (number - (n << 4));
-        buf[size-i-1] = hex_chars[(number - (n << 4))]; 
-        number = n;    
-    }
 
-}
-
-
-
-void print_screen(char *buffer,word y){
+void _print_screen(word y, char *buffer){
     char i;
     char l;
     l = strlen(buffer);
     waitForVBlank();
 	for(i=0; i<32; i++) {
+        if (buffer[i] == '\n' ) {
+          y++;
+          continue;
+        }
 		if (i<l)
 		    VRAMByteWrite((byte) (buffer[i]-32), (word) (0x4000+i+(y*0x20)));
 	    else
@@ -58,55 +49,61 @@ void print_screen(char *buffer,word y){
 	}
 }
 
-
-
-void print_console(char *buffer){
+void _print_console(const char *buffer){
 	while(*buffer)
 	    *(byte*) 0x3000=*buffer++;
 }
 
 
-void printfc(char *fmt, ...){
-    va_list arg;
-    va_start(arg,fmt);
-    vsprintf(debug_buffer,fmt,arg); 
-    print_console(debug_buffer);
-}
-
 
 /* keep the linker happy */
 int open(const char * _name, int _mode){
-    print_console("open called\n");
+    _print_console("open called\n");
     return -1;
 }
 
 int close(int fd){
-    print_console("close called\n");
+    _print_console("close called\n");
     return -1;
     
 } 
 
 size_t read(int fd, void * buff, size_t len){
-    print_console("read called\n");
+    _print_console("read called\n");
     return 0;
 } 
 
 size_t write(int fd, void * buffer, size_t len){
-    print_console("write called\n");
+    _print_console("write called\n");
     return 0;
 }
 
 long lseek(int fd, long off, int count){
-    print_console("lseek called\n");
+    _print_console("lseek called\n");
     return 0;
 } 
 
 int unlink(const char * name){
-    print_console("unlink called\n");
+    _print_console("unlink called\n");
     return -1;
 }
 
 int isatty(){
-    print_console("isatty called\n");
+    _print_console("isatty called\n");
     return 1;
+}
+void printfc(char *fmt,...){
+  va_list ap;
+  va_start(ap,fmt);
+  vsprintf(debug_buffer,fmt,ap);
+  va_end(ap);
+  _print_console(debug_buffer);
+}
+
+void printfs(word y,char *fmt,...){
+  va_list ap;
+  va_start(ap,fmt);
+  vsprintf(debug_buffer,fmt,ap);
+  va_end(ap);
+  _print_screen(y,debug_buffer);
 }

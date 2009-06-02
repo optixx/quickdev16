@@ -39,7 +39,7 @@ BYTE  *image_addr;
 DSTATUS disk_initialize (BYTE drv) {
     
     byte retval;
-    print_console("disk_initialize\n");
+    printfc("disk_initialize\n");
     if (drv) return STA_NOINIT;             /* Supports only single drive */
 
 
@@ -49,7 +49,7 @@ DSTATUS disk_initialize (BYTE drv) {
     while(*(byte*) MMIO_RETVAL == STA_VOID);
     retval = *(byte*) MMIO_RETVAL;
     Stat &= ~STA_NOINIT;                    /* When device goes ready, clear STA_NOINIT */
-    print_console("disk_initialize done\n");
+    printfc("disk_initialize done\n");
     return Stat;
 }
 
@@ -80,11 +80,11 @@ DRESULT disk_read (
     byte retval;
     word i;
     
-    print_console("disk_read enter\n");
+    printfc("disk_read enter\n");
     //if (drv || !count) return RES_PARERR;
-    print_console("drv ok\n");
+    printfc("drv ok\n");
     if (Stat & STA_NOINIT) return RES_NOTRDY;
-    print_console("sta ok\n");
+    printfc("sta ok\n");
 
     *(byte*) MMIO_RETVAL = STA_VOID;
     *(byte*) MMIO_CMD = CMD_READ;    
@@ -92,14 +92,14 @@ DRESULT disk_read (
     *(byte*) MMIO_SECTOR01 = (sector >> 24) & 0xff;    
     *(byte*) MMIO_SECTOR02 = (sector >> 16) & 0xff;    
     *(byte*) MMIO_SECTOR03 = (sector >> 8) & 0xff;
-    *(byte*) MMIO_SECTOR04 = (sector >> 8) & 0xff;
+    *(byte*) MMIO_SECTOR04 = (sector) & 0xff;
     
     *(byte*) MMIO_COUNT = count;    
     
     while(*(byte*) MMIO_RETVAL == STA_VOID);
     retval = *(byte*) MMIO_RETVAL;
     
-    print_console("copy buffer\n");
+    printfc("copy buffer\n");
     for (i=0;i<(count*512);i++)
         *(byte*)(SHARED_ADDR+i) = buff[i];
 
