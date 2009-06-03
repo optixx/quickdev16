@@ -16,3 +16,6 @@
 
 #define SHARED_SIZE     512
 #define SHARED_ADDR     0x3f0000
+
+#undef MMIO_DEBUG
+#undef FATFS_DEBUG

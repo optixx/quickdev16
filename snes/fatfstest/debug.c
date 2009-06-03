@@ -31,31 +31,32 @@ void debug_enable(void){
 }
 
 
+void _print_char(word y,word x, unsigned char c){
+  VRAMByteWrite((byte) (c-32), (word) (0x4000+x+(y*0x20)));
+}
 
 void _print_screen(word y, char *buffer){
-    char i;
     char l;
+    char x = 0;
     l = strlen(buffer);
     waitForVBlank();
-	
-	for(i=0; i<32; i++) {
-        if (buffer[i] == '\n' ) {
+    while(*buffer){
+        if (*buffer == '\n' ) {
+          while(x++<32)
+              _print_char(y,x,' ');
+          x = 0;
           y++;
-          continue;
-        }
-		if (i<l)
-		    VRAMByteWrite((byte) (buffer[i]-32), (word) (0x4000+i+(y*0x20)));
-	    else
-	        VRAMByteWrite((byte) (' '-32), (word) (0x4000+i+(y*0x20)));
-	}
+      }
+      _print_char(y,x,*buffer);
+      x++;
+      buffer++;
+    }
 }
 
 void _print_console(const char *buffer){
 	while(*buffer)
 	    *(byte*) 0x3000=*buffer++;
 }
-
-
 
 /* keep the linker happy */
 int open(const char * _name, int _mode){

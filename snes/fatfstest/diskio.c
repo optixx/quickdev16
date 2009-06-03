@@ -39,16 +39,24 @@ DSTATUS Stat = 0 ; //STA_NOINIT;  /* Disk status */
 DSTATUS disk_initialize (BYTE drv) {
     
     byte retval;
+    #ifdef MMIO_DEBUG
     printfc("SNES::disk_initialize called drv=%i stat=%i\n",drv,Stat);
+    #endif
     if (drv) return STA_NOINIT;             /* Supports only single drive */
     Stat |= STA_NOINIT;
+    #ifdef MMIO_DEBUG
     printfc("SNES::disk_initialize stat=%i\n",Stat);
+    #endif
     *(byte*) MMIO_RETVAL = STA_VOID;
     *(byte*) MMIO_CMD = CMD_INIT;    
+    #ifdef MMIO_DEBUG
     printfc("SNES::disk_initialize poll retval\n");
+    #endif
     while((retval = *(byte*) MMIO_RETVAL) == STA_VOID);
     Stat &= ~STA_NOINIT;                    /* When device goes ready, clear STA_NOINIT */
+    #ifdef MMIO_DEBUG
     printfc("SNES::disk_initialize done Stat=%i\n",Stat);
+    #endif
     return Stat;
 }
 
@@ -79,11 +87,17 @@ DRESULT disk_read (
     byte retval;
     word i;
     
+    #ifdef MMIO_DEBUG
     printfc("SNES::disk_read called sector=%li count=%i\n",sector,count);
+    #endif
     if (drv || !count) return RES_PARERR;
+    #ifdef MMIO_DEBUG
     printfc("SNES::disk_read drv ok\n");
+    #endif
     if (Stat & STA_NOINIT) return RES_NOTRDY;
+    #ifdef MMIO_DEBUG
     printfc("SNES::disk_read sta ok\n");
+    #endif
 
     *(byte*) MMIO_RETVAL = STA_VOID;
     *(byte*) MMIO_CMD = CMD_READ;    
@@ -95,18 +109,25 @@ DRESULT disk_read (
     
     *(byte*) MMIO_COUNT = count;    
 
+    #ifdef MMIO_DEBUG
     printfc("SNES::disk_read poll retval\n");
+    #endif
     while((retval = *(byte*) MMIO_RETVAL) == STA_VOID);
     
     
+    #ifdef MMIO_DEBUG
     printfc("SNES::disk_read copy buffer to %06lx\n",SHARED_ADDR);
+    #endif
     for (i=0;i<(count*512);i++){
         buff[i]  = *(byte*)(SHARED_ADDR+i);
+        #ifdef MMIO_DEBUG
         if ( i < 8)
           printfc("0x%02x ",buff[i]);
-
+        #endif
     }
+    #ifdef MMIO_DEBUG
     printfc("\n");
+    #endif
     return retval;
 }
 

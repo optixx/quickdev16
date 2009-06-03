@@ -55,11 +55,13 @@ DSTATUS disk_initialize (BYTE drv) {
     lseek(fd,0,SEEK_SET);
     
     image_addr = (BYTE*)mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    #ifdef MMIO_DEBUG
     printf("DISKIO::disk_initialize: Open Image (size %i) %p\n",size,image_addr);
+    #endif
     if (image_addr == MAP_FAILED) {
 	    close(fd);
 	    perror("DISKIO::disk_initialize: Error mmapping the file");
-	    exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
     
     Stat &= ~STA_NOINIT;                    /* When device goes ready, clear STA_NOINIT */
@@ -94,9 +96,13 @@ DRESULT disk_read (
 
     DWORD offset = sector  * 512;
     int size = count * 512;
+    #ifdef MMIO_DEBUG
     printf("DISKIO::disk_read: sector=%li count=%i addr=%p off=%li size=%i\n",sector,count,image_addr + offset,offset,size);
+    #endif
     memcpy(buff,image_addr + offset,size);
+    #ifdef MMIO_DEBUG
     printf("DISKIO::disk_read: done\n");
+    #endif
     return RES_OK;
 }
 
@@ -118,7 +124,9 @@ DRESULT disk_write (
 
     DWORD offset = sector  * 512;
     int size = count * 512;
+    #ifdef MMIO_DEBUG
     printf("disk_write: sector=%li count=%i addr=%p off=%li size=%i\n",sector,count,image_addr + offset,offset,size);
+    #endif
     memcpy(image_addr + offset,buff,size);
     return RES_OK;
 }
@@ -143,17 +151,23 @@ DRESULT disk_ioctl (
 
     switch (ctrl) {
         case GET_SECTOR_COUNT : /* Get number of sectors on the disk (DWORD) */
+    #ifdef MMIO_DEBUG
             printf("disk_ioctl: GET_SECTOR_COUNT\n");
+    #endif
             ofs = 60; w = 2; n = 0;
             break;
 
         case GET_SECTOR_SIZE :  /* Get sectors on the disk (WORD) */
+    #ifdef MMIO_DEBUG
             printf("disk_ioctl: GET_SECTOR_SIZE\n");
+    #endif
             *(WORD*)buff = 512;
             return RES_OK;
 
         case GET_BLOCK_SIZE :   /* Get erase block size in sectors (DWORD) */
+    #ifdef MMIO_DEBUG
             printf("disk_ioctl: GET_BLOCK_SIZE\n");
+    #endif
             *(DWORD*)buff = 32;
             return RES_OK;
 

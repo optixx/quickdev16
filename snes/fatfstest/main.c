@@ -119,8 +119,10 @@ void main(void) {
 
     debug_enable();
     printfs(0,"FATFS ");
-
-    //halt();
+    printfs(2,"FATFS ");
+    printfs(3,"FATFS ");
+    printfs(4,"FATFS ");
+    halt();
     printfc("SNES::main: Try to init disk\n");
     put_rc(f_mount(0, &fatfs[0]));
     
@@ -129,7 +131,6 @@ void main(void) {
     res = f_getfree("", &p2, &fs);
     if (res)
         put_rc(res);
-    //halt();
 
     printfc("SNES::main: printf fs results\n");
     printfc("FAT TYPE = %u\nBYTES/CLUSTER = %lu\nNUMBER OF FATS = %u\n"
@@ -150,7 +151,35 @@ void main(void) {
            acc_files, acc_size, acc_dirs,
            (fs->max_clust - 2) * (fs->csize / 2), p2 * (fs->csize / 2));
   
-	while(1){
+    res = f_opendir(&dir, "");
+    if (res)
+      put_rc(res);
+
+    p1 = s1 = s2 = 0;
+    printfc("SNES::main: read dir\n");
+    for(;;) {
+        res = f_readdir(&dir, &finfo);
+        if ((res != FR_OK) || !finfo.fname[0]) break;
+        if (finfo.fattrib & AM_DIR) {
+            s2++;
+        } else {
+            s1++; p1 += finfo.fsize;
+        }
+        printfc("%c%c%c%c%c %u/%02u/%02u %02u:%02u %9lu  %s\n",
+                    (finfo.fattrib & AM_DIR) ? 'D' : '-',
+                    (finfo.fattrib & AM_RDO) ? 'R' : '-',
+                    (finfo.fattrib & AM_HID) ? 'H' : '-',
+                    (finfo.fattrib & AM_SYS) ? 'S' : '-',
+                    (finfo.fattrib & AM_ARC) ? 'A' : '-',
+                    (finfo.fdate >> 9) + 1980, (finfo.fdate >> 5) & 15, finfo.fdate & 31,
+                    (finfo.ftime >> 11), (finfo.ftime >> 5) & 63,
+                    finfo.fsize, &(finfo.fname[0]));
+    }
+    printfc("%4u FILES, %10lu BYTES TOTAL\n%4u DIRS", s1, p1, s2);
+    if (f_getfree("", &p1, &fs) == FR_OK)
+        printfc(", %10luK BYTES FREE\n", p1 * fs->csize / 2);
+
+    while(1){
 		while(!pad1.start) {
 			waitForVBlank();
 			pad1 = readPad((byte) 0);
