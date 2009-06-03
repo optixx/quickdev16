@@ -1,9 +1,15 @@
 #include "data.h";
 #include "pad.h";
+#include "debug.h";
 
 void enablePad(void) {
 	// Enable pad reading and NMI
 	*(byte*)0x4200 = 0x81;
+}
+
+void disablePad(void) {
+    // Enable pad reading and NMI
+    *(byte*)0x4200 = 0x00;
 }
 
 padStatus readPad(byte padNumber) {

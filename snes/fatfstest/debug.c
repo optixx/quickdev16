@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <fcntl.h>
 
+#include "debug.h"
 #include "data.h"
 #include "pad.h"
 #include "PPU.h"
@@ -10,7 +11,27 @@
 
 word debugMap[0x400];
 static char debug_buffer[255];
+static char screen_buffer[255];
 
+word col[] = {
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+      0x03ff,
+
+};
 
 void debug_init(void) {
 	word i;
@@ -31,7 +52,16 @@ void debug_enable(void){
 }
 
 
-void _print_char(word y,word x, unsigned char c){
+void clears(void) {
+    word x,y;
+    for(y=0; y<16; y++)
+      for(x=0; x<32; x++)
+        VRAMByteWrite((byte) (' '-32), (word) (0x4000+x+(y*0x20)));
+}
+
+
+void _print_char(word y,word x,  char c){
+  waitForVBlank();
   VRAMByteWrite((byte) (c-32), (word) (0x4000+x+(y*0x20)));
 }
 
@@ -41,22 +71,41 @@ void _print_screen(word y, char *buffer){
     l = strlen(buffer);
     waitForVBlank();
     while(*buffer){
+        
         if (*buffer == '\n' ) {
-          while(x++<32)
-              _print_char(y,x,' ');
-          x = 0;
-          y++;
-      }
-      _print_char(y,x,*buffer);
-      x++;
-      buffer++;
+            while(x++<32)
+                _print_char(y,x,' ');
+            x = 0;
+            y++;
+            buffer++;
+            continue;
+        }
+        _print_char(y,x,*buffer);
+        x++;
+        buffer++;
     }
 }
-
 void _print_console(const char *buffer){
-	while(*buffer)
-	    *(byte*) 0x3000=*buffer++;
+    while(*buffer)
+        *(byte*) 0x3000=*buffer++;
 }
+
+void printfc(char *fmt,...){
+  va_list ap;
+  va_start(ap,fmt);
+  vsprintf(debug_buffer,fmt,ap);
+  va_end(ap);
+  _print_console(debug_buffer);
+}
+
+void printfs(word y,char *fmt,...){
+  va_list ap;
+  va_start(ap,fmt);
+  vsprintf(screen_buffer,fmt,ap);
+  va_end(ap);
+  _print_screen(y,screen_buffer);
+}
+
 
 /* keep the linker happy */
 int open(const char * _name, int _mode){
@@ -94,18 +143,4 @@ int isatty(){
     _print_console("isatty called\n");
     return 1;
 }
-void printfc(char *fmt,...){
-  va_list ap;
-  va_start(ap,fmt);
-  vsprintf(debug_buffer,fmt,ap);
-  va_end(ap);
-  _print_console(debug_buffer);
-}
 
-void printfs(word y,char *fmt,...){
-  va_list ap;
-  va_start(ap,fmt);
-  vsprintf(debug_buffer,fmt,ap);
-  va_end(ap);
-  _print_screen(y,debug_buffer);
-}

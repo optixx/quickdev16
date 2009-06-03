@@ -16,4 +16,5 @@ typedef struct padStatus{
 } padStatus;
 
 extern void enablePad(void);
+extern void disablePad(void);
 extern padStatus readPad(byte padNumber);

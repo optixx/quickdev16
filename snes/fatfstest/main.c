@@ -108,22 +108,34 @@ FRESULT scan_files (char* path){
     return res;
 }
 
+void wait(){
+    printfc("SNES::wait: press A to continue\n");
+    enablePad();
+    pad1 = readPad((byte) 0);
+    while(!pad1.A) {
+        pad1 = readPad((byte) 0);
+    }
+    printfc("SNES::wait: done\n");
+    disablePad();
+}
+
+
 void main(void) {
 	word i,j;
     BYTE res;
 	initInternalRegisters();
+    
 	*(byte*) 0x2105 = 0x01;	// MODE 1 value
 	*(byte*) 0x212c = 0x01; // Plane 0 (bit one) enable register
 	*(byte*) 0x212d = 0x00;	// All subPlane disable
 	*(byte*) 0x2100 = 0x0f; // enable background
 
     debug_enable();
+
     printfs(0,"FATFS ");
-    printfs(2,"FATFS ");
-    printfs(3,"FATFS ");
-    printfs(4,"FATFS ");
-    halt();
+    //wait();
     printfc("SNES::main: Try to init disk\n");
+
     put_rc(f_mount(0, &fatfs[0]));
     
     
@@ -133,7 +145,7 @@ void main(void) {
         put_rc(res);
 
     printfc("SNES::main: printf fs results\n");
-    printfc("FAT TYPE = %u\nBYTES/CLUSTER = %lu\nNUMBER OF FATS = %u\n"
+    printfs(1,"FAT TYPE = %u\nBYTES/CLUSTER = %lu\nNUMBER OF FATS = %u\n"
             "ROOT DIR ENTRIES = %u\nSECTORS/FAT = %lu\nNUMBER OF CLUSTERS = %lu\n"
             "FAT START = %lu\nDIR START LBA,CLUSTER = %lu\nDATA START LBA = %lu\n",
             (WORD)fs->fs_type, (DWORD)fs->csize * 512, (WORD)fs->n_fats,
@@ -146,7 +158,7 @@ void main(void) {
     if (res)
         put_rc(res);
     
-    printfc("%u FILES, %lu BYTES\n%u FOLDERS\n"
+    printfs(12,"%u FILES, %lu BYTES\n%u FOLDERS\n"
            "%lu KB TOTAK DISK SPACE\n%lu KB AVAILABLE\n",
            acc_files, acc_size, acc_dirs,
            (fs->max_clust - 2) * (fs->csize / 2), p2 * (fs->csize / 2));
@@ -156,6 +168,9 @@ void main(void) {
       put_rc(res);
 
     p1 = s1 = s2 = 0;
+    cnt = 0;
+    wait();
+    clears();
     printfc("SNES::main: read dir\n");
     for(;;) {
         res = f_readdir(&dir, &finfo);
@@ -165,7 +180,9 @@ void main(void) {
         } else {
             s1++; p1 += finfo.fsize;
         }
-        printfc("%c%c%c%c%c %u/%02u/%02u %02u:%02u %9lu  %s\n",
+        ;
+        
+        printfs(cnt,"%c%c%c%c%c %u/%02u/%02u %02u:%02u %9lu\n%s\n",
                     (finfo.fattrib & AM_DIR) ? 'D' : '-',
                     (finfo.fattrib & AM_RDO) ? 'R' : '-',
                     (finfo.fattrib & AM_HID) ? 'H' : '-',
@@ -174,16 +191,21 @@ void main(void) {
                     (finfo.fdate >> 9) + 1980, (finfo.fdate >> 5) & 15, finfo.fdate & 31,
                     (finfo.ftime >> 11), (finfo.ftime >> 5) & 63,
                     finfo.fsize, &(finfo.fname[0]));
+        cnt+=2;
+        /*
+        printfs(cnt,"%u/%02u/%02u %02u:%02u %9lu\n%s\n",
+                    (finfo.fdate >> 9) + 1980, (finfo.fdate >> 5) & 15, finfo.fdate & 31,
+                    (finfo.ftime >> 11), (finfo.ftime >> 5) & 63,
+                    finfo.fsize, &(finfo.fname[0]));
+        */
     }
+    /*
     printfc("%4u FILES, %10lu BYTES TOTAL\n%4u DIRS", s1, p1, s2);
     if (f_getfree("", &p1, &fs) == FR_OK)
         printfc(", %10luK BYTES FREE\n", p1 * fs->csize / 2);
-
+    */
     while(1){
-		while(!pad1.start) {
-			waitForVBlank();
-			pad1 = readPad((byte) 0);
-		}
+      wait();
 	}	
 	while(1);
 }
