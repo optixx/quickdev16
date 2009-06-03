@@ -1,3 +1,7 @@
+
+//#include "integer.h"
+#include "ff.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -9,8 +13,7 @@
 #include "ressource.h";
 #include "PPU.h"
 #include "debug.h"
-#include "integer.h"
-#include "ff.h"
+
 
 
 padStatus pad1;
@@ -20,8 +23,8 @@ DWORD acc_size;                 /* Work register for fs command */
 WORD acc_files, acc_dirs;
 
 FILINFO finfo;
-FATFS fatfs[1];                 /* File system object for each logical drive */
-BYTE Buff[512];                 /* Working buffer */
+FATFS fatfs[2];             /* File system object for each logical drive */
+BYTE Buff[1024];            /* Working buffer */
 
 DWORD p1, p2, p3;
 BYTE res;
@@ -70,7 +73,7 @@ void halt(void) {
 void put_rc (FRESULT rc){
     const char *p;
     static const char str[] =
-        "OK\0" "NOT_READY\0" "NO_FILE\0" "FR_NO_PATH\0" "INVALID_NAME\0" "INVALID_DRIVE\0"
+        "OK\0" "NOT_READY\0" "NO_FILE\0" "NO_PATH\0" "INVALID_NAME\0" "INVALID_DRIVE\0"
         "DENIED\0" "EXIST\0" "RW_ERROR\0" "WRITE_PROTECTED\0" "NOT_ENABLED\0"
         "NO_FILESYSTEM\0" "INVALID_OBJECT\0" "MKFS_ABORTED\0";
     FRESULT i;
@@ -117,14 +120,19 @@ void main(void) {
     debug_enable();
     printfs(0,"FATFS ");
 
-    printfc("Try to init disk\n");
+    //halt();
+    printfc("SNES::main: Try to init disk\n");
     put_rc(f_mount(0, &fatfs[0]));
-
-    res = f_getfree("/", &p2, &fs);
+    
+    
+    printfc("SNES::main: Try to get free\n");
+    res = f_getfree("", &p2, &fs);
     if (res)
         put_rc(res);
+    //halt();
 
-    printfs(0,"FAT TYPE = %u\nBYTES/CLUSTER = %lu\nNUMBER OF FATS = %u\n"
+    printfc("SNES::main: printf fs results\n");
+    printfc("FAT TYPE = %u\nBYTES/CLUSTER = %lu\nNUMBER OF FATS = %u\n"
             "ROOT DIR ENTRIES = %u\nSECTORS/FAT = %lu\nNUMBER OF CLUSTERS = %lu\n"
             "FAT START = %lu\nDIR START LBA,CLUSTER = %lu\nDATA START LBA = %lu\n",
             (WORD)fs->fs_type, (DWORD)fs->csize * 512, (WORD)fs->n_fats,
@@ -132,7 +140,8 @@ void main(void) {
             fs->fatbase, fs->dirbase, fs->database);
     
     acc_size = acc_files = acc_dirs = 0;
-    res = scan_files("/");
+    printfc("SNES::main: scan files\n");
+    res = scan_files("");
     if (res)
         put_rc(res);
     

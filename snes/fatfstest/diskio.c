@@ -5,8 +5,6 @@
 #include "data.h"
 #include "debug.h"
 
-volatile static 
-DSTATUS Stat = STA_NOINIT;  /* Disk status */
 
 
 /* Interface
@@ -33,20 +31,24 @@ return      1 byte
 #include <string.h>
 
 
+// TODO: Figure out gobal vars ?!?
+
+DSTATUS Stat = 0 ; //STA_NOINIT;  /* Disk status */
+
+
 DSTATUS disk_initialize (BYTE drv) {
     
     byte retval;
-    printfc("disk_initialize\n");
+    printfc("SNES::disk_initialize called drv=%i stat=%i\n",drv,Stat);
     if (drv) return STA_NOINIT;             /* Supports only single drive */
-
-
     Stat |= STA_NOINIT;
+    printfc("SNES::disk_initialize stat=%i\n",Stat);
     *(byte*) MMIO_RETVAL = STA_VOID;
     *(byte*) MMIO_CMD = CMD_INIT;    
-    while(*(byte*) MMIO_RETVAL == STA_VOID);
-    retval = *(byte*) MMIO_RETVAL;
+    printfc("SNES::disk_initialize poll retval\n");
+    while((retval = *(byte*) MMIO_RETVAL) == STA_VOID);
     Stat &= ~STA_NOINIT;                    /* When device goes ready, clear STA_NOINIT */
-    printfc("disk_initialize done\n");
+    printfc("SNES::disk_initialize done Stat=%i\n",Stat);
     return Stat;
 }
 
@@ -77,11 +79,11 @@ DRESULT disk_read (
     byte retval;
     word i;
     
-    printfc("disk_read enter\n");
-    //if (drv || !count) return RES_PARERR;
-    printfc("drv ok\n");
+    printfc("SNES::disk_read called sector=%li count=%i\n",sector,count);
+    if (drv || !count) return RES_PARERR;
+    printfc("SNES::disk_read drv ok\n");
     if (Stat & STA_NOINIT) return RES_NOTRDY;
-    printfc("sta ok\n");
+    printfc("SNES::disk_read sta ok\n");
 
     *(byte*) MMIO_RETVAL = STA_VOID;
     *(byte*) MMIO_CMD = CMD_READ;    
@@ -92,14 +94,19 @@ DRESULT disk_read (
     *(byte*) MMIO_SECTOR04 = (sector) & 0xff;
     
     *(byte*) MMIO_COUNT = count;    
-    
-    while(*(byte*) MMIO_RETVAL == STA_VOID);
-    retval = *(byte*) MMIO_RETVAL;
-    
-    printfc("copy buffer\n");
-    for (i=0;i<(count*512);i++)
-        *(byte*)(SHARED_ADDR+i) = buff[i];
 
+    printfc("SNES::disk_read poll retval\n");
+    while((retval = *(byte*) MMIO_RETVAL) == STA_VOID);
+    
+    
+    printfc("SNES::disk_read copy buffer to %06lx\n",SHARED_ADDR);
+    for (i=0;i<(count*512);i++){
+        buff[i]  = *(byte*)(SHARED_ADDR+i);
+        if ( i < 8)
+          printfc("0x%02x ",buff[i]);
+
+    }
+    printfc("\n");
     return retval;
 }
 

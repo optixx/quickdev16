@@ -13,7 +13,7 @@ void FATFS::init() {
   sector = 0;
   count = 0;
   retval = -1;
-  scratch_buffer = (char*)malloc(SHARED_SIZE);
+  scratch_buffer = (unsigned char*)malloc(SHARED_SIZE);
 }
 
 void FATFS::enable() {
@@ -47,7 +47,10 @@ void FATFS::fetchMem() {
 void FATFS::pushMem() {
   for ( int i=0;i<SHARED_SIZE;i++){
       bus.write(SHARED_ADDR + i,scratch_buffer[i]);
+      if ( i < 8)
+        printf("0x%02x ",scratch_buffer[i]);
   }
+  printf("\n");
 }
 
 uint8 FATFS::mmio_read(unsigned addr) {
@@ -90,7 +93,7 @@ void FATFS::mmio_write(unsigned addr, uint8 data) {
   }
   if (addr == MMIO_COUNT){
       count = data;
-      printf("FATFS::mmio_write set count: countr=%i \n",count);
+      printf("FATFS::mmio_write set count: count=%i \n",count);
       if (command == CMD_READ) {
           retval = disk_read (0, (BYTE*)scratch_buffer, sector, count);
           if (!retval)

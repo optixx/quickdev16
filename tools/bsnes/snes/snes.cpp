@@ -78,6 +78,7 @@ void SNES::power() {
   }
 
   scheduler.init();
+  fatfs.init();
 
   ppu.PPUcounter::reset();
   cpu.power();
@@ -85,6 +86,7 @@ void SNES::power() {
   dsp.power();
   ppu.power();
   bus.power();
+
 
   if(expansion() == ExpansionBSX)            bsxbase.power();
   if(cartridge.mode() == Cartridge::ModeBsx) bsxcart.power();

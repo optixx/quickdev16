@@ -66,6 +66,7 @@
 
 #include "ff.h"			/* FatFs configurations and declarations */
 #include "diskio.h"		/* Declarations of low level disk I/O functions */
+#include "debug.h"         /* FatFs configurations and declarations */
 
 
 /*--------------------------------------------------------------------------
@@ -1367,13 +1368,14 @@ FRESULT auto_mount (	/* FR_OK(0): successful, !=0: any error occured */
 	} else {
 		vol = 0;				/* No drive number is given, use drive number 0 as default */
 	}
-
+    printfc("auto_mount drv %i\n",vol);
 	/* Check if the logical drive number is valid or not */
 	if (vol >= _DRIVES) return FR_INVALID_DRIVE;	/* Is the drive number valid? */
 	*rfs = fs = FatFs[vol];					/* Returen pointer to the corresponding file system object */
 	if (!fs) return FR_NOT_ENABLED;			/* Is the file system object registered? */
 
 	ENTER_FF(fs);				/* Lock file system */
+    printfc("auto_mount ok enter_ff\n");
 
 	if (fs->fs_type) {						/* If the logical drive has been mounted */
 		stat = disk_status(fs->drive);
@@ -1386,11 +1388,13 @@ FRESULT auto_mount (	/* FR_OK(0): successful, !=0: any error occured */
 		}
 	}
 
+    printfc("auto_mount mount now\n");
 	/* The logical drive must be re-mounted. Following code attempts to mount the volume */
 
 	fs->fs_type = 0;					/* Clear the file system object */
 	fs->drive = LD2PD(vol);				/* Bind the logical drive and a physical drive */
 	stat = disk_initialize(fs->drive);	/* Initialize low level disk I/O layer */
+    printfc("auto_mount disk_initialize return %i\n",stat);
 	if (stat & STA_NOINIT)				/* Check if the drive is ready */
 		return FR_NOT_READY;
 #if _MAX_SS != 512						/* Get disk sector size if needed */
@@ -1401,6 +1405,7 @@ FRESULT auto_mount (	/* FR_OK(0): successful, !=0: any error occured */
 	if (chk_wp && (stat & STA_PROTECT))	/* Check write protection if needed */
 		return FR_WRITE_PROTECTED;
 #endif
+    printfc("auto_mount search fat now\n");
 	/* Search FAT partition on the drive */
 	fmt = check_fs(fs, bsect = 0);		/* Check sector 0 as an SFD format */
 	if (fmt == 1) {						/* Not an FAT boot record, it may be patitioned */

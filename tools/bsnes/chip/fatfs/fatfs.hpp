@@ -20,7 +20,7 @@ private:
   int  sector;
   char count;
   char retval;
-  char *scratch_buffer;
+  unsigned char *scratch_buffer;
 };
 
 extern FATFS fatfs;
