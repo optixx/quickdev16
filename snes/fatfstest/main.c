@@ -119,7 +119,7 @@ FRESULT scan_files (char* path){
     return res;
 }
 
-void wait(){
+void wait(void){
     printfc("SNES::wait: press A to continue\n");
     enablePad();
     //waitForVBlank();
@@ -152,7 +152,7 @@ void main(void) {
 
     put_rc(f_mount(0, &fatfs[0]));
     
-#if 0
+#if 1
     printfc("SNES::main: Try to get free\n");
     res = f_getfree("", &p2, &fs);
     if (res)
