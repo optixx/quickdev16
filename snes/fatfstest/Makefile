@@ -24,7 +24,7 @@ LD=$(WINE) $(SDK)/bin/WDCLN.exe
 # Project
 
 INC=$(SDK)/include
-LIBS=-L$(SDK)/lib/cc 
+LIBS=-L$(SDK)/lib/cl 
 #-L$(SDK)/lib/c134
 
 
@@ -62,7 +62,7 @@ hook.obj: hook.asm
 
 
 %.obj: %.c
-		$(CC)  -wl -wp -sop -MC -I $(INC) $?
+		$(CC)  -wl -wp -sop -ML -I $(INC) $?
 
 $(APP): $(OBJS)
 		$(LD) -HB -M21 -V -T -Pff \
@@ -72,6 +72,9 @@ $(APP): $(OBJS)
                 -Aressource=3f8000,8000 \
                 -N $(OBJS) $(LIBS) -O $@
 		ucon64 -snes -chk $(APP) 2>&1 >/dev/null
+
+
+                #-Ahook=008000,0000 \
 
 clean:
 		rm -vf $(APP) *.obj *.TMP

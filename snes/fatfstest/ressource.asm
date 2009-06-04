@@ -12,12 +12,12 @@ ressource	.section
 ;__title_pal:
 ;make	INSERT ressource/kungfu.clr
 
-	XDEF _~debugFont_pic
-_~debugFont_pic
+	XDEF ~~debugFont_pic
+~~debugFont_pic
 	INSERT ressource/debugFont.pic
 
-	XDEF _~debugFont_pal
-_~debugFont_pal
+	XDEF ~~debugFont_pal
+~~debugFont_pal
 	INSERT ressource/debugFont.clr
 
 .ends

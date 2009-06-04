@@ -12,7 +12,7 @@ CODE
 
 	XDEF  	START
 START:
-        XREF  	_~main
+        XREF  	~~main
   	
 	sei             ; Disabled interrupts
         clc             ; clear carry to switch to native mode
@@ -28,13 +28,13 @@ START:
 
 	; Init data used for heap 
 	; see heap definition below
-	XREF _~_heap_top
-	XREF _~_mem_start	
-	stz	_~_heap_top
-	stz	_~_mem_start
+	XREF ~~_heap_top
+	XREF ~~_mem_start
+	stz	~~_heap_top
+	stz	~~_mem_start
 	
-	XREF	_~preInit
-        jsr   	>_~preInit
+	XREF	~~preInit
+        jsr   	>~~preInit
 
         sep     #$30    ; X,Y,A are 8 bit numbers
 	LONGA	OFF
@@ -127,19 +127,19 @@ START:
 	longa	on
 	longi	on
 
-    jsr   	>_~main
+    jsr   	>~~main
     brk
 
 	XDEF IRQ
 IRQ:	
-	XREF _~IRQHandler
+	XREF ~~IRQHandler
 	LONGA	ON
 	LONGI	ON
 	rep	#$30
 	pha
 	phx
 	phy
-	jsr	_~IRQHandler
+	jsr	~~IRQHandler
 	ply
 	plx
 	pla
@@ -147,7 +147,7 @@ IRQ:
 	
 	XDEF	NMI
 NMI:
-	XREF	_~NMIHandler
+	XREF	~~NMIHandler
 	LONGA	ON
 	LONGI	ON
 	rep	#$30
@@ -164,7 +164,7 @@ NMI:
 	LONGA	ON
 	LONGI	ON
 	rep	#$30
-	jsr	_~NMIHandler
+	jsr	~~NMIHandler
 	plb
 	pld
 	ply
@@ -183,12 +183,12 @@ ENDS
 
 DATA
 
-	XDEF	_~heap_start
-	XDEF	_~heap_end
+	XDEF	~~heap_start
+	XDEF	~~heap_end
 
-_~heap_start:
+~~heap_start:
 	WORD	$1000
-_~heap_end:
+~~heap_end:
 	WORD	$1200
 
 ;******************************************************************************
