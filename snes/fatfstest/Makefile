@@ -64,9 +64,9 @@ $(APP): $(OBJS)
                 -C008000,0000 -U0000,0000 \
                 -Avectors=FFE4,7FE4 \
                 -Aregistration_data=FFB0,7FB0 \
-                -Aressource=18000,8000 \
+                -Aressource=3f8000,8000 \
                 -N $(OBJS) $(LIBS) -O $@
-		ucon64 -snes -chk $(APP)
+		ucon64 -snes -chk $(APP) 2>&1 >/dev/null
 
 clean:
 		rm -vf $(APP) *.obj *.TMP

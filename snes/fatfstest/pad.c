@@ -4,7 +4,7 @@
 
 void enablePad(void) {
 	// Enable pad reading and NMI
-	*(byte*)0x4200 = 0x81;
+	*(byte*)0x4200 = 0x01;
 }
 
 void disablePad(void) {

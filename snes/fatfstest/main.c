@@ -1,11 +1,9 @@
 
-//#include "integer.h"
-#include "ff.h"
-
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
+#include "ff.h"
 #include "data.h";
 #include "pad.h";
 #include "event.h";
@@ -15,16 +13,24 @@
 #include "debug.h"
 
 
+/*
+
+o debug STA global
+o optimize internal transfer buffer
+o direct write to mempage
+o relocate main code
+o exec loaded file
+*/
+
 
 padStatus pad1;
-
-
+unsigned long addr;
 DWORD acc_size;                 /* Work register for fs command */
 WORD acc_files, acc_dirs;
 
 FILINFO finfo;
 FATFS fatfs[2];             /* File system object for each logical drive */
-BYTE Buff[1024];            /* Working buffer */
+BYTE Buff[512];            /* Working buffer */
 
 DWORD p1, p2, p3;
 BYTE res;
@@ -33,8 +39,13 @@ UINT s1, s2, cnt;
 
 FATFS *fs;
 DIR dir;                        /* Directory object */
-FIL file1, file2;               /* File object */
+FIL file1;
 
+
+#define ROM_NAME "BANK01.SMC"
+#define BLOCK_SIZE 512
+
+//#pragma section CODE=BANK2,offset $2:0000
 
 
 void initInternalRegisters(void) {
@@ -111,13 +122,16 @@ FRESULT scan_files (char* path){
 void wait(){
     printfc("SNES::wait: press A to continue\n");
     enablePad();
+    //waitForVBlank();
     pad1 = readPad((byte) 0);
     while(!pad1.A) {
+        waitForVBlank();
         pad1 = readPad((byte) 0);
     }
     printfc("SNES::wait: done\n");
-    disablePad();
+    //disablePad();
 }
+
 
 
 void main(void) {
@@ -132,18 +146,19 @@ void main(void) {
 
     debug_enable();
 
-    printfs(0,"FATFS ");
+    printfs(0,"FATFS OPTIXX.ORG ");
     //wait();
     printfc("SNES::main: Try to init disk\n");
 
     put_rc(f_mount(0, &fatfs[0]));
     
-    
+#if 0
     printfc("SNES::main: Try to get free\n");
     res = f_getfree("", &p2, &fs);
     if (res)
         put_rc(res);
 
+  
     printfc("SNES::main: printf fs results\n");
     printfs(1,"FAT TYPE = %u\nBYTES/CLUSTER = %lu\nNUMBER OF FATS = %u\n"
             "ROOT DIR ENTRIES = %u\nSECTORS/FAT = %lu\nNUMBER OF CLUSTERS = %lu\n"
@@ -198,12 +213,55 @@ void main(void) {
                     (finfo.ftime >> 11), (finfo.ftime >> 5) & 63,
                     finfo.fsize, &(finfo.fname[0]));
         */
+        if (cnt && cnt==20){
+          cnt = 0;
+          wait();
+          clears();
+        }
     }
-    /*
-    printfc("%4u FILES, %10lu BYTES TOTAL\n%4u DIRS", s1, p1, s2);
+    
+    printfs(20,"%4u FILES\n%10lu BYTES TOTAL\n%4u DIRS", s1, p1, s2);
     if (f_getfree("", &p1, &fs) == FR_OK)
-        printfc(", %10luK BYTES FREE\n", p1 * fs->csize / 2);
-    */
+        printfs(23,"%10luK BYTES FREE\n", p1 * fs->csize / 2);
+
+    wait();
+    clears();
+#endif
+    printfc("SNES::main: open %s \n",ROM_NAME);
+    printfs(0,"OPEN %s",ROM_NAME);
+    put_rc(f_open(&file1, ROM_NAME, FA_READ));
+
+
+    addr = 0x020000;
+    p1 = 1024 * 31;
+    p2 = 0;
+    while (p1) {
+        cnt = BLOCK_SIZE;
+        p1 -= BLOCK_SIZE;
+        res = f_read(&file1, Buff, cnt, &s2);
+        printfc("SNES::main: read cnt=%i p1=%i p2=%i s2=%i\n",cnt,p1,p2,s2);
+        //printfc("SNES::main: read %x %x %x %x \n",Buff[0],Buff[1],Buff[2],Buff[3]);
+        if (res != FR_OK) {
+            printfc("SNES::main: read failed\n");
+            put_rc(res);
+            break;
+        }
+        p2 += s2;
+        if (cnt != s2){
+          printfc("SNES::main: read cnt=%i s2=%i\n",cnt,s2);
+          break;
+        }
+        printfs(1,"%lu BYTES READ", p2);
+        /*
+        for (i=0; i<BLOCK_SIZE; i++){
+          *(byte*)(0x020000 + i) = Buff[i];
+        }
+        */
+        printfs(2,"%i BYTES TANS %x",BLOCK_SIZE, 0x020000 + p2);
+    }
+    printfs(1,"%lu BYTES READ", p2);
+    put_rc(f_close(&file1));
+  
     while(1){
       wait();
 	}	

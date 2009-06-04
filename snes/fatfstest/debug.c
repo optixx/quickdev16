@@ -9,29 +9,22 @@
 #include "ressource.h"
 
 
+
+word debug_colors[] = {
+  0xff7f, 0x1f00, 0x1802, 0x9772, 0xb55a, 0xbf5a, 0x1f5b, 0x7b73,
+  0x987f, 0x7f5f, 0xff03, 0xfc7f, 0xff7f, 0xff7f, 0xff7f, 0xff7f
+};
+
 word debugMap[0x400];
 static char debug_buffer[255];
 static char screen_buffer[255];
 
-word col[] = {
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-      0x03ff,
-
+/*
+word debug_colors[] = {
+  0x0000, 0x001f, 0x0218, 0x7297, 0x5ab5, 0x5abf, 0x5b1f, 0x737b,
+  0x7f98, 0x5f7f, 0x03ff, 0x7ffc, 0x7fff, 0x0000, 0x0000, 0x0000
 };
+*/
 
 void debug_init(void) {
 	word i;
@@ -44,21 +37,33 @@ void debug_init(void) {
 
 void debug_enable(void){
 	VRAMLoad((word) debugFont_pic, 0x5000, 2048);
-	CGRAMLoad((word) debugFont_pal, (byte) 0x00, (word) 16);
+	//CGRAMLoad((word) debug_colors, (byte) 0x00, (word) 16);
 	VRAMLoad((word) debugMap, 0x4000, 0x0800);
 	setTileMapLocation(0x4000, (byte) 0x00, (byte) 0);
 	setCharacterLocation(0x5000, (byte) 0);
 	*(byte*) 0x2100 = 0x0f; // enable background
-}
 
+    // hex(24 << 10 | 24 << 5 | 24 )
+    // '0x6318'
+
+    *(byte*) 0x2121 = 0x00;
+    *(byte*) 0x2122 = 0x18;
+    *(byte*) 0x2122 = 0x63;
+
+
+}
 
 void clears(void) {
-    word x,y;
-    for(y=0; y<16; y++)
-      for(x=0; x<32; x++)
-        VRAMByteWrite((byte) (' '-32), (word) (0x4000+x+(y*0x20)));
+    word i,y;
+    for(y=0; y<20; y++){
+      waitForVBlank();
+      for(i=0; i<32; i++){
+        *(byte*)0x2115 = 0x80;
+        *(word*)0x2116 = 0x4000+i+(y*0x20);
+        *(byte*)0x2118 = 0;
+      }
+  }
 }
-
 
 void _print_char(word y,word x,  char c){
   waitForVBlank();
@@ -71,18 +76,24 @@ void _print_screen(word y, char *buffer){
     l = strlen(buffer);
     waitForVBlank();
     while(*buffer){
-        
         if (*buffer == '\n' ) {
-            while(x++<32)
-                _print_char(y,x,' ');
+            while(x++<32){
+              *(byte*)0x2115 = 0x80;
+              *(word*)0x2116 = 0x4000+x+(y*0x20);
+              *(byte*)0x2118 = 0;
+            }
             x = 0;
             y++;
             buffer++;
+            waitForVBlank();
             continue;
         }
-        _print_char(y,x,*buffer);
+        *(byte*)0x2115 = 0x80;
+        *(word*)0x2116 = 0x4000+x+(y*0x20);
+        *(byte*)0x2118 = *buffer-32;
         x++;
         buffer++;
+        //waitForVBlank();
     }
 }
 void _print_console(const char *buffer){
