@@ -1,9 +1,9 @@
+#include "ff.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-#include "ff.h"
 #include "data.h";
 #include "pad.h";
 #include "event.h";
@@ -22,9 +22,13 @@ o relocate main code
 o exec loaded file
 */
 
+//#pragma section CODE=BANK2,offset $2:0000
+#define ROM_NAME "SUPER02.SMC"
+#define BLOCK_SIZE 512
+
 
 padStatus pad1;
-unsigned long addr;
+
 DWORD acc_size;                 /* Work register for fs command */
 WORD acc_files, acc_dirs;
 
@@ -39,13 +43,9 @@ UINT s1, s2, cnt;
 
 FATFS *fs;
 DIR dir;                        /* Directory object */
-FIL file1;
+FIL file1,file2;
 
 
-#define ROM_NAME "BANK01.SMC"
-#define BLOCK_SIZE 512
-
-//#pragma section CODE=BANK2,offset $2:0000
 
 
 void initInternalRegisters(void) {
@@ -232,8 +232,7 @@ void main(void) {
     put_rc(f_open(&file1, ROM_NAME, FA_READ));
 
 
-    addr = 0x020000;
-    p1 = 1024 * 31;
+    p1 = 1024 * 16;
     p2 = 0;
     while (p1) {
         cnt = BLOCK_SIZE;

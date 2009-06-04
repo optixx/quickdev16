@@ -28,7 +28,7 @@ LIBS=-L$(SDK)/lib/cc
 #-L$(SDK)/lib/c134
 
 
-OBJS=StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj diskio.obj ff.obj
+OBJS=hook.obj StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj diskio.obj ff.obj
 APP=fatfs.smc
 GFX=debugfont
 
@@ -56,12 +56,17 @@ StartupSnes.obj: StartupSnes.asm
 ressource.obj: ressource.asm
 		$(AS) -V $?
 
+hook.obj: hook.asm
+		$(AS) -V $?
+
+
+
 %.obj: %.c
 		$(CC)  -wl -wp -sop -MC -I $(INC) $?
 
 $(APP): $(OBJS)
 		$(LD) -HB -M21 -V -T -Pff \
-                -C008000,0000 -U0000,0000 \
+                -C008000,000000 -U000000,000000 \
                 -Avectors=FFE4,7FE4 \
                 -Aregistration_data=FFB0,7FB0 \
                 -Aressource=3f8000,8000 \
