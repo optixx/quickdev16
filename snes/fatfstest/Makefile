@@ -66,15 +66,15 @@ hook.obj: hook.asm
 
 $(APP): $(OBJS)
 		$(LD) -HB -M21 -V -T -Pff \
-                -C008000,000000 -U000000,000000 \
+                -C3e8000,000000 -U000000,000000 \
                 -Avectors=FFE4,7FE4 \
                 -Aregistration_data=FFB0,7FB0 \
                 -Aressource=3f8000,8000 \
+                -Ahook=0108000,0000 \
                 -N $(OBJS) $(LIBS) -O $@
 		ucon64 -snes -chk $(APP) 2>&1 >/dev/null
 
 
-                #-Ahook=008000,0000 \
 
 clean:
 		rm -vf $(APP) *.obj *.TMP
