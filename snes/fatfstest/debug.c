@@ -19,12 +19,6 @@ word debugMap[0x400];
 static char debug_buffer[255];
 static char screen_buffer[255];
 
-/*
-word debug_colors[] = {
-  0x0000, 0x001f, 0x0218, 0x7297, 0x5ab5, 0x5abf, 0x5b1f, 0x737b,
-  0x7f98, 0x5f7f, 0x03ff, 0x7ffc, 0x7fff, 0x0000, 0x0000, 0x0000
-};
-*/
 
 void debug_init(void) {
 	word i;
@@ -37,7 +31,6 @@ void debug_init(void) {
 
 void debug_enable(void){
 	VRAMLoad((word) debugFont_pic, 0x5000, 2048);
-	//CGRAMLoad((word) debug_colors, (byte) 0x00, (word) 16);
 	VRAMLoad((word) debugMap, 0x4000, 0x0800);
 	setTileMapLocation(0x4000, (byte) 0x00, (byte) 0);
 	setCharacterLocation(0x5000, (byte) 0);

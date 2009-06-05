@@ -29,7 +29,7 @@ LIBS=-L$(SDK)/lib/cl
 #-L$(SDK)/lib/c134
 
 
-OBJS=hook.obj StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj diskio.obj ff.obj
+OBJS=StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj diskio.obj ff.obj
 APP=fatfs.smc
 GFX=debugfont
 
@@ -63,14 +63,24 @@ hook.obj: hook.asm
 %.obj: %.c
 	$(CC)  -wl -wp -sop -ML -I $(INC) $?
 
-$(APP): $(OBJS)
+#$(APP): $(OBJS)
+#		$(LD) -HB -M21 -V -T -Pff \
+#                -C008000,0000 -U0000,0000 \
+#                -Avectors=FFE4,7FE4 \
+#                -Aregistration_data=FFB0,7FB0 \
+#		 -Aressource=18000,8000 \
+#                -N $(OBJS) $(LIBS) -O $@
+
+$(APP): $(OBJS) hook.obj
 	$(LD) -B -HB -M21 -V -T -Pff \
         -C3e8000,1f0000 -U000000,000000 \
         -Avectors=FFE4,7FE4 \
         -Aregistration_data=FFB0,7FB0 \
-        -Aressource=18000,8000 \
+        -Aressource=3f8000,1f8000 \
 	-Ahook=008000,0000 \
-        -N $(OBJS) $(LIBS) -O $@
+        -N $(OBJS) hook.obj $(LIBS) -O $@
+
+
 repair: $(APP)
 	$(UCON) -snes -chk $(APP) 2>&1 >/dev/null
 	rm -rf fatfs.bak
