@@ -147,7 +147,7 @@ void main(void) {
     debug_enable();
 
     printfs(0,"FATFS OPTIXX.ORG ");
-    //wait();
+    wait();
     printfc("SNES::main: Try to init disk\n");
 
     put_rc(f_mount(0, &fatfs[0]));

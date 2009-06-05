@@ -1,4 +1,4 @@
-ressource	.section
+resource	.section
 
 ;	XDEF __title_map
 ;__title_map:
