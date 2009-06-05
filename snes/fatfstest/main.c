@@ -251,11 +251,11 @@ void main(void) {
           break;
         }
         printfs(1,"%lu BYTES READ", p2);
-        
+        /*
         for (i=0; i<BLOCK_SIZE; i++){
           *(byte*)(0x020000 + i) = Buff[i];
         }
-        
+        */
         printfs(2,"%i BYTES TANS %x",BLOCK_SIZE, 0x020000 + p2);
     }
     printfs(1,"%lu BYTES READ", p2);
