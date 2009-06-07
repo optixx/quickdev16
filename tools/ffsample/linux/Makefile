@@ -44,9 +44,10 @@ image_not_parted:
 
 image:
 	rm -fv disk00.vfat
-	mkfs.vfat  -I -F 16 -v -C disk00.vfat 32000 
+	mkfs.vfat  -I -F 12 -v -C disk00.vfat 32000 
 	sudo mount -o loop disk00.vfat disk
 	sudo cp -v ../../../roms/*smc  disk/
+	sudo cp -v /var/log/syslog disk/test.txt 
 	sudo umount disk
 
 mount:

@@ -96,10 +96,11 @@ DRESULT disk_read (
 
     DWORD offset = sector  * 512;
     int size = count * 512;
-    #ifdef MMIO_DEBUG
+    //#ifdef MMIO_DEBUG
     printf("DISKIO::disk_read: sector=%li count=%i addr=%p off=%li size=%i\n",sector,count,image_addr + offset,offset,size);
-    #endif
+    //#endif
     memcpy(buff,image_addr + offset,size);
+    printf("%x %x %x %x\n",buff[0],buff[1],buff[2],buff[3]);
     #ifdef MMIO_DEBUG
     printf("DISKIO::disk_read: done\n");
     #endif

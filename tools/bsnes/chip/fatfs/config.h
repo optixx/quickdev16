@@ -14,8 +14,8 @@
 #define MMIO_RETVAL     0x3016
 
 
-#define SHARED_SIZE     512
-#define SHARED_ADDR     0x3f0000
+#define SHARED_MAX_SIZE     512
+#define SHARED_ADDR     0x3d0000
 
 #undef MMIO_DEBUG
 #undef FATFS_DEBUG

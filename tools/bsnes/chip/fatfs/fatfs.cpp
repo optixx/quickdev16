@@ -13,7 +13,7 @@ void FATFS::init() {
   sector = 0;
   count = 0;
   retval = -1;
-  scratch_buffer = (unsigned char*)malloc(SHARED_SIZE);
+  scratch_buffer = (unsigned char*)malloc(SHARED_MAX_SIZE);
 }
 
 void FATFS::enable() {
@@ -38,17 +38,17 @@ void FATFS::reset() {
 }
 
 
-void FATFS::fetchMem() {
-  for ( int i=0;i<SHARED_SIZE;i++){
+void FATFS::fetchMem(unsigned int len) {
+  for ( int i=0;i<len;i++){
       scratch_buffer[i] = bus.read(SHARED_ADDR + i);
   } 
 }
 
-void FATFS::pushMem() {
-  for ( int i=0;i<SHARED_SIZE;i++){
+void FATFS::pushMem(unsigned int len) {
+  for ( int i=0;i<len;i++){
       bus.write(SHARED_ADDR + i,scratch_buffer[i]);
       #ifdef FATFS_DEBUG
-      if ( i < 8)
+      if ( i < 4)
         printf("0x%02x ",scratch_buffer[i]);
       #endif
   }
@@ -117,9 +117,9 @@ void FATFS::mmio_write(unsigned addr, uint8 data) {
       if (command == CMD_READ) {
           retval = disk_read (0, (BYTE*)scratch_buffer, sector, count);
           if (!retval)
-              pushMem();
+              pushMem(512 * count);
       } else if (command == CMD_WRITE) {
-            fetchMem();
+            fetchMem(512 * count);
             retval = disk_write (0, (BYTE*)scratch_buffer, sector, count);
       } else{
             #ifdef FATFS_DEBUG
