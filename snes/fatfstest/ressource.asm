@@ -16,8 +16,5 @@ ressource	.section
 ~~debugFont_pic
 	INSERT ressource/debugFont.pic
 
-	XDEF ~~debugFont_pal
-~~debugFont_pal
-	INSERT ressource/debugFont.clr
 
 .ends

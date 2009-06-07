@@ -11,7 +11,7 @@
 #include "ressource.h";
 #include "PPU.h"
 #include "debug.h"
-
+#include "crc.h"
 
 /*
 
@@ -23,8 +23,11 @@ o exec loaded file
 */
 
 //#pragma section CODE=BANK2,offset $2:0000
-#define ROM_NAME "SUPER02.SMC"
+
+#define ROM_NAME "MRDO.SMC"
+//#define ROM_NAME "TEST.TXT"
 #define BLOCK_SIZE 512
+#define BASE_ADDR 0x008000
 
 
 padStatus pad1;
@@ -37,7 +40,11 @@ FATFS fatfs[2];             /* File system object for each logical drive */
 BYTE Buff[512];            /* Working buffer */
 
 DWORD p1, p2, p3;
-BYTE res;
+DWORD addr;
+DWORD crc_addr; 
+UINT crc;
+ 
+BYTE res,bank;
 WORD w1;
 UINT s1, s2, cnt;
 
@@ -132,7 +139,11 @@ void wait(void){
     //disablePad();
 }
 
-
+void boot(void){
+    #asm 
+        jsl  $008000 
+    #endasm 
+}
 
 void main(void) {
 	word i,j;
@@ -152,7 +163,7 @@ void main(void) {
 
     put_rc(f_mount(0, &fatfs[0]));
     
-#if 1
+#if 0
     printfc("SNES::main: Try to get free\n");
     res = f_getfree("", &p2, &fs);
     if (res)
@@ -232,14 +243,19 @@ void main(void) {
     put_rc(f_open(&file1, ROM_NAME, FA_READ));
 
 
-    p1 = 1024 * 16;
-    p2 = 0;
+    p1 = 32768L * 8; 
+    p2 = 0 ;
+    p3 = 0;
+    cnt = 0;
+    bank =0;
+    addr = BASE_ADDR;
+    crc_addr = BASE_ADDR;
     while (p1) {
         cnt = BLOCK_SIZE;
         p1 -= BLOCK_SIZE;
-        res = f_read(&file1, Buff, cnt, &s2);
-        printfc("SNES::main: read cnt=%i p1=%i p2=%i s2=%i\n",cnt,p1,p2,s2);
-        //printfc("SNES::main: read %x %x %x %x \n",Buff[0],Buff[1],Buff[2],Buff[3]);
+        res = f_read(&file1, (byte*)(addr) , cnt, &s2);
+        printfc("SNES::main: read cnt=%i p1=%li p2=%li s2=%i\n",cnt,p1,p2,s2);
+        //printfc("SNES::main: file %x %x %x %x\n",Buff[0],Buff[1],Buff[2],Buff[3]);
         if (res != FR_OK) {
             printfc("SNES::main: read failed\n");
             put_rc(res);
@@ -250,17 +266,31 @@ void main(void) {
           printfc("SNES::main: read cnt=%i s2=%i\n",cnt,s2);
           break;
         }
-        printfs(1,"%lu BYTES READ", p2);
-        
+        printfs(1 + bank,"BANK %X  ADDR %LX",bank,addr);
+        /*
         for (i=0; i<BLOCK_SIZE; i++){
-          *(byte*)(0x020000 + i) = Buff[i];
+          *(byte*)(addr  + i) = Buff[i];
         }
+        */
+        printfc("SNES::main: mem  %x %x %x %x %lx\n",*(byte*)(addr  + 0) ,*(byte*)(addr  + 1) ,*(byte*)(addr  + 2) ,*(byte*)(addr  + 3) ,addr);
+        //if (addr=0x10fe00){
+            
+        printc_packet(addr,512,(byte*)(addr));
+            
+        //}
         
-        printfs(2,"%i BYTES TANS %x",BLOCK_SIZE, 0x020000 + p2);
+        addr+=s2;
+        if (addr%0x10000==0){
+    		//crc = crc_update_mem(crc_addr,0x8000);
+            //printfc("addr=%lx crc=%x\n",crc_addr,crc);
+            //printfs(1 + bank,"BANK %X  ADDR %LX CRC %X",bank,addr,crc);
+            addr+=0x8000;
+            //crc_addr+=0x8000;
+            bank++;
+        }
     }
-    printfs(1,"%lu BYTES READ", p2);
     put_rc(f_close(&file1));
-  
+    boot();
     while(1){
       wait();
 	}	
