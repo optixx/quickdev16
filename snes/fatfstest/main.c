@@ -149,7 +149,7 @@ void boot(void)
     printfs(0, "FATFS OPTIXX.ORG ");
 
     printfc("SNES::main: Try to init disk\n");
-    put_rc(f_mount(0, &fatfs[0]));
+    put_rc(f_mount((BYTE)0, &fatfs[0]));
 
 #if 0
     printfc("SNES::main: Try to get free\n");
@@ -222,7 +222,7 @@ void boot(void)
 #endif                          /* */
     printfc("SNES::main: open %s \n", ROM_NAME);
     printfs(0, "OPEN %s", ROM_NAME);
-    put_rc(f_open(&file1, ROM_NAME, FA_READ));
+    put_rc(f_open(&file1, ROM_NAME, (BYTE)FA_READ));
     p1 = 32768L * 8;
     p2 = 0;
     p3 = 0;
