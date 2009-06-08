@@ -13,14 +13,22 @@
 #include "debug.h"
 #include "crc.h"
 
-    /*
-     *   o debug STA global o optimize internal transfer buffer o direct write to mempage o relocate main code o exec loaded file 
-     */
+/*
+
+o relocate main code
+o exec loaded file
+
+o debug STA global
+o optimize internal transfer buffer
+o direct writeto mempage
 
 
-#define ROM_NAME "MRDO.SMC"
-#define BLOCK_SIZE 512
-#define BASE_ADDR 0x008000
+*/
+
+
+#define ROM_NAME        "MRDO.SMC"
+#define BLOCK_SIZE      512
+#define BASE_ADDR       0x008000
 
 padStatus pad1;
 DWORD acc_size;                 /* Work register for fs command */
@@ -114,16 +122,12 @@ void wait(void)
 {
     printfc("SNES::wait: press A to continue\n");
     enablePad();
-
-    // waitForVBlank();
     pad1 = readPad((byte) 0);
     while (!pad1.A) {
         waitForVBlank();
         pad1 = readPad((byte) 0);
     }
     printfc("SNES::wait: done\n");
-
-    // disablePad();
 }
 
 void boot(void)
@@ -233,9 +237,8 @@ void boot(void)
         printfc("SNES::main: read cnt=%i p1=%li p2=%li s2=%i\n", cnt,
                 p1, p2, s2);
 
-        // printfc("SNES::main: file %x %x %x
-        // %x\n",Buff[0],Buff[1],Buff[2],Buff[3]);
-        if (res != FR_OK) {
+
+       if (res != FR_OK) {
             printfc("SNES::main: read failed\n");
             put_rc(res);
             break;
@@ -247,27 +250,21 @@ void boot(void)
         }
         printfs(1 + bank, "BANK %X  ADDR %LX", bank, addr);
 
-        /*
-         *  for (i=0; i<BLOCK_SIZE; i++){ *(byte*)(addr + i) = Buff[i]; } 
-         */
-        printfc("SNES::main: mem  %x %x %x %x %lx\n",
+        printfc("SNES::main: mem  %x %x %x %x %x\n",
                 *(byte *) (addr + 0), *(byte *) (addr + 1),
-                *(byte *) (addr + 2), *(byte *) (addr + 3), addr);
+                *(byte *) (addr + 2), *(byte *) (addr + 3));
 
-        // if (addr=0x10fe00){
+#if 0
         printc_packet(addr, 512, (byte *) (addr));
-
-        // }
+#endif
         addr += s2;
         if (addr % 0x10000 == 0) {
-
-            // crc = crc_update_mem(crc_addr,0x8000);
-            // printfc("addr=%lx crc=%x\n",crc_addr,crc);
-            // printfs(1 + bank,"BANK %X ADDR %LX CRC
-            // %X",bank,addr,crc);
+            crc = crc_update_mem(crc_addr,0x8000);
+            printfc("addr=%lx crc=%x\n",crc_addr,crc);
+            wait();
+            printfs(1 + bank,"BANK %X ADDR %LX CRC %X",bank,addr,crc);
             addr += 0x8000;
-
-            // crc_addr+=0x8000;
+            crc_addr+=0x8000;
             bank++;
         }
     }
