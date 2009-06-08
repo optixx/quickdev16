@@ -7,8 +7,8 @@ public:
   void reset();
 
 
-  void fetchMem();
-  void pushMem();
+  void fetchMem(unsigned int len);
+  void pushMem(unsigned int len);
 
 
   uint8 mmio_read (unsigned addr);

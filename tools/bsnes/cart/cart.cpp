@@ -46,8 +46,8 @@ void Cartridge::load_end() {
   memory::stAram.map(stA.ram, stA.ram_size);
   memory::stBrom.map(stB.rom, stB.rom_size);
   memory::stBram.map(stB.ram, stB.ram_size);
-
-  memory::cartrom.write_protect(true);
+  /* enable rom write */
+  memory::cartrom.write_protect(false);
   memory::cartram.write_protect(false);
   memory::bscram.write_protect(true);
   memory::stArom.write_protect(true);

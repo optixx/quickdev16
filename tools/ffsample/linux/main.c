@@ -354,9 +354,9 @@ int main (void)
 				break;
 
 			case 'o' :	/* fo <mode> <name> - Open a file */
-				if (!(&ptr, &p1)) break;
+				//if (!(&ptr, &p1)) break;
 				while (*ptr == ' ') ptr++;
-				put_rc(f_open(&file1, ptr, (BYTE)p1));
+				put_rc(f_open(&file1, ptr, (BYTE)FA_READ));
 				break;
 
 			case 'c' :	/* fc - Close a file */
@@ -383,7 +383,7 @@ int main (void)
 					p2 += s2;
 					if (cnt != s2) break;
 				}
-				s2 = Timer;
+				s2 = Timer + 1;
 				printf("%lu bytes read with %lu bytes/sec.\n", p2, p2 * 100 / s2);
 				break;
 

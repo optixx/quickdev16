@@ -10,14 +10,10 @@
 
 
 
-word debug_colors[] = {
-  0xff7f, 0x1f00, 0x1802, 0x9772, 0xb55a, 0xbf5a, 0x1f5b, 0x7b73,
-  0x987f, 0x7f5f, 0xff03, 0xfc7f, 0xff7f, 0xff7f, 0xff7f, 0xff7f
-};
 
 word debugMap[0x400];
-static char debug_buffer[255];
-static char screen_buffer[255];
+static char debug_buffer[512];
+static char screen_buffer[512];
 
 
 void debug_init(void) {
@@ -94,12 +90,17 @@ void _print_console(const char *buffer){
         *(byte*) 0x3000=*buffer++;
 }
 
+
+
+
 void printfc(char *fmt,...){
   va_list ap;
   va_start(ap,fmt);
   vsprintf(debug_buffer,fmt,ap);
   va_end(ap);
   _print_console(debug_buffer);
+  //memset(debug_buffer,0,255);
+
 }
 
 void printfs(word y,char *fmt,...){
@@ -108,8 +109,42 @@ void printfs(word y,char *fmt,...){
   vsprintf(screen_buffer,fmt,ap);
   va_end(ap);
   _print_screen(y,screen_buffer);
+  memset(screen_buffer,0,255);
 }
 
+void printc_packet(unsigned long addr,unsigned int len,byte *packet){
+	unsigned int i,j;
+	unsigned int sum = 0;
+	unsigned int clear=0;
+	
+	for (i=0;i<len;i+=16) {
+		
+		sum = 0;
+		for (j=0;j<16;j++) {
+			sum +=packet[i+j];
+		}
+		if (!sum){
+			clear=1;
+			continue;
+		}
+		if (clear){
+			printfc("*\n");
+			clear = 0;
+		}	
+		printfc("%lx:", addr + i);
+		for (j=0;j<16;j++) {
+			printfc(" %x", packet[i+j]);
+		}
+		printfc(" |");
+		for (j=0;j<16;j++) {
+			if (packet[i+j]>=33 && packet[i+j]<=126 )
+				printfc("%c", packet[i+j]);
+			else
+				printfc(".");
+		}
+		printfc("|\n");
+	}
+}
 
 /* keep the linker happy */
 int open(const char * _name, int _mode){
