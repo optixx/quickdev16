@@ -17,35 +17,27 @@
      *   o debug STA global o optimize internal transfer buffer o direct write to mempage o relocate main code o exec loaded file 
      */
 
-    // #pragma section CODE=BANK2,offset $2:0000
 
 #define ROM_NAME "MRDO.SMC"
-    // #define ROM_NAME "TEST.TXT"
 #define BLOCK_SIZE 512
 #define BASE_ADDR 0x008000
+
 padStatus pad1;
 DWORD acc_size;                 /* Work register for fs command */
-WORD acc_files,
- acc_dirs;
+WORD acc_files, acc_dirs;
 FILINFO finfo;
 FATFS fatfs[2];                 /* File system object for each logical * drive */
 BYTE Buff[512];                 /* Working buffer */
-DWORD p1,
- p2,
- p3;
+DWORD p1, p2, p3;
 DWORD addr;
 DWORD crc_addr;
 UINT crc;
-BYTE res,
- bank;
+BYTE res, bank;
 WORD w1;
-UINT s1,
- s2,
- cnt;
+UINT s1, s2, cnt;
 FATFS *fs;
 DIR dir;                        /* Directory object */
-FIL file1,
- file2;
+FIL file1, file2;
 void initInternalRegisters(void)
 {
     characterLocation[0] = 0x0000;
@@ -53,8 +45,7 @@ void initInternalRegisters(void)
     characterLocation[2] = 0x0000;
     characterLocation[3] = 0x0000;
     debug_init();
-} void
- preInit(void)
+} void preInit(void)
 {
 
     // For testing purpose ... 
@@ -141,11 +132,9 @@ void boot(void)
 #asm
     jsl $008000
 #endasm
-} void
- main(void)
+} void main(void)
 {
-    word i,
-     j;
+    word i, j;
     BYTE res;
     initInternalRegisters();
     *(byte *) 0x2105 = 0x01;    // MODE 1 value
@@ -292,8 +281,7 @@ void boot(void)
 
 void IRQHandler(void)
 {
-} void
- NMIHandler(void)
+} void NMIHandler(void)
 {
 
     // processEvents();
