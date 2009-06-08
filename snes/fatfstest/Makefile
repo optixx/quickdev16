@@ -65,7 +65,6 @@ hook.obj: hook.asm
 	$(CC)  -wl -wp -sop -ML -I $(INC) $?
 
 $(APP): $(OBJS) 
-	echo "test"
 	$(LD) -B -HB -M21 -V -T -Pff \
         -C3e8000,1f0000 -U000000,000000 \
         -Avectors=FFE4,7FE4 \

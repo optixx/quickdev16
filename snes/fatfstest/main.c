@@ -250,18 +250,19 @@ void boot(void)
         }
         printfs(1 + bank, "BANK %X  ADDR %LX", bank, addr);
 
-        printfc("SNES::main: mem  %x %x %x %x %x\n",
+        printfc("SNES::main: mem  %x %x %x %x\n",
                 *(byte *) (addr + 0), *(byte *) (addr + 1),
                 *(byte *) (addr + 2), *(byte *) (addr + 3));
 
-#if 0
+#if 1
         printc_packet(addr, 512, (byte *) (addr));
+        wait();
 #endif
+        
         addr += s2;
         if (addr % 0x10000 == 0) {
             crc = crc_update_mem(crc_addr,0x8000);
             printfc("addr=%lx crc=%x\n",crc_addr,crc);
-            wait();
             printfs(1 + bank,"BANK %X ADDR %LX CRC %X",bank,addr,crc);
             addr += 0x8000;
             crc_addr+=0x8000;

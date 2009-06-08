@@ -94,8 +94,10 @@ DRESULT disk_read (
 
     DWORD offset = sector  * 512;
     int size = count * 512;
-    printf("disk_read: sector=%li count=%i addr=%p off=%li size=%i\n",sector,count,image_addr + offset,offset,size);
+
     memcpy(buff,image_addr + offset,size);
+    printf("disk_read: sector=%li count=%i addr=%p off=%li size=%i\n",sector,count,image_addr + offset,offset,size);
+    printf("disk_read: %02x %02x %02x %02x\n",buff[0],buff[1],buff[2],buff[3]);
     return RES_OK;
 }
 

@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include <fcntl.h>
 
 #include "debug.h"
@@ -93,7 +94,7 @@ void _print_console(const char *buffer){
 
 
 
-void printfc(char *fmt,...){
+void printfc(const char *fmt,...){
   va_list ap;
   va_start(ap,fmt);
   vsprintf(debug_buffer,fmt,ap);
@@ -103,7 +104,7 @@ void printfc(char *fmt,...){
 
 }
 
-void printfs(word y,char *fmt,...){
+void printfs(word y,const char *fmt,...){
   va_list ap;
   va_start(ap,fmt);
   vsprintf(screen_buffer,fmt,ap);

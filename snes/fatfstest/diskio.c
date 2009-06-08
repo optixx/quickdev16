@@ -116,13 +116,13 @@ DRESULT disk_read (
     
     
     #ifdef MMIO_DEBUG
-    printfc("SNES::disk_read copy buffer to %06lx\n",SHARED_ADDR);
+    printfc("SNES::disk_read copy buffer to %lx\n",SHARED_ADDR);
     #endif
     for (i=0;i<(count*512);i++){
         buff[i]  = *(byte*)(SHARED_ADDR+i);
         #ifdef MMIO_DEBUG
-        if ( i < 8)
-          printfc("0x%02x ",buff[i]);
+        if ( i < 4)
+          printfc("0x%x ",buff[i]);
         #endif
     }
     #ifdef MMIO_DEBUG
