@@ -16,8 +16,8 @@
 #define MMIO_RETVAL     0x3016
 
 
-#define SHARED_SIZE     512
+#define SHARED_SIZE     32768
 #define SHARED_ADDR     0x3d0000
 
 
-#undef MMIO_DEBUG
+#define MMIO_DEBUG

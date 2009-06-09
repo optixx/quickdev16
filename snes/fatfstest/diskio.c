@@ -87,9 +87,9 @@ DRESULT disk_read (
     byte retval;
     word i;
     
-    //#ifdef MMIO_DEBUG
+    #ifdef MMIO_DEBUG
     printfc("SNES::disk_read: sector=%li count=%i\n",sector,count);
-    //#endif
+    #endif
     if (drv || !count) return RES_PARERR;
     #ifdef MMIO_DEBUG
     printfc("SNES::disk_read: drv ok\n");

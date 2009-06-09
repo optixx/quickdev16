@@ -28,6 +28,8 @@ o direct writeto mempage
 
 #define ROM_NAME        "MRDO.SMC"
 #define BLOCK_SIZE      512
+#define BANK_SIZE       32768L
+#define BANK_COUNT      8
 #define BASE_ADDR       0x008000
 
 padStatus pad1;
@@ -35,7 +37,7 @@ DWORD acc_size;                 /* Work register for fs command */
 WORD acc_files, acc_dirs;
 FILINFO finfo;
 FATFS fatfs[2];                 /* File system object for each logical * drive */
-BYTE Buff[512];                 /* Working buffer */
+//BYTE Buff[512];                 /* Working buffer */
 DWORD p1, p2, p3;
 DWORD addr;
 DWORD crc_addr;
@@ -145,13 +147,13 @@ void boot(void)
     *(byte *) 0x212c = 0x01;    // Plane 0 (bit one) enable register
     *(byte *) 0x212d = 0x00;    // All subPlane disable
     *(byte *) 0x2100 = 0x0f;    // enable background
-    debug_enable();
-    printfs(0, "FATFS OPTIXX.ORG ");
 
+    debug_enable();
     printfc("SNES::main: Try to init disk\n");
     put_rc(f_mount((BYTE)0, &fatfs[0]));
 
 #if 0
+    printfs(0, "FATFS OPTIXX.ORG ");
     printfc("SNES::main: Try to get free\n");
     res = f_getfree("", &p2, &fs);
     if (res)
@@ -220,10 +222,11 @@ void boot(void)
     clears();
 
 #endif                          /* */
+
     printfc("SNES::main: open %s \n", ROM_NAME);
     printfs(0, "OPEN %s", ROM_NAME);
     put_rc(f_open(&file1, ROM_NAME, (BYTE)FA_READ));
-    p1 = 32768L * 8;
+    p1 = BANK_SIZE * BANK_COUNT;
     p2 = 0;
     p3 = 0;
     cnt = 0;
@@ -248,13 +251,9 @@ void boot(void)
             printfc("SNES::main: read cnt=%i s2=%i\n", cnt, s2);
             break;
         }
-        printfs(1 + bank, "BANK %X  ADDR %LX", bank, addr);
+        printfs(1 + bank, "CRC 0000 BANK %X  ADDR %lX",bank, addr);
 
-        printfc("SNES::main: mem  %x %x %x %x\n",
-                *(byte *) (addr + 0), *(byte *) (addr + 1),
-                *(byte *) (addr + 2), *(byte *) (addr + 3));
-
-#if 1
+#if 0
         printc_packet(addr, 512, (byte *) (addr));
         wait();
 #endif
@@ -263,7 +262,7 @@ void boot(void)
         if (addr % 0x10000 == 0) {
             crc = crc_update_mem(crc_addr,0x8000);
             printfc("addr=%lx crc=%x\n",crc_addr,crc);
-            printfs(1 + bank,"BANK %X ADDR %LX CRC %X",bank,addr,crc);
+            printfs(1 + bank, "CRC %X BANK %X  ADDR %LX",crc, bank, addr);
             addr += 0x8000;
             crc_addr+=0x8000;
             bank++;
