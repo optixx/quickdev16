@@ -93,7 +93,7 @@ void _print_screen(word y, char *buffer){
         *(byte*)0x2118 = *buffer-32;
         x++;
         buffer++;
-        //waitForVBlank();
+        waitForVBlank();
     }
 }
 void _print_console(const char *buffer){

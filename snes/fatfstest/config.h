@@ -20,4 +20,4 @@
 #define SHARED_ADDR     0x3d0000
 
 
-#define MMIO_DEBUG
+#undef MMIO_DEBUG

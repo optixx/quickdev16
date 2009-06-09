@@ -102,7 +102,9 @@ void FATFS::mmio_write(unsigned addr, uint8 data) {
       fflush(stderr);
   }
   if (addr >= MMIO_SECTOR01 && addr <= MMIO_SECTOR04){
-      sector = data << ( (3 - ( addr - MMIO_SECTOR01))  << 3);
+      if (addr == MMIO_SECTOR01)
+        sector = 0;
+      sector |= data << ( (3 - ( addr - MMIO_SECTOR01))  << 3);
       #ifdef FATFS_DEBUG
       printf("BSNES::mmio_write set sector: byte=%i val=%i sector=%i \n",(3 - ( addr - MMIO_SECTOR01)),data,sector);
       #endif
