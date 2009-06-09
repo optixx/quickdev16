@@ -33,12 +33,22 @@ void debug_enable(void){
 	setCharacterLocation(0x5000, (byte) 0);
 	*(byte*) 0x2100 = 0x0f; // enable background
 
-    // hex(24 << 10 | 24 << 5 | 24 )
-    // '0x6318'
-
-    *(byte*) 0x2121 = 0x00;
+    // Font Color
+    // hex(24 << 10 | 24 << 5 | 24 ) = '0x6318'
+    *(byte*) 0x2121 = 0x02;
     *(byte*) 0x2122 = 0x18;
     *(byte*) 0x2122 = 0x63;
+
+    // Font Border Color
+    *(byte*) 0x2121 = 0x00;
+    *(byte*) 0x2122 = 0x00;
+    *(byte*) 0x2122 = 0x00;
+
+    // Background Color
+    //hex( 32 << 10 | 10 << 5 | 10) = '0x814a'
+    *(byte*) 0x2121 = 0x01;
+    *(byte*) 0x2122 = 0x4a;
+    *(byte*) 0x2122 = 0x81;
 
 
 }
