@@ -33,7 +33,7 @@ OBJS=hook.obj StartupSnes.obj main.obj pad.obj PPU.obj debug.obj ressource.obj d
 APP=fatfs.smc
 GFX=debugfont
 
-all:  $(APP)
+all:  $(APP) repair
 
 run:
 	$(EMU) $(APP)

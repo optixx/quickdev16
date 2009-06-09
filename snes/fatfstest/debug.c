@@ -36,8 +36,8 @@ void debug_enable(void){
     // Font Color
     // hex(24 << 10 | 24 << 5 | 24 ) = '0x6318'
     *(byte*) 0x2121 = 0x02;
-    *(byte*) 0x2122 = 0x18;
-    *(byte*) 0x2122 = 0x63;
+    *(byte*) 0x2122 = 0xff;
+    *(byte*) 0x2122 = 0x7f;
 
     // Font Border Color
     *(byte*) 0x2121 = 0x00;
@@ -45,10 +45,9 @@ void debug_enable(void){
     *(byte*) 0x2122 = 0x00;
 
     // Background Color
-    //hex( 32 << 10 | 10 << 5 | 10) = '0x814a'
     *(byte*) 0x2121 = 0x01;
-    *(byte*) 0x2122 = 0x4a;
-    *(byte*) 0x2122 = 0x81;
+    *(byte*) 0x2122 = 0x05;
+    *(byte*) 0x2122 = 0x29;
 
 
 }
@@ -93,7 +92,9 @@ void _print_screen(word y, char *buffer){
         *(byte*)0x2118 = *buffer-32;
         x++;
         buffer++;
+#if 0
         waitForVBlank();
+#endif
     }
 }
 void _print_console(const char *buffer){

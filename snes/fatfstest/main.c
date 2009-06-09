@@ -26,11 +26,13 @@ o direct writeto mempage
 */
 
 
-#define ROM_NAME        "MRDO.SMC"
+#define ROM_NAME        "TURRICAN.SMC"
 #define BLOCK_SIZE      512
 #define BANK_SIZE       32768L
-#define BANK_COUNT      8
+#define BANK_COUNT      16
 #define BASE_ADDR       0x008000
+
+typedef void (*FUNC)(void);
 
 padStatus pad1;
 DWORD acc_size;                 /* Work register for fs command */
@@ -132,12 +134,13 @@ void wait(void)
     printfc("SNES::wait: done\n");
 }
 
-void boot(void)
+void boot(DWORD addr)
 {
+    FUNC fn;
+    printfc("SNES::boot addr=%lx\n",addr);
+    fn = (FUNC) addr;
+    fn();
 
-#asm
-    jsl $008000
-#endasm
 } void main(void)
 {
     word i, j;
@@ -152,7 +155,6 @@ void boot(void)
     printfc("SNES::main: Try to init disk\n");
     put_rc(f_mount((BYTE)0, &fatfs[0]));
 
-#if 0
     printfs(0, "FATFS OPTIXX.ORG ");
     printfc("SNES::main: Try to get free\n");
     res = f_getfree("", &p2, &fs);
@@ -182,6 +184,7 @@ void boot(void)
     cnt = 0;
     wait();
     clears();
+#if 0
     printfc("SNES::main: read dir\n");
     for (;;) {
         res = f_readdir(&dir, &finfo);
@@ -237,8 +240,6 @@ void boot(void)
         cnt = BLOCK_SIZE;
         p1 -= BLOCK_SIZE;
         res = f_read(&file1, (byte *) (addr), cnt, &s2);
-        printfc("SNES::main: read cnt=%i p1=%li p2=%li s2=%i\n", cnt,
-                p1, p2, s2);
 
 
        if (res != FR_OK) {
@@ -251,7 +252,6 @@ void boot(void)
             printfc("SNES::main: read cnt=%i s2=%i\n", cnt, s2);
             break;
         }
-        printfs(1 + bank, "CRC 0000 BANK %X  ADDR %lX",bank, addr);
 
 #if 0
         printc_packet(addr, 512, (byte *) (addr));
@@ -259,17 +259,26 @@ void boot(void)
 #endif
         
         addr += s2;
+
         if (addr % 0x10000 == 0) {
+            printfc("SNES::main: read cnt=%u p1=%lu p2=%lu s2=%u \n", cnt,
+                p1, p2, s2);
+#if 0
             crc = crc_update_mem(crc_addr,0x8000);
             printfc("addr=%lx crc=%x\n",crc_addr,crc);
-            printfs(1 + bank, "CRC %X BANK %X  ADDR %LX",crc, bank, addr);
-            addr += 0x8000;
             crc_addr+=0x8000;
+#endif
+            printfs(1 + bank, "BANK %i  ADDR 0X%lx   ", bank, addr);
+            
+            addr += 0x8000;
             bank++;
         }
     }
     put_rc(f_close(&file1));
-    boot();
+    addr = *(byte *)0xFFFD;
+    addr = addr << 8;
+    addr |= (*(byte *)0xFFFC);
+    boot(addr);
     while (1) {
         wait();
     }

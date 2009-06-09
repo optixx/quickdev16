@@ -17,6 +17,6 @@
 #define SHARED_MAX_SIZE     32768
 #define SHARED_ADDR     0x3d0000
 
-#undef  MMIO_DEBUG
-#undef  FATFS_DEBUG
-#define DISKIO_DEBUG 1
+#undef MMIO_DEBUG
+#undef FATFS_DEBUG
+#undef DISKIO_DEBUG 1
