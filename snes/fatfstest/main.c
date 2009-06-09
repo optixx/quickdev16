@@ -261,14 +261,14 @@ void boot(DWORD addr)
         addr += s2;
 
         if (addr % 0x10000 == 0) {
-            printfc("SNES::main: read cnt=%u p1=%lu p2=%lu s2=%u \n", cnt,
+            printfc("SNES::main: read cnt=%i p1=%li p2=%li s2=%i \n", cnt,
                 p1, p2, s2);
 #if 0
             crc = crc_update_mem(crc_addr,0x8000);
-            printfc("addr=%lx crc=%x\n",crc_addr,crc);
+            printfc("SNES::main: crc_addr=%lx crc=%x\n",crc_addr,crc);
             crc_addr+=0x8000;
 #endif
-            printfs(1 + bank, "BANK %i  ADDR 0X%lx   ", bank, addr);
+            printfs((1 + bank), "BANK %i  ADDR 0X%lx   ", bank, addr);
             
             addr += 0x8000;
             bank++;
