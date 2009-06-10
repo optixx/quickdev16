@@ -13,18 +13,6 @@
 #include "debug.h"
 #include "crc.h"
 
-/*
-
-o relocate main code
-o exec loaded file
-
-o debug STA global
-o optimize internal transfer buffer
-o direct writeto mempage
-
-
-*/
-
 
 #define ROM_NAME        "TURRICAN.SMC"
 #define BLOCK_SIZE      512
@@ -32,14 +20,14 @@ o direct writeto mempage
 #define BANK_COUNT      16
 #define BASE_ADDR       0x008000
 
-typedef void (*FUNC)(void);
+typedef void (*FUNC) (void);
 
 padStatus pad1;
 DWORD acc_size;                 /* Work register for fs command */
 WORD acc_files, acc_dirs;
 FILINFO finfo;
 FATFS fatfs[2];                 /* File system object for each logical * drive */
-//BYTE Buff[512];                 /* Working buffer */
+// BYTE Buff[512]; /* Working buffer */
 DWORD p1, p2, p3;
 DWORD addr;
 DWORD crc_addr;
@@ -57,7 +45,9 @@ void initInternalRegisters(void)
     characterLocation[2] = 0x0000;
     characterLocation[3] = 0x0000;
     debug_init();
-} void preInit(void)
+}
+
+void preInit(void)
 {
 
     // For testing purpose ... 
@@ -137,7 +127,7 @@ void wait(void)
 void boot(DWORD addr)
 {
     FUNC fn;
-    printfc("SNES::boot addr=%lx\n",addr);
+    printfc("SNES::boot addr=%lx\n", addr);
     fn = (FUNC) addr;
     fn();
 
@@ -153,7 +143,7 @@ void boot(DWORD addr)
 
     debug_enable();
     printfc("SNES::main: Try to init disk\n");
-    put_rc(f_mount((BYTE)0, &fatfs[0]));
+    put_rc(f_mount((BYTE) 0, &fatfs[0]));
 
     printfs(0, "FATFS OPTIXX.ORG ");
     printfc("SNES::main: Try to get free\n");
@@ -228,7 +218,7 @@ void boot(DWORD addr)
 
     printfc("SNES::main: open %s \n", ROM_NAME);
     printfs(0, "OPEN %s", ROM_NAME);
-    put_rc(f_open(&file1, ROM_NAME, (BYTE)FA_READ));
+    put_rc(f_open(&file1, ROM_NAME, (BYTE) FA_READ));
     p1 = BANK_SIZE * BANK_COUNT;
     p2 = 0;
     p3 = 0;
@@ -242,7 +232,7 @@ void boot(DWORD addr)
         res = f_read(&file1, (byte *) (addr), cnt, &s2);
 
 
-       if (res != FR_OK) {
+        if (res != FR_OK) {
             printfc("SNES::main: read failed\n");
             put_rc(res);
             break;
@@ -252,32 +242,31 @@ void boot(DWORD addr)
             printfc("SNES::main: read cnt=%i s2=%i\n", cnt, s2);
             break;
         }
-
 #if 0
         printc_packet(addr, 512, (byte *) (addr));
         wait();
 #endif
-        
+
         addr += s2;
 
         if (addr % 0x10000 == 0) {
             printfc("SNES::main: read cnt=%i p1=%li p2=%li s2=%i \n", cnt,
-                p1, p2, s2);
+                    p1, p2, s2);
 #if 0
-            crc = crc_update_mem(crc_addr,0x8000);
-            printfc("SNES::main: crc_addr=%lx crc=%x\n",crc_addr,crc);
-            crc_addr+=0x8000;
+            crc = crc_update_mem(crc_addr, 0x8000);
+            printfc("SNES::main: crc_addr=%lx crc=%x\n", crc_addr, crc);
+            crc_addr += 0x8000;
 #endif
             printfs((1 + bank), "BANK %i  ADDR 0X%lx   ", bank, addr);
-            
+
             addr += 0x8000;
             bank++;
         }
     }
     put_rc(f_close(&file1));
-    addr = *(byte *)0xFFFD;
+    addr = *(byte *) 0xFFFD;
     addr = addr << 8;
-    addr |= (*(byte *)0xFFFC);
+    addr |= (*(byte *) 0xFFFC);
     boot(addr);
     while (1) {
         wait();
@@ -287,7 +276,9 @@ void boot(DWORD addr)
 
 void IRQHandler(void)
 {
-} void NMIHandler(void)
+}
+
+void NMIHandler(void)
 {
 
     // processEvents();
