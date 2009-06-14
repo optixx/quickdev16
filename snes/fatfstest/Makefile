@@ -15,6 +15,8 @@ else
     SDK=/Users/david/.wine/drive_c/65xx_FreeSDK
     WINE=wine
     EMU=zsnes
+    DISASM=/Users/david/Devel/arch/snes/devkit/bin/disasm
+    UCON=ucon64
 endif
 
 CC=$(WINE) $(SDK)/bin/WDC816CC.exe
@@ -45,8 +47,8 @@ upload:
 	diskutil unmount /Volumes/SNES
 
 disasm: $(APP)
-	rm -rf  fatfs.asm
-	$(DISASM) fatfs.smc >  fatfs.asm 
+	rm -rf   $(APP).asm
+	$(DISASM) $(APP) >   $(APP).asm 
 
 repair: $(APP)
 	$(UCON) -snes -chk $(APP) 2>&1 >/dev/null
@@ -74,4 +76,4 @@ $(APP): $(OBJS)
         -N $(OBJS) $(LIBS) -O $@
 
 clean:
-	rm -vf $(APP) *.obj *.TMP
+	rm -vf $(APP) $(APP).asm *.obj *.TMP *.bnk *~

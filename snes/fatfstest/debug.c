@@ -152,7 +152,7 @@ void printc_packet(unsigned long addr, unsigned int len, byte * packet)
             printfc("*\n");
             clear = 0;
         }
-        printfc("%lx:", addr + i);
+        printfc("%06lX:", addr + i);
         for (j = 0; j < 16; j++) {
             printfc(" %x", packet[i + j]);
         }
