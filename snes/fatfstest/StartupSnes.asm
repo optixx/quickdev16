@@ -187,9 +187,9 @@ DATA
 	XDEF	~~heap_end
 
 ~~heap_start:
-	WORD	$1000
+	WORD	$1e00
 ~~heap_end:
-	WORD	$1200
+	WORD	$2000
 
 ;******************************************************************************
 ;*** SNES ROM Registartion Data                                             ***

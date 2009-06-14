@@ -23,21 +23,25 @@
 typedef void (*FUNC) (void);
 
 padStatus pad1;
-DWORD acc_size;                 /* Work register for fs command */
-WORD acc_files, acc_dirs;
+
 FILINFO finfo;
-FATFS fatfs[2];                 /* File system object for each logical * drive */
-// BYTE Buff[512]; /* Working buffer */
-DWORD p1, p2, p3;
-DWORD addr;
-DWORD crc_addr;
-UINT crc;
-BYTE res, bank;
-WORD w1;
-UINT s1, s2, cnt;
+FATFS fatfs[1];                 /* File system object for each logical * drive */
 FATFS *fs;
 DIR dir;                        /* Directory object */
-FIL file1, file2;
+FIL file1;
+char buffer[512];
+char *ptr;
+DWORD acc_size;                 /* Work register for fs command */
+WORD acc_files, acc_dirs;
+
+DWORD p1, p2;
+UINT s1, s2, cnt,crc,bank;
+DWORD addr,crc_addr;
+BYTE res;
+
+
+char rom_name[]= ROM_NAME;
+    
 void initInternalRegisters(void)
 {
     characterLocation[0] = 0x0000;
@@ -83,7 +87,7 @@ void put_rc(FRESULT rc)
     for (p = str, i = 0; i != rc && *p; i++) {
         while (*p++);
     }
-    printfc("rc=%u FR_%s\n", (WORD) rc, p);
+    printfc("rc=%i FR_%s\n", (WORD) rc, p);
 }
 
 FRESULT scan_files(char *path)
@@ -128,7 +132,7 @@ void boot(DWORD addr)
 {
     FUNC fn;
     printfc("SNES::boot addr=%lx\n", addr);
-    fn = (FUNC) addr;
+    fn = (FUNC)addr;
     fn();
 
 } void main(void)
@@ -145,11 +149,14 @@ void boot(DWORD addr)
     printfc("SNES::main: Try to init disk\n");
     put_rc(f_mount((BYTE) 0, &fatfs[0]));
 
+#if 0
     printfs(0, "FATFS OPTIXX.ORG ");
     printfc("SNES::main: Try to get free\n");
+    
     res = f_getfree("", &p2, &fs);
     if (res)
         put_rc(res);
+    
     printfc("SNES::main: printf fs results\n");
     printfs(1,
             "FAT TYPE = %u\nBYTES/CLUSTER = %lu\nNUMBER OF FATS = %u\n"
@@ -159,6 +166,7 @@ void boot(DWORD addr)
             (WORD) fs->n_fats, fs->n_rootdir, (DWORD) fs->sects_fat,
             (DWORD) fs->max_clust - 2, fs->fatbase, fs->dirbase, fs->database);
     acc_size = acc_files = acc_dirs = 0;
+    
     printfc("SNES::main: scan files\n");
     res = scan_files("");
     if (res)
@@ -170,10 +178,14 @@ void boot(DWORD addr)
     res = f_opendir(&dir, "");
     if (res)
         put_rc(res);
+    
     p1 = s1 = s2 = 0;
     cnt = 0;
     wait();
     clears();
+#endif
+
+
 #if 0
     printfc("SNES::main: read dir\n");
     for (;;) {
@@ -214,55 +226,63 @@ void boot(DWORD addr)
     wait();
     clears();
 
-#endif                          /* */
+#endif                          
 
-    printfc("SNES::main: open %s \n", ROM_NAME);
-    printfs(0, "OPEN %s", ROM_NAME);
-    put_rc(f_open(&file1, ROM_NAME, (BYTE) FA_READ));
     p1 = BANK_SIZE * BANK_COUNT;
     p2 = 0;
-    p3 = 0;
     cnt = 0;
     bank = 0;
     addr = BASE_ADDR;
     crc_addr = BASE_ADDR;
+
+    printfc("SNES::main: open %s \n", rom_name);
+    printfs(0, "OPEN %s", rom_name);
+    put_rc(f_open(&file1, rom_name, (BYTE) FA_READ));
+    
     while (p1) {
         cnt = BLOCK_SIZE;
         p1 -= BLOCK_SIZE;
-        res = f_read(&file1, (byte *) (addr), cnt, &s2);
-
+        
+        res = f_read(&file1, buffer, cnt, &s2);
 
         if (res != FR_OK) {
             printfc("SNES::main: read failed\n");
             put_rc(res);
             break;
         }
+        
         p2 += s2;
         if (cnt != s2) {
             printfc("SNES::main: read cnt=%i s2=%i\n", cnt, s2);
             break;
         }
+        
+        for (i=0;i<BLOCK_SIZE;i++)
+            *(byte*)(addr++) = buffer[i];
+
 #if 0
         printc_packet(addr, 512, (byte *) (addr));
         wait();
 #endif
 
-        addr += s2;
-
+        //addr += s2;
         if (addr % 0x10000 == 0) {
-            printfc("SNES::main: read cnt=%i p1=%li p2=%li s2=%i \n", cnt,
-                    p1, p2, s2);
+            //printfc("SNES::main: read p1=%li p2=%li cnt=%i s2=%i\n", 
+            //        p1, p2, cnt, s2);
+
 #if 0
             crc = crc_update_mem(crc_addr, 0x8000);
             printfc("SNES::main: crc_addr=%lx crc=%x\n", crc_addr, crc);
             crc_addr += 0x8000;
 #endif
-            printfs((1 + bank), "BANK %i  ADDR 0X%lx   ", bank, addr);
-
+            
+            
+            printfs(bank+1, "BANK 0X%X ADDR 0X%lX", bank, addr);
             addr += 0x8000;
             bank++;
         }
     }
+    
     put_rc(f_close(&file1));
     addr = *(byte *) 0xFFFD;
     addr = addr << 8;

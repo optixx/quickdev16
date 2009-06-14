@@ -12,25 +12,34 @@
 
 
 
-word debugMap[0x400];
-static char debug_buffer[512];
-static char screen_buffer[512];
+#define DEBUG_BUFFER_SIZE 256
+
+word debug_map[0x400];
+char debug_buffer[DEBUG_BUFFER_SIZE];
+//char screen_buffer[DEBUG_BUFFER_SIZE];
+
 
 
 void debug_init(void)
 {
-    word i;
-    for (i = 0; i < 0x400; i++) {
-        debugMap[i] = 0x00;
-    }
-    memset(debug_buffer, 0, 255);
+    
+    memset(debug_map, 0, 0x800);
+    memset(debug_buffer, 0,DEBUG_BUFFER_SIZE);
+
+#if 0    
+    memset(screen_buffer, 0, DEBUG_BUFFER_SIZE);
+    printfc("screen_buffer=%p\n",screen_buffer);
+    printfc("debug_buffer=%p\n",debug_buffer);
+    printfc("debug_map=%p\n",debug_map);
+#endif
+    
 }
 
 
 void debug_enable(void)
 {
     VRAMLoad((word) debugFont_pic, 0x5000, 2048);
-    VRAMLoad((word) debugMap, 0x4000, 0x0800);
+    VRAMLoad((word) debug_map, 0x4000, 0x0800);
     setTileMapLocation(0x4000, (byte) 0x00, (byte) 0);
     setCharacterLocation(0x5000, (byte) 0);
     *(byte *) 0x2100 = 0x0f;    // enable background
@@ -73,10 +82,12 @@ void _print_char(word y, word x, char c)
     VRAMByteWrite((byte) (c - 32), (word) (0x4000 + x + (y * 0x20)));
 }
 
+
 void _print_screen(word y, char *buffer)
 {
     char l;
-    char x = 0;
+    unsigned int x; 
+    x = y * 0x20;
     l = strlen(buffer);
     waitForVBlank();
     while (*buffer) {
@@ -86,14 +97,14 @@ void _print_screen(word y, char *buffer)
                 *(word *) 0x2116 = 0x4000 + x + (y * 0x20);
                 *(byte *) 0x2118 = 0;
             }
-            x = 0;
-            y++;
+            y ++;
+            x = y * 0x20;
             buffer++;
             waitForVBlank();
             continue;
         }
         *(byte *) 0x2115 = 0x80;
-        *(word *) 0x2116 = 0x4000 + x + (y * 0x20);
+        *(word *) 0x2116 = 0x4000 + x;
         *(byte *) 0x2118 = *buffer - 32;
         x++;
         buffer++;
@@ -102,6 +113,7 @@ void _print_screen(word y, char *buffer)
 #endif
     }
 }
+
 void _print_console(const char *buffer)
 {
     while (*buffer)
@@ -118,7 +130,7 @@ void printfc(const char *fmt, ...)
     vsprintf(debug_buffer, fmt, ap);
     va_end(ap);
     _print_console(debug_buffer);
-    // memset(debug_buffer,0,255);
+    //memset(debug_buffer, 0, DEBUG_BUFFER_SIZE);
 
 }
 
@@ -126,10 +138,11 @@ void printfs(word y, const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    vsprintf(screen_buffer, fmt, ap);
+    vsprintf(debug_buffer, fmt, ap);
     va_end(ap);
-    _print_screen(y, screen_buffer);
-    memset(screen_buffer, 0, 255);
+    _print_screen(y, debug_buffer);
+    //memset(debug_buffer, 0, DEBUG_BUFFER_SIZE);
+    //memset(screen_buffer, 0, DEBUG_BUFFER_SIZE);
 }
 
 void printc_packet(unsigned long addr, unsigned int len, byte * packet)
