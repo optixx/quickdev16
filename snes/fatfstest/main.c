@@ -149,7 +149,7 @@ void boot(DWORD addr)
     printfc("SNES::main: Try to init disk\n");
     put_rc(f_mount((BYTE) 0, &fatfs[0]));
 
-#if 0
+#if 1
     printfs(0, "FATFS OPTIXX.ORG ");
     printfc("SNES::main: Try to get free\n");
     
@@ -186,7 +186,7 @@ void boot(DWORD addr)
 #endif
 
 
-#if 0
+#if 1
     printfc("SNES::main: read dir\n");
     for (;;) {
         res = f_readdir(&dir, &finfo);
