@@ -187,12 +187,14 @@ void boot(DWORD addr)
     printfc("SNES::main: Try to init disk\n");
     put_rc(f_mount((BYTE) 0, &fatfs[0]));
 
+#if 0
     while(1){
         if (irq_triggered)
             handle_irq();
         if (nmi_triggered)
             handle_nmi();
     }
+#endif
 
 #if 0
     printfs(0, "FATFS OPTIXX.ORG ");
