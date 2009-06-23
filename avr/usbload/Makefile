@@ -1,8 +1,10 @@
+
+TTY     = /dev/tty.PL2303-00002126
 DEVICE  = atmega644
 F_CPU   = 20000000	# in Hz
-FUSE_L  = # see below for fuse values for particular devices
-FUSE_H  = 
-AVRDUDE = sudo avrdude -c usbasp -p $(DEVICE) -P  /dev/tty.PL2303-00002126
+FUSE_L  = 0xb7
+FUSE_H  = 0xd9
+AVRDUDE = sudo avrdude -c usbasp -p $(DEVICE) -P  $(TTY)
 
 CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 
 #-std=gnu99
@@ -17,6 +19,25 @@ COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 # http://palmavr.sourceforge.net/cgi-bin/fc.cgi
 # and choose options for external crystal clock and no clock divider
 #
+################################## ATMega644 ##################################
+# ATMega644 FUSE_L (Fuse low byte):
+# 0xb7 = 1 0 1 1   0 1 1 1
+#        ^ ^ \ /   \--+--/
+#        | |  |       +------- CKSEL 3..0 (external >8M crystal)
+#        | |  +--------------- SUT 1..0 (crystal osc, BOD enabled)
+#        | +------------------ BODEN (BrownOut Detector enabled)
+#        +-------------------- BODLEVEL (2.7V)
+
+# ATMega644 FUSE_H (Fuse high byte):
+# 0xd9 = 1 1 0 1 1 0 0 1
+#        ^ ^ ^ ^   ^ ^ ^------ BOOTSZ0
+#        | | | |   | +-------- BOOTSZ1
+#        | | | |   + --------- EESAVE (don't preserve EEPROM over chip erase)
+#        | | | +-------------- CKOPT (full output swing)
+#        | | +---------------- SPIEN (allow serial programming)
+#        | +------------------ WDTON (WDT not always on)
+
+
 ################################## ATMega8 ##################################
 # ATMega8 FUSE_L (Fuse low byte):
 # 0x9f = 1 0 0 1   1 1 1 1
@@ -35,60 +56,6 @@ COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 #        | +------------------ WDTON (WDT not always on)
 #        +-------------------- RSTDISBL (reset pin is enabled)
 #
-############################## ATMega48/88/168 ##############################
-# ATMega*8 FUSE_L (Fuse low byte):
-# 0xdf = 1 1 0 1   1 1 1 1
-#        ^ ^ \ /   \--+--/
-#        | |  |       +------- CKSEL 3..0 (external >8M crystal)
-#        | |  +--------------- SUT 1..0 (crystal osc, BOD enabled)
-#        | +------------------ CKOUT (if 0: Clock output enabled)
-#        +-------------------- CKDIV8 (if 0: divide by 8)
-# ATMega*8 FUSE_H (Fuse high byte):
-# 0xde = 1 1 0 1   1 1 1 0
-#        ^ ^ ^ ^   ^ \-+-/
-#        | | | |   |   +------ BODLEVEL 0..2 (110 = 1.8 V)
-#        | | | |   + --------- EESAVE (preserve EEPROM over chip erase)
-#        | | | +-------------- WDTON (if 0: watchdog always on)
-#        | | +---------------- SPIEN (allow serial programming)
-#        | +------------------ DWEN (debug wire enable)
-#        +-------------------- RSTDISBL (reset pin is enabled)
-#
-############################## ATTiny25/45/85 ###############################
-# ATMega*5 FUSE_L (Fuse low byte):
-# 0xef = 1 1 1 0   1 1 1 1
-#        ^ ^ \+/   \--+--/
-#        | |  |       +------- CKSEL 3..0 (clock selection -> crystal @ 12 MHz)
-#        | |  +--------------- SUT 1..0 (BOD enabled, fast rising power)
-#        | +------------------ CKOUT (clock output on CKOUT pin -> disabled)
-#        +-------------------- CKDIV8 (divide clock by 8 -> don't divide)
-# ATMega*5 FUSE_H (Fuse high byte):
-# 0xdd = 1 1 0 1   1 1 0 1
-#        ^ ^ ^ ^   ^ \-+-/ 
-#        | | | |   |   +------ BODLEVEL 2..0 (brownout trigger level -> 2.7V)
-#        | | | |   +---------- EESAVE (preserve EEPROM on Chip Erase -> not preserved)
-#        | | | +-------------- WDTON (watchdog timer always on -> disable)
-#        | | +---------------- SPIEN (enable serial programming -> enabled)
-#        | +------------------ DWEN (debug wire enable)
-#        +-------------------- RSTDISBL (disable external reset -> enabled)
-#
-################################ ATTiny2313 #################################
-# ATTiny2313 FUSE_L (Fuse low byte):
-# 0xef = 1 1 1 0   1 1 1 1
-#        ^ ^ \+/   \--+--/
-#        | |  |       +------- CKSEL 3..0 (clock selection -> crystal @ 12 MHz)
-#        | |  +--------------- SUT 1..0 (BOD enabled, fast rising power)
-#        | +------------------ CKOUT (clock output on CKOUT pin -> disabled)
-#        +-------------------- CKDIV8 (divide clock by 8 -> don't divide)
-# ATTiny2313 FUSE_H (Fuse high byte):
-# 0xdb = 1 1 0 1   1 0 1 1
-#        ^ ^ ^ ^   \-+-/ ^
-#        | | | |     |   +---- RSTDISBL (disable external reset -> enabled)
-#        | | | |     +-------- BODLEVEL 2..0 (brownout trigger level -> 2.7V)
-#        | | | +-------------- WDTON (watchdog timer always on -> disable)
-#        | | +---------------- SPIEN (enable serial programming -> enabled)
-#        | +------------------ EESAVE (preserve EEPROM on Chip Erase -> not preserved)
-#        +-------------------- DWEN (debug wire enable)
-
 
 # symbolic targets:
 help:
