@@ -179,7 +179,7 @@ uint8_t usbFunctionRead(uint8_t * data, uint8_t len)
 int main(void)
 {
     uint8_t i;
-    //wdt_enable(WDTO_1S);
+    wdt_enable(WDTO_1S);
     uart_init();
     stdout = &uart_stdout;
     sram_init();
@@ -190,11 +190,12 @@ int main(void)
     printf("USB Init\n");
     usbDeviceDisconnect();      /* enforce re-enumeration, do this while
                                  * interrupts are disabled! */
+    cli();                             
     printf("USB disconnect\n");
     i = 10;
     while (--i) {               /* fake USB disconnect for > 250 ms */
         wdt_reset();
-        _delay_ms(1);
+        _delay_ms(10);
     }
     usbDeviceConnect();
     printf("USB connect\n");
