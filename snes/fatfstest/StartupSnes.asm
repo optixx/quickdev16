@@ -123,6 +123,10 @@ START:
     stz     $420D   ; Access cycle designation (slow/fast rom)
     cli             ; Enable interrupts
 
+
+        ;lda     #$81
+        ;sta     $4200   
+
 	rep     #$30
 	longa	on
 	longi	on

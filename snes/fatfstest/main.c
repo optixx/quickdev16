@@ -40,7 +40,45 @@ DWORD addr,crc_addr;
 BYTE res;
 
 
+byte irq_triggered = 0;
+byte nmi_triggered = 0;
+
 char rom_name[]= ROM_NAME;
+
+void handle_irq(void){
+
+    char message[]="irq\n";
+    char* ptr;
+    ptr = message;
+    while (*ptr)
+        *(byte *) 0x3000 = *ptr++;
+
+  irq_triggered = 0;
+}
+
+
+void handle_nmi(void){
+
+    char message[]="nmi\n";
+    char* ptr;
+    ptr = message;
+    while (*ptr)
+        *(byte *) 0x3000 = *ptr++;
+
+  irq_triggered = 0;
+}
+
+
+void IRQHandler(void)
+{
+  irq_triggered = 1;
+}
+
+void NMIHandler(void)
+{
+  nmi_triggered = 1;
+
+}
     
 void initInternalRegisters(void)
 {
@@ -148,6 +186,13 @@ void boot(DWORD addr)
     debug_enable();
     printfc("SNES::main: Try to init disk\n");
     put_rc(f_mount((BYTE) 0, &fatfs[0]));
+
+    while(1){
+        if (irq_triggered)
+            handle_irq();
+        if (nmi_triggered)
+            handle_nmi();
+    }
 
 #if 0
     printfs(0, "FATFS OPTIXX.ORG ");
@@ -294,12 +339,4 @@ void boot(DWORD addr)
     while (1);
 }
 
-void IRQHandler(void)
-{
-}
 
-void NMIHandler(void)
-{
-
-    // processEvents();
-}
