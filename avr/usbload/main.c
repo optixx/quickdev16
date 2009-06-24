@@ -30,40 +30,8 @@ uint16_t sync_errors = 0;
 uint8_t tx_buffer[32];
 uint8_t data_buffer[4];
 uint32_t addr;
+uint16_t crc = 0;
 
-void crc_check_memory(uint32_t top_addr)
-{
-    uint16_t crc = 0;
-    uint32_t addr;
-    req_bank = 0;
-    for (addr = 0x000000; addr < top_addr; addr += BUFFER_SIZE) {
-        sram_read_buffer(addr, read_buffer, BUFFER_SIZE);
-        crc = do_crc_update(crc, read_buffer, BUFFER_SIZE);
-        if (addr && addr % 32768 == 0) {
-            printf("crc_check_memory: req_bank: 0x%x Addr: 0x%lx CRC: %x\n",
-                   req_bank, addr, crc);
-            req_bank++;
-            crc = 0;
-        }
-    }
-}
-
-
-void crc_check_memory_range(uint32_t start_addr, uint32_t size)
-{
-    uint16_t crc = 0;
-    uint32_t addr;
-    req_bank = 0;
-    for (addr = start_addr; addr < start_addr + size; addr += BUFFER_SIZE) {
-        sram_read_buffer(addr, read_buffer, BUFFER_SIZE);
-        crc = do_crc_update(crc, read_buffer, BUFFER_SIZE);
-    }
-    tx_buffer[0] = crc & 0xff;
-    tx_buffer[1] = (crc >> 8) & 0xff;
-#if DEBUG_USB
-    printf("crc_check_memory_range: Addr: 0x%lx CRC: %x\n", addr, crc);
-#endif
-}
 
 
 usbMsgLen_t usbFunctionSetup(uchar data[8])
@@ -95,7 +63,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
             ret_len = 0;
         }
         rx_remaining = rq->wLength.word;
-        ret_len = 0xff;
+        ret_len = USB_MAX_TRANS;
         if (req_addr && req_addr % req_bank_size == 0) {
 #if DEBUG_USB
             printf("USB_UPLOAD_ADDR: req_bank: 0x%x Addr: 0x%08lx \n",
@@ -103,7 +71,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                    req_bank, req_addr);
             req_bank++;
         }
-        ret_len = 0xff;
+        ret_len = USB_MAX_TRANS;
     } else if (rq->bRequest == USB_DOWNLOAD_INIT) {
 #if DEBUG_USB
         printf("USB_DOWNLOAD_INIT\n");
@@ -118,7 +86,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         printf("USB_CRC: Addr 0x%lx \n", req_addr);
 #endif
         cli();
-        crc_check_memory(req_addr);
+        crc_check_memory(req_addr,read_buffer);
         sei();
     } else if (rq->bRequest == USB_CRC_ADDR) {
         req_addr = rq->wValue.word;
@@ -135,7 +103,10 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         printf("USB_CRC_ADDR: Addr: 0x%lx Size: %li\n", req_addr, req_size);
 #endif
         cli();
-        crc_check_memory_range(req_addr,req_size);
+        crc = crc_check_memory_range(req_addr,req_size,read_buffer);
+        tx_buffer[0] = crc & 0xff;
+        tx_buffer[1] = (crc >> 8) & 0xff;
+
         sei();
         ret_len = 2;
     }
