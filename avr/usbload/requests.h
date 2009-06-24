@@ -18,9 +18,16 @@
 
 #define USB_UPLOAD_INIT         0
 #define USB_UPLOAD_ADDR         1
+
 #define USB_DOWNLOAD_INIT       2
 #define USB_DOWNLOAD_ADDR       3
+
 #define USB_CRC                 4
 #define USB_CRC_ADDR            5
+
+#define USB_BULK_UPLOAD_INIT    6
+#define USB_BULK_UPLOAD_ADDR    7
+#define USB_BULK_UPLOAD_NEXT    8
+#define USB_BULK_UPLOAD_END     9
 
 #endif /* __REQUESTS_H_INCLUDED__ */

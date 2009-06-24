@@ -46,7 +46,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_bank_size = 1 << rq->wValue.word;
         sync_errors = 0;
 #if DEBUG_USB
-        printf("USB_UPLOAD_INIT: bank size %li\n", req_bank_size);
+        printf("USB_UPLOAD_INIT: bank_size=%li\n", req_bank_size);
 #endif
 /*
  * -------------------------------------------------------------------------
@@ -61,7 +61,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
             sync_errors++;
 #if DEBUG_USB
             printf
-                ("USB_UPLOAD_ADDR: Out of sync Addr=0x%lx remain=%i packet=%i sync_error=%i\n",
+                ("USB_UPLOAD_ADDR: Out of sync addr=0x%lx remain=%i packet=%i sync_error=%i\n",
                  req_addr, rx_remaining, rq->wLength.word, sync_errors);
 #endif
             ret_len = 0;
@@ -70,16 +70,22 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         ret_len = USB_MAX_TRANS;
         if (req_addr && req_addr % req_bank_size == 0) {
 #if DEBUG_USB
-            printf("USB_UPLOAD_ADDR: req_bank: 0x%x Addr: 0x%08lx \n",
+            printf("USB_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx \n",
 #endif
                    req_bank, req_addr);
             req_bank++;
         }
         ret_len = USB_MAX_TRANS;
+/*
+ * -------------------------------------------------------------------------
+ */
     } else if (rq->bRequest == USB_DOWNLOAD_INIT) {
 #if DEBUG_USB
         printf("USB_DOWNLOAD_INIT\n");
 #endif
+/*
+ * -------------------------------------------------------------------------
+ */
     } else if (rq->bRequest == USB_DOWNLOAD_ADDR) {
         printf("USB_DOWNLOAD_ADDR\n");
     } else if (rq->bRequest == USB_CRC) {
@@ -87,7 +93,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
 #if DEBUG_USB
-        printf("USB_CRC: Addr 0x%lx \n", req_addr);
+        printf("USB_CRC: addr=0x%lx \n", req_addr);
 #endif
 
 #if USB_CRC_CHECK
@@ -95,24 +101,74 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         crc_check_memory(req_addr,read_buffer);
         sei();
 #endif
-
+  
 /*
  * -------------------------------------------------------------------------
  */
+   } else if (rq->bRequest == USB_BULK_UPLOAD_INIT) {
+        req_bank = 0;
+        rx_remaining = 0;
+        req_bank_size = 1 << rq->wValue.word;
+        sync_errors = 0;
+#if DEBUG_USB
+        printf("USB_BULK_UPLOAD_INIT: bank_size=%li\n", req_bank_size);
+#endif
+/*
+ * -------------------------------------------------------------------------
+ */
+    } else if (rq->bRequest == USB_BULK_UPLOAD_ADDR) {
+
+        req_state = REQ_STATUS_BULK_UPLOAD;
+        req_addr = rq->wValue.word;
+        req_addr = req_addr << 16;
+        req_addr = req_addr | rq->wIndex.word;
+#if DEBUG_USB
+        printf("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx \n",req_bank,req_addr);
+#endif
+        ret_len = 0;
+  
+/*
+ * -------------------------------------------------------------------------
+ */
+    } else if (rq->bRequest == USB_BULK_UPLOAD_NEXT) {
+
+        if (rx_remaining) {
+            sync_errors++;
+#if DEBUG_USB
+            printf
+                ("USB_BULK_UPLOAD_NEXT: Out of sync addr=0x%lx remain=%i packet=%i sync_error=%i\n",
+                 req_addr, rx_remaining, rq->wLength.word, sync_errors);
+#endif
+            ret_len = 0;
+        }
+        rx_remaining = rq->wLength.word;
+        ret_len = USB_MAX_TRANS;
+        if (req_addr && req_addr % req_bank_size == 0) {
+#if DEBUG_USB
+            printf("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr= 0x%08lx \n",
+#endif
+                   req_bank, req_addr);
+            req_bank++;
+        }
+        ret_len = USB_MAX_TRANS;
+/*
+ * -------------------------------------------------------------------------
+ */
+
     } else if (rq->bRequest == USB_CRC_ADDR) {
         req_state = REQ_STATUS_CRC;
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
 #if DEBUG_USB
-        printf("USB_CRC_ADDR: Addr: 0x%lx Size: %i\n", req_addr,
-#endif
+        printf("USB_CRC_ADDR: addr=0x%lx size=%i\n", req_addr,
                rq->wLength.word);
+#endif
         req_size = rq->wLength.word;
         req_size = req_size << 2;
         tx_remaining = 2;
 #if DEBUG_USB
-        printf("USB_CRC_ADDR: Addr: 0x%lx Size: %li\n", req_addr, req_size);
+        printf("USB_CRC_ADDR: addr=0x%lx size=%li\n", req_addr, req_size);
 #endif
 
         cli();
