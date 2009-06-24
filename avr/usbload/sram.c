@@ -5,10 +5,10 @@
 #include <util/delay.h>         /* for _delay_ms() */
 
 
+#include "config.h"
 #include "sram.h"
 #include "uart.h"
 #include "debug.h"
-
 
 void system_init(void)
 {
@@ -67,20 +67,28 @@ void system_init(void)
 void sreg_set(uint32_t addr)
 {
     uint8_t i = 24;
-    printf("sreg addr=0x%08lx ",addr);
+#ifdef DEBUG_SREG
+    printf("sreg_set: addr=0x%08lx",addr);
+#endif
     while(i--) {
         if ((addr & ( 1L << i))){
+#ifdef DEBUG_SREG
             printf("1");
+#endif
             AVR_ADDR_SER_PORT |= ( 1 << AVR_ADDR_SER_PIN);
         } else {
             AVR_ADDR_SER_PORT &= ~( 1 << AVR_ADDR_SER_PIN);
+#ifdef DEBUG_SREG
             printf("0");
+#endif
             
         }
         AVR_ADDR_SCK_PORT |= (1 << AVR_ADDR_SCK_PIN);
         AVR_ADDR_SCK_PORT &= ~(1 << AVR_ADDR_SCK_PIN);
     }
+#ifdef DEBUG_SREG
     printf("\n");
+#endif
     AVR_ADDR_LATCH_PORT |= (1 << AVR_ADDR_LATCH_PIN);
     AVR_ADDR_LATCH_PORT &= ~(1 << AVR_ADDR_LATCH_PIN);
     
@@ -99,7 +107,6 @@ uint8_t sram_read(uint32_t addr)
     AVR_WR_PORT |= (1 << AVR_WR_PIN);
     AVR_RD_PORT |= (1 << AVR_RD_PIN);
     AVR_CS_PORT &= ~(1 << AVR_CS_PIN);
-    _delay_ms(1);
     
     sreg_set(addr);
     
@@ -115,13 +122,8 @@ uint8_t sram_read(uint32_t addr)
     asm volatile ("nop");
     
     byte = AVR_DATA_PIN;
-#if 0    
-    printf("read %x\n",byte);
-    while(1)
-        wdt_reset();
-#endif  
+
     AVR_RD_PORT |= (1 << AVR_RD_PIN);
-    
     AVR_CS_PORT |= (1 << AVR_CS_PIN);
     
     avr_data_in();
@@ -155,7 +157,7 @@ void sram_clear(uint32_t addr, uint32_t len)
     uint32_t i;
     for (i = addr; i < (addr + len); i++) {
         if (0 == i % 0xfff)
-            printf("sram_clear %lx\n\r", i);
+            printf("sram_clear: addr=0x%08lx\n\r", i);
         sram_write(i, 0x00);
     }
 }

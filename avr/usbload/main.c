@@ -8,17 +8,13 @@
 #include "usbdrv.h"
 #include "oddebug.h"            /* This is also an example for using debug
                                  * macros */
+#include "config.h"
 #include "requests.h"           /* The custom request numbers we use */
 #include "uart.h"
 #include "sram.h"
 #include "debug.h"
 #include "crc.h"
 
-
-#define REQ_IDLE      0
-#define REQ_UPLOAD    1
-#define RES_CRC       2
-#define BUFFER_SIZE 256
 
 extern FILE uart_stdout;
 
@@ -64,7 +60,9 @@ void crc_check_memory_range(uint32_t start_addr, uint32_t size)
     }
     tx_buffer[0] = crc & 0xff;
     tx_buffer[1] = (crc >> 8) & 0xff;
+#if DEBUG_USB
     printf("crc_check_memory_range: Addr: 0x%lx CRC: %x\n", addr, crc);
+#endif
 }
 
 
@@ -78,7 +76,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         rx_remaining = 0;
         req_bank_size = 1 << rq->wValue.word;
         sync_errors = 0;
+#if DEBUG_USB
         printf("USB_UPLOAD_INIT: bank size %li\n", req_bank_size);
+#endif
     } else if (rq->bRequest == USB_UPLOAD_ADDR) {       /* echo -- used for
                                                          * reliability tests */
         req_state = REQ_UPLOAD;
@@ -88,27 +88,35 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         if (rx_remaining) {
             sync_errors++;
             printf
+#if DEBUG_USB
                 ("USB_UPLOAD_ADDR: Out of sync Addr=0x%lx remain=%i packet=%i sync_error=%i\n",
                  req_addr, rx_remaining, rq->wLength.word, sync_errors);
+#endif
             ret_len = 0;
         }
         rx_remaining = rq->wLength.word;
         ret_len = 0xff;
         if (req_addr && req_addr % req_bank_size == 0) {
+#if DEBUG_USB
             printf("USB_UPLOAD_ADDR: req_bank: 0x%x Addr: 0x%08lx \n",
+#endif
                    req_bank, req_addr);
             req_bank++;
         }
         ret_len = 0xff;
     } else if (rq->bRequest == USB_DOWNLOAD_INIT) {
+#if DEBUG_USB
         printf("USB_DOWNLOAD_INIT\n");
+#endif
     } else if (rq->bRequest == USB_DOWNLOAD_ADDR) {
         printf("USB_DOWNLOAD_ADDR\n");
     } else if (rq->bRequest == USB_CRC) {
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
+#if DEBUG_USB
         printf("USB_CRC: Addr 0x%lx \n", req_addr);
+#endif
         cli();
         crc_check_memory(req_addr);
         sei();
@@ -116,12 +124,16 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
+#if DEBUG_USB
         printf("USB_CRC_ADDR: Addr: 0x%lx Size: %i\n", req_addr,
+#endif
                rq->wLength.word);
         req_size = rq->wLength.word;
         req_size = req_size << 2;
         tx_remaining = 2;
+#if DEBUG_USB
         printf("USB_CRC_ADDR: Addr: 0x%lx Size: %li\n", req_addr, req_size);
+#endif
         cli();
         // crc_check_memory_range(req_addr,req_size);
         sei();
@@ -144,7 +156,7 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
     if (req_state == REQ_UPLOAD) {
 
         rx_remaining -= len;
-#if 1
+#if DEBUG_USB_RAW
         printf("usbFunctionWrite addr: 0x%08lx len: %i rx_remaining=%i\n",
                req_addr, len, rx_remaining);
 #endif
@@ -162,7 +174,7 @@ uint8_t usbFunctionRead(uint8_t * data, uint8_t len)
     if (len > tx_remaining)
         len = tx_remaining;
     tx_remaining -= len;
-#if 1
+#if DEBUG_USB_RAW
     printf("usbFunctionRead len=%i tx_remaining=%i \n", len, tx_remaining);
 #endif
     for (i = 0; i < len; i++) {
@@ -180,62 +192,25 @@ int main(void)
 {
     uint8_t i;
     uint32_t addr;
-    
-    wdt_enable(WDTO_8S);
+
     uart_init();
     stdout = &uart_stdout;
     
     system_init();
-    
     printf("Sytem Init\n");
-    avr_bus_active();
 
-
-    DDRB|= (1 << PB1);
-    PORTB|= (1 << PB1);
-    while(1)
-        wdt_reset();  
-    
-#if 0    
     avr_bus_active();
-    printf("set sreg 0xff55aa\n");
-    sreg_set(0xff55aa);
-    counter_load();
-    sram_write(0xff55aa,0x55);
-    while(1)
-        wdt_reset();  
-    addr = 0x3fffff;
-    sreg_set(0x00000);
-    counter_load();
-    wdt_reset();
     
-    while(addr--){
-        counter_up();
-    }
-    printf("done\n");
-    
-    while(1){   
-        wdt_reset();
-        i = 10;
-        while(i--)
-            _delay_ms(100);
-        //printf("counter up\n");
-    
-    }
-#endif 
-    avr_bus_active();
-#if 1    
-    addr = 0x00;
+    addr = 0x000000;
     i = 0;
-    while (addr++ <= 0xff){
+    while (addr++ <= 0x00ffff){
         sram_write(addr,i++);
     }
-#endif    
-    addr = 0x00;
-    while (addr++ <= 0xff){
+
+    addr = 0x000000;
+    while (addr++ <= 0x00ffff){
         printf("read addr=0x%08lx %x\n",addr,sram_read(addr));
     }
-    while(1);
     
     usbInit();
     printf("USB Init\n");
@@ -253,14 +228,11 @@ int main(void)
         
     }
     led_on();
-    
-    
     usbDeviceConnect();
     printf("USB connect\n");
     sei();
     printf("USB poll\n");
     for (;;) {                  /* main event loop */
-        wdt_reset();
         usbPoll();
     }
     return 0;

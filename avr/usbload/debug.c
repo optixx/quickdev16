@@ -9,8 +9,7 @@ extern FILE uart_stdout;
 
 void dump_packet(uint32_t addr, uint32_t len, uint8_t * packet)
 {
-    uint16_t i,
-     j;
+    uint16_t i,j;
     uint16_t sum = 0;
     uint8_t clear = 0;
 
