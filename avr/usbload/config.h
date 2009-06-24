@@ -9,14 +9,14 @@
 #define DEBUG                       1
 
 
-#define REQ_IDLE                    0
-#define REQ_UPLOAD                  1
-#define REQ_CRC                     2
+#define REQ_STATUS_IDLE                    0
+#define REQ_STATUS_UPLOAD                  1
+#define REQ_STATUS_CRC                     2
 
 #define USB_MAX_TRANS               0xff
 #define USB_CRC_CHECK               1
 
-#define BUFFER_SIZE                 0xff
+#define TRANSFER_BUFFER_SIZE        0xff
 
 
 #endif 

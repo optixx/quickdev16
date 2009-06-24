@@ -18,12 +18,12 @@
 
 extern FILE uart_stdout;
 
-uint8_t read_buffer[BUFFER_SIZE];
+uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
 uint32_t req_size;
 uint8_t req_bank;
 uint32_t req_bank_size;
-uint8_t req_state = REQ_IDLE;
+uint8_t req_state = REQ_STATUS_IDLE;
 uint8_t rx_remaining = 0;
 uint8_t tx_remaining = 0;
 uint16_t sync_errors = 0;
@@ -53,7 +53,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  */
     } else if (rq->bRequest == USB_UPLOAD_ADDR) {       
                                                         
-        req_state = REQ_UPLOAD;
+        req_state = REQ_STATUS_UPLOAD;
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
@@ -100,7 +100,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * -------------------------------------------------------------------------
  */
     } else if (rq->bRequest == USB_CRC_ADDR) {
-        req_state = REQ_CRC;
+        req_state = REQ_STATUS_CRC;
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
@@ -121,7 +121,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         tx_buffer[1] = (crc >> 8) & 0xff;
         sei();
         ret_len = 2;
-        req_state = REQ_IDLE;
+        req_state = REQ_STATUS_IDLE;
     }
 
     usbMsgPtr = data_buffer;

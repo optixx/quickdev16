@@ -17,7 +17,7 @@
 #include "crc.h"
 #include "usb_bulk.h"
 
-extern uint8_t read_buffer[BUFFER_SIZE];
+extern uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 extern uint32_t req_addr;
 extern uint32_t req_size;
 extern uint8_t req_bank;
@@ -34,7 +34,7 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
                rx_remaining, len);
         len = rx_remaining;
     }
-    if (req_state == REQ_UPLOAD) {
+    if (req_state == REQ_STATUS_UPLOAD) {
 
         rx_remaining -= len;
 #if DEBUG_USB_RAW
