@@ -2,7 +2,7 @@
 TTY     = /dev/tty.PL2303-00002126
 DEVICE  = atmega644
 F_CPU   = 20000000	# in Hz
-FUSE_L  = 0xb7
+FUSE_L  = 0xf7
 FUSE_H  = 0xd9
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 
@@ -10,6 +10,7 @@ CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0
 #-std=gnu99
 OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o main.o uart.o fifo.o sram.o crc.o debug.o
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
+
 
 ##############################################################################
 # Fuse values for particular devices
@@ -20,7 +21,7 @@ COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 #
 ################################## ATMega644 ##################################
 # ATMega644 FUSE_L (Fuse low byte):
-# 0xb7 = 1 0 1 1   0 1 1 1
+# 0xf7 = 1 1 1 1  0 1 1 1
 #        ^ ^ \ /   \--+--/
 #        | |  |       +------- CKSEL 3..0 (external >8M crystal)
 #        | |  +--------------- SUT 1..0 (crystal osc, BOD enabled)
