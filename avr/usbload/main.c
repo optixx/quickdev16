@@ -37,6 +37,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
     usbRequest_t *rq = (void *) data;
     uint8_t ret_len = 0;
+/*
+ * -------------------------------------------------------------------------
+ */
     if (rq->bRequest == USB_UPLOAD_INIT) {
         req_bank = 0;
         rx_remaining = 0;
@@ -45,16 +48,19 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 #if DEBUG_USB
         printf("USB_UPLOAD_INIT: bank size %li\n", req_bank_size);
 #endif
-    } else if (rq->bRequest == USB_UPLOAD_ADDR) {       /* echo -- used for
-                                                         * reliability tests */
+/*
+ * -------------------------------------------------------------------------
+ */
+    } else if (rq->bRequest == USB_UPLOAD_ADDR) {       
+                                                        
         req_state = REQ_UPLOAD;
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
         if (rx_remaining) {
             sync_errors++;
-            printf
 #if DEBUG_USB
+            printf
                 ("USB_UPLOAD_ADDR: Out of sync Addr=0x%lx remain=%i packet=%i sync_error=%i\n",
                  req_addr, rx_remaining, rq->wLength.word, sync_errors);
 #endif
@@ -83,9 +89,16 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 #if DEBUG_USB
         printf("USB_CRC: Addr 0x%lx \n", req_addr);
 #endif
+
+#if USB_CRC_CHECK
         cli();
         crc_check_memory(req_addr,read_buffer);
         sei();
+#endif
+
+/*
+ * -------------------------------------------------------------------------
+ */
     } else if (rq->bRequest == USB_CRC_ADDR) {
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
@@ -100,11 +113,11 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 #if DEBUG_USB
         printf("USB_CRC_ADDR: Addr: 0x%lx Size: %li\n", req_addr, req_size);
 #endif
+
         cli();
         crc = crc_check_memory_range(req_addr,req_size,read_buffer);
         tx_buffer[0] = crc & 0xff;
         tx_buffer[1] = (crc >> 8) & 0xff;
-
         sei();
         ret_len = 2;
     }
@@ -169,6 +182,3 @@ int main(void)
     return 0;
 }
 
-/*
- * ------------------------------------------------------------------------- 
- */
