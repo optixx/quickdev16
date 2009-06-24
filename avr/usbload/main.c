@@ -14,7 +14,7 @@
 #include "sram.h"
 #include "debug.h"
 #include "crc.h"
-
+#include "usb_bulk.h"
 
 extern FILE uart_stdout;
 
@@ -31,8 +31,6 @@ uint8_t tx_buffer[32];
 uint8_t data_buffer[4];
 uint32_t addr;
 uint16_t crc = 0;
-
-
 
 usbMsgLen_t usbFunctionSetup(uchar data[8])
 {
@@ -116,44 +114,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                                  * no data back to host */
 }
 
-
-uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
-{
-    if (len > rx_remaining) {
-        printf("usbFunctionWrite more data than expected remain: %i len: %i\n",
-               rx_remaining, len);
-        len = rx_remaining;
-    }
-    if (req_state == REQ_UPLOAD) {
-
-        rx_remaining -= len;
-#if DEBUG_USB_RAW
-        printf("usbFunctionWrite addr: 0x%08lx len: %i rx_remaining=%i\n",
-               req_addr, len, rx_remaining);
-#endif
-        cli();
-        sram_copy(req_addr, data, len);
-        sei();
-        req_addr += len;
-    }
-    return len;
-}
-
-uint8_t usbFunctionRead(uint8_t * data, uint8_t len)
-{
-    uint8_t i;
-    if (len > tx_remaining)
-        len = tx_remaining;
-    tx_remaining -= len;
-#if DEBUG_USB_RAW
-    printf("usbFunctionRead len=%i tx_remaining=%i \n", len, tx_remaining);
-#endif
-    for (i = 0; i < len; i++) {
-        *data = tx_buffer[len];
-        data++;
-    }
-    return len;
-}
 
 /*
  * ------------------------------------------------------------------------- 
