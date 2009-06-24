@@ -104,27 +104,27 @@ void sram_bulk_read_start(uint32_t addr)
 #endif
     avr_data_in();
 
+    AVR_CS_PORT &= ~(1 << AVR_CS_PIN);
+
     AVR_WR_PORT |= (1 << AVR_WR_PIN);
     AVR_RD_PORT |= (1 << AVR_RD_PIN);
-    AVR_CS_PORT &= ~(1 << AVR_CS_PIN);
+
     sreg_set(addr);
 
     AVR_RD_PORT &= ~(1 << AVR_RD_PIN);
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
 
 }
 
-void sram_bulk_read_end(void)
+inline void sram_bulk_read_next(void)
 {
-#ifdef DEBUG_SRAM
-    printf("sram_bulk_read_end:");
-#endif
-    AVR_CS_PORT |= (1 << AVR_CS_PIN);
-    avr_data_in();
-}
-
-inline uint8_t sram_bulk_read(void)
-{
-    uint8_t byte;
     AVR_RD_PORT |= (1 << AVR_RD_PIN);
     counter_up();
     AVR_RD_PORT &= ~(1 << AVR_RD_PIN);
@@ -138,9 +138,25 @@ inline uint8_t sram_bulk_read(void)
     asm volatile ("nop");
     asm volatile ("nop");
 
+}
+
+
+inline uint8_t sram_bulk_read(void)
+{
+    uint8_t byte;
+
     byte = AVR_DATA_PIN;
     AVR_RD_PORT |= (1 << AVR_RD_PIN);
     return byte;
+}
+
+void sram_bulk_read_end(void)
+{
+#ifdef DEBUG_SRAM
+    printf("sram_bulk_read_end:");
+#endif
+    AVR_CS_PORT |= (1 << AVR_CS_PIN);
+    avr_data_in();
 }
 
 uint8_t sram_read(uint32_t addr)
@@ -153,6 +169,7 @@ uint8_t sram_read(uint32_t addr)
     avr_data_in();
     
     AVR_CS_PORT &= ~(1 << AVR_CS_PIN);
+
     AVR_WR_PORT |= (1 << AVR_WR_PIN);
     AVR_RD_PORT |= (1 << AVR_RD_PIN);
     
@@ -178,6 +195,50 @@ uint8_t sram_read(uint32_t addr)
     return byte;
 
 }
+
+void sram_bulk_write_start(uint32_t addr)
+{
+#ifdef DEBUG_SRAM
+    printf("sram_bulk_write_start: addr=0x%08lx\n\r", addr);
+#endif
+
+    avr_data_out();
+
+    AVR_CS_PORT &= ~(1 << AVR_CS_PIN);
+    AVR_WR_PORT |= (1 << AVR_WR_PIN);
+    AVR_RD_PORT |= (1 << AVR_RD_PIN);
+
+    sreg_set(addr);
+
+    AVR_WR_PORT &= ~(1 << AVR_WR_PIN);
+}
+
+inline void sram_bulk_write_next(void)
+{
+    AVR_RD_PORT |= (1 << AVR_RD_PIN);
+
+    counter_up();
+
+    AVR_WR_PORT &= ~(1 << AVR_WR_PIN);
+}
+
+inline void sram_bulk_write( uint8_t data)
+{
+    AVR_DATA_PORT = data;
+
+    AVR_WR_PORT |= (1 << AVR_WR_PIN);
+}
+
+void sram_bulk_write_end(void)
+{
+#ifdef DEBUG_SRAM
+    printf("sram_bulk_write_end:");
+#endif
+    AVR_CS_PORT |= (1 << AVR_CS_PIN);
+
+    avr_data_in();
+}
+
 
 void sram_write(uint32_t addr, uint8_t data)
 {
@@ -202,6 +263,7 @@ void sram_write(uint32_t addr, uint8_t data)
     
     avr_data_in();
 }
+
 
 
 void sram_clear(uint32_t addr, uint32_t len)
