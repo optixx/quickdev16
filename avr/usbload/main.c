@@ -100,6 +100,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * -------------------------------------------------------------------------
  */
     } else if (rq->bRequest == USB_CRC_ADDR) {
+        req_state = REQ_CRC;
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
@@ -120,6 +121,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         tx_buffer[1] = (crc >> 8) & 0xff;
         sei();
         ret_len = 2;
+        req_state = REQ_IDLE;
     }
 
     usbMsgPtr = data_buffer;
