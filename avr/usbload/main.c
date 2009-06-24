@@ -1,5 +1,4 @@
 #include <avr/io.h>
-#include <avr/wdt.h>
 #include <avr/interrupt.h>      /* for sei() */
 #include <util/delay.h>         /* for _delay_ms() */
 #include <stdlib.h>
@@ -60,12 +59,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * -------------------------------------------------------------------------
  */
     } else if (rq->bRequest == USB_UPLOAD_ADDR) {       
-        if (req_state != REQ_STATUS_IDLE){
-#if DEBUG_USB
-            printf("USB_UPLOAD_ADDR: ERROR state is not REQ_STATUS_IDLE\n");
-#endif
-            return 0;
-        }
                                                         
         req_state = REQ_STATUS_UPLOAD;
         req_addr = rq->wValue.word;
@@ -244,6 +237,48 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * ------------------------------------------------------------------------- 
  */
 
+void test_read_write(){
+    
+    uint8_t i;
+    uint32_t addr;
+    avr_bus_active();
+    addr = 0x000000;
+    i = 1;
+    while (addr++ <= 0x0000ff){
+        sram_write(addr,i++);
+    }
+
+    addr = 0x000000;
+    while (addr++ <= 0x0000ff){
+        printf("read addr=0x%08lx %x\n",addr,sram_read(addr));
+    }
+}
+
+
+void test_bulk_read_write(){
+    
+    uint8_t i;
+    uint32_t addr;
+    avr_bus_active();
+    addr = 0x000000;
+    i = 0;
+    sram_bulk_write_start(addr);
+    while (addr++ <= 0x3fffff){
+        sram_bulk_write(i++);
+        sram_bulk_write_next();
+    }
+    sram_bulk_write_end();
+
+    addr = 0x000000;
+    sram_bulk_read_start(addr);
+    while (addr <= 0x3fffff){
+        printf("addr=0x%08lx %x\n",addr,sram_bulk_read());
+        sram_bulk_read_next();
+        addr ++;
+    }
+    sram_bulk_read_end();
+}
+
 int main(void)
 {
     uint8_t i;
@@ -255,19 +290,9 @@ int main(void)
     system_init();
     printf("Sytem Init\n");
 
-    avr_bus_active();
-    
-    addr = 0x000000;
-    i = 0;
-    while (addr++ <= 0x00ffff){
-        sram_write(addr,i++);
-    }
+    //while(1);
 
-    addr = 0x000000;
-    while (addr++ <= 0x00ffff){
-        printf("read addr=0x%08lx %x\n",addr,sram_read(addr));
-    }
-    
+    avr_bus_active();
     usbInit();
     printf("USB Init\n");
     usbDeviceDisconnect();      /* enforce re-enumeration, do this while
@@ -276,7 +301,6 @@ int main(void)
     printf("USB disconnect\n");
     i = 10;
     while (--i) {               /* fake USB disconnect for > 250 ms */
-        wdt_reset();
         led_on(); 
         _delay_ms(35);
         led_off();

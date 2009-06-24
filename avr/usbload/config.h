@@ -3,9 +3,10 @@
 #define __config_h__
 
 #define DEBUG_USB                   1
-#define DEBUG_USB_RAW               1
-#define DEBUG_SRAM                  1
-#define DEBUG_SREG                  1
+#undef DEBUG_USB_RAW               1
+#undef DEBUG_SRAM                  1
+#undef DEBUG_SRAM_RAW                  
+#undef DEBUG_SREG                  
 #define DEBUG                       1
 
 

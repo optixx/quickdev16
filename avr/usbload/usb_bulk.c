@@ -43,9 +43,9 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
         printf("usbFunctionWrite REQ_STATUS_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n",
                req_addr, len, rx_remaining);
 #endif
-        cli();
+        //cli();
         sram_copy(req_addr, data, len);
-        sei();
+        //sei();
         req_addr += len;
     } else if (req_state == REQ_STATUS_BULK_UPLOAD) {
 
