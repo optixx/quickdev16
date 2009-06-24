@@ -161,4 +161,4 @@ void sram_bulk_write(uint8_t data);
 
 void sram_bulk_copy(uint32_t addr, uint8_t * src, uint32_t len);
 void sram_bulk_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len);
-void sram_bulk_clear(uint32_t addr, uint32_t len);
+void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value);

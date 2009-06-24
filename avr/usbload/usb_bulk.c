@@ -26,6 +26,7 @@ extern uint8_t req_state;
 extern uint8_t rx_remaining; 
 extern uint8_t tx_remaining;
 extern  uint8_t tx_buffer[32];
+extern uint16_t crc;
 
 uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
 {
@@ -43,9 +44,7 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
         printf("usbFunctionWrite REQ_STATUS_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n",
                req_addr, len, rx_remaining);
 #endif
-        //cli();
         sram_copy(req_addr, data, len);
-        //sei();
         req_addr += len;
     } else if (req_state == REQ_STATUS_BULK_UPLOAD) {
 
@@ -56,12 +55,10 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
 #endif
         ptr = data;
         i = len;
-        cli();
         while(i--){
             sram_bulk_write(*ptr++);
             counter_up();
         }
-        sei();
     }
     return len;
 }

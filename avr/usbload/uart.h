@@ -16,3 +16,4 @@ static int uart_stream(char c, FILE *stream);
 
 
 #endif                          /* _UART_H_ */
+

@@ -29,5 +29,6 @@
 #define USB_BULK_UPLOAD_ADDR    7
 #define USB_BULK_UPLOAD_NEXT    8
 #define USB_BULK_UPLOAD_END     9
+#define USB_SNES_BOOT           10
 
 #endif /* __REQUESTS_H_INCLUDED__ */
