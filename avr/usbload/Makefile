@@ -4,12 +4,11 @@ DEVICE  = atmega644
 F_CPU   = 20000000	# in Hz
 FUSE_L  = 0xb7
 FUSE_H  = 0xd9
-AVRDUDE = sudo avrdude -c usbasp -p $(DEVICE) -P  $(TTY)
+AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 
 CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 
 #-std=gnu99
 OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o main.o uart.o fifo.o sram.o crc.o debug.o
-
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 
 ##############################################################################
@@ -38,24 +37,6 @@ COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 #        | +------------------ WDTON (WDT not always on)
 
 
-################################## ATMega8 ##################################
-# ATMega8 FUSE_L (Fuse low byte):
-# 0x9f = 1 0 0 1   1 1 1 1
-#        ^ ^ \ /   \--+--/
-#        | |  |       +------- CKSEL 3..0 (external >8M crystal)
-#        | |  +--------------- SUT 1..0 (crystal osc, BOD enabled)
-#        | +------------------ BODEN (BrownOut Detector enabled)
-#        +-------------------- BODLEVEL (2.7V)
-# ATMega8 FUSE_H (Fuse high byte):
-# 0xc9 = 1 1 0 0   1 0 0 1 <-- BOOTRST (boot reset vector at 0x0000)
-#        ^ ^ ^ ^   ^ ^ ^------ BOOTSZ0
-#        | | | |   | +-------- BOOTSZ1
-#        | | | |   + --------- EESAVE (don't preserve EEPROM over chip erase)
-#        | | | +-------------- CKOPT (full output swing)
-#        | | +---------------- SPIEN (allow serial programming)
-#        | +------------------ WDTON (WDT not always on)
-#        +-------------------- RSTDISBL (reset pin is enabled)
-#
 
 # symbolic targets:
 help:

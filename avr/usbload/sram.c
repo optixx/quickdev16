@@ -1,67 +1,110 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/wdt.h>
+#include <util/delay.h>         /* for _delay_ms() */
+
 
 #include "sram.h"
 #include "uart.h"
 #include "debug.h"
 
-void spi_init(void)
+
+void system_init(void)
 {
-    /*
-     * Set MOSI and SCK output, all others input 
-     */
-    SPI_DIR |= ((1 << S_MOSI) | (1 << S_SCK) | (1 << S_LATCH));
-    SPI_DIR &= ~(1 << S_MISO);
-    SPI_PORT |= (1 << S_MISO);
-    /*
-     * Enable SPI, Master
-     */
-    SPCR = ((1 << SPE) | (1 << MSTR));
+    /*-------------------------------------------------*/
+    
+    DDRA =  0x00;
+    PORTA =  0x00;
+    
+    /*-------------------------------------------------*/
+    
+    DDRC |=     ( (1 << AVR_ADDR_LATCH_PIN)	    
+                | (1 << AVR_ADDR_SCK_PIN)	    
+                | (1 << AVR_ADDR_SER_PIN)	    
+                | (1 << AVR_ADDR_LOAD_PIN)	    
+                | (1 << AVR_ADDR_DOWN_PIN)	    
+                | (1 << AVR_ADDR_UP_PIN));
+    
+    DDRC &=     ~ (1 << SNES_WR_PIN);	    
+ 
+    PORTC &=    ~((1 << AVR_ADDR_LATCH_PIN)	    
+                | (1 << AVR_ADDR_SCK_PIN));
+ 
+    
+    PORTC |=    ( (1 << AVR_ADDR_DOWN_PIN)	    
+                | (1 << AVR_ADDR_UP_PIN)
+                | (1 << AVR_ADDR_LOAD_PIN)	    
+                | (1 << SNES_WR_PIN));
+    /*-------------------------------------------------*/
+    
+    DDRB |=     ( (1 << AVR_RD_PIN)	            
+                | (1 << AVR_WR_PIN) 
+                | (1 << AVR_CS_PIN)	            
+                | (1 << SNES_IRQ_PIN));
+    
+    PORTB |=    ( (1 << AVR_RD_PIN)	            
+                | (1 << AVR_WR_PIN) 
+                | (1 << AVR_CS_PIN)	            
+                | (1 << SNES_IRQ_PIN));
+    /*-------------------------------------------------*/
+                	        
+    
+    DDRD |=     ( (1 << AVR_SNES_SW_PIN)	            
+                | (1 << HI_LOROM_SW_PIN) 
+                | (1 << SNES_WR_EN_PIN));
+
+    PORTD |=    (1 << HI_LOROM_SW_PIN);
+                
+    PORTD &=    ~((1 << AVR_SNES_SW_PIN) 
+                | (1 << SNES_WR_EN_PIN));
+    /*-------------------------------------------------*/
+                	    
+    
+}   
+
+
+void sreg_set(uint32_t addr)
+{
+    uint8_t i = 24;
+    printf("sreg addr=0x%08lx ",addr);
+    while(i--) {
+        if ((addr & ( 1L << i))){
+            printf("1");
+            AVR_ADDR_SER_PORT |= ( 1 << AVR_ADDR_SER_PIN);
+        } else {
+            AVR_ADDR_SER_PORT &= ~( 1 << AVR_ADDR_SER_PIN);
+            printf("0");
+            
+        }
+        AVR_ADDR_SCK_PORT |= (1 << AVR_ADDR_SCK_PIN);
+        AVR_ADDR_SCK_PORT &= ~(1 << AVR_ADDR_SCK_PIN);
+    }
+    printf("\n");
+    AVR_ADDR_LATCH_PORT |= (1 << AVR_ADDR_LATCH_PIN);
+    AVR_ADDR_LATCH_PORT &= ~(1 << AVR_ADDR_LATCH_PIN);
+    
+    counter_load();
+    
 }
 
-void spi_master_transmit(unsigned char cData)
-{
-    /*
-     * Start transmission 
-     */
-    SPDR = cData;
 
-    /*
-     * Wait for transmission complete 
-     */
-    while (!(SPSR & (1 << SPIF)));
-}
-
-
-void sram_set_addr(uint32_t addr)
-{
-    spi_master_transmit((uint8_t) (addr >> 16));
-    spi_master_transmit((uint8_t) (addr >> 8));
-    spi_master_transmit((uint8_t) (addr >> 0));
-
-    LATCH_PORT |= (1 << S_LATCH);
-    LATCH_PORT &= ~(1 << S_LATCH);
-}
 
 uint8_t sram_read(uint32_t addr)
 {
     uint8_t byte;
-
-    RAM_DIR = 0x00;
-    RAM_PORT = 0xff;
-
-    CTRL_PORT |= (1 << R_RD);
-    CTRL_PORT |= (1 << R_WR);
-
-    spi_master_transmit((uint8_t) (addr >> 16));
-    spi_master_transmit((uint8_t) (addr >> 8));
-    spi_master_transmit((uint8_t) (addr >> 0));
-
-    LATCH_PORT |= (1 << S_LATCH);
-    LATCH_PORT &= ~(1 << S_LATCH);
-    CTRL_PORT &= ~(1 << R_RD);
-
+    
+    avr_data_in();
+    
+    AVR_WR_PORT |= (1 << AVR_WR_PIN);
+    AVR_RD_PORT |= (1 << AVR_RD_PIN);
+    AVR_CS_PORT &= ~(1 << AVR_CS_PIN);
+    _delay_ms(1);
+    
+    sreg_set(addr);
+    
+    AVR_RD_PORT &= ~(1 << AVR_RD_PIN);
+    
     asm volatile ("nop");
     asm volatile ("nop");
     asm volatile ("nop");
@@ -70,65 +113,39 @@ uint8_t sram_read(uint32_t addr)
     asm volatile ("nop");
     asm volatile ("nop");
     asm volatile ("nop");
-
-    byte = RAM_REG;
-    CTRL_PORT |= (1 << R_RD);
-    RAM_DIR = 0x00;
-    RAM_PORT = 0x00;
+    
+    byte = AVR_DATA_PIN;
+#if 0    
+    printf("read %x\n",byte);
+    while(1)
+        wdt_reset();
+#endif  
+    AVR_RD_PORT |= (1 << AVR_RD_PIN);
+    
+    AVR_CS_PORT |= (1 << AVR_CS_PIN);
+    
+    avr_data_in();
     return byte;
+
 }
 
 void sram_write(uint32_t addr, uint8_t data)
 {
-    RAM_DIR = 0xff;
-
-    CTRL_PORT |= (1 << R_RD);
-    CTRL_PORT |= (1 << R_WR);
-
-    spi_master_transmit((uint8_t) (addr >> 16));
-    spi_master_transmit((uint8_t) (addr >> 8));
-    spi_master_transmit((uint8_t) (addr >> 0));
-
-    LATCH_PORT |= (1 << S_LATCH);
-    LATCH_PORT &= ~(1 << S_LATCH);
-
-
-    CTRL_PORT &= ~(1 << R_WR);
-
-    RAM_PORT = data;
-    CTRL_PORT |= (1 << R_WR);
-
-    RAM_DIR = 0x00;
-    RAM_PORT = 0x00;
-}
-
-void sram_init(void)
-{
-
-    RAM_DIR = 0x00;
-    RAM_PORT = 0x00;
-
-    CTRL_DIR |= ((1 << R_WR) | (1 << R_RD));
-    CTRL_PORT |= (1 << R_RD);
-    CTRL_PORT |= (1 << R_WR);
-
-    LED_PORT |= (1 << D_LED0);
-}
-
-void sram_snes_mode01(void)
-{
-    CTRL_PORT |= (1 << R_WR);
-    CTRL_PORT &= ~(1 << R_RD);
-}
-
-void sram_snes_mode02(void)
-{
-    CTRL_DIR |= (1 << R_WR);
-    CTRL_PORT |= (1 << R_WR);
-    // CTRL_PORT &= ~(1<<R_RD);
-    CTRL_DIR &= ~(1 << R_RD);
-    CTRL_PORT &= ~(1 << R_RD);
-
+    avr_data_out();
+    
+    AVR_CS_PORT &= ~(1 << AVR_CS_PIN);
+    AVR_WR_PORT |= (1 << AVR_WR_PIN);
+    AVR_RD_PORT |= (1 << AVR_RD_PIN);
+    
+    sreg_set(addr);
+    
+    AVR_WR_PORT &= ~(1 << AVR_WR_PIN);
+    AVR_DATA_PORT = data;
+        
+    AVR_WR_PORT |= (1 << AVR_WR_PIN);
+    AVR_CS_PORT |= (1 << AVR_CS_PIN);
+    
+    avr_data_in();
 }
 
 

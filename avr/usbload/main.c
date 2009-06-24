@@ -179,23 +179,82 @@ uint8_t usbFunctionRead(uint8_t * data, uint8_t len)
 int main(void)
 {
     uint8_t i;
-    //wdt_enable(WDTO_1S);
+    uint32_t addr;
+    
+    wdt_enable(WDTO_8S);
     uart_init();
     stdout = &uart_stdout;
-    sram_init();
-    printf("SRAM Init\n");
-    spi_init();
-    printf("SPI Init\n");
+    
+    system_init();
+    
+    printf("Sytem Init\n");
+    avr_bus_active();
+
+
+    DDRB|= (1 << PB1);
+    PORTB|= (1 << PB1);
+    while(1)
+        wdt_reset();  
+    
+#if 0    
+    avr_bus_active();
+    printf("set sreg 0xff55aa\n");
+    sreg_set(0xff55aa);
+    counter_load();
+    sram_write(0xff55aa,0x55);
+    while(1)
+        wdt_reset();  
+    addr = 0x3fffff;
+    sreg_set(0x00000);
+    counter_load();
+    wdt_reset();
+    
+    while(addr--){
+        counter_up();
+    }
+    printf("done\n");
+    
+    while(1){   
+        wdt_reset();
+        i = 10;
+        while(i--)
+            _delay_ms(100);
+        //printf("counter up\n");
+    
+    }
+#endif 
+    avr_bus_active();
+#if 1    
+    addr = 0x00;
+    i = 0;
+    while (addr++ <= 0xff){
+        sram_write(addr,i++);
+    }
+#endif    
+    addr = 0x00;
+    while (addr++ <= 0xff){
+        printf("read addr=0x%08lx %x\n",addr,sram_read(addr));
+    }
+    while(1);
+    
     usbInit();
     printf("USB Init\n");
     usbDeviceDisconnect();      /* enforce re-enumeration, do this while
                                  * interrupts are disabled! */
+    cli();                             
     printf("USB disconnect\n");
     i = 10;
     while (--i) {               /* fake USB disconnect for > 250 ms */
         wdt_reset();
-        _delay_ms(1);
+        led_on(); 
+        _delay_ms(35);
+        led_off();
+        _delay_ms(65);
+        
     }
+    led_on();
+    
+    
     usbDeviceConnect();
     printf("USB connect\n");
     sei();
