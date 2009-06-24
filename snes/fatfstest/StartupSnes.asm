@@ -124,8 +124,8 @@ START:
     cli             ; Enable interrupts
 
 
-        ;lda     #$81
-        ;sta     $4200   
+        ;;lda     #$01
+        ;;sta     $4200
 
 	rep     #$30
 	longa	on
@@ -136,7 +136,19 @@ START:
 
 	XDEF IRQ
 IRQ:	
-	XREF ~~IRQHandler
+    ;LONGA   ON
+    ;LONGI   ON
+    rep #$10
+    sep #$20
+    lda #65
+    sta $3000
+    rep #$30
+    ;LONGA   OFF
+    ;LONGI   OFF
+    rti
+
+
+    XREF ~~IRQHandler
 	LONGA	ON
 	LONGI	ON
 	rep	#$30
@@ -151,6 +163,11 @@ IRQ:
 	
 	XDEF	NMI
 NMI:
+    rep #$30
+    lda #66
+    sta $3000
+    sep     #$30    ; X,Y,A are 8 bit numbers
+    rti
 	XREF	~~NMIHandler
 	LONGA	ON
 	LONGI	ON

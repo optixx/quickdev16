@@ -28,19 +28,22 @@ uint8 CMMIO::mmio_read(unsigned addr) {
 
 void CMMIO::mmio_write(unsigned addr, uint8 data) {
   addr &= 0xffff;
-  //printf("CMMIO::mmio_write 0x%04x 0x%02x (%i)\n",addr,data,data);
   //fflush(stdout);
+  //printf("CMMIO::mmio_write 0x%04x 0x%02x (%i)\n",addr,data,data);
   /* debug to stderr */
   if (addr == 0x3000){
       fprintf(stderr,"%c",data);
       fflush(stderr);
+      
   }
+
+#if 0
   if (addr == 0x3001){
       fprintf(stderr,"Trigger IRQ\n");
       fflush(stderr);
       cpu.triggerIRQ();
   }
-
+#endif
 }
 
 CMMIO::CMMIO() {

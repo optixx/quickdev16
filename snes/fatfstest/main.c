@@ -94,7 +94,9 @@ void preInit(void)
 
     // For testing purpose ... 
     // Insert code here to be executed before register init
-} DWORD get_fattime()
+}
+
+DWORD get_fattime()
 {
     time_t rawtime;
     struct tm *ptm;
@@ -184,19 +186,30 @@ void boot(DWORD addr)
     *(byte *) 0x2100 = 0x0f;    // enable background
 
     debug_enable();
-    printfc("SNES::main: Try to init disk\n");
-    put_rc(f_mount((BYTE) 0, &fatfs[0]));
-
+    printfc("SNES::main: init\n");
 #if 0
+    i = 0;
+    printfc("SNES::main: wait for irq\n");
     while(1){
         if (irq_triggered)
             handle_irq();
         if (nmi_triggered)
             handle_nmi();
+        /*
+        if (i++==30){
+          printfc("SNES::main: poll\n");
+          i=0;
+        }
+        waitForVBlank();
+        */
     }
 #endif
 
-#if 0
+    printfc("SNES::main: Try to init disk\n");
+    put_rc(f_mount((BYTE) 0, &fatfs[0]));
+
+
+#if 1
     printfs(0, "FATFS OPTIXX.ORG ");
     printfc("SNES::main: Try to get free\n");
     
@@ -236,7 +249,7 @@ void boot(DWORD addr)
 #if 0
     printfc("SNES::main: read dir\n");
     for (;;) {
-        res = f_readdir(&dir, &finfo);
+        res = f_readdir(&dir, &finfo);make
         if ((res != FR_OK) || !finfo.fname[0])
             break;
         if (finfo.fattrib & AM_DIR) {
