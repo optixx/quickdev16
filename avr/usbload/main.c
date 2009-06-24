@@ -41,6 +41,14 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * -------------------------------------------------------------------------
  */
     if (rq->bRequest == USB_UPLOAD_INIT) {
+
+        if (req_state != REQ_STATUS_IDLE){
+#if DEBUG_USB
+            printf("USB_UPLOAD_INIT: ERROR state is not REQ_STATUS_IDLE\n");
+#endif
+            return 0;
+        }
+
         req_bank = 0;
         rx_remaining = 0;
         req_bank_size = 1 << rq->wValue.word;
@@ -52,6 +60,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * -------------------------------------------------------------------------
  */
     } else if (rq->bRequest == USB_UPLOAD_ADDR) {       
+        if (req_state != REQ_STATUS_IDLE){
+#if DEBUG_USB
+            printf("USB_UPLOAD_ADDR: ERROR state is not REQ_STATUS_IDLE\n");
+#endif
+            return 0;
+        }
                                                         
         req_state = REQ_STATUS_UPLOAD;
         req_addr = rq->wValue.word;
@@ -88,24 +102,17 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  */
     } else if (rq->bRequest == USB_DOWNLOAD_ADDR) {
         printf("USB_DOWNLOAD_ADDR\n");
-    } else if (rq->bRequest == USB_CRC) {
-        req_addr = rq->wValue.word;
-        req_addr = req_addr << 16;
-        req_addr = req_addr | rq->wIndex.word;
-#if DEBUG_USB
-        printf("USB_CRC: addr=0x%lx \n", req_addr);
-#endif
-
-#if USB_CRC_CHECK
-        cli();
-        crc_check_memory(req_addr,read_buffer);
-        sei();
-#endif
-  
 /*
  * -------------------------------------------------------------------------
  */
    } else if (rq->bRequest == USB_BULK_UPLOAD_INIT) {
+        if (req_state != REQ_STATUS_IDLE){
+#if DEBUG_USB
+            printf("USB_BULK_UPLOAD_INIT: ERROR state is not REQ_STATUS_IDLE\n");
+#endif
+            return 0;
+        }
+
         req_bank = 0;
         rx_remaining = 0;
         req_bank_size = 1 << rq->wValue.word;
@@ -118,6 +125,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  */
     } else if (rq->bRequest == USB_BULK_UPLOAD_ADDR) {
 
+        if (req_state != REQ_STATUS_IDLE){
+#if DEBUG_USB
+            printf("USB_BULK_UPLOAD_ADDR: ERROR state is not REQ_STATUS_IDLE\n");
+#endif
+            return 0;
+        }
         req_state = REQ_STATUS_BULK_UPLOAD;
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
@@ -132,6 +145,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  */
     } else if (rq->bRequest == USB_BULK_UPLOAD_NEXT) {
 
+        if (req_state != REQ_STATUS_BULK_UPLOAD){
+#if DEBUG_USB
+            printf("USB_BULK_UPLOAD_NEXT: ERROR state is not REQ_STATUS_BULK_UPLOAD\n");
+#endif
+            return 0;
+        }
         if (rx_remaining) {
             sync_errors++;
 #if DEBUG_USB
@@ -146,11 +165,46 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         if (req_addr && req_addr % req_bank_size == 0) {
 #if DEBUG_USB
             printf("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr= 0x%08lx \n",
-#endif
                    req_bank, req_addr);
+#endif
             req_bank++;
         }
         ret_len = USB_MAX_TRANS;
+/*
+ * -------------------------------------------------------------------------
+ */
+    } else if (rq->bRequest == USB_BULK_UPLOAD_END) {
+
+        if (req_state != REQ_STATUS_BULK_UPLOAD){
+#if DEBUG_USB
+            printf("USB_BULK_UPLOAD_END: ERROR state is not REQ_STATUS_BULK_UPLOAD\n");
+#endif
+            return 0;
+        }
+
+#if DEBUG_USB
+        printf("USB_BULK_UPLOAD_END:\n");
+#endif
+        req_state = REQ_STATUS_IDLE;
+        sram_bulk_write_end();
+        ret_len = 0;
+/*
+ * -------------------------------------------------------------------------
+ */
+    } else if (rq->bRequest == USB_CRC) {
+        req_addr = rq->wValue.word;
+        req_addr = req_addr << 16;
+        req_addr = req_addr | rq->wIndex.word;
+#if DEBUG_USB
+        printf("USB_CRC: addr=0x%lx \n", req_addr);
+#endif
+
+#if USB_CRC_CHECK
+        cli();
+        crc_check_memory(req_addr,read_buffer);
+        sei();
+#endif
+
 /*
  * -------------------------------------------------------------------------
  */
