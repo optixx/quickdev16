@@ -157,7 +157,9 @@ void sram_clear(uint32_t addr, uint32_t len)
     uint32_t i;
     for (i = addr; i < (addr + len); i++) {
         if (0 == i % 0xfff)
+#ifdef DEBUG_SRAM
             printf("sram_clear: addr=0x%08lx\n\r", i);
+#endif
         sram_write(i, 0x00);
     }
 }
@@ -167,6 +169,9 @@ void sram_copy(uint32_t addr, uint8_t * src, uint32_t len)
 
     uint32_t i;
     uint8_t *ptr = src;
+#ifdef DEBUG_SRAM
+            printf("sram_copy: addr=0x%08lx src=0x%p len=%li\n\r", addr,src,len);
+#endif
     for (i = addr; i < (addr + len); i++)
         sram_write(i, *ptr++);
 }
@@ -176,6 +181,9 @@ void sram_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 
     uint32_t i;
     uint8_t *ptr = dst;
+#ifdef DEBUG_SRAM
+            printf("sram_read_buffer: addr=0x%08lx dst=0x%p len=%li\n\r", addr,dst,len);
+#endif
     for (i = addr; i < (addr + len); i++) {
         *ptr = sram_read(i);
         ptr++;
@@ -184,6 +192,9 @@ void sram_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 uint8_t sram_check(uint8_t * buffer, uint32_t len)
 {
     uint16_t cnt;
+#ifdef DEBUG_SRAM
+            printf("sram_check: len=%li\n\r",len);
+#endif
     for (cnt = 0; cnt < len; cnt++)
         if (buffer[cnt])
             return 1;
