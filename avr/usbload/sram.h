@@ -141,9 +141,15 @@
 
 void system_init(void);
 void sreg_set(uint32_t addr);
+
 uint8_t sram_read(uint32_t addr);
 void sram_write(uint32_t addr, uint8_t data);
 void sram_clear(uint32_t addr, uint32_t len);
 void sram_copy(uint32_t addr,uint8_t *src, uint32_t len);
+
+void sram_bulk_read_start(uint32_t addr);
+void sram_bulk_read_end(void);
+uint8_t sram_bulk_read(void);
+
 void sram_read_buffer(uint32_t addr,uint8_t *dst, uint32_t len);
 uint8_t sram_check(uint8_t *buffer, uint32_t len);

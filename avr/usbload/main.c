@@ -135,7 +135,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         printf("USB_CRC_ADDR: Addr: 0x%lx Size: %li\n", req_addr, req_size);
 #endif
         cli();
-        // crc_check_memory_range(req_addr,req_size);
+        crc_check_memory_range(req_addr,req_size);
         sei();
         ret_len = 2;
     }
