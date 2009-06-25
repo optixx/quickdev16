@@ -7,38 +7,23 @@
 
 extern FILE uart_stdout;
 
-void dump_packet(uint32_t addr, uint32_t len, uint8_t * packet)
-{
-    uint16_t i,j;
-    uint16_t sum = 0;
-    uint8_t clear = 0;
+extern int debug_level; /* the higher, the more messages... */
 
-    for (i = 0; i < len; i += 16) {
-
-        sum = 0;
-        for (j = 0; j < 16; j++) {
-            sum += packet[i + j];
-        }
-        if (!sum) {
-            clear = 1;
-            continue;
-        }
-        if (clear) {
-            printf("*\n");
-            clear = 0;
-        }
-        printf("%08lx:", addr + i);
-        for (j = 0; j < 16; j++) {
-            printf(" %02x", packet[i + j]);
-        }
-        printf(" |");
-        for (j = 0; j < 16; j++) {
-            if (packet[i + j] >= 33 && packet[i + j] <= 126)
-                printf("%c", packet[i + j]);
-            else
-                printf(".");
-        }
-        printf("|\n");
-    }
+#if defined(NO_DEBUG) && defined(__GNUC__)
+/* Nothing. debug has been "defined away" in debug.h already. */
+#else
+void debug(int level, char* format, ...) {
+#ifdef NDEBUG
+    /* Empty body, so a good compiler will optimise calls
+       to pmesg away */
+#else
+    va_list args;
+    if (!(debug_level & level))
+        return;
+    va_start(args, format);
+    printf(format, args);
+    va_end(args);
+#endif /* NDEBUG */
+#endif /* NDEBUG && __GNUC__ */
 }
-
+   

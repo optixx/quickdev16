@@ -2,13 +2,12 @@
 #ifndef __config_h__
 #define __config_h__
 
-#define DEBUG_USB                   1
-#define DEBUG_USB_RAW               1
-#define DEBUG_SRAM                  0
-#define DEBUG_SRAM_RAW              0   
-#define DEBUG_SREG                  0
 #define DEBUG                       1
-
+#define DEBUG_USB                   2
+#define DEBUG_USB_RAW               4
+#define DEBUG_SRAM                  8
+#define DEBUG_SRAM_RAW              16
+#define DEBUG_SREG                  32
 
 #define REQ_STATUS_IDLE             0x01
 #define REQ_STATUS_UPLOAD           0x02

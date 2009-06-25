@@ -17,6 +17,8 @@
 
 extern FILE uart_stdout;
 
+uint8_t debug_level = ( DEBUG | DEBUG_USB );
+
 uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
 uint32_t req_size;
