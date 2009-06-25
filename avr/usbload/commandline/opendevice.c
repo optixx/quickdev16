@@ -11,6 +11,7 @@
  * open a device based on libusb or libusb-win32. 
  */
 
+
 #include <stdio.h>
 #include "opendevice.h"
 
