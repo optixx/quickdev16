@@ -1,3 +1,6 @@
+#ifndef __SRAM_H__
+#define __SRAM_H__
+
 #include <stdlib.h>
 #include <stdint.h> 
 #include <avr/io.h>
@@ -162,3 +165,5 @@ void sram_bulk_write(uint8_t data);
 void sram_bulk_copy(uint32_t addr, uint8_t * src, uint32_t len);
 void sram_bulk_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len);
 void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value);
+
+#endif

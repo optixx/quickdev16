@@ -33,26 +33,22 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
     uint8_t *ptr;
     uint8_t  i;
     if (len > rx_remaining) {
-        printf("usbFunctionWrite more data than expected remain: %i len: %i\n",
+        printf("ERROR:usbFunctionWrite more data than expected remain: %i len: %i\n",
                rx_remaining, len);
         len = rx_remaining;
     }
     if (req_state == REQ_STATUS_UPLOAD) {
 
         rx_remaining -= len;
-#if DEBUG_USB_RAW
-        printf("usbFunctionWrite REQ_STATUS_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n",
+        debug(DEBUG_USB_TRANS,"usbFunctionWrite REQ_STATUS_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n",
                req_addr, len, rx_remaining);
-#endif
         sram_copy(req_addr, data, len);
         req_addr += len;
     } else if (req_state == REQ_STATUS_BULK_UPLOAD) {
 
         rx_remaining -= len;
-#if DEBUG_USB_RAW
-        printf("usbFunctionWrite REQ_STATUS_BULK_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n",
+        debug(DEBUG_USB_TRANS,"usbFunctionWrite REQ_STATUS_BULK_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n",
                req_addr, len, rx_remaining);
-#endif
         ptr = data;
         i = len;
         while(i--){
@@ -69,9 +65,8 @@ uint8_t usbFunctionRead(uint8_t * data, uint8_t len)
     if (len > tx_remaining)
         len = tx_remaining;
     tx_remaining -= len;
-#if DEBUG_USB_RAW
-    printf("usbFunctionRead len=%i tx_remaining=%i \n", len, tx_remaining);
-#endif
+    debug(DEBUG_USB_TRANS,"usbFunctionRead len=%i tx_remaining=%i \n", len, tx_remaining);
+
     for (i = 0; i < len; i++) {
         *data = tx_buffer[len];
         data++;

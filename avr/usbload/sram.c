@@ -57,6 +57,7 @@ void system_init(void)
                 
     PORTD &=    ~((1 << AVR_SNES_SW_PIN) 
                 | (1 << SNES_WR_EN_PIN));
+
     /*-------------------------------------------------*/
                 	    
     
@@ -66,28 +67,19 @@ void system_init(void)
 void sreg_set(uint32_t addr)
 {
     uint8_t i = 24;
-#if DEBUG_SREG
-    printf("sreg_set: addr=0x%08lx",addr);
-#endif
+    debug(DEBUG_SREG,"sreg_set: addr=0x%08lx",addr);
     while(i--) {
         if ((addr & ( 1L << i))){
-#if DEBUG_SREG
-            printf("1");
-#endif
+            debug(DEBUG_SREG,"1");
             AVR_ADDR_SER_PORT |= ( 1 << AVR_ADDR_SER_PIN);
         } else {
             AVR_ADDR_SER_PORT &= ~( 1 << AVR_ADDR_SER_PIN);
-#if DEBUG_SREG
-            printf("0");
-#endif
-            
+            debug(DEBUG_SREG,"0");
         }
         AVR_ADDR_SCK_PORT |= (1 << AVR_ADDR_SCK_PIN);
         AVR_ADDR_SCK_PORT &= ~(1 << AVR_ADDR_SCK_PIN);
     }
-#if DEBUG_SREG
-    printf("\n");
-#endif
+    debug(DEBUG_SREG,"\n");
     AVR_ADDR_LATCH_PORT |= (1 << AVR_ADDR_LATCH_PIN);
     AVR_ADDR_LATCH_PORT &= ~(1 << AVR_ADDR_LATCH_PIN);
     
@@ -99,9 +91,7 @@ void sreg_set(uint32_t addr)
 
 void sram_bulk_read_start(uint32_t addr)
 {
-#if DEBUG_SRAM
-    printf("sram_bulk_read_start: addr=0x%08lx\n\r", addr);
-#endif
+    debug(DEBUG_SRAM,"sram_bulk_read_start: addr=0x%08lx\n\r", addr);
     avr_data_in();
 
     AVR_CS_PORT &= ~(1 << AVR_CS_PIN);
@@ -141,9 +131,8 @@ inline uint8_t sram_bulk_read(void)
 
 void sram_bulk_read_end(void)
 {
-#if DEBUG_SRAM
-    printf("sram_bulk_read_end:");
-#endif
+    debug(DEBUG_SRAM,"sram_bulk_read_end:");
+
     AVR_RD_PORT |= (1 << AVR_RD_PIN);
     AVR_CS_PORT |= (1 << AVR_CS_PIN);
     avr_data_in();
@@ -152,9 +141,7 @@ void sram_bulk_read_end(void)
 uint8_t sram_read(uint32_t addr)
 {
     uint8_t byte;
-#if DEBUG_SRAM_RAW
-    printf("sram_read: addr=0x%08lx\n\r", addr);
-#endif
+    debug(DEBUG_SRAM_RAW,"sram_read: addr=0x%08lx\n\r", addr);
     
     avr_data_in();
     
@@ -186,9 +173,7 @@ uint8_t sram_read(uint32_t addr)
 
 void sram_bulk_write_start(uint32_t addr)
 {
-#if DEBUG_SRAM
-    printf("sram_bulk_write_start: addr=0x%08lx\n\r", addr);
-#endif
+    debug(DEBUG_SRAM,"sram_bulk_write_start: addr=0x%08lx\n\r", addr);
 
     avr_data_out();
 
@@ -215,9 +200,7 @@ inline void sram_bulk_write( uint8_t data)
 
 void sram_bulk_write_end(void)
 {
-#if DEBUG_SRAM
-    printf("sram_bulk_write_end:");
-#endif
+    debug(DEBUG_SRAM,"sram_bulk_write_end:");
     AVR_WR_PORT |= (1 << AVR_WR_PIN);
     AVR_CS_PORT |= (1 << AVR_CS_PIN);
     avr_data_in();
@@ -226,10 +209,7 @@ void sram_bulk_write_end(void)
 
 void sram_write(uint32_t addr, uint8_t data)
 {
-
-#if DEBUG_SRAM_RAW
-    printf("sram_write: addr=0x%08lx data=%x\n\r", addr, data);
-#endif
+    debug(DEBUG_SRAM_RAW,"sram_write: addr=0x%08lx data=%x\n\r", addr, data);
 
     avr_data_out();
     
@@ -254,9 +234,7 @@ void sram_bulk_copy(uint32_t addr, uint8_t * src, uint32_t len)
 
     uint32_t i;
     uint8_t *ptr = src;
-#if DEBUG_SRAM
-    printf("sram_copy: addr=0x%08lx src=0x%p len=%li\n\r", addr,src,len);
-#endif
+    debug(DEBUG_SRAM,"sram_copy: addr=0x%08lx src=0x%p len=%li\n\r", addr,src,len);
     sram_bulk_write_start(addr);
     for (i = addr; i < (addr + len); i++){
         sram_bulk_write(*ptr++);
@@ -270,9 +248,7 @@ void sram_bulk_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 
     uint32_t i;
     uint8_t *ptr = dst;
-#if DEBUG_SRAM
-    printf("sram_bulk_read_buffer: addr=0x%08lx dst=0x%p len=%li\n\r", addr,dst,len);
-#endif
+    debug(DEBUG_SRAM,"sram_bulk_read_buffer: addr=0x%08lx dst=0x%p len=%li\n\r", addr,dst,len);
     sram_bulk_read_start(addr);
     for (i = addr; i < (addr + len); i++) {
         *ptr = sram_bulk_read();
@@ -284,15 +260,11 @@ void sram_bulk_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 
 void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value){
     uint32_t i;
-#if DEBUG_SRAM
-    printf("sram_bulk_set: addr=0x%08lx len=%li\n\r", addr,len);
-#endif
+    debug(DEBUG_SRAM,"sram_bulk_set: addr=0x%08lx len=%li\n\r", addr,len);
     sram_bulk_write_start(addr);
     for (i = addr; i < (addr + len); i++) {
         if (0 == i % 0xfff)
-#if DEBUG_SRAM
-        printf("sram_bulk_set: addr=0x%08lx\n\r", i);
-#endif
+            debug(DEBUG_SRAM,"sram_bulk_set: addr=0x%08lx\n\r", i);
         sram_bulk_write(value);
         sram_bulk_write_next();
     }
@@ -302,14 +274,10 @@ void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value){
 void sram_setr(uint32_t addr, uint32_t len,uint8_t value)
 {
     uint32_t i;
-#if DEBUG_SRAM
-    printf("sram_clear: addr=0x%08lx len=%li\n\r", addr,len);
-#endif
+    debug(DEBUG_SRAM,"sram_clear: addr=0x%08lx len=%li\n\r", addr,len);
     for (i = addr; i < (addr + len); i++) {
         if (0 == i % 0xfff)
-#if DEBUG_SRAM
-    printf("sram_clear: addr=0x%08lx\n\r", i);
-#endif
+            debug(DEBUG_SRAM,"sram_clear: addr=0x%08lx\n\r", i);
         sram_write(i, value);
     }
 }
@@ -319,9 +287,7 @@ void sram_copy(uint32_t addr, uint8_t * src, uint32_t len)
 
     uint32_t i;
     uint8_t *ptr = src;
-#if DEBUG_SRAM
-    printf("sram_copy: addr=0x%08lx src=0x%p len=%li\n\r", addr,src,len);
-#endif
+    debug(DEBUG_SRAM,"sram_copy: addr=0x%08lx src=0x%p len=%li\n\r", addr,src,len);
     for (i = addr; i < (addr + len); i++)
         sram_write(i, *ptr++);
 }
@@ -331,9 +297,7 @@ void sram_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 
     uint32_t i;
     uint8_t *ptr = dst;
-#if DEBUG_SRAM
-    printf("sram_read_buffer: addr=0x%08lx dst=0x%p len=%li\n\r", addr,dst,len);
-#endif
+    debug(DEBUG_SRAM,"sram_read_buffer: addr=0x%08lx dst=0x%p len=%li\n\r", addr,dst,len);
     for (i = addr; i < (addr + len); i++) {
         *ptr = sram_read(i);
         ptr++;
@@ -344,9 +308,7 @@ void sram_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 uint8_t sram_check(uint8_t * buffer, uint32_t len)
 {
     uint16_t cnt;
-#if DEBUG_SRAM
-    printf("sram_check: len=%li\n\r",len);
-#endif
+    debug(DEBUG_SRAM,"sram_check: len=%li\n\r",len);
     for (cnt = 0; cnt < len; cnt++)
         if (buffer[cnt])
             return 1;

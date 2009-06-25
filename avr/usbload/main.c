@@ -44,9 +44,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
     if (rq->bRequest == USB_UPLOAD_INIT) {
 
         if (req_state != REQ_STATUS_IDLE){
-#if DEBUG_USB
-            printf("USB_UPLOAD_INIT: ERROR state is not REQ_STATUS_IDLE\n");
-#endif
+            debug(DEBUG_USB,"USB_UPLOAD_INIT: ERROR state is not REQ_STATUS_IDLE\n");
             return 0;
         }
 
@@ -55,9 +53,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_bank_size = 1 << rq->wValue.word;
         sync_errors = 0;
         crc = 0;
-#if DEBUG_USB
-        printf("USB_UPLOAD_INIT: bank_size=0x%x\n", req_bank_size);
-#endif
+        debug(DEBUG_USB,"USB_UPLOAD_INIT: bank_size=0x%x\n", req_bank_size);
+
 /*
  * -------------------------------------------------------------------------
  */
@@ -69,29 +66,24 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = req_addr | rq->wIndex.word;
         if (rx_remaining) {
             sync_errors++;
-#if DEBUG_USB
-            printf
-                ("USB_UPLOAD_ADDR: Out of sync addr=0x%lx remain=%i packet=%i sync_error=%i\n",
+            debug
+              (DEBUG_USB,"USB_UPLOAD_ADDR: Out of sync addr=0x%lx remain=%i packet=%i sync_error=%i\n",
                  req_addr, rx_remaining, rq->wLength.word, sync_errors);
-#endif
             ret_len = 0;
         }
         rx_remaining = rq->wLength.word;
         ret_len = USB_MAX_TRANS;
-#if DEBUG_USB
+
         if (req_addr && (req_addr % 0x1000) == 0) {
-            
-            printf("USB_UPLOAD_ADDR: bank=0x%02x addr=0x%08lx\n",
+            debug(DEBUG_USB,"USB_UPLOAD_ADDR: bank=0x%02x addr=0x%08lx\n",
                 req_bank, req_addr);
             crc_check_bulk_memory(req_addr - 0x1000,req_addr);
         
         }
-#endif
         if (req_addr && req_addr % req_bank_size == 0) {
-#if DEBUG_USB
-            printf("USB_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx\n",
+            debug(DEBUG_USB,"USB_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx\n",
                    req_bank, req_addr);
-#endif
+
             req_bank++;
         }
         ret_len = USB_MAX_TRANS;
@@ -99,22 +91,19 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * -------------------------------------------------------------------------
  */
     } else if (rq->bRequest == USB_DOWNLOAD_INIT) {
-#if DEBUG_USB
-        printf("USB_DOWNLOAD_INIT\n");
-#endif
+        debug(DEBUG_USB,"USB_DOWNLOAD_INIT\n");
+
 /*
  * -------------------------------------------------------------------------
  */
     } else if (rq->bRequest == USB_DOWNLOAD_ADDR) {
-        printf("USB_DOWNLOAD_ADDR\n");
+        debug(DEBUG_USB,"USB_DOWNLOAD_ADDR\n");
 /*
  * -------------------------------------------------------------------------
  */
    } else if (rq->bRequest == USB_BULK_UPLOAD_INIT) {
         if (req_state != REQ_STATUS_IDLE){
-#if DEBUG_USB
-            printf("USB_BULK_UPLOAD_INIT: ERROR state is not REQ_STATUS_IDLE\n");
-#endif
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: ERROR state is not REQ_STATUS_IDLE\n");
             return 0;
         }
 
@@ -122,27 +111,21 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         rx_remaining = 0;
         req_bank_size = (1 << rq->wValue.word) & 0xffff;
         sync_errors = 0;
-#if DEBUG_USB
-        printf("USB_BULK_UPLOAD_INIT: bank_size=0x%x\n", req_bank_size);
-#endif
+        debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: bank_size=0x%x\n", req_bank_size);
 /*
  * -------------------------------------------------------------------------
  */
     } else if (rq->bRequest == USB_BULK_UPLOAD_ADDR) {
 
         if (req_state != REQ_STATUS_IDLE){
-#if DEBUG_USB
-            printf("USB_BULK_UPLOAD_ADDR: ERROR state is not REQ_STATUS_IDLE\n");
-#endif
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: ERROR state is not REQ_STATUS_IDLE\n");
             return 0;
         }
         req_state = REQ_STATUS_BULK_UPLOAD;
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
-#if DEBUG_USB
-        printf("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx \n",req_bank,req_addr);
-#endif
+        debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx \n",req_bank,req_addr);
         ret_len = 0;
   
 /*
@@ -151,27 +134,21 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
     } else if (rq->bRequest == USB_BULK_UPLOAD_NEXT) {
 
         if (req_state != REQ_STATUS_BULK_UPLOAD){
-#if DEBUG_USB
-            printf("USB_BULK_UPLOAD_NEXT: ERROR state is not REQ_STATUS_BULK_UPLOAD\n");
-#endif
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: ERROR state is not REQ_STATUS_BULK_UPLOAD\n");
             return 0;
         }
         if (rx_remaining) {
             sync_errors++;
-#if DEBUG_USB
-            printf
-                ("USB_BULK_UPLOAD_NEXT: Out of sync addr=0x%lx remain=%i packet=%i sync_error=%i\n",
+            debug(DEBUG_USB,
+                "USB_BULK_UPLOAD_NEXT: Out of sync addr=0x%lx remain=%i packet=%i sync_error=%i\n",
                  req_addr, rx_remaining, rq->wLength.word, sync_errors);
-#endif
             ret_len = 0;
         }
         rx_remaining = rq->wLength.word;
         ret_len = USB_MAX_TRANS;
         if (req_addr && req_addr % req_bank_size == 0) {
-#if DEBUG_USB
-            printf("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr= 0x%08lx \n",
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr= 0x%08lx \n",
                    req_bank, req_addr);
-#endif
             req_bank++;
         }
         ret_len = USB_MAX_TRANS;
@@ -179,17 +156,11 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * -------------------------------------------------------------------------
  */
     } else if (rq->bRequest == USB_BULK_UPLOAD_END) {
-
         if (req_state != REQ_STATUS_BULK_UPLOAD){
-#if DEBUG_USB
-            printf("USB_BULK_UPLOAD_END: ERROR state is not REQ_STATUS_BULK_UPLOAD\n");
-#endif
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_END: ERROR state is not REQ_STATUS_BULK_UPLOAD\n");
             return 0;
         }
-
-#if DEBUG_USB
-        printf("USB_BULK_UPLOAD_END:\n");
-#endif
+        debug(DEBUG_USB,"USB_BULK_UPLOAD_END:\n");
         req_state = REQ_STATUS_IDLE;
         sram_bulk_write_end();
         ret_len = 0;
@@ -200,10 +171,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
-#if DEBUG_USB
-        printf("USB_CRC: addr=0x%08lx \n", req_addr);
-#endif
-
+        debug(DEBUG_USB,"USB_CRC: addr=0x%08lx \n", req_addr);
         crc_check_bulk_memory(0x000000,req_addr);
         ret_len = 0;
 /*
@@ -211,10 +179,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  */
     } else if (rq->bRequest == USB_SNES_BOOT) {
         req_state = REQ_STATUS_BOOT;
-#if DEBUG_USB
-        printf("USB_SNES_BOOT: ");
+        debug(DEBUG_USB,"USB_SNES_BOOT: ");
         ret_len = 0;
-#endif
 /*
  * -------------------------------------------------------------------------
  */
@@ -224,22 +190,16 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
-#if DEBUG_USB
-        printf("USB_CRC_ADDR: addr=0x%lx size=%i\n", req_addr,
+        debug(DEBUG_USB,"USB_CRC_ADDR: addr=0x%lx size=%i\n", req_addr,
                rq->wLength.word);
-#endif
         req_size = rq->wLength.word;
         req_size = req_size << 2;
         tx_remaining = 2;
-#if DEBUG_USB
-        printf("USB_CRC_ADDR: addr=0x%lx size=%li\n", req_addr, req_size);
-#endif
+        debug(DEBUG_USB,"USB_CRC_ADDR: addr=0x%lx size=%li\n", req_addr, req_size);
 
-        cli();
         crc = crc_check_memory_range(req_addr,req_size,read_buffer);
         tx_buffer[0] = crc & 0xff;
         tx_buffer[1] = (crc >> 8) & 0xff;
-        sei();
         ret_len = 2;
         req_state = REQ_STATUS_IDLE;
     }

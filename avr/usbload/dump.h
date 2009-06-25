@@ -1,5 +1,5 @@
-#ifndef DUMP_H
-#define DUMP_H
+#ifndef __DUMP_H__
+#define __DUMP_H__
 
 #include <stdlib.h>
 #include <stdint.h>

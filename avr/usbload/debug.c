@@ -13,7 +13,7 @@ extern int debug_level; /* the higher, the more messages... */
 /* Nothing. debug has been "defined away" in debug.h already. */
 #else
 void debug(int level, char* format, ...) {
-#ifdef NDEBUG
+#ifdef NO_DEBUG
     /* Empty body, so a good compiler will optimise calls
        to pmesg away */
 #else
