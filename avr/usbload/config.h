@@ -1,10 +1,10 @@
 
-#ifndef __config_h__
-#define __config_h__
+#ifndef __CONFIH_H__
+#define __CONFIH_H__
 
 #define DEBUG                       1
 #define DEBUG_USB                   2
-#define DEBUG_USB_RAW               4
+#define DEBUG_USB_TRANS             4
 #define DEBUG_SRAM                  8
 #define DEBUG_SRAM_RAW              16
 #define DEBUG_SREG                  32

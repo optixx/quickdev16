@@ -13,8 +13,8 @@
  * communicate between the host and the device.
  */
 
-#ifndef __REQUESTS_H_INCLUDED__
-#define __REQUESTS_H_INCLUDED__
+#ifndef __REQUESTS_H__
+#define __REQUESTS_H__
 
 #define USB_UPLOAD_INIT         0
 #define USB_UPLOAD_ADDR         1

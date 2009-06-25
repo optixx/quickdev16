@@ -1,8 +1,7 @@
-#ifndef _UART_H_
-#define _UART_H_
+#ifndef __UART_H__
+#define __UART_H__
 
 #define CR "\r\n"
-
 
 #include <avr/io.h>
 #include <avr/pgmspace.h>
@@ -14,6 +13,6 @@ void uart_puts(const char *s);
 void uart_puts_P(PGM_P s);
 static int uart_stream(char c, FILE *stream);
 
+#endif
 
-#endif                          /* _UART_H_ */
 
