@@ -16,7 +16,6 @@ void debug(int level, char *format, ...);
       Adapted from [K&R2], p. 174 */
 #endif
 
-void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet);
 
 #endif /* DEBUG_H */
         
