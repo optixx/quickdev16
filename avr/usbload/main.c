@@ -358,7 +358,7 @@ int main(void)
     printf("USB poll done\n");
     usbDeviceDisconnect();      
     printf("USB disconnect\n");
-    crc_check_bulk_memory(0x000000,0x80000);
+    crc_check_bulk_memory(0x000000,0x1000);
     
     printf("Disable snes WR\n");
     snes_wr_disable(); 
