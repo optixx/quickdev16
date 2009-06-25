@@ -36,12 +36,13 @@ def main():
                       AND
                           rom_sram = 0
                       AND
+                          rom_type = 0
+                      AND
                           rom_region like "Europe%"
                       ORDER BY file_name
                       ''',i)
         for row in c:
             name,size,filename =  row
-            if '[' not in filename:
                 cmd = 'scp burst:"%s" %s/' % ( filename,dirname)
                 print cmd
 
