@@ -1,5 +1,4 @@
 #include <avr/io.h>
-#include <avr/wdt.h>
 #include <avr/interrupt.h>      /* for sei() */
 #include <util/delay.h>         /* for _delay_ms() */
 #include <stdlib.h>
@@ -22,7 +21,7 @@ uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
 uint32_t req_size;
 uint8_t req_bank;
-uint32_t req_bank_size;
+uint16_t req_bank_size;
 uint8_t req_state = REQ_STATUS_IDLE;
 uint8_t rx_remaining = 0;
 uint8_t tx_remaining = 0;
@@ -53,19 +52,14 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         rx_remaining = 0;
         req_bank_size = 1 << rq->wValue.word;
         sync_errors = 0;
+        crc = 0;
 #if DEBUG_USB
-        printf("USB_UPLOAD_INIT: bank_size=%li\n", req_bank_size);
+        printf("USB_UPLOAD_INIT: bank_size=0x%x\n", req_bank_size);
 #endif
 /*
  * -------------------------------------------------------------------------
  */
     } else if (rq->bRequest == USB_UPLOAD_ADDR) {       
-        if (req_state != REQ_STATUS_IDLE){
-#if DEBUG_USB
-            printf("USB_UPLOAD_ADDR: ERROR state is not REQ_STATUS_IDLE\n");
-#endif
-            return 0;
-        }
                                                         
         req_state = REQ_STATUS_UPLOAD;
         req_addr = rq->wValue.word;
@@ -82,11 +76,20 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         }
         rx_remaining = rq->wLength.word;
         ret_len = USB_MAX_TRANS;
+#if DEBUG_USB
+        if (req_addr && (req_addr % 0x1000) == 0) {
+            
+            printf("USB_UPLOAD_ADDR: bank=0x%02x addr=0x%08lx\n",
+                req_bank, req_addr);
+            crc_check_bulk_memory(req_addr - 0x1000,req_addr);
+        
+        }
+#endif
         if (req_addr && req_addr % req_bank_size == 0) {
 #if DEBUG_USB
-            printf("USB_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx \n",
-#endif
+            printf("USB_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx\n",
                    req_bank, req_addr);
+#endif
             req_bank++;
         }
         ret_len = USB_MAX_TRANS;
@@ -115,10 +118,10 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         req_bank = 0;
         rx_remaining = 0;
-        req_bank_size = 1 << rq->wValue.word;
+        req_bank_size = (1 << rq->wValue.word) & 0xffff;
         sync_errors = 0;
 #if DEBUG_USB
-        printf("USB_BULK_UPLOAD_INIT: bank_size=%li\n", req_bank_size);
+        printf("USB_BULK_UPLOAD_INIT: bank_size=0x%x\n", req_bank_size);
 #endif
 /*
  * -------------------------------------------------------------------------
@@ -196,15 +199,20 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
 #if DEBUG_USB
-        printf("USB_CRC: addr=0x%lx \n", req_addr);
+        printf("USB_CRC: addr=0x%08lx \n", req_addr);
 #endif
 
-#if USB_CRC_CHECK
-        cli();
-        crc_check_memory(req_addr,read_buffer);
-        sei();
+        crc_check_bulk_memory(0x000000,req_addr);
+        ret_len = 0;
+/*
+ * -------------------------------------------------------------------------
+ */
+    } else if (rq->bRequest == USB_SNES_BOOT) {
+        req_state = REQ_STATUS_BOOT;
+#if DEBUG_USB
+        printf("USB_SNES_BOOT: ");
+        ret_len = 0;
 #endif
-
 /*
  * -------------------------------------------------------------------------
  */
@@ -244,30 +252,85 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * ------------------------------------------------------------------------- 
  */
 
+void test_read_write(){
+    
+    uint8_t i;
+    uint32_t addr;
+    avr_bus_active();
+    addr = 0x000000;
+    i = 1;
+    while (addr++ <= 0x0000ff){
+        sram_write(addr,i++);
+    }
+    addr = 0x000000;
+    while (addr++ <= 0x0000ff){
+        printf("read addr=0x%08lx %x\n",addr,sram_read(addr));
+    }
+}
+
+
+void test_bulk_read_write(){
+    
+    uint8_t i;
+    uint32_t addr;
+    avr_bus_active();
+    addr = 0x000000;
+    i = 0;
+    sram_bulk_write_start(addr);
+    while (addr++ <= 0x3fffff){
+        sram_bulk_write(i++);
+        sram_bulk_write_next();
+    }
+    sram_bulk_write_end();
+
+    addr = 0x000000;
+    sram_bulk_read_start(addr);
+    while (addr <= 0x3fffff){
+        printf("addr=0x%08lx %x\n",addr,sram_bulk_read());
+        sram_bulk_read_next();
+        addr ++;
+    }
+    sram_bulk_read_end();
+}
+
+
+void test_non_zero_memory(uint32_t bottom_addr,uint32_t top_addr)
+{
+    uint32_t addr = 0;
+    uint8_t c;
+    sram_bulk_read_start(bottom_addr);
+    for (addr = bottom_addr; addr < top_addr; addr++) {
+        c = sram_bulk_read();
+        if (c!=0xff)
+            printf("addr=0x%08lx c=0x%x\n",addr,c);
+        sram_bulk_read_next();
+    }
+    sram_bulk_read_end();
+}
+
+
+
+void test_crc(){
+    printf("test_crc: clear\n");
+    avr_bus_active();
+    sram_bulk_set(0x000000,0x10000,0xff);
+    printf("test_crc: crc\n");
+    crc_check_bulk_memory(0x000000,0x10000);
+    printf("test_crc: check\n");
+    test_non_zero_memory(0x000000,0x10000);
+}
+
 int main(void)
 {
     uint8_t i;
-    uint32_t addr;
 
     uart_init();
     stdout = &uart_stdout;
     
     system_init();
     printf("Sytem Init\n");
-
+    
     avr_bus_active();
-    
-    addr = 0x000000;
-    i = 0;
-    while (addr++ <= 0x00ffff){
-        sram_write(addr,i++);
-    }
-
-    addr = 0x000000;
-    while (addr++ <= 0x00ffff){
-        printf("read addr=0x%08lx %x\n",addr,sram_read(addr));
-    }
-    
     usbInit();
     printf("USB Init\n");
     usbDeviceDisconnect();      /* enforce re-enumeration, do this while
@@ -276,7 +339,6 @@ int main(void)
     printf("USB disconnect\n");
     i = 10;
     while (--i) {               /* fake USB disconnect for > 250 ms */
-        wdt_reset();
         led_on(); 
         _delay_ms(35);
         led_off();
@@ -288,9 +350,23 @@ int main(void)
     printf("USB connect\n");
     sei();
     printf("USB poll\n");
-    for (;;) {                  /* main event loop */
+    while (req_state != REQ_STATUS_BOOT){
         usbPoll();
     }
+    printf("USB poll done\n");
+    usbDeviceDisconnect();      
+    printf("USB disconnect\n");
+    crc_check_bulk_memory(0x000000,0x80000);
+    
+    printf("Disable snes WR\n");
+    snes_wr_disable(); 
+    printf("Use Snes lowrom\n");
+    snes_lorom();
+    printf("Activate Snes bus\n");
+    snes_bus_active();
+                          
+                                 
+    while(1);
     return 0;
 }
 
