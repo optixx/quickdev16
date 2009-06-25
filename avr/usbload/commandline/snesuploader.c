@@ -180,7 +180,7 @@ int main(int argc, char **argv)
             for (step = 0; step <= READ_BUFFER_SIZE; step += SEND_BUFFER_SIZE) {
                 addr_lo = addr & 0xffff;
                 addr_hi = (addr >> 16) & 0xff;
-                //memset(read_buffer, 0xff, READ_BUFFER_SIZE);
+
                 cnt = usb_control_msg(handle,
                                 USB_TYPE_VENDOR | USB_RECIP_DEVICE |
                                 USB_ENDPOINT_OUT, USB_UPLOAD_ADDR, addr_hi,
@@ -194,20 +194,19 @@ int main(int argc, char **argv)
                     fprintf(stderr, "USB error: %s\n", usb_strerror());
                     exit(-1);
                 } 
-#if 0
-                dump_packet(addr, SEND_BUFFER_SIZE, read_buffer + step);
-#endif
                 addr += SEND_BUFFER_SIZE;
             }
+            dump_packet(0x00000,READ_BUFFER_SIZE, read_buffer);
             memcpy(crc_buffer + cnt_crc, read_buffer, READ_BUFFER_SIZE);
             cnt_crc += READ_BUFFER_SIZE;
-            if (cnt_crc >= BANK_SIZE) {
+            if (cnt_crc >= READ_BUFFER_SIZE) {
                 crc = do_crc(crc_buffer, BANK_SIZE);
                 printf ("bank=0x%02x  crc=0x%04x\n", bank, crc);
                 memset(crc_buffer, 0, BUFFER_CRC);
                 bank++;
                 cnt_crc = 0;
             }
+            break;
         }
         
         /*
