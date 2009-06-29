@@ -47,19 +47,16 @@ void dump_memory(uint32_t bottom_addr, uint32_t top_addr)
 {
     uint32_t addr;
     uint8_t byte;
-    
-    //sram_bulk_read_start(bottom_addr);
-    bottom_addr = 0x00;
-    top_addr = 0x80;
-    
-    printf("%08lx - %08lx\n",bottom_addr, top_addr);
+    printf("dump_memory: bottom_addr=%08lx top_addr=%08lx\n",bottom_addr, top_addr);
+    sram_bulk_read_start(bottom_addr);
     printf("%08lx:", bottom_addr);
     for ( addr = bottom_addr; addr < top_addr; addr++) {
         if (addr%0x10 == 0)
             printf("\n%08lx:", addr);
-        byte = sram_read(addr);
-        //sram_bulk_read_next();
+        byte = sram_bulk_read();
+        sram_bulk_read_next();
         printf(" %02x", byte);
     }
-    //sram_bulk_read_end();
+    printf("\n");
+    sram_bulk_read_end();
 }

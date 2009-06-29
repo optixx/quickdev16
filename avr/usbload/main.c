@@ -12,12 +12,13 @@
 #include "uart.h"
 #include "sram.h"
 #include "debug.h"
+#include "dump.h"
 #include "crc.h"
 #include "usb_bulk.h"
 
 extern FILE uart_stdout;
 
-uint8_t debug_level = ( DEBUG | DEBUG_USB | DEBUG_USB_TRANS | DEBUG_SRAM);
+uint8_t debug_level = ( DEBUG | DEBUG_USB);
 
 uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
@@ -53,7 +54,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_bank_size = 1 << rq->wValue.word;
         sync_errors = 0;
         crc = 0;
-        debug(DEBUG_USB,"USB_UPLOAD_INIT: bank_size=0x%x\n", req_bank_size);
+        debug(DEBUG_USB,"USB_UPLOAD_INIT: bank_size=0x%04x\n", req_bank_size);
 
 /*
  * -------------------------------------------------------------------------
@@ -292,7 +293,7 @@ int main(void)
     
     system_init();
     printf("Sytem Init\n");
-    
+
     avr_bus_active();
     usbInit();
     printf("USB Init\n");
@@ -320,9 +321,14 @@ int main(void)
     usbDeviceDisconnect();      
     printf("USB disconnect\n");
     
-    crc_check_bulk_memory(0x000000,0x8000);
+    crc_check_bulk_memory(0x000000, 0x80000);
+
+#if 0    
+    dump_memory(0x0000,0x0080);
+    printf("crc=0x%x\n",crc_check_bulk_memory(0x000000, 0x80));
+#endif
     
-    dump_memory(0x00,0x80);
+    dump_memory(0x7f00,0x8000);
     
     printf("Disable snes WR\n");
     snes_wr_disable(); 

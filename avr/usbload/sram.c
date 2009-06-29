@@ -131,7 +131,7 @@ inline uint8_t sram_bulk_read(void)
 
 void sram_bulk_read_end(void)
 {
-    debug(DEBUG_SRAM,"sram_bulk_read_end:");
+    debug(DEBUG_SRAM,"sram_bulk_read_end:\n");
 
     AVR_RD_PORT |= (1 << AVR_RD_PIN);
     AVR_CS_PORT |= (1 << AVR_CS_PIN);

@@ -195,20 +195,21 @@ int main(int argc, char **argv)
                     exit(-1);
                 } 
                 addr += SEND_BUFFER_SIZE;
-                break;
+                //break;
             }
-            dump_packet(0x00000,SEND_BUFFER_SIZE, read_buffer);
+            //dump_packet(0x00000,SEND_BUFFER_SIZE, read_buffer);
             memcpy(crc_buffer + cnt_crc, read_buffer, READ_BUFFER_SIZE);
             cnt_crc += READ_BUFFER_SIZE;
             if (cnt_crc >= READ_BUFFER_SIZE) {
-                crc = do_crc(crc_buffer, BANK_SIZE);
+                crc = do_crc(crc_buffer, READ_BUFFER_SIZE);
                 printf ("bank=0x%02x  crc=0x%04x\n", bank, crc);
                 memset(crc_buffer, 0, BUFFER_CRC);
                 bank++;
                 cnt_crc = 0;
+                break;
             }
             
-            break;
+            //break;
         }
         
         /*
