@@ -17,7 +17,7 @@
 
 extern FILE uart_stdout;
 
-uint8_t debug_level = ( DEBUG | DEBUG_USB );
+uint8_t debug_level = ( DEBUG | DEBUG_USB | DEBUG_USB_TRANS | DEBUG_SRAM);
 
 uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
@@ -231,6 +231,7 @@ void test_read_write(){
 }
 
 
+
 void test_bulk_read_write(){
     
     uint8_t i;
@@ -250,7 +251,7 @@ void test_bulk_read_write(){
     while (addr <= 0x3fffff){
         printf("addr=0x%08lx %x\n",addr,sram_bulk_read());
         sram_bulk_read_next();
-        addr ++;
+        addr++;
     }
     sram_bulk_read_end();
 }
@@ -318,17 +319,21 @@ int main(void)
     printf("USB poll done\n");
     usbDeviceDisconnect();      
     printf("USB disconnect\n");
-    crc_check_bulk_memory(0x000000,0x1000);
+    
+    crc_check_bulk_memory(0x000000,0x8000);
+    
+    dump_memory(0x00,0x80);
     
     printf("Disable snes WR\n");
     snes_wr_disable(); 
+    
     printf("Use Snes lowrom\n");
     snes_lorom();
+    
     printf("Activate Snes bus\n");
     snes_bus_active();
-                          
-                                 
     while(1);
+    
     return 0;
 }
 

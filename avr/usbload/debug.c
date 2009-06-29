@@ -5,6 +5,7 @@
 #include "uart.h"
 
 
+
 extern FILE uart_stdout;
 
 extern int debug_level; /* the higher, the more messages... */
@@ -21,9 +22,10 @@ void debug(int level, char* format, ...) {
     if (!(debug_level & level))
         return;
     va_start(args, format);
-    printf(format, args);
+    vprintf(format, args);
     va_end(args);
 #endif /* NDEBUG */
 #endif /* NDEBUG && __GNUC__ */
 }
+
    

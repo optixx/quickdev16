@@ -15,8 +15,8 @@
  */
 
 
-#define READ_BUFFER_SIZE    1024
-#define SEND_BUFFER_SIZE    0x200
+#define READ_BUFFER_SIZE    (1024 * 32)
+#define SEND_BUFFER_SIZE    128
 #define BUFFER_CRC          (1024 * 32)
 #define BANK_SIZE           (1<<15)
 #define BANK_SIZE_SHIFT     15
@@ -170,7 +170,6 @@ int main(int argc, char **argv)
         crc_buffer = (unsigned char *) malloc(BUFFER_CRC);
         memset(crc_buffer, 0, BUFFER_CRC);
         addr = 0x000000;
-
         usb_control_msg(handle,
                         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
                         USB_UPLOAD_INIT, BANK_SIZE_SHIFT , 0, NULL, 0, 5000);
@@ -192,11 +191,13 @@ int main(int argc, char **argv)
                 
                 if (cnt < 0) {
                     fprintf(stderr, "USB error: %s\n", usb_strerror());
+                    usb_close(handle);
                     exit(-1);
                 } 
                 addr += SEND_BUFFER_SIZE;
+                break;
             }
-            dump_packet(0x00000,READ_BUFFER_SIZE, read_buffer);
+            dump_packet(0x00000,SEND_BUFFER_SIZE, read_buffer);
             memcpy(crc_buffer + cnt_crc, read_buffer, READ_BUFFER_SIZE);
             cnt_crc += READ_BUFFER_SIZE;
             if (cnt_crc >= READ_BUFFER_SIZE) {
@@ -206,6 +207,7 @@ int main(int argc, char **argv)
                 bank++;
                 cnt_crc = 0;
             }
+            
             break;
         }
         
