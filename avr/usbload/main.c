@@ -18,7 +18,7 @@
 
 extern FILE uart_stdout;
 
-uint8_t debug_level = ( DEBUG | DEBUG_USB);
+uint8_t debug_level = ( DEBUG | DEBUG_USB | DEBUG_CRC );
 
 uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
@@ -75,10 +75,10 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         rx_remaining = rq->wLength.word;
         ret_len = USB_MAX_TRANS;
 
+        
         if (req_addr && (req_addr % 0x1000) == 0) {
-            debug(DEBUG_USB,"USB_UPLOAD_ADDR: bank=0x%02x addr=0x%08lx\n",
-                req_bank, req_addr);
-            crc_check_bulk_memory(req_addr - 0x1000,req_addr);
+            debug(DEBUG_USB,"USB_UPLOAD_ADDR: bank=0x%02x addr=0x%08lx crc=%04x\n",
+                req_bank, req_addr,crc_check_bulk_memory(req_addr - 0x1000,req_addr));
         
         }
         if (req_addr && req_addr % req_bank_size == 0) {

@@ -17,7 +17,6 @@
 
 #define READ_BUFFER_SIZE    (1024 * 32)
 #define SEND_BUFFER_SIZE    128
-#define BUFFER_CRC          (1024 * 32)
 #define BANK_SIZE           (1<<15)
 #define BANK_SIZE_SHIFT     15
 
@@ -119,20 +118,19 @@ int main(int argc, char **argv)
     USB_CFG_DEVICE_ID};
     char vendor[] = { USB_CFG_VENDOR_NAME, 0 }, product[] = {
     USB_CFG_DEVICE_NAME, 0};
-    int cnt,
-     vid,
-     pid;
-    int cnt_crc = 0;
+    int cnt, vid, pid;
     uint8_t *read_buffer;
     uint8_t *crc_buffer;
+    uint8_t *ptr;
+    
     uint32_t addr = 0;
     uint16_t addr_lo = 0;
     uint16_t addr_hi = 0;
     uint16_t step = 0;
     uint16_t crc = 0;
     uint8_t bank = 0;
+    
     FILE *fp;
-
     usb_init();
     if (argc < 2) {             /* we need at least one argument */
         usage(argv[0]);
@@ -167,58 +165,64 @@ int main(int argc, char **argv)
             exit(1);
         }
         read_buffer = (unsigned char *) malloc(READ_BUFFER_SIZE);
-        crc_buffer = (unsigned char *) malloc(BUFFER_CRC);
-        memset(crc_buffer, 0, BUFFER_CRC);
+        crc_buffer = (unsigned char *) malloc(0x1000);
+        memset(crc_buffer, 0, 0x1000);
         addr = 0x000000;
-        usb_control_msg(handle,
+        cnt = usb_control_msg(handle,
                         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
                         USB_UPLOAD_INIT, BANK_SIZE_SHIFT , 0, NULL, 0, 5000);
 
-
+        if (cnt < 0) {
+            fprintf(stderr, "USB error: %s\n", usb_strerror());
+            usb_close(handle);
+            exit(-1);
+        } 
+        ptr = crc_buffer;
         while ((cnt = fread(read_buffer, READ_BUFFER_SIZE, 1, fp)) > 0) {
-            for (step = 0; step <= READ_BUFFER_SIZE; step += SEND_BUFFER_SIZE) {
+            ptr = crc_buffer;
+            for (step = 0; step < READ_BUFFER_SIZE; step += SEND_BUFFER_SIZE) {
+                
+                
                 addr_lo = addr & 0xffff;
-                addr_hi = (addr >> 16) & 0xff;
+                addr_hi = (addr >> 16) & 0x00ff;
 
                 cnt = usb_control_msg(handle,
                                 USB_TYPE_VENDOR | USB_RECIP_DEVICE |
                                 USB_ENDPOINT_OUT, USB_UPLOAD_ADDR, addr_hi,
                                 addr_lo, (char *) read_buffer + step,
                                 SEND_BUFFER_SIZE, 5000);
-                if (addr%0x1000==0){
-                    printf ("bank=0x%02x  addr=0x%08x\n", bank, addr);
-                }                
                 
                 if (cnt < 0) {
                     fprintf(stderr, "USB error: %s\n", usb_strerror());
                     usb_close(handle);
                     exit(-1);
                 } 
+                
+                memcpy(ptr, read_buffer + step, SEND_BUFFER_SIZE);
                 addr += SEND_BUFFER_SIZE;
-                //break;
+                ptr += SEND_BUFFER_SIZE;
+                if ( addr % 0x1000 == 0){
+                    crc = do_crc(crc_buffer, 0x1000);
+                    printf ("bank=0x%02x addr=0x%08x addr=0x%08x crc=0x%04x\n", bank, addr - 0x1000, addr, crc);
+                    ptr = crc_buffer;
+                    if ( addr % 0x8000 == 0) {
+                        bank++;
+                        
+                    }
+                }                
             }
-            //dump_packet(0x00000,SEND_BUFFER_SIZE, read_buffer);
-            memcpy(crc_buffer + cnt_crc, read_buffer, READ_BUFFER_SIZE);
-            cnt_crc += READ_BUFFER_SIZE;
-            if (cnt_crc >= READ_BUFFER_SIZE) {
-                crc = do_crc(crc_buffer, READ_BUFFER_SIZE);
-                printf ("bank=0x%02x  crc=0x%04x\n", bank, crc);
-                memset(crc_buffer, 0, BUFFER_CRC);
-                bank++;
-                cnt_crc = 0;
+            if (bank == 1)
                 break;
-            }
-            
-            //break;
         }
+        bank = 0;
         
-        /*
-            
-        cnt = usb_control_msg(handle,
-                              USB_TYPE_VENDOR | USB_RECIP_DEVICE |
-                              USB_ENDPOINT_OUT, USB_CRC, addr_hi, addr_lo, NULL,
-                              0, 5000);
-        */   
+        fseek(fp, 0, SEEK_SET);
+        while ((cnt = fread(read_buffer, READ_BUFFER_SIZE, 1, fp)) > 0) {
+            printf ("bank=0x%02x crc=0x%04x\n", bank++, 
+                do_crc(read_buffer, READ_BUFFER_SIZE));
+        }
+        fclose(fp);
+        
         cnt = usb_control_msg(handle,
                             USB_TYPE_VENDOR | USB_RECIP_DEVICE |
                             USB_ENDPOINT_OUT, USB_SNES_BOOT, 0, 0, NULL,

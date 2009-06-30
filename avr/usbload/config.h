@@ -8,6 +8,7 @@
 #define DEBUG_SRAM                  8
 #define DEBUG_SRAM_RAW              16
 #define DEBUG_SREG                  32
+#define DEBUG_CRC                   64
 
 #define REQ_STATUS_IDLE             0x01
 #define REQ_STATUS_UPLOAD           0x02
