@@ -170,7 +170,7 @@ int main(int argc, char **argv)
         addr = 0x000000;
         cnt = usb_control_msg(handle,
                         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
-                        USB_UPLOAD_INIT, BANK_SIZE_SHIFT , 0, NULL, 0, 5000);
+                        USB_BULK_UPLOAD_INIT, BANK_SIZE_SHIFT , 0, NULL, 0, 5000);
 
         if (cnt < 0) {
             fprintf(stderr, "USB error: %s\n", usb_strerror());
@@ -188,7 +188,7 @@ int main(int argc, char **argv)
 
                 cnt = usb_control_msg(handle,
                                 USB_TYPE_VENDOR | USB_RECIP_DEVICE |
-                                USB_ENDPOINT_OUT, USB_UPLOAD_ADDR, addr_hi,
+                                USB_ENDPOINT_OUT, USB_BULK_UPLOAD_ADDR, addr_hi,
                                 addr_lo, (char *) read_buffer + step,
                                 SEND_BUFFER_SIZE, 5000);
                 
@@ -211,8 +211,6 @@ int main(int argc, char **argv)
                     }
                 }                
             }
-            if (bank == 1)
-                break;
         }
         bank = 0;
         

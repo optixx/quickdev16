@@ -32,6 +32,7 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
 {
     uint8_t *ptr;
     uint8_t  i;
+    
     if (len > rx_remaining) {
         printf("ERROR:usbFunctionWrite more data than expected remain: %i len: %i\n",
                rx_remaining, len);
@@ -55,7 +56,7 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
         i = len;
         while(i--){
             sram_bulk_write(*ptr++);
-            counter_up();
+            sram_bulk_write_next();
         }
     }
     return len;

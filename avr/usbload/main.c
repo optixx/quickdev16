@@ -103,10 +103,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * -------------------------------------------------------------------------
  */
    } else if (rq->bRequest == USB_BULK_UPLOAD_INIT) {
-        if (req_state != REQ_STATUS_IDLE){
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: ERROR state is not REQ_STATUS_IDLE\n");
-            return 0;
-        }
 
         req_bank = 0;
         rx_remaining = 0;
@@ -118,16 +114,19 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  */
     } else if (rq->bRequest == USB_BULK_UPLOAD_ADDR) {
 
-        if (req_state != REQ_STATUS_IDLE){
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: ERROR state is not REQ_STATUS_IDLE\n");
-            return 0;
-        }
         req_state = REQ_STATUS_BULK_UPLOAD;
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
-        debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx \n",req_bank,req_addr);
-        ret_len = 0;
+        sram_bulk_write_start(req_addr);
+        //debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx \n",req_bank,req_addr);
+        rx_remaining = rq->wLength.word;
+        if (req_addr && req_addr % req_bank_size == 0) {
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr= 0x%08lx \n",
+                   req_bank, req_addr);
+            req_bank++;
+        }
+        ret_len = USB_MAX_TRANS;
   
 /*
  * -------------------------------------------------------------------------
@@ -336,10 +335,14 @@ int main(void)
     printf("Use Snes lowrom\n");
     snes_lorom();
     
+    printf("IRQ off\n");
+    snes_irq_off();
+        
     printf("Activate Snes bus\n");
     snes_bus_active();
-    while(1);
+
     
+    while(1);
     return 0;
 }
 
