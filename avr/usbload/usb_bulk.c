@@ -59,6 +59,8 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
             sram_bulk_write_next();
         }
     }
+    /* test this */
+    //return rx_remaining == 0
     return len;
 }
 
