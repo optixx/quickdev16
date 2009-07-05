@@ -41,6 +41,10 @@ run:
 
 debugger:  
 	$(EMU_DEBUG) $(APP)
+	
+check:	
+	ucon64 -chk $(APP)
+	
 
 upload:
 	ucon64 -chk $(APP)
@@ -85,9 +89,9 @@ $(APP): $(OBJS)
                 -C008000,0000 -U0000,0000 \
                 -Avectors=FFE4,7FE4 \
                 -Aregistration_data=FFB0,7FB0 \
-                -Aressource=18000,8000 \
+                -Aressource=38000,8000 \
                 -N $(OBJS) -L$(LIBS) -O $@
-		$(PADBIN) 0x40000 $(APP)
+		$(PADBIN) 0x100000 $(APP)
 
 clean:
 		rm -vf $(APP) *.obj

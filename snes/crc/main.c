@@ -26,7 +26,7 @@ void preInit(void) {
 }
 
 void main(void) {
-	word i,j;
+	word i,j,y;
 	word crc01;
 	word crc02;
 	padStatus pad1;
@@ -48,12 +48,17 @@ void main(void) {
 	while(1){
 		addr = 0x008000;
 		crc02 = crc_update(test_buffer,2);
-		for(j=0; j<16; j++) {
+        y = 0;
+		for(j=0; j<32; j++) {
     		crc01 = crc_update_mem(addr,0x8000);
 			int2hex((unsigned long)j,&line[0],4);
 			int2hex((unsigned long)crc01,&line[5],4);
 			int2hex((unsigned long)addr,&line[10],6);
-            writeln(line,j+1);
+            writeln(line,y + 1);
+            y++;
+            if (y==16)
+                y = 0;
+    		
     		addr += 0x010000;
 		}
 		while(!pad1.start) {
