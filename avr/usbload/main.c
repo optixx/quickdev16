@@ -23,9 +23,11 @@ uint8_t debug_level = ( DEBUG | DEBUG_USB | DEBUG_CRC );
 
 uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
+uint32_t req_addr_end = 0;
 uint32_t req_size;
 uint8_t req_bank;
 uint16_t req_bank_size;
+uint16_t req_bank_cnt;
 uint8_t req_state = REQ_STATUS_IDLE;
 uint8_t rx_remaining = 0;
 uint8_t tx_remaining = 0;
@@ -108,10 +110,14 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_bank = 0;
         rx_remaining = 0;
         req_bank_size = (1 << rq->wValue.word) & 0xffff;
+        req_bank_cnt = rq->wIndex.word;
+        req_addr_end =  (uint32_t)req_bank_size * req_bank_cnt;
+        
         sync_errors = 0;
-        debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: bank_size=0x%x\n", req_bank_size);
+        debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: bank_size=0x%x bank_cnt=0x%x end_addr=0x%08lx\n", 
+                req_bank_size, req_bank_cnt, req_addr_end);
+        
         if (req_addr == 0x000000){
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: timer_start\n");
             timer_start();
         }
 /*
@@ -127,7 +133,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         rx_remaining = rq->wLength.word;
             
         if (req_addr && req_addr % req_bank_size == 0) {
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr= 0x%08lx time=%i\n",
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr= 0x%08lx time=%.4f\n",
                    req_bank, req_addr,timer_stop());
             req_bank++;
             timer_start();
@@ -316,6 +322,7 @@ int main(void)
         
     }
     led_on();
+    
     usbDeviceConnect();
     printf("USB connect\n");
 
@@ -332,7 +339,6 @@ int main(void)
     printf("Disable snes WR\n");
     snes_wr_disable(); 
     
-    
     sei();
     printf("USB poll\n");
     while (req_state != REQ_STATUS_BOOT){
@@ -343,9 +349,9 @@ int main(void)
     usbDeviceDisconnect();      
     printf("USB disconnect\n");
     
-    crc_check_bulk_memory(0x000000, 0x80000);
+    crc_check_bulk_memory(0x000000, req_addr_end);
     
-    //dump_memory(0x7f00,0x8000);
+    dump_memory(0x7f00,0x8000);
 
     printf("IRQ off\n");
     snes_irq_lo();

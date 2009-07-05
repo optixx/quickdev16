@@ -1,7 +1,10 @@
- 
+#include <stdint.h>
+#include <stdio.h>
+#include <avr/io.h> 
 #include <avr/io.h>
 #include <avr/interrupt.h>      /* for sei() */
- 
+
+#include "debug.h" 
  
 #ifndef OCR1A
     #define OCR1A OCR1  // 2313 support
@@ -53,10 +56,10 @@ void timer_start( void )
 
 }
 
-uint16_t timer_stop(void)
+double timer_stop(void)
 {
-    //cli();
-    return second;
+    double t = ((double)(DEBOUNCE - prescaler) / DEBOUNCE )  + second;
+    return t;
 }
 
 

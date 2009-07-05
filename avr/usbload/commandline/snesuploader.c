@@ -24,7 +24,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <usb.h>                /* this is libusb */
+
 #include "opendevice.h"         /* common code moved to separate module */
 
 #include "../requests.h"        /* custom request numbers */
@@ -129,6 +131,9 @@ int main(int argc, char **argv)
     uint16_t step = 0;
     uint16_t crc = 0;
     uint8_t bank = 0;
+    uint8_t bank_cnt = 0;
+    uint32_t file_size = 0;
+    struct stat st;
     
     FILE *fp;
     usb_init();
@@ -164,13 +169,20 @@ int main(int argc, char **argv)
             fprintf(stderr, "Cannot open file %s ", argv[2]);
             exit(1);
         }
+        
+        fseek (fp, 0, SEEK_END);
+        file_size = ftell (fp);
+        fseek (fp, 0, SEEK_SET);
+        bank_cnt = file_size / BANK_SIZE;
+        printf("Transfer '%s' %i Bytes, %i Banks\n",argv[2],file_size,bank_cnt);
+            
         read_buffer = (unsigned char *) malloc(READ_BUFFER_SIZE);
         crc_buffer = (unsigned char *) malloc(0x1000);
         memset(crc_buffer, 0, 0x1000);
         addr = 0x000000;
         cnt = usb_control_msg(handle,
                         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
-                        USB_BULK_UPLOAD_INIT, BANK_SIZE_SHIFT , 0, NULL, 0, 5000);
+                        USB_BULK_UPLOAD_INIT, BANK_SIZE_SHIFT , bank_cnt, NULL, 0, 5000);
 
         if (cnt < 0) {
             fprintf(stderr, "USB error: %s\n", usb_strerror());

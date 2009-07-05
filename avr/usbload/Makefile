@@ -91,7 +91,7 @@ usbdrv:
 	cp -r ../../../usbdrv .
 
 main.elf: usbdrv $(OBJECTS)	# usbdrv dependency only needed because we copy it
-	$(COMPILE) -o main.elf $(OBJECTS)
+	$(COMPILE) -o main.elf $(OBJECTS) -Wl,-u,vfprintf -lprintf_flt
 
 main.hex: main.elf
 	rm -f main.hex main.eep.hex
