@@ -56,8 +56,12 @@
 #define SNES_IRQ_DIR            DDRB
 #define SNES_IRQ_PIN            PB3
 
-#define snes_irq_off()          (SNES_IRQ_PORT |= (1 << SNES_IRQ_PIN))
-#define snes_irq_on()           (SNES_IRQ_PORT &= ~(1 << SNES_IRQ_PIN))
+
+#define snes_irq_on()          (SNES_IRQ_DIR |= (1 << SNES_IRQ_PIN))
+#define snes_irq_hi()          (SNES_IRQ_PORT |= (1 << SNES_IRQ_PIN))
+
+#define snes_irq_off()          (SNES_IRQ_DIR &= ~(1 << SNES_IRQ_PIN))
+#define snes_irq_lo()           (SNES_IRQ_PORT &= ~(1 << SNES_IRQ_PIN))
 
 
 
@@ -120,9 +124,11 @@
 #define AVR_SNES_SW_PIN	        PD5
 
 #define avr_bus_active()	    ((AVR_SNES_SW_PORT &= ~(1 << AVR_SNES_SW_PIN)),\
-                                (HI_LOROM_SW_PORT |= (1 << HI_LOROM_SW_PIN)))
+                                (HI_LOROM_SW_PORT |= (1 << HI_LOROM_SW_PIN)),\
+                                (AVR_CS_DIR |= (1 << AVR_CS_PIN)))
 
-#define snes_bus_active()	    (AVR_SNES_SW_PORT |= (1 << AVR_SNES_SW_PIN))
+#define snes_bus_active()	    ((AVR_SNES_SW_PORT |= (1 << AVR_SNES_SW_PIN)),\
+                                (AVR_CS_DIR &= ~(1 << AVR_CS_PIN)))
 
 #define HI_LOROM_SW_PORT	    PORTD
 #define HI_LOROM_SW_DIR	        DDRD
@@ -136,6 +142,7 @@
 #define SNES_WR_EN_PIN	        PD7
 
 #define snes_wr_disable()	    (SNES_WR_EN_PORT &= ~(1 << SNES_WR_EN_PIN))
+
 #define snes_wr_enable()	    (SNES_WR_EN_PORT |= (1 << SNES_WR_EN_PIN))
 
 

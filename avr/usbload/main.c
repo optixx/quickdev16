@@ -15,6 +15,7 @@
 #include "dump.h"
 #include "crc.h"
 #include "usb_bulk.h"
+#include "timer.h"
 
 extern FILE uart_stdout;
 
@@ -109,6 +110,10 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_bank_size = (1 << rq->wValue.word) & 0xffff;
         sync_errors = 0;
         debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: bank_size=0x%x\n", req_bank_size);
+        if (req_addr == 0x000000){
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: timer_start\n");
+            timer_start();
+        }
 /*
  * -------------------------------------------------------------------------
  */
@@ -119,12 +124,14 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
         sram_bulk_write_start(req_addr);
-        //debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx \n",req_bank,req_addr);
         rx_remaining = rq->wLength.word;
+            
         if (req_addr && req_addr % req_bank_size == 0) {
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr= 0x%08lx \n",
-                   req_bank, req_addr);
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr= 0x%08lx time=%i\n",
+                   req_bank, req_addr,timer_stop());
             req_bank++;
+            timer_start();
+            
         }
         ret_len = USB_MAX_TRANS;
   
@@ -293,7 +300,7 @@ int main(void)
     system_init();
     printf("Sytem Init\n");
 
-    avr_bus_active();
+    
     usbInit();
     printf("USB Init\n");
     usbDeviceDisconnect();      /* enforce re-enumeration, do this while
@@ -311,38 +318,62 @@ int main(void)
     led_on();
     usbDeviceConnect();
     printf("USB connect\n");
+
+    avr_bus_active();
+    printf("Activate AVR bus\n");
+
+    printf("IRQ off\n");
+    snes_irq_lo();
+    snes_irq_off();
+    
+    printf("Set Snes lowrom\n");
+    snes_lorom();
+
+    printf("Disable snes WR\n");
+    snes_wr_disable(); 
+    
+    
     sei();
     printf("USB poll\n");
     while (req_state != REQ_STATUS_BOOT){
         usbPoll();
     }
     printf("USB poll done\n");
+    
     usbDeviceDisconnect();      
     printf("USB disconnect\n");
     
     crc_check_bulk_memory(0x000000, 0x80000);
+    
+    //dump_memory(0x7f00,0x8000);
 
-#if 0    
-    dump_memory(0x0000,0x0080);
-    printf("crc=0x%x\n",crc_check_bulk_memory(0x000000, 0x80));
-#endif
+    printf("IRQ off\n");
+    snes_irq_lo();
+    snes_irq_off();
     
-    dump_memory(0x7f00,0x8000);
-    
+    printf("Set Snes lowrom\n");
+    snes_lorom();
+
     printf("Disable snes WR\n");
     snes_wr_disable(); 
-    
-    printf("Use Snes lowrom\n");
-    snes_lorom();
-    
-    printf("IRQ off\n");
-    snes_irq_off();
         
-    printf("Activate Snes bus\n");
     snes_bus_active();
+    printf("Activate Snes bus\n");
 
-    
+#if 0    
+    i = 50;
+    while (--i) {               /* fake USB disconnect for > 250 ms */
+        _delay_ms(100);
+        printf(".");
+    }
+    printf("\n");
+    avr_bus_active();
+    printf("Activate AVR bus\n");
+    crc_check_bulk_memory(0x000000, 0x80000);
+#endif
+
     while(1);
+    
     return 0;
 }
 
