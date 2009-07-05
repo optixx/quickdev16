@@ -6,8 +6,7 @@ AS=wla-65816
 LD=wlalink
 
 OBJS=sprite.o
-APP=sprite.raw
-SWC=sprite.swc
+APP=sprite.smc
 GFX=biker.pic
 EMU=/Applications/ZSNES.app/Contents/MacOS/ZSNES
 DEBUG=wine /Users/david/Devel/arch/snes/tools/snes9x1/Snes9X1.43.ep9r8.exe
@@ -32,6 +31,6 @@ linkfile:
 
 $(APP):  linkfile $(GFX) $(OBJS) $(GFX)
 	$(LD) -vr linkerfile.prj  $@
-	ucon64 $(APP) -swc $(SWC)     
+	ucon64 -chk $(APP)      
 clean:
 	rm -vf $(SWC) $(APP) *.prj *.o
