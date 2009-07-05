@@ -133,7 +133,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         rx_remaining = rq->wLength.word;
             
         if (req_addr && req_addr % req_bank_size == 0) {
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr= 0x%08lx time=%.4f\n",
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
                    req_bank, req_addr,timer_stop());
             req_bank++;
             timer_start();
@@ -146,23 +146,19 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  */
     } else if (rq->bRequest == USB_BULK_UPLOAD_NEXT) {
 
-        if (req_state != REQ_STATUS_BULK_UPLOAD){
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: ERROR state is not REQ_STATUS_BULK_UPLOAD\n");
-            return 0;
-        }
-        if (rx_remaining) {
-            sync_errors++;
-            debug(DEBUG_USB,
-                "USB_BULK_UPLOAD_NEXT: Out of sync addr=0x%lx remain=%i packet=%i sync_error=%i\n",
-                 req_addr, rx_remaining, rq->wLength.word, sync_errors);
-            ret_len = 0;
-        }
+        req_state = REQ_STATUS_BULK_UPLOAD;
+        req_addr = rq->wValue.word;
+        req_addr = req_addr << 16;
+        req_addr = req_addr | rq->wIndex.word;
+        //sram_bulk_write_start(req_addr);
         rx_remaining = rq->wLength.word;
-        ret_len = USB_MAX_TRANS;
+            
         if (req_addr && req_addr % req_bank_size == 0) {
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr= 0x%08lx \n",
-                   req_bank, req_addr);
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr= 0x%08lx time=%.4f\n",
+                   req_bank, req_addr,timer_stop());
             req_bank++;
+            timer_start();
+            
         }
         ret_len = USB_MAX_TRANS;
 /*
@@ -192,7 +188,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  */
     } else if (rq->bRequest == USB_SNES_BOOT) {
         req_state = REQ_STATUS_BOOT;
-        debug(DEBUG_USB,"USB_SNES_BOOT: ");
+        debug(DEBUG_USB,"USB_SNES_BOOT:\n");
         ret_len = 0;
 /*
  * -------------------------------------------------------------------------
@@ -353,33 +349,21 @@ int main(void)
     
     dump_memory(0x7f00,0x8000);
 
-    printf("IRQ off\n");
     snes_irq_lo();
     snes_irq_off();
+    printf("IRQ off\n");
     
-    printf("Set Snes lowrom\n");
     snes_lorom();
+    printf("Set Snes lowrom\n");
 
-    printf("Disable snes WR\n");
     snes_wr_disable(); 
+    printf("Disable snes WR\n");
         
     snes_bus_active();
     printf("Activate Snes bus\n");
 
-#if 0    
-    i = 50;
-    while (--i) {               /* fake USB disconnect for > 250 ms */
-        _delay_ms(100);
-        printf(".");
-    }
-    printf("\n");
-    avr_bus_active();
-    printf("Activate AVR bus\n");
-    crc_check_bulk_memory(0x000000, 0x80000);
-#endif
-
     while(1);
-    
+     
     return 0;
 }
 

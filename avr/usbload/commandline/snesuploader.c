@@ -133,7 +133,6 @@ int main(int argc, char **argv)
     uint8_t bank = 0;
     uint8_t bank_cnt = 0;
     uint32_t file_size = 0;
-    struct stat st;
     
     FILE *fp;
     usb_init();
@@ -197,13 +196,22 @@ int main(int argc, char **argv)
                 
                 addr_lo = addr & 0xffff;
                 addr_hi = (addr >> 16) & 0x00ff;
+                if (addr == 0x000000){
 
-                cnt = usb_control_msg(handle,
+                    cnt = usb_control_msg(handle,
                                 USB_TYPE_VENDOR | USB_RECIP_DEVICE |
                                 USB_ENDPOINT_OUT, USB_BULK_UPLOAD_ADDR, addr_hi,
                                 addr_lo, (char *) read_buffer + step,
                                 SEND_BUFFER_SIZE, 5000);
-                
+                } else {
+                    
+                    cnt = usb_control_msg(handle,
+                                USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+                                USB_ENDPOINT_OUT, USB_BULK_UPLOAD_NEXT, addr_hi,
+                                addr_lo, (char *) read_buffer + step,
+                                SEND_BUFFER_SIZE, 5000);
+                    
+                }
                 if (cnt < 0) {
                     fprintf(stderr, "USB error: %s\n", usb_strerror());
                     usb_close(handle);
@@ -225,6 +233,11 @@ int main(int argc, char **argv)
             }
         }
         bank = 0;
+        cnt = usb_control_msg(handle,
+                             USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+                             USB_ENDPOINT_OUT, USB_BULK_UPLOAD_END, 0, 0, NULL,
+                             0, 5000);
+ 
         
         fseek(fp, 0, SEEK_SET);
         while ((cnt = fread(read_buffer, READ_BUFFER_SIZE, 1, fp)) > 0) {
