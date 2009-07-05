@@ -28,10 +28,11 @@
   CARTRIDGETYPE $00             ; $00 = ROM only, see WLA documentation for others
   ROMSIZE $08                   ; $08 = 2 Mbits,  see WLA doc for more..
   SRAMSIZE $00                  ; No SRAM         see WLA doc for more..
-  COUNTRY $01                   ; $01 = U.S.  $00 = Japan, that's all I know
+  COUNTRY $02                   ; $01 = U.S.  $00 = Japan, that's all I know
   LICENSEECODE $00              ; Just use $00
   VERSION $00                   ; $00 = 1.00, $01 = 1.01, etc.
 .ENDSNES
+
 
 .SNESNATIVEVECTOR               ; Define Native Mode interrupt vector table
   COP       COPHandler
@@ -40,6 +41,7 @@
   NMI       NMIHandler
   IRQ       IRQHandler
 .ENDNATIVEVECTOR
+
 
 .SNESEMUVECTOR                  ; Define Emulation Mode interrupt vector table
   COP       EmptyHandler

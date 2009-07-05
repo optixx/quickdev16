@@ -111,7 +111,7 @@ ABRTHandler:
     prints "ABRTHandler"
     rti
 NMIHandler:
-    ;prints "NMIHandler"
+    prints "NMIHandler"
     rti
 
 IRQHandler:
