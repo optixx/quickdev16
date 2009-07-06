@@ -107,7 +107,7 @@ OBJECTS=ucon64.o ucon64_dat.o ucon64_misc.o ucon64_opts.o \
         backup/fig.o backup/gbx.o backup/gd.o backup/interceptor.o \
         backup/lynxit.o backup/mccl.o backup/mcd.o backup/md-pro.o \
         backup/mgd.o backup/msg.o backup/pce-pro.o backup/pl.o \
-        backup/psxpblib.o backup/sflash.o backup/smc.o backup/smd.o \
+        backup/psxpblib.o backup/sflash.o backup/snesram.o backup/smc.o backup/smd.o \
         backup/smsgg-pro.o backup/ssc.o backup/swc.o backup/tototek.o \
         backup/ufo.o backup/yoko.o backup/z64.o
 ifdef USE_ZLIB
