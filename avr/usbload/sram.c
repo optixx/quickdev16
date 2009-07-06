@@ -111,6 +111,7 @@ void sram_bulk_read_start(uint32_t addr)
     asm volatile ("nop");
     asm volatile ("nop");
     asm volatile ("nop");
+ 
  }
 
 inline void sram_bulk_read_next(void)
@@ -125,6 +126,7 @@ inline void sram_bulk_read_next(void)
     asm volatile ("nop");
     asm volatile ("nop");
     asm volatile ("nop");
+
 }
 
 
@@ -188,11 +190,12 @@ void sram_bulk_write_start(uint32_t addr)
     sreg_set(addr);
 
     AVR_WR_PORT &= ~(1 << AVR_WR_PIN);
+
 }
 
 inline void sram_bulk_write_next(void)
 {
-    AVR_RD_PORT |= (1 << AVR_RD_PIN);
+    AVR_WR_PORT |= (1 << AVR_WR_PIN);
     counter_up();
     AVR_WR_PORT &= ~(1 << AVR_WR_PIN);
 }
@@ -200,6 +203,7 @@ inline void sram_bulk_write_next(void)
 inline void sram_bulk_write( uint8_t data)
 {
     AVR_DATA_PORT = data;
+    
 }
 
 void sram_bulk_write_end(void)
@@ -224,9 +228,18 @@ void sram_write(uint32_t addr, uint8_t data)
     sreg_set(addr);
     
     AVR_WR_PORT &= ~(1 << AVR_WR_PIN);
+
+
     AVR_DATA_PORT = data;
+
         
     AVR_WR_PORT |= (1 << AVR_WR_PIN);
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
+    asm volatile ("nop");
     AVR_CS_PORT |= (1 << AVR_CS_PIN);
     
     avr_data_in();
