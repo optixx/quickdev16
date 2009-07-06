@@ -17,21 +17,43 @@ import socket
 import sys
 import traceback
 import paramiko
-
+import socket
 
 from subprocess import Popen
 
+
+def distance(a,b):
+    c = {}
+    n = len(a); m = len(b)
+
+    for i in range(0,n+1):
+        c[i,0] = i
+    for j in range(0,m+1):
+        c[0,j] = j
+
+    for i in range(1,n+1):
+        for j in range(1,m+1):
+            x = c[i-1,j]+1
+            y = c[i,j-1]+1
+            if a[i-1] == b[j-1]:
+                z = c[i-1,j-1]
+            else:
+                z = c[i-1,j-1]+1
+            c[i,j] = min(x,y,z)
+    return c[n,m]
+
 paramiko.util.log_to_file('rom_sftp.log')
 
-if os.name == 'posix':
+if socket.gethostname() == 'slap':
     path = "/home/david/Devel/arch/avr/code/snesram/roms/"
     username = "david"
     hostname = "slap"
-else:
+elif socket.gethostname() == 'box':
     path = "/Users/david/Devel/arch/avr/code/snesram/roms/"
     username = "david"
     hostname = "burst"
-
+else:
+   sys.exit() 
 def shellquote(s):
     return "'" + s.replace("'", "'\\''") + "'"
 
@@ -57,9 +79,9 @@ def main():
         print "Dirlist:", dirlist
 
 
-        conn = sqlite3.connect('roms.sqlite3')
+        conn = sqlite3.connect('roms_cleanup.sqlite3')
         c = conn.cursor()
-        for i in [(4,),(8,),(16,),(32,)]:
+        for i in [(1,),(2,),(4,),(8,),(16,)]:
             dirname = os.path.join(path,"%02i" % i)
             if not os.path.isdir(dirname):
                 os.mkdir(dirname)
@@ -84,13 +106,25 @@ def main():
                               rom_region like "Europe%"
                           ORDER BY file_name
                           ''',i)
+            
+            
+            last_name = str()     
             for row in c:
                 name,size,filename =  row
+                d = distance(os.path.basename(filename),os.path.basename(last_name)) 
+                if d < 7:    
+                    print "Skip ",filename
+                    continue
                 filename_dst = os.path.join(dirname,os.path.basename(filename))
                 print "Remote: %s -> %s" % ( filename,filename_dst)
-                data = open(filename, 'r').read()
-                open(filename_dst,"w").write(data)
+                last_name = filename
+                try:
+                    sftp.get(filename,filename_dst)
+                except Exception, e:
+                    print '*** Caught exception: %s: %s' % (e.__class__, e)
+                    traceback.print_exc()
 
+            print "Done"
     except Exception, e:
         print '*** Caught exception: %s: %s' % (e.__class__, e)
         traceback.print_exc()
@@ -99,6 +133,7 @@ def main():
         except:
             pass
         sys.exit(1)
+    t.close()
 
 
 if __name__ == '__main__':

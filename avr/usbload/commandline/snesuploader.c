@@ -171,9 +171,20 @@ int main(int argc, char **argv)
         
         fseek (fp, 0, SEEK_END);
         file_size = ftell (fp);
-        fseek (fp, 0, SEEK_SET);
+
+        if (strstr(argv[2],".smc") || strstr(argv[2],".swc")){
+            printf("Skip 512 Byte header\n");
+            file_size -= 512;
+            fseek (fp, 512, SEEK_SET);
+            
+        } else { 
+            fseek (fp, 0, SEEK_SET);
+        }
+
         bank_cnt = file_size / BANK_SIZE;
         printf("Transfer '%s' %i Bytes, %i Banks\n",argv[2],file_size,bank_cnt);
+    
+          
             
         read_buffer = (unsigned char *) malloc(READ_BUFFER_SIZE);
         crc_buffer = (unsigned char *) malloc(0x1000);
