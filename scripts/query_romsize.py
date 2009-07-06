@@ -21,7 +21,7 @@ import paramiko
 
 from subprocess import Popen
 
-paramiko.util.log_to_file('demo_sftp.log')
+paramiko.util.log_to_file('rom_sftp.log')
 
 if os.name == 'posix':
     path = "/home/david/Devel/arch/avr/code/snesram/roms/"

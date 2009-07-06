@@ -66,7 +66,7 @@ void debug_enable(void)
 void clears(void)
 {
     word i, y;
-    for (y = 0; y < 20; y++) {
+    for (y = 0; y < 28; y++) {
         waitForVBlank();
         for (i = 0; i < 32; i++) {
             *(byte *) 0x2115 = 0x80;

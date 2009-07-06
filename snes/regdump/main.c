@@ -24,9 +24,20 @@ void preInit(void) {
 	// Insert code here to be executed before register init
 }
 
+
+void wait(void)
+{
+    enablePad();
+    pad1 = readPad((byte) 0);
+    while (!pad1.A) {
+        waitForVBlank();
+        pad1 = readPad((byte) 0);
+    }
+}
+
+
 void main(void) {
 	word x,y;
-	padStatus pad1;
     unsigned long addr; 
     
     initInternalRegisters();
@@ -41,6 +52,9 @@ void main(void) {
     addr = 0x21400;
     x = 0;
     y = 0;
+    //printfs(26,"PRESS A");
+    //wait();
+    //clears();
     for (addr = 0x2100 ; addr < 0x21C0; addr+=8){
     	waitForVBlank();
         printfs(y,"%lX: %02X %02X %02X %02X %02X %02X %02X %02X",addr,
@@ -48,6 +62,21 @@ void main(void) {
         *(byte *) (addr+4),*(byte *) (addr +5),*(byte *) (addr+6),*(byte *) (addr+7));
         y++;
     }
+    while(1);
+    printfs(26,"PRESS A");
+    //wait();
+    clears();
+    y = 0;
+    for (addr = 0x4100 ; addr < 0x41C0; addr+=8){
+    	waitForVBlank();
+        printfs(y,"%lX: %02X %02X %02X %02X %02X %02X %02X %02X",addr,
+        *(byte *) addr,*(byte *) (addr +1),*(byte *) (addr+2),*(byte *) (addr+3),
+        *(byte *) (addr+4),*(byte *) (addr +5),*(byte *) (addr+6),*(byte *) (addr+7));
+        y++;
+    }
+    printfs(26,"PRESS A");
+    wait();
+    clears();
     
     
 
