@@ -49,7 +49,7 @@ const st_getopt2_t snesram_usage[] =
 #ifdef  USE_USB
     {
       "xsnesram", 0, 0, UCON64_XSNESRAM, // send only
-      NULL, "send ROM (in FFE format) to Snesram; " OPTION_LONG_S "port=PORT",
+      NULL, "send ROM (in FFE format) to Snesram",
       &ucon64_wf[WF_OBJ_NES_DEFAULT_STOP_NO_SPLIT]
     },
 #endif

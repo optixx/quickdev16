@@ -27,4 +27,4 @@ extern const st_getopt2_t snesram_usage[];
 extern int snesram_write_rom (const char *filename);
 #endif
 
-#endif // SMC_H
+#endif // SNESRAM_H

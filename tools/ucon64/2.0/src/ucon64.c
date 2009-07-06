@@ -171,6 +171,9 @@ static const st_getopt2_t lf[] =
     sflash_usage,
   //  mgd_usage,
 #endif
+#ifdef  USE_USB
+    snesram_usage,
+#endif
     lf,
     neogeo_usage,
     lf,
