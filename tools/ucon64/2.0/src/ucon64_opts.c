@@ -308,9 +308,9 @@ ucon64_switches (st_ucon64_t *p)
     case UCON64_XSFS:
     case UCON64_XSMC:
     case UCON64_XSMCR:
-    case UCON64_XSNESRAM:
     case UCON64_XSMD:
     case UCON64_XSMDS:
+    case UCON64_XSNESRAM:
     case UCON64_XSWC:
     case UCON64_XSWC2:
     case UCON64_XSWCR:
@@ -2052,14 +2052,6 @@ ucon64_options (st_ucon64_t *p)
       fputc ('\n', stdout);
       break;
     
-    case UCON64_XSNESRAM:         
-        if (!ucon64.rominfo->buheader_len)
-          fputs ("ERROR: This ROM has no header. Convert to an SMC compatible format with -ffe\n",
-                 stderr);
-        else
-          snesram_write_rom (ucon64.rom);
-        fputc ('\n', stdout);
-        break;
 
     case UCON64_XSMD:
       if (access (ucon64.rom, F_OK) != 0)       // file does not exist -> dump cartridge
@@ -2086,6 +2078,15 @@ ucon64_options (st_ucon64_t *p)
         smd_write_sram (ucon64.rom, ucon64.parport);
       fputc ('\n', stdout);
       break;
+
+    case UCON64_XSNESRAM:
+        if (!ucon64.rominfo->buheader_len)
+          fputs ("ERROR: This ROM has no header. Convert to an SMC compatible format with -ffe\n",
+                 stderr);
+        else
+          snesram_write_rom (ucon64.rom);
+        fputc ('\n', stdout);
+        break;
 
     case UCON64_XSWC:
       enableRTS = 0;                            // falling through

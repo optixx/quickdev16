@@ -58,6 +58,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #if     defined USE_PARALLEL || defined USE_USB
 #include "f2a.h"
 #endif
+
 #ifdef USE_USB
 #include "snesram.h"
 #endif // USE_PARALLEL
