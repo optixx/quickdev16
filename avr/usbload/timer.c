@@ -17,8 +17,7 @@
 //#define XTAL      11059201L   // nominal value
 #define XTAL        20000000UL 
 
- 
-#define DEBOUNCE    500UL        // debounce clock (256Hz = 4msec)
+#define DEBOUNCE    256L        // debounce clock (256Hz = 4msec)
  
 #define uint8_t unsigned char
 #define uint unsigned int
