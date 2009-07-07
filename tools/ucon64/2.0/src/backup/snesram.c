@@ -25,6 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <usb.h>                
 #include "misc/misc.h"
 #include "misc/itypes.h"
 #ifdef  USE_ZLIB
@@ -38,6 +39,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "smc.h"
 #include "snesram.h"
 
+#include "../misc/opendevice.h"
 
 const st_getopt2_t snesram_usage[] =
   {
@@ -59,120 +61,127 @@ const st_getopt2_t snesram_usage[] =
 
 #ifdef USE_USB
 
-#define BUFFERSIZE 8192
-
-
+#define READ_BUFFER_SIZE    (1024 * 32)
+#define SEND_BUFFER_SIZE    128
+#define BANK_SIZE           (1<<15)
+#define BANK_SIZE_SHIFT     15
 
 int
 snesram_write_rom (const char *filename)
 {
   FILE *file;
-  unsigned char *buffer;
-  int bytesread, bytessend, size, offset, n_blocks1, n_blocks2, n_blocks3, n;
+  int bytesread, bytessend, size;
   time_t starttime;
+  usb_dev_handle *handle = NULL;
+  const unsigned char rawVid[2] = { USB_CFG_VENDOR_ID }, rawPid[2] = { USB_CFG_DEVICE_ID};
+  char vendor[] = { USB_CFG_VENDOR_NAME, 0 }, product[] = { USB_CFG_DEVICE_NAME, 0};
+  int cnt, vid, pid;
+  uint8_t *read_buffer;
+  uint32_t addr = 0;
+  uint16_t addr_lo = 0;
+  uint16_t addr_hi = 0;
+  uint16_t step = 0;
+  uint8_t bank = 0;
+  uint8_t bank_cnt = 0;
 
+  usb_init();
+  vid = rawVid[1] * 256 + rawVid[0];
+  pid = rawPid[1] * 256 + rawPid[0];
+  if (usbOpenDevice(&handle, vid, vendor, pid, product, NULL, NULL, NULL) != 0) {
+        fprintf(stderr,
+                "Could not find USB device \"%s\" with vid=0x%x pid=0x%x\n",
+                product, vid, pid);
+        exit(1);
+    }
+    printf("Open USB device \"%s\" with vid=0x%x pid=0x%x\n", product, vid,pid);
 
   if ((file = fopen (filename, "rb")) == NULL)
     {
       fprintf (stderr, ucon64_msg[OPEN_READ_ERROR], filename);
       exit (1);
     }
-  if ((buffer = (unsigned char *) malloc (BUFFERSIZE)) == NULL)
+
+  if ((read_buffer = (unsigned char *) malloc (READ_BUFFER_SIZE)) == NULL)
     {
-      fprintf (stderr, ucon64_msg[FILE_BUFFER_ERROR], BUFFERSIZE);
+      fprintf (stderr, ucon64_msg[FILE_BUFFER_ERROR], READ_BUFFER_SIZE);
       exit (1);
     }
 
-  fread (buffer, 1, SMC_HEADER_LEN, file);
+  fseek (file, 0, SEEK_END);
+  size = ftell (file);
+  fseek (file, SMC_HEADER_LEN, SEEK_SET);
+  size -= SMC_HEADER_LEN;
+  bank_cnt = size / BANK_SIZE;
 
-
-  size = (n_blocks1 + n_blocks2 + n_blocks3) * 8 * 1024 + 8 +
-         (buffer[0] & SMC_TRAINER ? 512 : 0);
   printf ("Send: %d Bytes (%.4f Mb)\n", size, (float) size / MBIT);
-
-  ffe_send_block (0x5020, buffer, 8);           // send "file control block"
-  bytessend = 8;
-
-  if (buffer[1] >> 5 > 4)
-    offset = 12;
-  else
-    offset = 0;
-
-  if (buffer[0] & SMC_TRAINER)                  // send trainer if present
-    {
-      fread (buffer, 1, 512, file);
-      ffe_send_block (0x600, buffer, 512);
-      bytessend += 512;
-    }
-
+  bytessend = 0;
   printf ("Press q to abort\n\n");
   starttime = time (NULL);
+  
+ 
+  cnt = usb_control_msg(handle,
+        USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
+        USB_BULK_UPLOAD_INIT, BANK_SIZE_SHIFT , bank_cnt, NULL, 0, 5000);
 
-  for (n = 0; n < n_blocks1; n++)
-    {
-      ffe_send_command0 (0x4507, (unsigned char) (n + offset));
-      if ((bytesread = fread (buffer, 1, BUFFERSIZE, file)) == 0)
-        break;
-      ffe_send_block (0x6000, buffer, bytesread);
 
-      bytessend += bytesread;
-      ucon64_gauge (starttime, bytessend, size);
-      ffe_checkabort (2);
-    }
+   while ((bytesread = fread(read_buffer, READ_BUFFER_SIZE, 1, file)) > 0) {
+      for (step = 0; step < READ_BUFFER_SIZE; step += SEND_BUFFER_SIZE) {
 
-  for (n = 0; n < n_blocks2; n++)
-    {
-      ffe_send_command0 (0x4507, (unsigned char) (n + 32));
-      if ((bytesread = fread (buffer, 1, BUFFERSIZE, file)) == 0)
-        break;
-      ffe_send_block (0x6000, buffer, bytesread);
+        addr_lo = addr & 0xffff;
+        addr_hi = (addr >> 16) & 0x00ff;
 
-      bytessend += bytesread;
-      ucon64_gauge (starttime, bytessend, size);
-      ffe_checkabort (2);
-    }
-
-  ffe_send_command0 (0x2001, 0);
-
-  for (n = 0; n < n_blocks3; n++)
-    {
-      if (n == 0)
-        {
-          ffe_send_command0 (0x4500, 0x22);
-          ffe_send_command0 (0x42ff, 0x30);
-          if ((bytesread = fread (buffer, 1, BUFFERSIZE, file)) == 0)
-            break;
-          ffe_send_block (0x6000, buffer, bytesread);
+        if (addr == 0){
+            cnt = usb_control_msg(handle,
+                                USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+                                USB_ENDPOINT_OUT, USB_BULK_UPLOAD_ADDR, addr_hi,
+                                addr_lo, (char *) read_buffer + step,
+                                SEND_BUFFER_SIZE, 5000);
+        } else {
+            cnt = usb_control_msg(handle,
+                                USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+                                USB_ENDPOINT_OUT, USB_BULK_UPLOAD_NEXT, addr_hi,
+                                addr_lo, (char *) read_buffer + step,
+                                SEND_BUFFER_SIZE, 5000);
         }
-      else
-        {
-          int m;
-
-          ffe_send_command0 (0x4500, 7);
-          for (m = 0; m < 8; m++)
-            ffe_send_command0 ((unsigned short) (0x4510 + m), (unsigned char) (n * 8 + m));
-          if ((bytesread = fread (buffer, 1, BUFFERSIZE, file)) == 0)
-            break;
-          ffe_send_block2 (0, buffer, bytesread);
+        if (cnt < 0) {
+            fprintf(stderr, "USB error: %s\n", usb_strerror());
+            usb_close(handle);
+            exit(-1);
         }
 
-      bytessend += bytesread;
-      ucon64_gauge (starttime, bytessend, size);
-      ffe_checkabort (2);
-    }
+        bytessend += SEND_BUFFER_SIZE;
+        ucon64_gauge (starttime, bytessend, size);
 
-  for (n = 0x4504; n < 0x4508; n++)
-    ffe_send_command0 ((unsigned short) n, 0);
-  for (n = 0x4510; n < 0x451c; n++)
-    ffe_send_command0 ((unsigned short) n, 0);
+        addr += SEND_BUFFER_SIZE;
+        if ( addr % 0x8000 == 0) {
+            bank++;
+        }
+      }
+  }
+  cnt = usb_control_msg(handle,
+                        USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+                        USB_ENDPOINT_OUT, USB_BULK_UPLOAD_END, 0, 0, NULL,
+                        0, 5000);
 
-  ffe_send_command (5, 1, 0);
+#if 0
+  bank = 0;
+  fseek(fp, 0, SEEK_SET);
+  while ((cnt = fread(read_buffer, READ_BUFFER_SIZE, 1, fp)) > 0) {
+      printf ("bank=0x%02x crc=0x%04x\n", bank++,
+          do_crc(read_buffer, READ_BUFFER_SIZE));
+  }
+  fclose(fp);
+#endif
+  cnt = usb_control_msg(handle,
+                      USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+                      USB_ENDPOINT_OUT, USB_SNES_BOOT, 0, 0, NULL,
+                      0, 5000);
 
-  free (buffer);
+
+  free (read_buffer);
   fclose (file);
-  ffe_deinit_io ();
-
   return 0;
 }
+
 
 #endif // USE_USB

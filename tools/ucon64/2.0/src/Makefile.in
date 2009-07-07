@@ -96,7 +96,8 @@ endif
 OBJECTS=ucon64.o ucon64_dat.o ucon64_misc.o ucon64_opts.o \
         misc/chksum.o misc/file.o misc/getopt.o misc/getopt2.o \
         misc/misc.o misc/parallel.o misc/property.o misc/string.o \
-        patch/aps.o patch/bsl.o patch/gg.o patch/ips.o patch/pal4u.o \
+        misc/opendevice.o \
+	patch/aps.o patch/bsl.o patch/gg.o patch/ips.o patch/pal4u.o \
         patch/ppf.o patch/xps.o \
         console/dc.o console/gb.o console/gba.o console/genesis.o \
         console/jaguar.o console/lynx.o console/n64.o console/neogeo.o \
