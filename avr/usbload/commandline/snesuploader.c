@@ -15,10 +15,10 @@
  */
 
 
-#define READ_BUFFER_SIZE    (1024 * 32)
+#define BANK_SIZE_SHIFT     16
+#define BANK_SIZE           (1<<BANK_SIZE_SHIFT)
+#define READ_BUFFER_SIZE    (1<<BANK_SIZE_SHIFT)
 #define SEND_BUFFER_SIZE    128
-#define BANK_SIZE           (1<<15)
-#define BANK_SIZE_SHIFT     15
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
     uint32_t addr = 0;
     uint16_t addr_lo = 0;
     uint16_t addr_hi = 0;
-    uint16_t step = 0;
+    uint32_t step = 0;
     uint16_t crc = 0;
     uint8_t bank = 0;
     uint8_t bank_cnt = 0;
@@ -234,11 +234,11 @@ int main(int argc, char **argv)
                 memcpy(ptr, read_buffer + step, SEND_BUFFER_SIZE);
                 addr += SEND_BUFFER_SIZE;
                 ptr += SEND_BUFFER_SIZE;
-                if ( addr % 0x1000 == 0){
+                if ( addr % BANK_SIZE == 0){
                     crc = do_crc(crc_buffer, 0x1000);
                     printf ("bank=0x%02x addr=0x%08x addr=0x%08x crc=0x%04x\n", bank, addr - 0x1000, addr, crc);
                     ptr = crc_buffer;
-                    if ( addr % 0x8000 == 0) {
+                    if ( addr % BANK_SIZE == 0) {
                         bank++;
                         
                     }

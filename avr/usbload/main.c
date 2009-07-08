@@ -26,7 +26,7 @@ uint32_t req_addr = 0;
 uint32_t req_addr_end = 0;
 uint32_t req_size;
 uint8_t req_bank;
-uint16_t req_bank_size;
+uint32_t req_bank_size;
 uint16_t req_bank_cnt;
 uint8_t req_state = REQ_STATUS_IDLE;
 uint8_t rx_remaining = 0;
@@ -54,10 +54,10 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         req_bank = 0;
         rx_remaining = 0;
-        req_bank_size = 1 << rq->wValue.word;
+        req_bank_size = (uint32_t)1 << rq->wValue.word;
         sync_errors = 0;
         crc = 0;
-        debug(DEBUG_USB,"USB_UPLOAD_INIT: bank_size=0x%04x\n", req_bank_size);
+        debug(DEBUG_USB,"USB_UPLOAD_INIT: bank_size=0x%08lx\n", req_bank_size);
 
 /*
  * -------------------------------------------------------------------------
@@ -81,7 +81,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         
         if (req_addr && (req_addr % 0x1000) == 0) {
             debug(DEBUG_USB,"USB_UPLOAD_ADDR: bank=0x%02x addr=0x%08lx crc=%04x\n",
-                req_bank, req_addr,crc_check_bulk_memory(req_addr - 0x1000,req_addr));
+                req_bank, req_addr,crc_check_bulk_memory(req_addr - 0x1000,req_addr,req_bank_size));
         
         }
         if (req_addr && req_addr % req_bank_size == 0) {
@@ -109,12 +109,13 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         req_bank = 0;
         rx_remaining = 0;
-        req_bank_size = (1 << rq->wValue.word) & 0xffff;
+        debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: %i %i\n",rq->wValue.word,  rq->wIndex.word);    
+        req_bank_size = (uint32_t)(1L << rq->wValue.word);
         req_bank_cnt = rq->wIndex.word;
         req_addr_end =  (uint32_t)req_bank_size * req_bank_cnt;
         
         sync_errors = 0;
-        debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: bank_size=0x%x bank_cnt=0x%x end_addr=0x%08lx\n", 
+        debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n", 
                 req_bank_size, req_bank_cnt, req_addr_end);
         
         if (req_addr == 0x000000){
@@ -154,13 +155,13 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 #if 0
         if (req_addr && (req_addr % 0x1000) == 0) {
             debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: bank=0x%02x addr=0x%08lx crc=%04x\n",
-                req_bank, req_addr,crc_check_bulk_memory(req_addr - 0x1000,req_addr));
+                req_bank, req_addr,crc_check_bulk_memory(req_addr - 0x1000,req_addr,req_bank_size));
         
         }
         sram_bulk_write_start(req_addr);
 #endif
-        if (req_addr && req_addr % req_bank_size == 0) {
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr= 0x%08lx time=%.4f\n",
+        if (req_addr && ( req_addr % req_bank_size) == 0) {
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
                    req_bank, req_addr,timer_stop());
             req_bank++;
             timer_start();
@@ -187,7 +188,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
         debug(DEBUG_USB,"USB_CRC: addr=0x%08lx \n", req_addr);
-        crc_check_bulk_memory(0x000000,req_addr);
+        crc_check_bulk_memory(0x000000, req_addr, req_bank_size);
         ret_len = 0;
 /*
  * -------------------------------------------------------------------------
@@ -212,7 +213,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         tx_remaining = 2;
         debug(DEBUG_USB,"USB_CRC_ADDR: addr=0x%lx size=%li\n", req_addr, req_size);
 
-        crc = crc_check_memory_range(req_addr,req_size,read_buffer);
+        crc = crc_check_memory_range(req_addr, req_size, read_buffer);
         tx_buffer[0] = crc & 0xff;
         tx_buffer[1] = (crc >> 8) & 0xff;
         ret_len = 2;
@@ -293,7 +294,7 @@ void test_crc(){
     avr_bus_active();
     sram_bulk_set(0x000000,0x10000,0xff);
     printf("test_crc: crc\n");
-    crc_check_bulk_memory(0x000000,0x10000);
+    crc_check_bulk_memory(0x000000,0x10000,0x8000);
     printf("test_crc: check\n");
     test_non_zero_memory(0x000000,0x10000);
 }
@@ -308,10 +309,12 @@ int main(void)
     system_init();
     printf("Sytem Init\n");
 
-    //test_read_write();
-    //test_bulk_read_write();
-    //test_crc();
-    //while(1);
+#if 0
+    test_read_write();
+    test_bulk_read_write();
+    test_crc();
+    while(1);
+#endif
     
     usbInit();
     printf("USB Init\n");
@@ -354,18 +357,22 @@ int main(void)
     
     usbDeviceDisconnect();      
     printf("USB disconnect\n");
-    
-    crc_check_bulk_memory(0x000000, req_addr_end);
-    
-    dump_memory(0x7f00,0x8000);
+
+#if 0    
+    crc_check_bulk_memory(0x000000, req_addr_end, req_bank_size);
+#endif
 
     snes_irq_lo();
     snes_irq_off();
-    printf("IRQ off\n");
     
-    snes_lorom();
-    printf("Set Snes lowrom\n");
-
+    printf("IRQ off\n");
+    if (req_bank_size == 0x8000){
+        snes_lorom();
+        printf("Set Snes lowrom \n");
+    } else {
+        snes_hirom();
+        printf("Set Snes hirom \n");
+    }
     snes_wr_disable(); 
     printf("Disable snes WR\n");
         

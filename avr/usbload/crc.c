@@ -43,18 +43,15 @@ uint16_t do_crc_update(uint16_t crc, uint8_t * data, uint16_t size)
 }
 
 
-uint16_t crc_check_bulk_memory(uint32_t bottom_addr,uint32_t top_addr)
+uint16_t crc_check_bulk_memory(uint32_t bottom_addr, uint32_t top_addr, uint32_t bank_size)
 {
     uint16_t crc = 0;
     uint32_t addr = 0;
     uint8_t req_bank = 0;
     sram_bulk_read_start(bottom_addr);
     
-    //debug(DEBUG_CRC,"crc_check_bulk_memory: bottom_addr=0x%08lx top_addr=0x%08lx\n",
-    //    bottom_addr, top_addr);
-    
     for (addr = bottom_addr; addr < top_addr; addr++) {
-        if (addr && addr % 0x8000 == 0) {
+        if (addr && addr % bank_size == 0) {
             debug(DEBUG_CRC,"crc_check_bulk_memory: bank=0x%02x addr=0x%08lx crc=0x%04x\n",
                 req_bank,addr,crc);
             req_bank++;
@@ -72,13 +69,13 @@ uint16_t crc_check_bulk_memory(uint32_t bottom_addr,uint32_t top_addr)
 
 
 
-void crc_check_memory(uint32_t bottom_addr,uint32_t top_addr,uint8_t *buffer)
+void crc_check_memory(uint32_t bottom_addr,uint32_t top_addr,uint32_t bank_size,uint8_t *buffer)
 {
     uint16_t crc = 0;
     uint32_t addr;
     uint8_t req_bank = 0;
     for (addr = bottom_addr; addr < top_addr; addr += TRANSFER_BUFFER_SIZE) {
-        if (addr && addr % 0x8000 == 0) {
+        if (addr && addr % bank_size == 0) {
             debug(DEBUG_CRC,"crc_check_memory: bank=0x%02x addr=0x%08lx crc=0x%04x\n",
                 req_bank,addr,crc);
             req_bank++;

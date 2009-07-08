@@ -1,1 +1,5 @@
-o Test
+TODO:
+    o ucon64 support
+    o hi/rom support
+    o speed optimize
+    o irq inject
