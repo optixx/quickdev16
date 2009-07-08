@@ -7,8 +7,8 @@
 @DEFINE_LIBCD64_MAKE@
 
 CC=@CC@
-CFLAGS=-I. -Wall -W -O3 @DEFS@
-LDFLAGS=-s
+CFLAGS=-I. -Wall -W -O3 @DEFS@ -I/opt/local/include
+LDFLAGS=-s -L/opt/local/lib
 TARGETS=
 
 ifdef USE_DISCMAGE
