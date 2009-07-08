@@ -15,7 +15,7 @@
  */
 
 
-#define BANK_SIZE_SHIFT     16
+#define BANK_SIZE_SHIFT     15
 #define BANK_SIZE           (1<<BANK_SIZE_SHIFT)
 #define READ_BUFFER_SIZE    (1<<BANK_SIZE_SHIFT)
 #define SEND_BUFFER_SIZE    128
@@ -192,6 +192,14 @@ int main(int argc, char **argv)
         crc_buffer = (unsigned char *) malloc(0x1000);
         memset(crc_buffer, 0, 0x1000);
         addr = 0x000000;
+        
+        cnt = usb_control_msg(handle,
+                            USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+                            USB_ENDPOINT_OUT, USB_MODE_AVR, 0, 0, NULL,
+                            0, 5000);
+        
+        
+        
         cnt = usb_control_msg(handle,
                         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
                         USB_BULK_UPLOAD_INIT, BANK_SIZE_SHIFT , bank_cnt, NULL, 0, 5000);
@@ -261,7 +269,7 @@ int main(int argc, char **argv)
         
         cnt = usb_control_msg(handle,
                             USB_TYPE_VENDOR | USB_RECIP_DEVICE |
-                            USB_ENDPOINT_OUT, USB_SNES_BOOT, 0, 0, NULL,
+                            USB_ENDPOINT_OUT, USB_MODE_SNES, 0, 0, NULL,
                             0, 5000);
         
 

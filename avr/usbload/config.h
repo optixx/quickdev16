@@ -15,7 +15,8 @@
 #define REQ_STATUS_BULK_UPLOAD      0x03
 #define REQ_STATUS_BULK_NEXT        0x04
 #define REQ_STATUS_CRC              0x05
-#define REQ_STATUS_BOOT             0x06
+#define REQ_STATUS_SNES             0x06
+#define REQ_STATUS_AVR              0x07
 
 #define USB_MAX_TRANS               0xff
 #define USB_CRC_CHECK               0x01

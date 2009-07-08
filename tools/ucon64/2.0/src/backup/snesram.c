@@ -141,6 +141,11 @@ snesram_write_rom (const char *filename)
   printf ("Press q to abort\n\n");
   starttime = time (NULL);
   
+  cnt = usb_control_msg(handle,
+                      USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+                      USB_ENDPOINT_OUT, USB_MODE_AVR, 0, 0, NULL,
+                      0, 5000);
+  
  
   cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
@@ -197,7 +202,7 @@ snesram_write_rom (const char *filename)
 #endif
   cnt = usb_control_msg(handle,
                       USB_TYPE_VENDOR | USB_RECIP_DEVICE |
-                      USB_ENDPOINT_OUT, USB_SNES_BOOT, 0, 0, NULL,
+                      USB_ENDPOINT_OUT, USB_MODE_SNES, 0, 0, NULL,
                       0, 5000);
 
 

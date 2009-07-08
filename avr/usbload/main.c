@@ -16,6 +16,7 @@
 #include "crc.h"
 #include "usb_bulk.h"
 #include "timer.h"
+#include "watchdog.h"
 
 extern FILE uart_stdout;
 
@@ -36,6 +37,9 @@ uint8_t tx_buffer[32];
 uint8_t data_buffer[4];
 uint32_t addr;
 uint16_t crc = 0;
+
+
+
 
 usbMsgLen_t usbFunctionSetup(uchar data[8])
 {
@@ -193,9 +197,23 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 /*
  * -------------------------------------------------------------------------
  */
-    } else if (rq->bRequest == USB_SNES_BOOT) {
-        req_state = REQ_STATUS_BOOT;
-        debug(DEBUG_USB,"USB_SNES_BOOT:\n");
+    } else if (rq->bRequest == USB_MODE_SNES) {
+        req_state = REQ_STATUS_SNES;
+        debug(DEBUG_USB,"USB_MODE_SNES:\n");
+        ret_len = 0;
+/*
+ * -------------------------------------------------------------------------
+ */
+    } else if (rq->bRequest == USB_MODE_AVR) {
+        req_state = REQ_STATUS_AVR;
+        debug(DEBUG_USB,"USB_MODE_AVR:\n");
+        ret_len = 0;
+/*
+ * -------------------------------------------------------------------------
+ */
+    } else if (rq->bRequest == USB_AVR_RESET) {
+        debug(DEBUG_USB,"USB_AVR_RESET:\n");
+        soft_reset();
         ret_len = 0;
 /*
  * -------------------------------------------------------------------------
@@ -305,9 +323,15 @@ int main(void)
 
     uart_init();
     stdout = &uart_stdout;
+
     
     system_init();
-    printf("Sytem Init\n");
+    printf("Sytem start\n");
+
+#if 0
+    wdt_init();
+    printf("Watchdog init\n");
+#endif
 
 #if 0
     test_read_write();
@@ -317,7 +341,7 @@ int main(void)
 #endif
     
     usbInit();
-    printf("USB Init\n");
+    printf("USB init\n");
     usbDeviceDisconnect();      /* enforce re-enumeration, do this while
                                  * interrupts are disabled! */
     cli();                             
@@ -328,58 +352,60 @@ int main(void)
         _delay_ms(35);
         led_off();
         _delay_ms(65);
-        
     }
     led_on();
     
     usbDeviceConnect();
     printf("USB connect\n");
 
-    avr_bus_active();
-    printf("Activate AVR bus\n");
-
-    printf("IRQ off\n");
-    snes_irq_lo();
-    snes_irq_off();
     
-    printf("Set Snes lowrom\n");
-    snes_lorom();
+    while (1){
+        avr_bus_active();
+        printf("Activate AVR bus\n");
 
-    printf("Disable snes WR\n");
-    snes_wr_disable(); 
-    
-    sei();
-    printf("USB poll\n");
-    while (req_state != REQ_STATUS_BOOT){
-        usbPoll();
-    }
-    printf("USB poll done\n");
-    
-    usbDeviceDisconnect();      
-    printf("USB disconnect\n");
+        printf("IRQ off\n");
+        snes_irq_lo();
+        snes_irq_off();
 
-#if 0    
-    crc_check_bulk_memory(0x000000, req_addr_end, req_bank_size);
-#endif
-
-    snes_irq_lo();
-    snes_irq_off();
-    
-    printf("IRQ off\n");
-    if (req_bank_size == 0x8000){
+        printf("Set Snes lowrom\n");
         snes_lorom();
-        printf("Set Snes lowrom \n");
-    } else {
-        snes_hirom();
-        printf("Set Snes hirom \n");
-    }
-    snes_wr_disable(); 
-    printf("Disable snes WR\n");
-        
-    snes_bus_active();
-    printf("Activate Snes bus\n");
 
-    while(1);
+        printf("Disable snes WR\n");
+        snes_wr_disable(); 
+
+        sei();
+        printf("USB poll\n");
+        while (req_state != REQ_STATUS_SNES){
+            usbPoll();
+        }
+        printf("USB poll done\n");
+    
+
+    #if 0    
+        crc_check_bulk_memory(0x000000, req_addr_end, req_bank_size);
+    #endif
+
+        snes_irq_lo();
+        snes_irq_off();
+    
+        printf("IRQ off\n");
+        if (req_bank_size == 0x8000){
+            snes_lorom();
+            printf("Set Snes lowrom \n");
+        } else {
+            snes_hirom();
+            printf("Set Snes hirom \n");
+        }
+        snes_wr_disable(); 
+        printf("Disable snes WR\n");
+        
+        snes_bus_active();
+        printf("Activate Snes bus\n");
+
+        while (req_state != REQ_STATUS_AVR){
+            usbPoll();
+        }
+    }
      
     return 0;
 }
