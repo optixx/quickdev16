@@ -61,10 +61,10 @@ const st_getopt2_t snesram_usage[] =
 
 #ifdef USE_USB
 
-#define READ_BUFFER_SIZE    (1024 * 32)
+#define READ_BUFFER_SIZE    8192
 #define SEND_BUFFER_SIZE    128
-#define BANK_SIZE           (1<<15)
-#define BANK_SIZE_SHIFT     15
+#define SNES_HIROM_SHIFT    16
+#define SNES_LOROM_SHIFT    15
 
 int
 snesram_write_rom (const char *filename)
@@ -83,7 +83,12 @@ snesram_write_rom (const char *filename)
   uint16_t step = 0;
   uint8_t bank = 0;
   uint8_t bank_cnt = 0;
+  uint16_t bank_shift;
+  uint32_t bank_size;
+  uint32_t hirom;
+  uint8_t byte = 0;
 
+  
   usb_init();
   vid = rawVid[1] * 256 + rawVid[0];
   pid = rawPid[1] * 256 + rawPid[0];
@@ -107,13 +112,31 @@ snesram_write_rom (const char *filename)
       exit (1);
     }
 
+    if (UCON64_ISSET (ucon64.snes_hirom)) { 
+        hirom = ucon64.snes_hirom ? 1 : 0;
+    } else {
+        fseek (file, 0x00ffd5, SEEK_SET);
+        fread(&byte, 1, 1, file);
+        hirom = ((byte & 1 && byte != 0x23) || byte == 0x3a) ? 1 : 0; // & 1 => 0x21, 0x31, 0x35
+    }
+    printf("Hirom: %i\n",hirom);
+    if (hirom) {
+        bank_shift = SNES_HIROM_SHIFT;
+        bank_size = 1 << SNES_HIROM_SHIFT;
+    } else {
+        bank_shift = SNES_LOROM_SHIFT;
+        bank_size = 1 << SNES_LOROM_SHIFT;
+    }
+
+
+
   fseek (file, 0, SEEK_END);
   size = ftell (file);
   fseek (file, SMC_HEADER_LEN, SEEK_SET);
   size -= SMC_HEADER_LEN;
-  bank_cnt = size / BANK_SIZE;
+  bank_cnt = size / bank_size;
 
-  printf ("Send: %d Bytes (%.4f Mb)\n", size, (float) size / MBIT);
+  printf ("Send: %d Bytes (%.4f Mb) Hirom: %s, Banks: %i\n", size, (float) size / MBIT, hirom ? "Yes" : "No", bank_cnt);
   bytessend = 0;
   printf ("Press q to abort\n\n");
   starttime = time (NULL);
@@ -121,7 +144,7 @@ snesram_write_rom (const char *filename)
  
   cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
-        USB_BULK_UPLOAD_INIT, BANK_SIZE_SHIFT , bank_cnt, NULL, 0, 5000);
+        USB_BULK_UPLOAD_INIT, bank_shift , bank_cnt, NULL, 0, 5000);
 
 
    while ((bytesread = fread(read_buffer, READ_BUFFER_SIZE, 1, file)) > 0) {
@@ -153,7 +176,7 @@ snesram_write_rom (const char *filename)
         ucon64_gauge (starttime, bytessend, size);
 
         addr += SEND_BUFFER_SIZE;
-        if ( addr % 0x8000 == 0) {
+        if ( addr % bank_size == 0) {
             bank++;
         }
       }
