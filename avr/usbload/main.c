@@ -153,12 +153,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         rx_remaining = rq->wLength.word;
 #if 0
         if (req_addr && (req_addr % 0x1000) == 0) {
-            debug(DEBUG_USB,"USB_UPLOAD_ADDR: bank=0x%02x addr=0x%08lx crc=%04x\n",
+            debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: bank=0x%02x addr=0x%08lx crc=%04x\n",
                 req_bank, req_addr,crc_check_bulk_memory(req_addr - 0x1000,req_addr));
         
         }
-#endif
         sram_bulk_write_start(req_addr);
+#endif
         if (req_addr && req_addr % req_bank_size == 0) {
             debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr= 0x%08lx time=%.4f\n",
                    req_bank, req_addr,timer_stop());

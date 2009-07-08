@@ -133,6 +133,7 @@ int main(int argc, char **argv)
     uint8_t bank = 0;
     uint8_t bank_cnt = 0;
     uint32_t file_size = 0;
+    uint32_t file_offset = 0;
     
     FILE *fp;
     usb_init();
@@ -171,10 +172,11 @@ int main(int argc, char **argv)
         
         fseek (fp, 0, SEEK_END);
         file_size = ftell (fp);
-
+        file_offset = 512;
         if (strstr(argv[2],".smc") || strstr(argv[2],".swc")){
             printf("Skip 512 Byte header\n");
             file_size -= 512;
+            
             fseek (fp, 512, SEEK_SET);
             
         } else { 
@@ -250,7 +252,7 @@ int main(int argc, char **argv)
                              0, 5000);
  
         
-        fseek(fp, 0, SEEK_SET);
+        fseek(fp, file_offset, SEEK_SET);
         while ((cnt = fread(read_buffer, READ_BUFFER_SIZE, 1, fp)) > 0) {
             printf ("bank=0x%02x crc=0x%04x\n", bank++, 
                 do_crc(read_buffer, READ_BUFFER_SIZE));
