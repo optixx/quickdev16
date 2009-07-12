@@ -9,10 +9,14 @@ OBJS=irqtest.o
 APP=irqtest.smc
 GFX=
 
-all: clean $(APP)
+all: clean $(APP) check
 
 run:
 	zsnes $(APP)
+
+
+upload: smc
+	ucon64 --port=usb -xsnesram $(APP)
 
 linkfile:
 	echo "[objects]" > linkerfile.prj
@@ -21,8 +25,13 @@ linkfile:
 optixx.inc: optixx.pcx
 	wine tools/pcx2snes.exe optixx.pcx -b2 -nOptixx -ooptixx.inc
 
-check: 
+check:
 	ucon64 -chk $(APP)
+	rm -fv *.bak
+smc:
+	ucon64 -smc $(APP)
+	rm -fv *.bak
+
 
 %.o: %.asm
 	echo "$@" >> linkerfile.prj

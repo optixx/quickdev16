@@ -47,8 +47,6 @@ Start_do:
    
     ; Setup Video modes and other stuff, then turn on the screen
     jsr SetupVideo
-
-    prints "Init done"
     
     lda #$81
     sta $4200
@@ -101,17 +99,13 @@ SetupVideo:
 ;.SECTION "IRQHandlers" 
 
 COPHandler:
-    prints "COPHandler"
     rti
 
 BRKHandler:
-    prints "BRKHandler"
     rti
 ABRTHandler:
-    prints "ABRTHandler"
     rti
 NMIHandler:
-    prints "NMIHandler"
     rti
 
 IRQHandler:
@@ -119,7 +113,13 @@ IRQHandler:
     lda PalNum
     sta $2122
     sta $2122
-    prints "IRQHandler"
+    
+    lda #65
+    sta $3000
+idle:    
+    lda $3001
+    
+    
     rti
 
 

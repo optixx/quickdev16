@@ -320,7 +320,8 @@ void test_crc(){
 int main(void)
 {
     uint8_t i;
-
+    uint8_t c;
+    
     uart_init();
     stdout = &uart_stdout;
 
@@ -404,6 +405,23 @@ int main(void)
 
         while (req_state != REQ_STATUS_AVR){
             usbPoll();
+            i = 20;
+            while (--i) {               /* fake USB disconnect for > 250 ms */
+                _delay_ms(100);
+            }
+            printf("Send IRQ\n");
+            snes_irq_lo();
+            snes_irq_on();
+
+            avr_bus_active();
+            c = sram_bulk_read();
+            snes_bus_active();
+            
+            snes_irq_off();
+            
+            sram_bulk_read_start(0x003000);
+            printf("Read 0x3000=%c\n",c);
+            
         }
     }
      

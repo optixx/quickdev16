@@ -26,7 +26,7 @@
   LOROM
 
   CARTRIDGETYPE $00             ; $00 = ROM only, see WLA documentation for others
-  ROMSIZE $08                   ; $08 = 2 Mbits,  see WLA doc for more..
+  ROMSIZE $07                   ; $08 = 2 Mbits,  see WLA doc for more..
   SRAMSIZE $00                  ; No SRAM         see WLA doc for more..
   COUNTRY $02                   ; $01 = U.S.  $00 = Japan, that's all I know
   LICENSEECODE $00              ; Just use $00
