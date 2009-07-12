@@ -3261,6 +3261,7 @@ snes_init (st_rominfo_t *rominfo)
       snes_hirom = 0;
       if (UCON64_ISSET (ucon64.snes_hirom))     // see snes_set_hirom()
         snes_hirom = ucon64.snes_hirom;
+      //ucon64.snes_hirom = snes_hirom;
       snes_hirom_ok = 1;
 
       rominfo->interleaved = 0;

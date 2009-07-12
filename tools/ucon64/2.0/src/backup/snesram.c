@@ -33,13 +33,18 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #endif
 #include "misc/getopt2.h"                       // st_getopt2_t
 #include "misc/file.h"
+#include "misc/opendevice.h"
+
+
 #include "ucon64.h"
 #include "ucon64_misc.h"
 #include "ffe.h"
 #include "smc.h"
 #include "snesram.h"
 
-#include "../misc/opendevice.h"
+#include "console/snes.h"
+
+#define SNES_HEADER_LEN (sizeof (st_snes_header_t))
 
 const st_getopt2_t snesram_usage[] =
   {
@@ -85,8 +90,9 @@ snesram_write_rom (const char *filename)
   uint8_t bank_cnt = 0;
   uint16_t bank_shift;
   uint32_t bank_size;
-  uint32_t hirom;
+  uint32_t hirom = 0;
   uint8_t byte = 0;
+  st_rominfo_t rominfo;
 
   
   usb_init();
@@ -111,15 +117,19 @@ snesram_write_rom (const char *filename)
       fprintf (stderr, ucon64_msg[FILE_BUFFER_ERROR], READ_BUFFER_SIZE);
       exit (1);
     }
+    
+    snes_init (&rominfo);
+    printf(rominfo.misc);
+    printf("\n");
 
-    if (UCON64_ISSET (ucon64.snes_hirom)) { 
+    if (UCON64_ISSET (ucon64.snes_hirom))
         hirom = ucon64.snes_hirom ? 1 : 0;
-    } else {
-        fseek (file, 0x00ffd5, SEEK_SET);
-        fread(&byte, 1, 1, file);
-        hirom = ((byte & 1 && byte != 0x23) || byte == 0x3a) ? 1 : 0; // & 1 => 0x21, 0x31, 0x35
+    else {
+        hirom = snes_get_snes_hirom ();
     }
-    printf("Hirom: %i\n",hirom);
+
+
+
     if (hirom) {
         bank_shift = SNES_HIROM_SHIFT;
         bank_size = 1 << SNES_HIROM_SHIFT;
