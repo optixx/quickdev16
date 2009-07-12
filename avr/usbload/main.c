@@ -405,6 +405,7 @@ int main(void)
 
         while (req_state != REQ_STATUS_AVR){
             usbPoll();
+#if 0            
             i = 20;
             while (--i) {               /* fake USB disconnect for > 250 ms */
                 _delay_ms(100);
@@ -421,7 +422,7 @@ int main(void)
             
             sram_bulk_read_start(0x003000);
             printf("Read 0x3000=%c\n",c);
-            
+#endif
         }
     }
      
