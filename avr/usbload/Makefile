@@ -3,11 +3,11 @@ TTY     = /dev/tty.PL2303-00002126
 DEVICE  = atmega644
 F_CPU   = 20000000	# in Hz
 FUSE_L  = 0xf7
-FUSE_H  = 0xd9
+FUSE_H  = 0xdd
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 
 CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 
-#-std=gnu99
+
 OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o dump.o timer.o watchdog.o
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 
@@ -15,27 +15,12 @@ COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 ##############################################################################
 # Fuse values for particular devices
 ##############################################################################
-# If your device is not listed here, go to
-# http://palmavr.sourceforge.net/cgi-bin/fc.cgi
-# and choose options for external crystal clock and no clock divider
-#
+# http://www.engbedded.com/fusecalc/
 ################################## ATMega644 ##################################
 # ATMega644 FUSE_L (Fuse low byte):
 # 0xf7 = 1 1 1 1  0 1 1 1
-#        ^ ^ \ /   \--+--/
-#        | |  |       +------- CKSEL 3..0 (external >8M crystal)
-#        | |  +--------------- SUT 1..0 (crystal osc, BOD enabled)
-#        | +------------------ BODEN (BrownOut Detector enabled)
-#        +-------------------- BODLEVEL (2.7V)
-
 # ATMega644 FUSE_H (Fuse high byte):
-# 0xd9 = 1 1 0 1 1 0 0 1
-#        ^ ^ ^ ^   ^ ^ ^------ BOOTSZ0
-#        | | | |   | +-------- BOOTSZ1
-#        | | | |   + --------- EESAVE (don't preserve EEPROM over chip erase)
-#        | | | +-------------- CKOPT (full output swing)
-#        | | +---------------- SPIEN (allow serial programming)
-#        | +------------------ WDTON (WDT not always on)
+# 0xdd = 1 1 0 1 1 1 0 0
 
 
 

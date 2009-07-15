@@ -413,15 +413,16 @@ int main(void)
             printf("Send IRQ\n");
             snes_irq_lo();
             snes_irq_on();
+            _delay_ms(1);
 
-            avr_bus_active();
-            c = sram_bulk_read();
-            snes_bus_active();
+            //avr_bus_active();
+            //c = sram_bulk_read();
+            //snes_bus_active();
             
             snes_irq_off();
             
-            sram_bulk_read_start(0x003000);
-            printf("Read 0x3000=%c\n",c);
+            //sram_bulk_read_start(0x003000);
+            //printf("Read 0x3000=%c\n",c);
 #endif
         }
     }
