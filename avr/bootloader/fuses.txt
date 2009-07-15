@@ -1,0 +1,21 @@
+additional fuse bit settings for using this bootloader:
+=======================================================
+
+atmega88/168:
+
+    extended fuse byte:
+        1024 words bootloader size: BOOTSZ0 = 0
+                                    BOOTSZ1 = 0
+
+        reset vector, jump to bootloader on reset: BOOTRST = 0
+
+    -> default: 0b001 = 0x01
+       new:     0b000 = 0x00
+
+    lock byte:
+        SPM is not allowed to write to the Boot Loader section BLB12 = 1
+                                                               BLB11 = 0
+
+    -> default: 0b111111 = 0x3f
+       new:     0b101111 = 0x2f
+
