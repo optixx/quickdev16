@@ -48,15 +48,17 @@ Start_do:
     ; Setup Video modes and other stuff, then turn on the screen
     jsr SetupVideo
     
-    lda #$81
+    lda #$00
     sta $4200
+    rep #$31
 
 Infinity:
-    lda PalNum
-    clc
-    adc #$01
-    and #$ff        ; If > palette starting color > 24 (00011100), make 0
-    sta PalNum
+;    lda.b PalNum
+;    clc
+;    adc.w #$01
+;    and.w #$ffff        ; If > palette starting color > 24 (00011100), make 0
+;    sta.b PalNum
+    inc.b PalNum
     jmp Infinity    ; bwa hahahahaha
 
 
@@ -109,17 +111,25 @@ NMIHandler:
     rti
 
 IRQHandler:
-    stz $2121
+    ;pha
+    ;php
+    ;rep #$31
+
     lda PalNum
+    ;sep #$20
+    stz $2121
+    ;sta.w $2122
+    ;xba
     sta $2122
     sta $2122
-    
-    lda #65
-    sta $3000
-idle:    
-    lda $3001
-    
-    
+;    lda.w $4211
+;    lda #65
+;    sta $3000
+;idle:    
+;    lda $3001
+;    rep #$31
+    plp
+    pla
     rti
 
 

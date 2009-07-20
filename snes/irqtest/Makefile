@@ -9,7 +9,7 @@ OBJS=irqtest.o
 APP=irqtest.smc
 GFX=
 
-all: clean $(APP) check
+all: clean $(APP) 
 
 run:
 	zsnes $(APP)
@@ -25,9 +25,6 @@ linkfile:
 optixx.inc: optixx.pcx
 	wine tools/pcx2snes.exe optixx.pcx -b2 -nOptixx -ooptixx.inc
 
-check:
-	ucon64 -chk $(APP)
-	rm -fv *.bak
 smc:
 	ucon64 -smc $(APP)
 	rm -fv *.bak

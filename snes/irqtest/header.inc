@@ -16,6 +16,9 @@
 .ROMBANKSIZE $8000              ; Every ROM bank is 32 KBytes in size
 .ROMBANKS 8                     ; 2 Mbits - Tell WLA we want to use 8 ROM Banks
 
+.LOROM
+.COMPUTESNESCHECKSUM 
+
 .SNESHEADER
   ID "SNES"                     ; 1-4 letter string, just leave it as "SNES"
   
