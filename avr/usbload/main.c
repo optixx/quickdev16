@@ -405,24 +405,41 @@ int main(void)
 
         while (req_state != REQ_STATUS_AVR){
             usbPoll();
-#if 0            
+#if 0          
             i = 20;
             while (--i) {               /* fake USB disconnect for > 250 ms */
-                _delay_ms(100);
+                _delay_ms(500);
+                printf("Wait to switch to avr mode %i\n", i);
             }
             printf("Send IRQ\n");
-            snes_irq_lo();
-            snes_irq_on();
-            _delay_ms(1);
+            //snes_irq_lo();
+            //snes_irq_on();
+            //_delay_ms(1);
 
-            //avr_bus_active();
-            //c = sram_bulk_read();
-            //snes_bus_active();
+            avr_bus_active();
             
-            snes_irq_off();
+            sram_bulk_read_start(0x003000);
+            c = sram_bulk_read();
+            i = 5;
+            while (--i) {               /* fake USB disconnect for > 250 ms */
+                _delay_ms(500);
+                printf("Wait to switch to snes mode %i\n", i);
+            }
             
-            //sram_bulk_read_start(0x003000);
-            //printf("Read 0x3000=%c\n",c);
+            if (req_bank_size == 0x8000){
+                snes_lorom();
+                printf("Set Snes lowrom \n");
+            } else {
+                snes_hirom();
+                printf("Set Snes hirom \n");
+            }
+            snes_wr_disable(); 
+            printf("Disable snes WR\n");
+
+            snes_bus_active();
+            printf("Activate Snes bus\n");
+            
+            printf("Read 0x3000=%c\n",c);
 #endif
         }
     }

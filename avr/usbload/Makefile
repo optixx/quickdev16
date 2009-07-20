@@ -2,8 +2,7 @@
 TTY     = /dev/tty.PL2303-00002126
 DEVICE  = atmega644
 F_CPU   = 20000000	# in Hz
-FUSE_L  = 0xf7
-FUSE_H  = 0xdd
+
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 
 CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 
@@ -16,12 +15,8 @@ COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 # Fuse values for particular devices
 ##############################################################################
 # http://www.engbedded.com/fusecalc/
-################################## ATMega644 ##################################
-# ATMega644 FUSE_L (Fuse low byte):
-# 0xf7 = 1 1 1 1  0 1 1 1
-# ATMega644 FUSE_H (Fuse high byte):
-# 0xdd = 1 1 0 1 1 1 0 0
-
+FUSE_L  = 0xf7
+FUSE_H  = 0xda
 
 
 # symbolic targets:
@@ -76,7 +71,7 @@ usbdrv:
 	cp -r ../../../usbdrv .
 
 main.elf: usbdrv $(OBJECTS)	# usbdrv dependency only needed because we copy it
-	$(COMPILE) -o main.elf $(OBJECTS) -Wl,-u,vfprintf -lprintf_flt
+	$(COMPILE) -o main.elf $(OBJECTS) -Wl,-u,vfprintf -lprintf_flt 
 
 main.hex: main.elf
 	rm -f main.hex main.eep.hex
