@@ -1,11 +1,11 @@
 /* Name: usbdrv.h
- * Project: AVR USB driver
+ * Project: V-USB, virtual USB port for Atmel's(r) AVR(r) microcontrollers
  * Author: Christian Starkjohann
  * Creation Date: 2004-12-29
  * Tabsize: 4
  * Copyright: (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
  * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
- * This Revision: $Id: usbdrv.h 738 2009-03-23 11:13:24Z cs $
+ * This Revision: $Id: usbdrv.h 748 2009-04-15 15:05:07Z cs $
  */
 
 #ifndef __usbdrv_h_included__
@@ -122,7 +122,7 @@ USB messages, even if they address another (low-speed) device on the same bus.
 /* --------------------------- Module Interface ---------------------------- */
 /* ------------------------------------------------------------------------- */
 
-#define USBDRV_VERSION  20090323
+#define USBDRV_VERSION  20090415
 /* This define uniquely identifies a driver version. It is a decimal number
  * constructed from the driver's release date in the form YYYYMMDD. If the
  * driver's behavior or interface changes, you can use this constant to

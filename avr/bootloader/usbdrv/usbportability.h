@@ -1,11 +1,11 @@
 /* Name: usbportability.h
- * Project: AVR USB driver
+ * Project: V-USB, virtual USB port for Atmel's(r) AVR(r) microcontrollers
  * Author: Christian Starkjohann
  * Creation Date: 2008-06-17
  * Tabsize: 4
  * Copyright: (c) 2008 by OBJECTIVE DEVELOPMENT Software GmbH
  * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
- * This Revision: $Id: usbportability.h 692 2008-11-07 15:07:40Z cs $
+ * This Revision: $Id: usbportability.h 740 2009-04-13 18:23:31Z cs $
  */
 
 /*
