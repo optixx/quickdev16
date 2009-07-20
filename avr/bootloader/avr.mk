@@ -1,5 +1,5 @@
 # Programmer used for In System Programming
-ISP_PROG = usbap
+ISP_PROG = usbasp
 # device the ISP programmer is connected to
 ISP_DEV = /dev/tty.PL2303-00002126
 # Programmer used for serial programming (using the bootloader)
@@ -39,7 +39,7 @@ endif
 
 
 
-AVRDUDE_FLAGS += -p $(AVRDUDE_MCU) -b $(AVRDUDE_BAUDRATE)
+AVRDUDE_FLAGS += -p $(AVRDUDE_MCU) 
 
 # flags for the compiler
 CFLAGS += -g -Os -finline-limit=800 -mmcu=$(MCU) -DF_CPU=$(F_CPU) -std=gnu99
@@ -76,8 +76,8 @@ interactive-serial:
 
 .PHONY: all clean interactive-isp interactive-serial launch-bootloader
 
-program-isp-%: %.hex
-	$(AVRDUDE) $(AVRDUDE_FLAGS) -c $(ISP_PROG) -P $(ISP_DEV) -U flash:w:$<
+flash:  bootloader.hex
+	$(AVRDUDE) $(AVRDUDE_FLAGS) -c $(ISP_PROG) -U flash:w:$<
 
 program-isp-eeprom-%: %.eep.hex
 	$(AVRDUDE) $(AVRDUDE_FLAGS) -c $(ISP_PROG) -P $(ISP_DEV) -U eeprom:w:$<

@@ -1,7 +1,7 @@
 
 # microcontroller and project specific settings
 TARGET = bootloader
-F_CPU = 20000000UL
+F_CPU = 20000000
 MCU = atmega644
 
 SRC = bootloader.c
@@ -11,7 +11,7 @@ OBJECTS += $(patsubst %.S,%.o,${ASRC})
 HEADERS += $(shell echo *.h)
 # CFLAGS += -Werror
 LDFLAGS += -L/usr/local/avr/avr/lib
-CFLAGS += -Iusbdrv -I.
+CFLAGS += -Iusbdrv -I. -Os
 CFLAGS += -DHARDWARE_REV=$(HARDWARE_REV)
 ASFLAGS += -x assembler-with-cpp
 ASFLAGS += -Iusbdrv -I.
@@ -37,8 +37,11 @@ else ifeq ($(MCU),atmega88)
 	BOOT_SECTION_START = 0x1800
 else ifeq ($(MCU),atmega644)
 	# atmega88 with 1024 words bootloader:
-	# bootloader section starts at 0x7e00 (word-address) == 0xFC00 (byte-address)
-	BOOT_SECTION_START = 0xFC00
+	# bootloader section starts at 0x7c00 (word-address) == 0xF800 (byte-address)
+	
+	# atmega88 with 2024 words bootloader:
+	# bootloader section starts at 0x7800 (word-address) == 0xF000 (byte-address)
+	BOOT_SECTION_START = 0xf000
 endif
 
 LDFLAGS += -Wl,--section-start=.text=$(BOOT_SECTION_START)
@@ -54,7 +57,7 @@ all: $(TARGET).hex $(TARGET).lss
 	@echo "$(TARGET) compiled for: $(MCU)"
 	@echo -n "size is: "
 	@$(SIZE) -A $(TARGET).hex | grep "\.sec1" | tr -s " " | cut -d" " -f2
-	@echo "max size:2048 bytes"
+	@echo "max size:4096 bytes"
 	@echo "==============================="
 
 $(TARGET): $(OBJECTS) $(TARGET).o

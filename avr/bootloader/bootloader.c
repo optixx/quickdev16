@@ -64,8 +64,8 @@
                   (LED_DIR &=~ (1 << LED_PIN))); }
 #define DLED_OFF {((LED_PORT &=~ (1 << LED_PIN)),\
                    (LED_DIR |= (1 << LED_PIN))); }
-#define DLED_TGL {((LED_PORT ^= (1 << LED_PIN)),\
-                  (LED_DIR |= (1 << LED_PIN)));}
+#define DLED_TGL {((LED_PORT &=~ (1 << LED_PIN)),\
+                  (LED_DIR ^= (1 << LED_PIN)));}
 
 
 
@@ -318,8 +318,8 @@ void leave_bootloader(void)
 
     /* disconnect usb */
     usbDeviceDisconnect();
-    for (uint8_t i = 0; i < 38; i++)
-        _delay_loop_2(0); /* 0 means 0x10000, 38*1/f*0x10000 =~ 498ms */
+    for (uint8_t i = 0; i < 50; i++)
+        _delay_ms(10); /* 0 means 0x10000, 38*1/f*0x10000 =~ 498ms */
 
     /* enable watchdog to soft-reset the uC for clean startup of new application */
     wdt_enable(WDTO_15MS);
@@ -334,36 +334,46 @@ int __attribute__ ((noreturn,OS_main)) main(void)
 {
     /* start bootloader */
     
-    /* init LED-Pin */
-    PORTB = 0;  
-
 
 #ifdef DEBUG_UART
     /* init uart (115200 baud, at 20mhz) */
     UBRR0L = 10;
     UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
     UCSR0B = _BV(TXEN0);
-    putc('b');
 #endif
+    putc('a');
 
+    wdt_disable();
+  
     uint8_t reset = MCUSR;
+    reset=0;
+    uint16_t delay =0;
+    timeout = TIMEOUT;
+
 
     /* if power-on reset, quit bootloader via watchdog reset */
     if (reset & _BV(PORF)){
+        putc('p');
 	    MCUSR = 0;
         leave_bootloader();
     }
     /* if watchdog reset, disable watchdog and jump to app */
     else if(reset & _BV(WDRF)){
+        
 	    MCUSR = 0;
+        //WDTCSR |= (1<<WDCE);
+        //WDTCSR &= ~((1<<WDIE) | (1<<WDE));                    
 	    wdt_disable();
+        putc('r');
+        while(1);
 	    jump_to_app();	
     }
+    
+    while(1);
 
     /* else: enter programming mode */
 
-
-
+    putc('u');
 
     /* clear external reset flags */
     MCUSR = 0;
@@ -372,40 +382,45 @@ int __attribute__ ((noreturn,OS_main)) main(void)
     request_exit = 0;
 
     /* move interrupts to boot section */
+    
     MCUCR = (1 << IVCE);
     MCUCR = (1 << IVSEL);
 
-    /* enable interrupts */
-    sei();
-
+    cli();
     /* initialize usb pins */
     usbInit();
 
     /* disconnect for ~500ms, so that the host re-enumerates this device */
+    putc('d');
     usbDeviceDisconnect();
-    for (uint8_t i = 0; i < 38; i++)
-        _delay_loop_2(0); /* 0 means 0x10000, 38*1/f*0x10000 =~ 498ms */
+    for (uint8_t i = 0; i < 50; i++)
+        _delay_ms(10); /* 0 means 0x10000, 38*1/f*0x10000 =~ 498ms */
     usbDeviceConnect();
-
-    uint16_t delay;
-    timeout = TIMEOUT;
+    putc('c');
+    
+    /* enable interrupts */
+    sei();
 
     while(1) {
+        //wdt_reset();
         usbPoll();
         delay++;
 
         /* do some led blinking, so that it is visible that the bootloader is still running */
         if (delay == 0) {
+            putc('p');
             DLED_TGL;
             if (timeout < 255)
                 timeout--;
         }
 
         if (request_exit || timeout == 0) {
-            _delay_loop_2(0);
+            putc('e');
+            _delay_ms(10);
             leave_bootloader();
         }
     }
+    putc('l');
 
     leave_bootloader();
 }
