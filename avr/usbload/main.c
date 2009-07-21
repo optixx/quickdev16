@@ -407,6 +407,9 @@ int main(void)
         crc_check_bulk_memory(0x000000, req_addr_end, req_bank_size);
     #endif
 
+        snes_reset_hi();
+        snes_reset_off();
+
         snes_irq_lo();
         snes_irq_off();
     
@@ -424,6 +427,15 @@ int main(void)
         snes_bus_active();
         printf("Activate Snes bus\n");
 
+        _delay_ms(100);
+        printf("Reset Snes\n");
+        snes_reset_on();
+        snes_reset_lo();
+        _delay_ms(2);
+        snes_reset_hi();
+        snes_reset_off();
+
+        printf("Poll\n");
         while (req_state != REQ_STATUS_AVR){
             usbPoll();
 #if 0          

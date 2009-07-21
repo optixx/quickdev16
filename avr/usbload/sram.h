@@ -84,6 +84,16 @@
 #define snes_irq_off()          (SNES_IRQ_DIR &= ~(1 << SNES_IRQ_PIN))
 #define snes_irq_lo()           (SNES_IRQ_PORT &= ~(1 << SNES_IRQ_PIN))
 
+#define SNES_RESET_PORT           PORTB
+#define SNES_RESET_DIR            DDRB
+#define SNES_RESET_PIN            PB4
+
+
+#define snes_reset_on()          (SNES_RESET_DIR |= (1 << SNES_RESET_PIN))
+#define snes_reset_hi()          (SNES_RESET_PORT |= (1 << SNES_RESET_PIN))
+
+#define snes_reset_off()          (SNES_RESET_DIR &= ~(1 << SNES_RESET_PIN))
+#define snes_reset_lo()           (SNES_RESET_PORT &= ~(1 << SNES_RESET_PIN))
 
 
 /* ---------------------------- PORT C ---------------------------- */
