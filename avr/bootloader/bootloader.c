@@ -95,15 +95,37 @@ static const uint8_t signature[4] = {
 #   error "BOOT_SECTION_START undefined!"
 #endif
 
+#if defined (__AVR_ATmega644__)
+    /* Due arvdude limitations we can't erase the whole progmem
+       without running into an usb timeount on cleint side. So we
+       we limit the erase section by 0x1000 
+    */
+    #define ERASE_SECTION 0xe000
+#else
+    #define ERASE_SECTION BOOT_SECTION_START
+#endif
+
 
 #ifdef DEBUG_UART
-static __attribute__ (( __noinline__ )) void putc(uint8_t data) {
+static __attribute__ (( __noinline__ )) void uart_putc(uint8_t data) {
     while(!(UCSR0A & _BV(UDRE0)));
     UDR0 = data;
 }
 #else
-#define putc(x)
+    #define uart_putc(x)
 #endif
+
+#ifdef DEBUG_UART
+static __attribute__ (( __noinline__ )) void uart_puts(uint8_t *data) {
+    while(*data){
+        uart_putc(*data);
+        data++;
+    }
+}
+#else
+    #define uart_puts(x)
+#endif
+
 
 /* supply custom usbDeviceConnect() and usbDeviceDisconnect() macros
  * which turn the interrupt on and off at the right times,
@@ -149,6 +171,8 @@ uint8_t request;
 uint8_t request_exit;
 
 uint8_t timeout;
+
+
 
 usbMsgLen_t usbFunctionSetup(uchar data[8])
 {
@@ -204,16 +228,20 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         /* catch a chip erase */
         } else if (data[2] == ISP_CHIP_ERASE1 && data[3] == ISP_CHIP_ERASE2) {
+            uart_puts("\n\rErase Flash");
             for (flash_address.word = 0;
-                 flash_address.word < BOOT_SECTION_START;
+                 flash_address.word < ERASE_SECTION;
                  flash_address.word += SPM_PAGESIZE) {
 
                 /* wait and erase page */
                 boot_spm_busy_wait();
+                if (flash_address.word && flash_address.word%1024 == 0 )
+                    uart_putc('.');
                 cli();
                 boot_page_erase(flash_address.word);
                 sei();
             }
+            uart_puts("\n\r");
         }
 
         /* in case no data has been filled in by the if's above, just return zeroes */
@@ -228,10 +256,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 #endif
     } else if (req->bRequest >= USBASP_FUNC_READFLASH) {
         /* && req->bRequest <= USBASP_FUNC_SETLONGADDRESS */
-
-        putc('R');
-        putc(req->bRequest);
-
         /* extract address and length */
         flash_address.word = req->wValue.word;
         bytes_remaining = req->wLength.bytes[0];
@@ -248,11 +272,11 @@ uchar usbFunctionWrite(uchar *data, uchar len)
     if (len > bytes_remaining)
         len = bytes_remaining;
     bytes_remaining -= len;
-
     if (request == USBASP_FUNC_WRITEEEPROM) {
         for (uint8_t i = 0; i < len; i++)
             eeprom_write_byte((uint8_t *)flash_address.word++, *data++);
-    } else {
+    } 
+    else {
         /* data is handled wordwise, adjust len */
         len /= 2;
         len -= 1;
@@ -334,46 +358,41 @@ int __attribute__ ((noreturn,OS_main)) main(void)
 {
     /* start bootloader */
     
-
 #ifdef DEBUG_UART
     /* init uart (115200 baud, at 20mhz) */
     UBRR0L = 10;
     UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
     UCSR0B = _BV(TXEN0);
 #endif
-    putc('0');
-
-
 
     uint8_t reset = MCUSR;
     uint16_t delay =0;
     timeout = TIMEOUT;
-
+    
+    uart_puts("Snesram Bootloader v0.1\n\r");
 
     /* if power-on reset, quit bootloader via watchdog reset */
     if (reset & _BV(PORF)){
-        putc('P');
+        uart_puts("Found power on reset\n\r");
 	    MCUSR = 0;
         leave_bootloader();
     }
     /* if watchdog reset, disable watchdog and jump to app */
     else if(reset & _BV(WDRF)){
-        
-	MCUSR = 0;
+        uart_puts("Found watchdog reset\n\r");
+	    MCUSR = 0;
     	wdt_disable();
-        putc('W');
-
 		DLED_TGL;
 		_delay_ms(500);
 		DLED_TGL;
 		_delay_ms(500);
-
-	jump_to_app();	
+        uart_puts("Jump to main\n\r");
+	    jump_to_app();	
     }
 
 
+    uart_puts("Enter programming mode\n\r");
     /* else: enter programming mode */
-
 
     /* clear external reset flags */
     MCUSR = 0;
@@ -394,16 +413,11 @@ int __attribute__ ((noreturn,OS_main)) main(void)
 
 
     /* disconnect for ~500ms, so that the host re-enumerates this device */
-    putc('d');
     usbDeviceDisconnect();
     for (uint8_t i = 0; i < 50; i++)
         _delay_ms(10); /* 0 means 0x10000, 38*1/f*0x10000 =~ 498ms */
     usbDeviceConnect();
-    putc('c');
-
-
-    
-
+    uart_puts("Wait for firmware");
     while(1) {
         usbPoll();
 
@@ -411,14 +425,14 @@ int __attribute__ ((noreturn,OS_main)) main(void)
 
         /* do some led blinking, so that it is visible that the bootloader is still running */
         if (delay == 0) {
-            putc('p');
+            uart_putc('.');
             DLED_TGL;
             if (timeout < 255)
                 timeout--;
         }
 
         if (request_exit || timeout == 0) {
-            putc('e');
+            uart_puts("\n\rExit\n\r");
             _delay_ms(10);
             leave_bootloader();
         }

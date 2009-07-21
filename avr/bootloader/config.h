@@ -16,3 +16,7 @@
 
 /* uncomment this for debug information via uart */
 #define DEBUG_UART
+
+
+#define DEBUG                       1
+#define DEBUG_USB                   2

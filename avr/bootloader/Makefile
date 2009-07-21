@@ -4,15 +4,17 @@ TARGET = bootloader
 F_CPU = 20000000UL
 MCU = atmega644
 
-SRC = bootloader.c
+SRC = bootloader.c  
 ASRC = usbdrv/usbdrvasm.S interrupts.S
 OBJECTS += $(patsubst %.c,%.o,${SRC})
 OBJECTS += $(patsubst %.S,%.o,${ASRC})
 HEADERS += $(shell echo *.h)
 # CFLAGS += -Werror
+
 LDFLAGS += -L/usr/local/avr/avr/lib
 CFLAGS += -Iusbdrv -I.
 CFLAGS += -DHARDWARE_REV=$(HARDWARE_REV)
+CDEFS += -DF_CPU
 ASFLAGS += -x assembler-with-cpp
 ASFLAGS += -Iusbdrv -I.
 
@@ -36,12 +38,12 @@ else ifeq ($(MCU),atmega88)
 	# bootloader section starts at 0xc00 (word-address) == 0x1800 (byte-address)
 	BOOT_SECTION_START = 0x1800
 else ifeq ($(MCU),atmega644)
-        # atmega88 with 2048 words bootloader:
+        # atmega644 with 2048 words bootloader:
         # bootloader section starts at 0x7800 (word-address) == 0xF000 (byte-address)
         BOOT_SECTION_START = 0xf000
 endif
 
-LDFLAGS += -Wl,--section-start=.text=$(BOOT_SECTION_START)
+LDFLAGS += -Wl,--section-start=.text=$(BOOT_SECTION_START) -Wl,-u,vfprintf
 CFLAGS += -DBOOT_SECTION_START=$(BOOT_SECTION_START)
 
 

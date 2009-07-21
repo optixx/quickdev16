@@ -2,9 +2,9 @@
 TTY     = /dev/tty.PL2303-00002126
 DEVICE  = atmega644
 F_CPU   = 20000000	# in Hz
-
+TARGET  = main
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
-
+SIZE    = avr-size
 CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 
 
 OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o dump.o timer.o watchdog.o
@@ -31,6 +31,11 @@ help:
 all: hex
 
 hex: main.hex
+	@echo "==============================="
+	@echo "$(TARGET) compiled for: $(DEVICE)"
+	@echo -n "size is: "
+	@$(SIZE) -A $(TARGET).hex | grep "\.sec1" | tr -s " " | cut -d" " -f2
+	@echo "==============================="
 
 program: flash fuse
 

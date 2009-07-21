@@ -30,9 +30,13 @@ spc: $(SPCOFILES)
 $(SPCOFILES): $(SPCSFILES)
 	$(SPCAC) $(AFLAGS) $(SPCSFILES)
 
+header:
+	$(UCON) -smc $(ROMFILE)
+
 flash:
 	$(FL) $(FLFLAGS) $(ROMFILE)
-upload:
+
+upload: header
 	$(UCON) $(UCONFLAGS) $(ROMFILE)
 run:
 	$(EMU) $(ROMFILE)

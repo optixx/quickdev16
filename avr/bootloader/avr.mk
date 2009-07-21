@@ -15,7 +15,6 @@ AS = avr-as
 CP = cp
 RM = rm -f
 AVRDUDE = avrdude
-AVRDUDE_BAUDRATE = 19200
 SIZE = avr-size
 
 -include $(CURDIR)/config.mk
