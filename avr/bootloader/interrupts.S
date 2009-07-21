@@ -5,5 +5,5 @@
 /* micro-jumptable, we are using just reset and int0 vectors */
 exit:
 __vector_default:
-rjmp __init
-rjmp __vector_1
+jmp __init
+jmp __vector_1

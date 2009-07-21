@@ -1,10 +1,10 @@
 /* Name: usbdrvasm.asm
- * Project: V-USB, virtual USB port for Atmel's(r) AVR(r) microcontrollers
+ * Project: AVR USB driver
  * Author: Christian Starkjohann
  * Creation Date: 2006-03-01
  * Tabsize: 4
  * Copyright: (c) 2006 by OBJECTIVE DEVELOPMENT Software GmbH
- * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
+ * License: GNU GPL v2 (see License.txt) or proprietary (CommercialLicense.txt)
  * This Revision: $Id$
  */
 

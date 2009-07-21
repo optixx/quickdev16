@@ -85,7 +85,7 @@ static const uint8_t signature[4] = {
 #elif defined (__AVR_ATmega328P__)
     0x1e, 0x95, 0x0f, 0
 #elif defined (__AVR_ATmega644__)
-    0x1e, 0x96, 0x06, 0
+    0x1e, 0x96, 0x09, 0
 #else
 #   error "Device signature is not known, please edit config.h!"
 #endif
@@ -109,7 +109,7 @@ static __attribute__ (( __noinline__ )) void putc(uint8_t data) {
  * which turn the interrupt on and off at the right times,
  * and prevent the execution of an interrupt while the pullup resistor
  * is switched off */
-/*
+
 #ifdef USB_CFG_PULLUP_IOPORTNAME
 #undef usbDeviceConnect
 #define usbDeviceConnect()      do { \
@@ -124,7 +124,7 @@ static __attribute__ (( __noinline__ )) void putc(uint8_t data) {
                                     USB_PULLUP_OUT &= ~(1<<USB_CFG_PULLUP_BIT); \
                                    } while(0);
 #endif
-*/
+
 /* prototypes */
 void __attribute__ (( __noreturn__, __noinline__, __naked__ )) leave_bootloader(void);
 
@@ -341,39 +341,39 @@ int __attribute__ ((noreturn,OS_main)) main(void)
     UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
     UCSR0B = _BV(TXEN0);
 #endif
-    putc('a');
+    putc('0');
 
-    wdt_disable();
-  
+
+
     uint8_t reset = MCUSR;
-    reset=0;
     uint16_t delay =0;
     timeout = TIMEOUT;
 
 
     /* if power-on reset, quit bootloader via watchdog reset */
     if (reset & _BV(PORF)){
-        putc('p');
+        putc('P');
 	    MCUSR = 0;
         leave_bootloader();
     }
     /* if watchdog reset, disable watchdog and jump to app */
     else if(reset & _BV(WDRF)){
         
-	    MCUSR = 0;
-        //WDTCSR |= (1<<WDCE);
-        //WDTCSR &= ~((1<<WDIE) | (1<<WDE));                    
-	    wdt_disable();
-        putc('r');
-        while(1);
-	    jump_to_app();	
+	MCUSR = 0;
+    	wdt_disable();
+        putc('W');
+
+		DLED_TGL;
+		_delay_ms(500);
+		DLED_TGL;
+		_delay_ms(500);
+
+	jump_to_app();	
     }
-    
-    while(1);
+
 
     /* else: enter programming mode */
 
-    putc('u');
 
     /* clear external reset flags */
     MCUSR = 0;
@@ -386,9 +386,12 @@ int __attribute__ ((noreturn,OS_main)) main(void)
     MCUCR = (1 << IVCE);
     MCUCR = (1 << IVSEL);
 
-    cli();
+    /* enable interrupts */
+    sei();
+
     /* initialize usb pins */
     usbInit();
+
 
     /* disconnect for ~500ms, so that the host re-enumerates this device */
     putc('d');
@@ -397,14 +400,14 @@ int __attribute__ ((noreturn,OS_main)) main(void)
         _delay_ms(10); /* 0 means 0x10000, 38*1/f*0x10000 =~ 498ms */
     usbDeviceConnect();
     putc('c');
+
+
     
-    /* enable interrupts */
-    sei();
 
     while(1) {
-        //wdt_reset();
         usbPoll();
-        delay++;
+
+       delay++;
 
         /* do some led blinking, so that it is visible that the bootloader is still running */
         if (delay == 0) {
@@ -419,8 +422,7 @@ int __attribute__ ((noreturn,OS_main)) main(void)
             _delay_ms(10);
             leave_bootloader();
         }
-    }
-    putc('l');
 
-    leave_bootloader();
+    }
+ 
 }

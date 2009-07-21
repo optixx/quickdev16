@@ -1,7 +1,7 @@
 # Programmer used for In System Programming
 ISP_PROG = usbasp
 # device the ISP programmer is connected to
-ISP_DEV = /dev/tty.PL2303-00002126
+ISP_DEV = 
 # Programmer used for serial programming (using the bootloader)
 SERIAL_PROG = avr109
 # device the serial programmer is connected to
@@ -38,7 +38,6 @@ ifeq ($(MCU),atmega644)
 endif
 
 
-
 AVRDUDE_FLAGS += -p $(AVRDUDE_MCU) 
 
 # flags for the compiler
@@ -67,26 +66,13 @@ $(OBJECTS):
 clean:
 	$(RM) *.hex *.eep.hex *.o *.lst *.lss
 
-interactive-isp:
-	$(AVRDUDE) $(AVRDUDE_FLAGS) -c $(ISP_PROG) -P $(ISP_DEV) -t
-
-interactive-serial:
-	$(AVRDUDE) $(AVRDUDE_FLAGS) -c $(SERIAL_PROG) -P $(SERIAL_DEV) -t
-
-
 .PHONY: all clean interactive-isp interactive-serial launch-bootloader
 
-flash:  bootloader.hex
+flash: 
 	$(AVRDUDE) $(AVRDUDE_FLAGS) -c $(ISP_PROG) -U flash:w:$<
 
-program-isp-eeprom-%: %.eep.hex
+flash-eeprom-%: %.eep.hex
 	$(AVRDUDE) $(AVRDUDE_FLAGS) -c $(ISP_PROG) -P $(ISP_DEV) -U eeprom:w:$<
-
-program-serial-%: %.hex
-	$(AVRDUDE) $(AVRDUDE_FLAGS) -c $(SERIAL_PROG) -P $(SERIAL_DEV) -U flash:w:$<
-
-program-serial-eeprom-%: %.eep.hex launch-bootloader
-	$(AVRDUDE) $(AVRDUDE_FLAGS) -c $(SERIAL_PROG) -P $(SERIAL_DEV) -U eeprom:w:$<
 
 %.hex: %
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
@@ -99,6 +85,3 @@ program-serial-eeprom-%: %.eep.hex launch-bootloader
 
 %-size: %.hex
 	$(SIZE) $<
-
-launch-bootloader:
-	launch-bootloader $(SERIAL_DEV) $(AVRDUDE_BAUDRATE)

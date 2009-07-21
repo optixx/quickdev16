@@ -4,8 +4,8 @@
  * Creation Date: 2006-03-01
  * Tabsize: 4
  * Copyright: (c) 2006 by OBJECTIVE DEVELOPMENT Software GmbH
- * License: Proprietary, free under certain conditions. See Documentation.
- * This Revision: $Id$
+ * License: GNU GPL v2 (see License.txt) or proprietary (CommercialLicense.txt)
+ * This Revision: $Id: iarcompat.h 533 2008-02-28 15:35:25Z cs $
  */
 
 /*
@@ -33,11 +33,6 @@ Thanks to Oleg Semyonov for his help with the IAR tools port!
 #endif
 
 #define __attribute__(arg)
-#define IAR_SECTION(section)    @ section
-
-#ifndef USB_BUFFER_SECTION
-#   define  USB_BUFFER_SECTION  "TINY_Z"    /* if user has not selected a named section */
-#endif
 
 #ifdef __IAR_SYSTEMS_ASM__
 #   define __ASSEMBLER__
@@ -58,6 +53,13 @@ Thanks to Oleg Semyonov for his help with the IAR tools port!
 #define sei()       __enable_interrupt()
 #define wdt_reset() __watchdog_reset()
 
+/* Depending on the device you use, you may get problems with the way usbdrv.h
+ * handles the differences between devices. Since IAR does not use #defines
+ * for MCU registers, we can't check for the existence of a particular
+ * register with an #ifdef. If the autodetection mechanism fails, include
+ * definitions for the required USB_INTR_* macros in your usbconfig.h. See
+ * usbconfig-prototype.h and usbdrv.h for details.
+ */
 
 #endif  /* defined __IAR_SYSTEMS_ICC__ || defined __IAR_SYSTEMS_ASM__ */
 #endif  /* __iarcompat_h_INCLUDED__ */
