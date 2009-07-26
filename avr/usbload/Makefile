@@ -7,7 +7,7 @@ AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 SIZE    = avr-size
 CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 
 
-OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o dump.o timer.o watchdog.o
+OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o dump.o timer.o watchdog.o huffman-decode.o rle.c loader.o
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 
 

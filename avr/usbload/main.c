@@ -24,6 +24,7 @@
 #include <util/delay.h>         /* for _delay_ms() */
 #include <stdlib.h>
 #include <avr/pgmspace.h>       /* required by usbdrv.h */
+#include <avr/eeprom.h>	
 
 #include "usbdrv.h"
 #include "oddebug.h"            /* This is also an example for using debug
@@ -38,7 +39,11 @@
 #include "usb_bulk.h"
 #include "timer.h"
 #include "watchdog.h"
+#include "huffman-decode.h"
+#include "rle.h"
 
+
+extern const char _rom[] PROGMEM;
 extern FILE uart_stdout;
 
 uint8_t debug_level = ( DEBUG | DEBUG_USB | DEBUG_CRC );
@@ -338,17 +343,155 @@ void test_crc(){
     test_non_zero_memory(0x000000,0x10000);
 }
 
+uint16_t read_byte_pgm(uint16_t addr){
+	return pgm_read_byte((PGM_VOID_P)addr);
+}
+
+uint16_t read_byte_ee(uint16_t addr){
+	return eeprom_read_byte((uint8_t*)addr);
+}
+
+
+void decompress(PGM_VOID_P addr, uint16_t(*fp)(uint16_t)){
+	uint16_t c;
+	uint32_t i = 0;
+	huffman_dec_ctx_t ctx;
+	huffman_dec_init(&ctx, fp);
+	huffman_dec_set_addr(&ctx, (uint16_t)addr);
+	while(1){
+        i++;
+		c=huffman_dec_byte(&ctx);
+        if (i%1024==0)
+            printf(".");
+		if(c>0xff){
+			return;
+		}
+		c&=0xff;
+        sram_bulk_write(c);
+	}
+}
+
+void decompress_huffman(void){
+    printf("Decompress Rom %p to 0x000000\n",(void*)_rom);
+	sram_bulk_write_start(0x000000);
+    decompress(&_rom,read_byte_pgm);
+	sram_bulk_write_end();
+    printf("Done\n");
+}
+
+void decompress_rle(void){
+    rle_decode(&_rom,30180,0x000000);
+    printf("Done\n");
+}
+
+void boot_startup_rom(){
+    
+    uint8_t i = 0;
+    
+    printf("Activate AVR bus\n");
+    avr_bus_active();
+
+    printf("IRQ off\n");
+    snes_irq_lo();
+    snes_irq_off();
+
+    printf("Set Snes hirom\n");
+    snes_hirom();
+
+    printf("Disable snes WR\n");
+    snes_wr_disable(); 
+    
+    printf("IRQ off\n");
+    snes_irq_lo();
+    snes_irq_off();
+    
+    decompress_rle();
+    //dump_memory(0x00000, 0x000100);
+    //dump_memory(0x10000 - 0x100, 0x10000);
+
+    decompress_rle();
+    dump_memory(0x00000, 0x000100);
+    dump_memory(0x10000 - 0x100, 0x10000);
+    //crc_check_bulk_memory(0x00000, 0x10000, 0x8000);
+    
+    snes_bus_active();
+    printf("Activate Snes bus\n");
+
+    _delay_ms(100);
+    printf("Reset Snes\n");
+    snes_reset_on();
+    snes_reset_lo();
+    _delay_ms(2);
+    snes_reset_hi();
+    snes_reset_off();
+    i = 20;
+    printf("Wait");
+    while (--i){               
+        _delay_ms(500);
+        printf(".");
+    }
+    printf("\n");
+    
+}
+
+void send_reset(){
+    printf("Reset Snes\n");
+    snes_reset_on();
+    snes_reset_lo();
+    _delay_ms(2);
+    snes_reset_hi();
+    snes_reset_off();
+}
+
+void send_irq(){
+    snes_irq_on();
+    snes_irq_lo();
+    _delay_us(20);
+    snes_irq_hi();
+    snes_irq_off();
+}
+
+void set_rom_mode(){
+    if (req_bank_size == 0x8000){
+        snes_lorom();
+        printf("Set Snes lowrom \n");
+    } else {
+        snes_hirom();
+        printf("Set Snes hirom \n");
+    }
+}
+
+
+void usb_connect(){
+    uint8_t i = 0;
+    printf("USB init\n");
+    usbDeviceDisconnect();      /* enforce re-enumeration, do this while */
+    cli();                             
+    printf("USB disconnect\n");
+    i = 10;
+    while (--i) {               /* fake USB disconnect for > 250 ms */
+        led_on(); 
+        _delay_ms(35);
+        led_off();
+        _delay_ms(65);
+    }
+    led_on();
+    usbDeviceConnect();
+    printf("USB connect\n");
+}
+
+
 int main(void)
 {
     uint8_t i;
-    uint8_t c;
+    uint16_t irq_count = 0;
     
     uart_init();
     stdout = &uart_stdout;
-
-    
-    system_init();
     printf("Sytem start\n");
+    system_init();
+    printf("Boot startup rom\n");
+    boot_startup_rom();
 
 #if 0
     wdt_init();
@@ -363,98 +506,56 @@ int main(void)
 #endif
     
     usbInit();
-    printf("USB init\n");
-    usbDeviceDisconnect();      /* enforce re-enumeration, do this while
-                                 * interrupts are disabled! */
-    cli();                             
-    printf("USB disconnect\n");
-    i = 10;
-    while (--i) {               /* fake USB disconnect for > 250 ms */
-        led_on(); 
-        _delay_ms(35);
-        led_off();
-        _delay_ms(65);
-    }
-    led_on();
-    
-    usbDeviceConnect();
-    printf("USB connect\n");
-
+    usb_connect();
     
     while (1){
         avr_bus_active();
         printf("Activate AVR bus\n");
-
         printf("IRQ off\n");
         snes_irq_lo();
         snes_irq_off();
-
         printf("Set Snes lowrom\n");
         snes_lorom();
-
         printf("Disable snes WR\n");
         snes_wr_disable(); 
-
         sei();
         printf("USB poll\n");
         while (req_state != REQ_STATUS_SNES){
             usbPoll();
         }
         printf("USB poll done\n");
-    
-
-    #if 0    
-        crc_check_bulk_memory(0x000000, req_addr_end, req_bank_size);
-    #endif
-
         snes_reset_hi();
         snes_reset_off();
-
         snes_irq_lo();
         snes_irq_off();
-    
         printf("IRQ off\n");
-        if (req_bank_size == 0x8000){
-            snes_lorom();
-            printf("Set Snes lowrom \n");
-        } else {
-            snes_hirom();
-            printf("Set Snes hirom \n");
-        }
+        set_rom_mode();
         snes_wr_disable(); 
         printf("Disable snes WR\n");
-        
         snes_bus_active();
         printf("Activate Snes bus\n");
-
         _delay_ms(100);
         printf("Reset Snes\n");
-        snes_reset_on();
-        snes_reset_lo();
-        _delay_ms(2);
-        snes_reset_hi();
-        snes_reset_off();
+        send_reset();
 
         printf("Poll\n");
         while (req_state != REQ_STATUS_AVR){
             usbPoll();
-#if 0          
-            i = 20;
+#if 1          
+            i = 10;
             while (--i) {               /* fake USB disconnect for > 250 ms */
-                _delay_ms(500);
-                printf("Wait to switch to avr mode %i\n", i);
+                _delay_ms(100);
             }
-            printf("Send IRQ\n");
-            //snes_irq_lo();
-            //snes_irq_on();
-            //_delay_ms(1);
+            printf("Send IRQ %i\n",++irq_count);
+            send_irq();
+#endif
 
+#if 0          
             avr_bus_active();
-            
             sram_bulk_read_start(0x003000);
             c = sram_bulk_read();
             i = 5;
-            while (--i) {               /* fake USB disconnect for > 250 ms */
+            while (--i) {               
                 _delay_ms(500);
                 printf("Wait to switch to snes mode %i\n", i);
             }
@@ -468,10 +569,8 @@ int main(void)
             }
             snes_wr_disable(); 
             printf("Disable snes WR\n");
-
             snes_bus_active();
             printf("Activate Snes bus\n");
-            
             printf("Read 0x3000=%c\n",c);
 #endif
         }
