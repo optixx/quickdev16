@@ -224,8 +224,7 @@ inline void sram_bulk_write_next(void)
 inline void sram_bulk_write( uint8_t data)
 {
     AVR_DATA_PORT = data;
-    
-}
+    }
 
 void sram_bulk_write_end(void)
 {

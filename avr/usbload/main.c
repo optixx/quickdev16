@@ -395,6 +395,10 @@ void boot_startup_rom(){
     snes_irq_lo();
     snes_irq_off();
 
+    snes_lorom();
+    printf("Set Snes lowrom \n");
+
+/*    
     printf("Set Snes hirom\n");
     snes_hirom();
 
@@ -404,26 +408,25 @@ void boot_startup_rom(){
     printf("IRQ off\n");
     snes_irq_lo();
     snes_irq_off();
-    
-    decompress_rle();
-    //dump_memory(0x00000, 0x000100);
-    //dump_memory(0x10000 - 0x100, 0x10000);
+*/  
 
     decompress_rle();
-    dump_memory(0x00000, 0x000100);
     dump_memory(0x10000 - 0x100, 0x10000);
     //crc_check_bulk_memory(0x00000, 0x10000, 0x8000);
-    
-    snes_bus_active();
-    printf("Activate Snes bus\n");
-
-    _delay_ms(100);
-    printf("Reset Snes\n");
-    snes_reset_on();
-    snes_reset_lo();
-    _delay_ms(2);
+ 
     snes_reset_hi();
     snes_reset_off();
+    snes_irq_lo();
+    snes_irq_off();
+    printf("IRQ off\n");
+    snes_hirom();
+    snes_wr_disable(); 
+    printf("Disable snes WR\n");
+    snes_bus_active();
+    printf("Activate Snes bus\n");
+    _delay_ms(100);
+    printf("Reset Snes\n");
+    send_reset();
     i = 20;
     printf("Wait");
     while (--i){               
@@ -488,15 +491,9 @@ int main(void)
     
     uart_init();
     stdout = &uart_stdout;
+    
     printf("Sytem start\n");
     system_init();
-    printf("Boot startup rom\n");
-    boot_startup_rom();
-
-#if 0
-    wdt_init();
-    printf("Watchdog init\n");
-#endif
 
 #if 0
     test_read_write();
@@ -504,6 +501,9 @@ int main(void)
     test_crc();
     while(1);
 #endif
+    
+    printf("Boot startup rom\n");
+    boot_startup_rom();
     
     usbInit();
     usb_connect();
