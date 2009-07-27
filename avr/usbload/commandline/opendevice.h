@@ -1,24 +1,31 @@
-/* Name: opendevice.h
- * Project: V-USB host-side library
- * Author: Christian Starkjohann
- * Creation Date: 2008-04-10
- * Tabsize: 4
- * Copyright: (c) 2008 by OBJECTIVE DEVELOPMENT Software GmbH
- * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
- * This Revision: $Id: opendevice.h 740 2009-04-13 18:23:31Z cs $
+/*
+ * =====================================================================================
+ *
+ * ________        .__        __    ________               ____  ________
+ * \_____  \  __ __|__| ____ |  | __\______ \   _______  _/_   |/  _____/
+ *  /  / \  \|  |  \  |/ ___\|  |/ / |    |  \_/ __ \  \/ /|   /   __  \
+ * /   \_/.  \  |  /  \  \___|    <  |    `   \  ___/\   / |   \  |__\  \
+ * \_____\ \_/____/|__|\___  >__|_ \/_______  /\___  >\_/  |___|\_____  /
+ *        \__>             \/     \/        \/     \/                 \/
+ *              ___.
+ *  __ __  _____\_ |__
+ * |  |  \/  ___/| __ \
+ * |  |  /\___ \ | \_\ \
+ * |____//____  >|___  /
+ *            \/     \/
+ *
+ *                                  www.optixx.org
+ *
+ *
+ *        Version:  1.0
+ *        Created:  07/21/2009 03:32:16 PM
+ *         Author:  david@optixx.org
+ *       Based on:  custom-class, a basic USB example 
+ *         Author:  Christian Starkjohann 
+ * =====================================================================================
  */
 
-/*
-General Description:
-This module offers additional functionality for host side drivers based on
-libusb or libusb-win32. It includes a function to find and open a device
-based on numeric IDs and textual description. It also includes a function to
-obtain textual descriptions from a device.
 
-To use this functionality, simply copy opendevice.c and opendevice.h into your
-project and add them to your Makefile. You may modify and redistribute these
-files according to the GNU General Public License (GPL) version 2 or 3.
-*/
 
 #ifndef __OPENDEVICE_H_INCLUDED__
 #define __OPENDEVICE_H_INCLUDED__

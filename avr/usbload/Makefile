@@ -1,3 +1,27 @@
+# =====================================================================================
+#
+# ________        .__        __    ________               ____  ________
+# \_____  \  __ __|__| ____ |  | __\______ \   _______  _/_   |/  _____/
+#  /  / \  \|  |  \  |/ ___\|  |/ / |    |  \_/ __ \  \/ /|   /   __  \
+# /   \_/.  \  |  /  \  \___|    <  |    `   \  ___/\   / |   \  |__\  \
+# \_____\ \_/____/|__|\___  >__|_ \/_______  /\___  >\_/  |___|\_____  /
+#        \__>             \/     \/        \/     \/                 \/
+#              ___.
+#  __ __  _____\_ |__
+# |  |  \/  ___/| __ \
+# |  |  /\___ \ | \_\ \
+# |____//____  >|___  /
+#            \/     \/
+#
+#                                  www.optixx.org
+#
+#
+#        Version:  1.0
+#        Created:  07/21/2009 03:32:16 PM
+#         Author:  david@optixx.org
+#       Based on:  custom-class, a basic USB example 
+#         Author:  Christian Starkjohann 
+# =====================================================================================
 
 TTY     = /dev/tty.PL2303-00002126
 DEVICE  = atmega644
@@ -18,8 +42,8 @@ COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 FUSE_L  = 0xf7
 FUSE_H  = 0xda
 
+all: hex
 
-# symbolic targets:
 help:
 	@echo "This Makefile has no default rule. Use one of the following:"
 	@echo "make hex ....... to build main.hex"
@@ -27,8 +51,6 @@ help:
 	@echo "make fuse ...... to flash the fuses"
 	@echo "make flash ..... to flash the firmware (use this on metaboard)"
 	@echo "make clean ..... to delete objects and hex file"
-
-all: hex
 
 hex: main.hex
 	@echo "==============================="

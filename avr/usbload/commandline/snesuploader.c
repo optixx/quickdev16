@@ -1,17 +1,28 @@
 /*
- * Name: set-led.c Project: custom-class, a basic USB example Author:
- * Christian Starkjohann Creation Date: 2008-04-10 Tabsize: 4 Copyright: (c)
- * 2008 by OBJECTIVE DEVELOPMENT Software GmbH License: GNU GPL v2 (see
- * License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt) This
- * Revision: $Id: set-led.c 692 2008-11-07 15:07:40Z cs $
- */
-
-/*
- * General Description: This is the host-side driver for the custom-class
- * example device. It searches the USB for the LEDControl device and sends the
- * requests understood by this device. This program must be linked with libusb
- * on Unix and libusb-win32 on Windows. See http://libusb.sourceforge.net/ or
- * http://libusb-win32.sourceforge.net/ respectively. 
+ * =====================================================================================
+ *
+ * ________        .__        __    ________               ____  ________
+ * \_____  \  __ __|__| ____ |  | __\______ \   _______  _/_   |/  _____/
+ *  /  / \  \|  |  \  |/ ___\|  |/ / |    |  \_/ __ \  \/ /|   /   __  \
+ * /   \_/.  \  |  /  \  \___|    <  |    `   \  ___/\   / |   \  |__\  \
+ * \_____\ \_/____/|__|\___  >__|_ \/_______  /\___  >\_/  |___|\_____  /
+ *        \__>             \/     \/        \/     \/                 \/
+ *              ___.
+ *  __ __  _____\_ |__
+ * |  |  \/  ___/| __ \
+ * |  |  /\___ \ | \_\ \
+ * |____//____  >|___  /
+ *            \/     \/
+ *
+ *                                  www.optixx.org
+ *
+ *
+ *        Version:  1.0
+ *        Created:  07/21/2009 03:32:16 PM
+ *         Author:  david@optixx.org
+ *       Based on:  custom-class, a basic USB example 
+ *         Author:  Christian Starkjohann 
+ * =====================================================================================
  */
 
 

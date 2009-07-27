@@ -1,11 +1,18 @@
 /*
  * =====================================================================================
  *
- *            .d8888b  88888b.   .d88b.  .d8888b  888d888 8888b.  88888b.d88b.
- *            88K      888 "88b d8P  Y8b 88K      888P"      "88b 888 "888 "88b
- *            "Y8888b. 888  888 88888888 "Y8888b. 888    .d888888 888  888  888
- *                 X88 888  888 Y8b.          X88 888    888  888 888  888  888
- *             88888P' 888  888  "Y8888   88888P' 888    "Y888888 888  888  888
+ * ________        .__        __    ________               ____  ________
+ * \_____  \  __ __|__| ____ |  | __\______ \   _______  _/_   |/  _____/
+ *  /  / \  \|  |  \  |/ ___\|  |/ / |    |  \_/ __ \  \/ /|   /   __  \
+ * /   \_/.  \  |  /  \  \___|    <  |    `   \  ___/\   / |   \  |__\  \
+ * \_____\ \_/____/|__|\___  >__|_ \/_______  /\___  >\_/  |___|\_____  /
+ *        \__>             \/     \/        \/     \/                 \/
+ *              ___.
+ *  __ __  _____\_ |__
+ * |  |  \/  ___/| __ \
+ * |  |  /\___ \ | \_\ \
+ * |____//____  >|___  /
+ *            \/     \/
  *
  *                                  www.optixx.org
  *
@@ -15,23 +22,6 @@
  *         Author:  david@optixx.org
  *
  * =====================================================================================
- */
-
-
-
-/* Name: requests.h
- * Project: custom-class, a basic USB example
- * Author: Christian Starkjohann
- * Creation Date: 2008-04-09
- * Tabsize: 4
- * Copyright: (c) 2008 by OBJECTIVE DEVELOPMENT Software GmbH
- * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
- * This Revision: $Id: requests.h 692 2008-11-07 15:07:40Z cs $
- */
-
-/* This header is shared between the firmware and the host software. It
- * defines the USB request numbers (and optionally data types) used to
- * communicate between the host and the device.
  */
 
 #ifndef __REQUESTS_H__
