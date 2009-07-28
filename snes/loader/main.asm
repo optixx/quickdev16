@@ -230,7 +230,11 @@ MemClearLoop4:		;regs $2123-$2133
 	lda.w SetIni			;set display mode 
 	sta.w $2133			;dont set this during nmi cause if the overscan flag is changed mid-nmi, it might result in screw ups with the nmi timing
 	cli
-	jsr EnableScreen
+	jsr ROMToWRAM
+    jml (go+$7f0000)
+go:
+    jsr EnableScreen
+    jsr SpcPlaySong
 /*		
 ;main loop starts here:
 CheckNextFrame:
