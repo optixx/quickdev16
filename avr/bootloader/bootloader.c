@@ -7,12 +7,6 @@
  * /   \_/.  \  |  /  \  \___|    <  |    `   \  ___/\   / |   \  |__\  \
  * \_____\ \_/____/|__|\___  >__|_ \/_______  /\___  >\_/  |___|\_____  /
  *        \__>             \/     \/        \/     \/                 \/
- *              ___.
- *  __ __  _____\_ |__
- * |  |  \/  ___/| __ \
- * |  |  /\___ \ | \_\ \
- * |____//____  >|___  /
- *            \/     \/
  *
  *                                  www.optixx.org
  *
@@ -20,7 +14,7 @@
  *        Version:  1.0
  *        Created:  07/21/2009 03:32:16 PM
  *         Author:  david@optixx.org
- *         
+ *
  *        simple USBasp compatible bootloader by 
  *        Alexander Neumann <alexander@lochraster.org> 
  *        inspired by USBasploader by Christian Starkjohann,
