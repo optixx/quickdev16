@@ -42,6 +42,7 @@
 #include "watchdog.h"
 #include "huffman-decode.h"
 #include "rle.h"
+#include "loader.h"
 
 
 extern const char _rom[] PROGMEM;
@@ -380,63 +381,7 @@ void decompress_huffman(void){
     printf("Done\n");
 }
 
-void decompress_rle(void){
-    rle_decode(&_rom,30180,0x000000);
-    printf("Done\n");
-}
 
-void boot_startup_rom(){
-    
-    uint8_t i = 0;
-    
-    printf("Activate AVR bus\n");
-    avr_bus_active();
-
-    printf("IRQ off\n");
-    snes_irq_lo();
-    snes_irq_off();
-
-    snes_lorom();
-    printf("Set Snes lowrom \n");
-
-/*    
-    printf("Set Snes hirom\n");
-    snes_hirom();
-
-    printf("Disable snes WR\n");
-    snes_wr_disable(); 
-    
-    printf("IRQ off\n");
-    snes_irq_lo();
-    snes_irq_off();
-*/  
-
-    decompress_rle();
-    dump_memory(0x10000 - 0x100, 0x10000);
-    //crc_check_bulk_memory(0x00000, 0x10000, 0x8000);
- 
-    snes_reset_hi();
-    snes_reset_off();
-    snes_irq_lo();
-    snes_irq_off();
-    printf("IRQ off\n");
-    snes_hirom();
-    snes_wr_disable(); 
-    printf("Disable snes WR\n");
-    snes_bus_active();
-    printf("Activate Snes bus\n");
-    _delay_ms(100);
-    printf("Reset Snes\n");
-    send_reset();
-    i = 20;
-    printf("Wait");
-    while (--i){               
-        _delay_ms(500);
-        printf(".");
-    }
-    printf("\n");
-    
-}
 
 void send_reset(){
     printf("Reset Snes\n");
@@ -484,6 +429,58 @@ void usb_connect(){
     printf("USB connect\n");
 }
 
+
+void boot_startup_rom(){
+    
+    uint8_t i = 0;
+    
+    printf("Activate AVR bus\n");
+    avr_bus_active();
+
+    printf("IRQ off\n");
+    snes_irq_lo();
+    snes_irq_off();
+
+    snes_lorom();
+    printf("Set Snes lowrom \n");
+
+/*    
+    printf("Set Snes hirom\n");
+    snes_hirom();
+
+    printf("Disable snes WR\n");
+    snes_wr_disable(); 
+    
+    printf("IRQ off\n");
+    snes_irq_lo();
+    snes_irq_off();
+*/  
+
+    rle_decode(&_rom, ROM_SIZE, 0x000000);
+    dump_memory(0x10000 - 0x100, 0x10000);
+ 
+    snes_reset_hi();
+    snes_reset_off();
+    snes_irq_lo();
+    snes_irq_off();
+    printf("IRQ off\n");
+    snes_hirom();
+    snes_wr_disable(); 
+    printf("Disable snes WR\n");
+    snes_bus_active();
+    printf("Activate Snes bus\n");
+    _delay_ms(100);
+    printf("Reset Snes\n");
+    send_reset();
+    i = 20;
+    printf("Wait");
+    while (--i){               
+        _delay_ms(500);
+        printf(".");
+    }
+    printf("\n");
+    
+}
 
 int main(void)
 {

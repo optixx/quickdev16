@@ -18,8 +18,8 @@
  * =====================================================================================
  */
 
- #ifndef __SRAM_H__
- #define __SRAM_H__
+ #ifndef __RLE_H__
+ #define __RLE_H__
  
 #include <avr/pgmspace.h>       
 
