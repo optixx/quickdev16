@@ -18,32 +18,25 @@
  * =====================================================================================
  */
 
+
+
+#ifndef __INFO_H__
+#define __INFO_H__
+
 #include <stdlib.h>
 #include <stdint.h>
-
-#include "debug.h"
-#include "uart.h"
+#include <stdarg.h>
 
 
-
-extern FILE uart_stdout;
-
-extern int debug_level; /* the higher, the more messages... */
-
-#if defined(NO_DEBUG) && defined(__GNUC__)
+#if defined(NO_INFO) && defined(__GNUC__)
+/* gcc's cpp has extensions; it allows for macros with a variable number of
+   arguments. We use this extension here to preprocess pmesg away. */
+#define info(format, args...) ((void)0)
 #else
-void debug(int level, char* format, ...) {
-#ifdef NO_DEBUG
+void info(char *format, ...);
+/* print a message, if it is considered significant enough.
+      Adapted from [K&R2], p. 174 */
+#endif
 
-#else
-    va_list args;
-    if (!(debug_level & level))
-        return;
-    va_start(args, format);
-    vprintf(format, args);
-    va_end(args);
-#endif 
-}
-#endif 
 
-   
+#endif 

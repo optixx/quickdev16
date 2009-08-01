@@ -21,24 +21,24 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "debug.h"
+#include "info.h"
 #include "uart.h"
 
 
 
 extern FILE uart_stdout;
 
-extern int debug_level; /* the higher, the more messages... */
 
-#if defined(NO_DEBUG) && defined(__GNUC__)
+#if defined(NO_INFO) && defined(__GNUC__)
+
+#define info(format, args...) ((void)0)
+
 #else
-void debug(int level, char* format, ...) {
-#ifdef NO_DEBUG
+void info(char* format, ...) {
+#ifdef NO_INFO
 
 #else
     va_list args;
-    if (!(debug_level & level))
-        return;
     va_start(args, format);
     vprintf(format, args);
     va_end(args);

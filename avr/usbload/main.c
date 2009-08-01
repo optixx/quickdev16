@@ -166,8 +166,13 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         rx_remaining = rq->wLength.word;
             
         if (req_addr && req_addr % req_bank_size == 0) {
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
+            #ifdef FLT_DEBUG
+                debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
                    req_bank, req_addr,timer_stop());
+            #else
+               debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%i\n",
+                  req_bank, req_addr,timer_stop_int());
+            #endif
             req_bank++;
             timer_start();
             
@@ -193,8 +198,13 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         sram_bulk_write_start(req_addr);
 #endif
         if (req_addr && ( req_addr % req_bank_size) == 0) {
-            debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
+            #ifdef FLT_DEBUG
+                debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
                    req_bank, req_addr,timer_stop());
+            #else
+               debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%i\n",
+                  req_bank, req_addr,timer_stop_int());
+            #endif
             req_bank++;
             timer_start();
             
@@ -539,7 +549,7 @@ int main(void)
         printf("Poll\n");
         while (req_state != REQ_STATUS_AVR){
             usbPoll();
-#if 1          
+#ifdef DO_IRQ          
             i = 10;
             while (--i) {               /* fake USB disconnect for > 250 ms */
                 _delay_ms(100);
@@ -548,7 +558,7 @@ int main(void)
             send_irq();
 #endif
 
-#if 0          
+#ifdef DO_BUS_STEALING          
             avr_bus_active();
             sram_bulk_read_start(0x003000);
             c = sram_bulk_read();

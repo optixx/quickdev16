@@ -78,9 +78,9 @@ void timer_start( void )
 
 }
 
-double timer_stop(void)
+uint16_t timer_stop_int(void)
 {
-    double t = ((double)(DEBOUNCE - prescaler) / DEBOUNCE )  + second;
+    uint16_t t = ((DEBOUNCE - prescaler) / DEBOUNCE )  + second;
     return t;
 }
 

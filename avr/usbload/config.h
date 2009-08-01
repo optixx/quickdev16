@@ -21,6 +21,7 @@
 #ifndef __CONFIH_H__
 #define __CONFIH_H__
 
+
 #define DEBUG                       1
 #define DEBUG_USB                   2
 #define DEBUG_USB_TRANS             4
