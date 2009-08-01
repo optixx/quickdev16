@@ -20,8 +20,8 @@ SPCFILE = $(SPCSFILES:.asm=.bin)
 
 all: spc $(OFILES) 
 	$(LD) $(LDFLAGS) linkfile $(ROMFILE)
-	dd if=$(ROMFILE) of=rom.smc bs=64k count=1
-	python conv_rle.py > loader.c
+	python conv_rle.py 
+
 $(OFILES): $(SFILES)
 	$(AC) $(AFLAGS) $(SFILES)
 
@@ -43,6 +43,6 @@ run:
 	$(EMU) $(ROMFILE)
 
 clean:
-	rm -f $(ROMFILE) rom.smc $(SPCFILE) core *~ *.o *.sym *.srm data/apu/*.o data/apu/*.sym
+	rm -f $(ROMFILE) rom.smc $(SPCFILE) core *~ *.o *.sym *.srm data/apu/*.o data/apu/*.sym loader.c loader.h
 
 
