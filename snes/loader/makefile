@@ -20,7 +20,9 @@ SPCFILE = $(SPCSFILES:.asm=.bin)
 
 all: spc $(OFILES) 
 	$(LD) $(LDFLAGS) linkfile $(ROMFILE)
+	dd if=$(ROMFILE) bs=1 count=65544 of=rom.smc
 	python conv_rle.py 
+	cp -v loader.[ch] ../../avr/usbload
 
 $(OFILES): $(SFILES)
 	$(AC) $(AFLAGS) $(SFILES)
