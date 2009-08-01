@@ -18,11 +18,14 @@
  */
 
 
-#include "huffman-decode.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include "huffman-decode.h"
+#include "info.h"
+#include "debug.h"
 
 #ifdef DEBUG
   #undef DEBUG
@@ -100,11 +103,11 @@ static inline void set_last_to_eof(node_t* start){
 #if DEBUG
 void print_tree(node_t* node){
 	if(node->value==V_NODE){
-        printf("\n%p --> node->left=%p node->right=%p",node,node->left, node->right);
+        info("\n%p --> node->left=%p node->right=%p",node,node->left, node->right);
 		print_tree(node->left);
 		print_tree(node->right);
 	}else{
-        printf("\n%p => %i",node,node->value);
+        info("\n%p => %i",node,node->value);
 	}
 }
 #endif

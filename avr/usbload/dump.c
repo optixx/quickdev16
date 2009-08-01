@@ -23,6 +23,7 @@
 #include <stdint.h>
 
 #include "debug.h"
+#include "info.h"
 #include "uart.h"
 #include "sram.h"
 
@@ -46,21 +47,21 @@ void dump_packet(uint32_t addr, uint32_t len, uint8_t * packet)
             continue;
         }
         if (clear) {
-            printf("*\n");
+            info("*\n");
             clear = 0;
         }
-        printf("%08lx:", addr + i);
+        info("%08lx:", addr + i);
         for (j = 0; j < 16; j++) {
-            printf(" %02x", packet[i + j]);
+            info(" %02x", packet[i + j]);
         }
-        printf(" |");
+        info(" |");
         for (j = 0; j < 16; j++) {
             if (packet[i + j] >= 33 && packet[i + j] <= 126)
-                printf("%c", packet[i + j]);
+                info("%c", packet[i + j]);
             else
-                printf(".");
+                info(".");
         }
-        printf("|\n");
+        info("|\n");
     }
 }
 
@@ -71,11 +72,11 @@ void dump_memory(uint32_t bottom_addr, uint32_t top_addr)
     sram_bulk_read_start(bottom_addr);
     for ( addr = bottom_addr; addr < top_addr; addr++) {
         if (addr%0x10 == 0)
-            printf("\n%08lx:", addr);
+            info("\n%08lx:", addr);
         byte = sram_bulk_read();
         sram_bulk_read_next();
-        printf(" %02x", byte);
+        info(" %02x", byte);
     }
-    printf("\n");
+    info("\n");
     sram_bulk_read_end();
 }

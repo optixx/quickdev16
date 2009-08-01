@@ -28,6 +28,7 @@
 
 #include "sram.h"
 #include "debug.h"
+#include "info.h"
 
 #define RUNCHAR 0x90
 
@@ -35,7 +36,7 @@ uint8_t rle_decode(PGM_VOID_P in_addr, int32_t in_len, uint32_t out_addr)
 {
 	uint8_t in_byte, in_repeat, last_byte;
 	uint32_t out_len, out_len_left;
-    printf("RLE decode len=%li addr=0x%08lx\n",in_len,out_addr);
+    info("RLE decode len=%li addr=0x%08lx\n",in_len,out_addr);
     last_byte = 0;
     
 	out_len_left = out_len;
@@ -62,7 +63,7 @@ uint8_t rle_decode(PGM_VOID_P in_addr, int32_t in_len, uint32_t out_addr)
 	if (in_byte == RUNCHAR) {
 		INBYTE(in_repeat);
 		if (in_repeat != 0) {
-			printf("Orphaned RLE code at start\n");
+			info("Orphaned RLE code at start\n");
 			return 1;
 		}
 		OUTBYTE(RUNCHAR);
@@ -73,7 +74,7 @@ uint8_t rle_decode(PGM_VOID_P in_addr, int32_t in_len, uint32_t out_addr)
 	while( in_len > 0 ) {
 		INBYTE(in_byte);
         if (in_len%1024==0)
-            printf(".");
+            info(".");
 		if (in_byte == RUNCHAR) {
 			INBYTE(in_repeat);
 			if ( in_repeat == 0 ) {

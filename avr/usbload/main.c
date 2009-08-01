@@ -35,6 +35,7 @@
 #include "uart.h"
 #include "sram.h"
 #include "debug.h"
+#include "info.h"
 #include "dump.h"
 #include "crc.h"
 #include "usb_bulk.h"
@@ -43,6 +44,7 @@
 #include "huffman-decode.h"
 #include "rle.h"
 #include "loader.h"
+#include "shared_memory.h"
 
 
 extern const char _rom[] PROGMEM;
@@ -89,6 +91,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_bank_size = (uint32_t)1 << rq->wValue.word;
         sync_errors = 0;
         crc = 0;
+        shared_memory_put(SHARED_MEM_CMD_UPLOAD_START,0);
         debug(DEBUG_USB,"USB_UPLOAD_INIT: bank_size=0x%08lx\n", req_bank_size);
 
 /*
@@ -121,6 +124,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                    req_bank, req_addr);
 
             req_bank++;
+            shared_memory_put(SHARED_MEM_CMD_UPLOAD_PROGESS,req_bank);
         }
         ret_len = USB_MAX_TRANS;
 /*
@@ -150,6 +154,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n", 
                 req_bank_size, req_bank_cnt, req_addr_end);
         
+        shared_memory_put(SHARED_MEM_CMD_UPLOAD_START,0);
         if (req_addr == 0x000000){
             timer_start();
         }
@@ -206,6 +211,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                   req_bank, req_addr,timer_stop_int());
             #endif
             req_bank++;
+            shared_memory_put(SHARED_MEM_CMD_UPLOAD_PROGESS,req_bank);
             timer_start();
             
         }
@@ -221,7 +227,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         debug(DEBUG_USB,"USB_BULK_UPLOAD_END:\n");
         req_state = REQ_STATUS_IDLE;
         sram_bulk_write_end();
+        shared_memory_put(SHARED_MEM_CMD_UPLOAD_END,0);
         ret_len = 0;
+        
 /*
  * -------------------------------------------------------------------------
  */
@@ -298,7 +306,7 @@ void test_read_write(){
     }
     addr = 0x000000;
     while (addr++ <= 0x0000ff){
-        printf("read addr=0x%08lx %x\n",addr,sram_read(addr));
+        info("read addr=0x%08lx %x\n",addr,sram_read(addr));
     }
 }
 
@@ -321,7 +329,7 @@ void test_bulk_read_write(){
     addr = 0x000000;
     sram_bulk_read_start(addr);
     while (addr <= 0x8000){
-        printf("addr=0x%08lx %x\n",addr,sram_bulk_read());
+        info("addr=0x%08lx %x\n",addr,sram_bulk_read());
         sram_bulk_read_next();
         addr++;
     }
@@ -337,7 +345,7 @@ void test_non_zero_memory(uint32_t bottom_addr,uint32_t top_addr)
     for (addr = bottom_addr; addr < top_addr; addr++) {
         c = sram_bulk_read();
         if (c!=0xff)
-            printf("addr=0x%08lx c=0x%x\n",addr,c);
+            info("addr=0x%08lx c=0x%x\n",addr,c);
         sram_bulk_read_next();
     }
     sram_bulk_read_end();
@@ -346,12 +354,12 @@ void test_non_zero_memory(uint32_t bottom_addr,uint32_t top_addr)
 
 
 void test_crc(){
-    printf("test_crc: clear\n");
+    info("test_crc: clear\n");
     avr_bus_active();
     sram_bulk_set(0x000000,0x10000,0xff);
-    printf("test_crc: crc\n");
+    info("test_crc: crc\n");
     crc_check_bulk_memory(0x000000,0x10000,0x8000);
-    printf("test_crc: check\n");
+    info("test_crc: check\n");
     test_non_zero_memory(0x000000,0x10000);
 }
 
@@ -374,7 +382,7 @@ void decompress(PGM_VOID_P addr, uint16_t(*fp)(uint16_t)){
         i++;
 		c=huffman_dec_byte(&ctx);
         if (i%1024==0)
-            printf(".");
+            info(".");
 		if(c>0xff){
 			return;
 		}
@@ -384,17 +392,17 @@ void decompress(PGM_VOID_P addr, uint16_t(*fp)(uint16_t)){
 }
 
 void decompress_huffman(void){
-    printf("Decompress Rom %p to 0x000000\n",(void*)_rom);
+    info("Decompress Rom %p to 0x000000\n",(void*)_rom);
 	sram_bulk_write_start(0x000000);
     decompress(&_rom,read_byte_pgm);
 	sram_bulk_write_end();
-    printf("Done\n");
+    info("Done\n");
 }
 
 
 
 void send_reset(){
-    printf("Reset Snes\n");
+    info("Reset Snes\n");
     snes_reset_on();
     snes_reset_lo();
     _delay_ms(2);
@@ -413,20 +421,20 @@ void send_irq(){
 void set_rom_mode(){
     if (req_bank_size == 0x8000){
         snes_lorom();
-        printf("Set Snes lowrom \n");
+        info("Set Snes lowrom \n");
     } else {
         snes_hirom();
-        printf("Set Snes hirom \n");
+        info("Set Snes hirom \n");
     }
 }
 
 
 void usb_connect(){
     uint8_t i = 0;
-    printf("USB init\n");
+    info("USB init\n");
     usbDeviceDisconnect();      /* enforce re-enumeration, do this while */
     cli();                             
-    printf("USB disconnect\n");
+    info("USB disconnect\n");
     i = 10;
     while (--i) {               /* fake USB disconnect for > 250 ms */
         led_on(); 
@@ -436,7 +444,7 @@ void usb_connect(){
     }
     led_on();
     usbDeviceConnect();
-    printf("USB connect\n");
+    info("USB connect\n");
 }
 
 
@@ -444,28 +452,27 @@ void boot_startup_rom(){
     
     uint8_t i = 0;
     
-    printf("Activate AVR bus\n");
+    info("Activate AVR bus\n");
     avr_bus_active();
 
-    printf("IRQ off\n");
+    info("IRQ off\n");
     snes_irq_lo();
     snes_irq_off();
 
     snes_lorom();
-    printf("Set Snes lowrom \n");
+    info("Set Snes lowrom \n");
 
 /*    
-    printf("Set Snes hirom\n");
+    info("Set Snes hirom\n");
     snes_hirom();
 
-    printf("Disable snes WR\n");
+    info("Disable snes WR\n");
     snes_wr_disable(); 
     
-    printf("IRQ off\n");
+    info("IRQ off\n");
     snes_irq_lo();
     snes_irq_off();
 */  
-
     rle_decode(&_rom, ROM_SIZE, 0x000000);
     dump_memory(0x10000 - 0x100, 0x10000);
  
@@ -473,23 +480,24 @@ void boot_startup_rom(){
     snes_reset_off();
     snes_irq_lo();
     snes_irq_off();
-    printf("IRQ off\n");
+    info("IRQ off\n");
     snes_hirom();
     snes_wr_disable(); 
-    printf("Disable snes WR\n");
+    info("Disable snes WR\n");
     snes_bus_active();
-    printf("Activate Snes bus\n");
+    info("Activate Snes bus\n");
     _delay_ms(100);
-    printf("Reset Snes\n");
+    info("Reset Snes\n");
     send_reset();
+#if 0 
     i = 20;
-    printf("Wait");
+    info("Wait");
     while (--i){               
         _delay_ms(500);
-        printf(".");
+        info(".");
     }
-    printf("\n");
-    
+    info("\n");
+#endif    
 }
 
 int main(void)
@@ -500,7 +508,7 @@ int main(void)
     uart_init();
     stdout = &uart_stdout;
     
-    printf("Sytem start\n");
+    info("Sytem start\n");
     system_init();
 
 #if 0
@@ -510,7 +518,7 @@ int main(void)
     while(1);
 #endif
     
-    printf("Boot startup rom\n");
+    info("Boot startup rom\n");
     boot_startup_rom();
     
     usbInit();
@@ -518,43 +526,45 @@ int main(void)
     
     while (1){
         avr_bus_active();
-        printf("Activate AVR bus\n");
-        printf("IRQ off\n");
+        info("Activate AVR bus\n");
+        info("IRQ off\n");
         snes_irq_lo();
         snes_irq_off();
-        printf("Set Snes lowrom\n");
+        info("Set Snes lowrom\n");
         snes_lorom();
-        printf("Disable snes WR\n");
+        info("Disable snes WR\n");
         snes_wr_disable(); 
         sei();
-        printf("USB poll\n");
+        info("USB poll\n");
         while (req_state != REQ_STATUS_SNES){
             usbPoll();
         }
-        printf("USB poll done\n");
+        shared_memory_put(SHARED_MEM_CMD_TERMINATE,0);
+        info("USB poll done\n");
         snes_reset_hi();
         snes_reset_off();
         snes_irq_lo();
         snes_irq_off();
-        printf("IRQ off\n");
+        info("IRQ off\n");
         set_rom_mode();
         snes_wr_disable(); 
-        printf("Disable snes WR\n");
+        info("Disable snes WR\n");
         snes_bus_active();
-        printf("Activate Snes bus\n");
+        info("Activate Snes bus\n");
         _delay_ms(100);
-        printf("Reset Snes\n");
+        info("Reset Snes\n");
         send_reset();
 
-        printf("Poll\n");
+        info("Poll\n");
         while (req_state != REQ_STATUS_AVR){
+            
             usbPoll();
 #ifdef DO_IRQ          
             i = 10;
             while (--i) {               /* fake USB disconnect for > 250 ms */
                 _delay_ms(100);
             }
-            printf("Send IRQ %i\n",++irq_count);
+            info("Send IRQ %i\n",++irq_count);
             send_irq();
 #endif
 
@@ -565,21 +575,21 @@ int main(void)
             i = 5;
             while (--i) {               
                 _delay_ms(500);
-                printf("Wait to switch to snes mode %i\n", i);
+                info("Wait to switch to snes mode %i\n", i);
             }
             
             if (req_bank_size == 0x8000){
                 snes_lorom();
-                printf("Set Snes lowrom \n");
+                info("Set Snes lowrom \n");
             } else {
                 snes_hirom();
-                printf("Set Snes hirom \n");
+                info("Set Snes hirom \n");
             }
             snes_wr_disable(); 
-            printf("Disable snes WR\n");
+            info("Disable snes WR\n");
             snes_bus_active();
-            printf("Activate Snes bus\n");
-            printf("Read 0x3000=%c\n",c);
+            info("Activate Snes bus\n");
+            info("Read 0x3000=%c\n",c);
 #endif
         }
     }

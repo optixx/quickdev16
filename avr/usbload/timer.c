@@ -28,6 +28,7 @@
 #include <avr/interrupt.h>      /* for sei() */
 
 #include "debug.h" 
+#include "info.h"
  
 #ifndef OCR1A
     #define OCR1A OCR1  // 2313 support

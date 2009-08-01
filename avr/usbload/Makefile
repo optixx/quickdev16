@@ -16,6 +16,7 @@
 #         Author:  Christian Starkjohann 
 # =====================================================================================
 
+DEBUG   = 1
 TTY     = /dev/tty.PL2303-00002126
 DEVICE  = atmega644
 F_CPU   = 20000000	# in Hz
@@ -23,15 +24,20 @@ TARGET  = main
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 SIZE    = avr-size
 
-#LDFLAGS =  -Wl,-u,vfprintf -lprintf_flt 
-#CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 
 
-LDFLAGS =  -Wl,-u,vfprintf
-CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG
 
-OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o dump.o timer.o watchdog.o huffman-decode.o rle.c loader.o info.o
+
+ifeq ($(DEBUG),1)
+    LDFLAGS =  -Wl,-u,vfprintf -lprintf_flt 
+    CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 
+    OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o dump.o timer.o watchdog.o huffman-decode.o rle.c loader.o info.o shared_memory.o
+else 
+    LDFLAGS =  -Wl,-u
+    CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG -DNO_INFO
+    OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o dump.o timer.o watchdog.o rle.c loader.o info.o shared_memory.o
+endif
+
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
-
 
 ##############################################################################
 # Fuse values for particular devices

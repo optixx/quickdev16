@@ -29,6 +29,7 @@
 #include "sram.h"
 #include "uart.h"
 #include "debug.h"
+#include "info.h"
 
 void system_init(void)
 {
