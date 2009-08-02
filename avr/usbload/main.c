@@ -124,7 +124,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                    req_bank, req_addr);
 
             req_bank++;
-            shared_memory_put(SHARED_MEM_CMD_UPLOAD_PROGESS,req_bank);
+            //shared_memory_put(SHARED_MEM_CMD_UPLOAD_PROGESS,req_bank);
         }
         ret_len = USB_MAX_TRANS;
 /*
@@ -167,7 +167,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
-        sram_bulk_write_start(req_addr);
         rx_remaining = rq->wLength.word;
             
         if (req_addr && req_addr % req_bank_size == 0) {
@@ -179,8 +178,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                   req_bank, req_addr,timer_stop_int());
             #endif
             req_bank++;
+            shared_memory_put(SHARED_MEM_CMD_UPLOAD_PROGESS,req_bank);
+            sram_bulk_write_start(req_addr);
             timer_start();
             
+        } else {
+            sram_bulk_write_start(req_addr);
         }
         ret_len = USB_MAX_TRANS;
   
@@ -204,15 +207,16 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 #endif
         if (req_addr && ( req_addr % req_bank_size) == 0) {
             #ifdef FLT_DEBUG
-                debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
+                debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
                    req_bank, req_addr,timer_stop());
             #else
-               debug(DEBUG_USB,"USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%i\n",
+               debug(DEBUG_USB,"USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%i\n",
                   req_bank, req_addr,timer_stop_int());
             #endif
             req_bank++;
-            shared_memory_put(SHARED_MEM_CMD_UPLOAD_PROGESS,req_bank);
             timer_start();
+            shared_memory_put(SHARED_MEM_CMD_UPLOAD_PROGESS,req_bank);
+            sram_bulk_write_start(req_addr);
             
         }
         ret_len = USB_MAX_TRANS;
@@ -489,7 +493,8 @@ void boot_startup_rom(){
     _delay_ms(100);
     info("Reset Snes\n");
     send_reset();
-#if 0 
+    _delay_ms(100);
+#if 0
     i = 20;
     info("Wait");
     while (--i){               
@@ -559,9 +564,10 @@ int main(void)
         while (req_state != REQ_STATUS_AVR){
             
             usbPoll();
+
 #ifdef DO_IRQ          
             i = 10;
-            while (--i) {               /* fake USB disconnect for > 250 ms */
+            while (--i) {
                 _delay_ms(100);
             }
             info("Send IRQ %i\n",++irq_count);

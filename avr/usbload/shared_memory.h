@@ -34,8 +34,8 @@
 #define SHARED_IRQ_LOC_HI              0x00ffff
 
 
-#define SHARED_IRQ_HANDLER_LO           0x12
-#define SHARED_IRQ_HANDLER_HI           0x34
+#define SHARED_IRQ_HANDLER_LO           0x00
+#define SHARED_IRQ_HANDLER_HI           0x10
 
 void shared_memory_put(uint8_t cmd, uint8_t value);
 

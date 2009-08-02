@@ -64,7 +64,8 @@ void shared_memory_irq_restore(){
 
 void shared_memory_put(uint8_t cmd, uint8_t value){
     
-    info("Write shared memory %06lx=%02x %06lx=%02x \n",SHARED_MEM_LOC_CMD,cmd,SHARED_MEM_LOC_PAYLOAD,value);
+    //return;
+    info("Write shared memory 0x%04x=0x%02x 0x%04x=0x%02x \n",SHARED_MEM_LOC_CMD,cmd,SHARED_MEM_LOC_PAYLOAD,value);
 
     shared_memory_scratchpad_save();
     shared_memory_irq_hook();
@@ -73,23 +74,17 @@ void shared_memory_put(uint8_t cmd, uint8_t value){
     sram_write(SHARED_MEM_LOC_CMD,cmd);
     sram_write(SHARED_MEM_LOC_PAYLOAD,value);
     
-    snes_irq_lo();
-    snes_irq_off();
     snes_hirom();
     snes_wr_disable(); 
     snes_bus_active();
-
-    //snes_irq_on();
-    //snes_irq_lo();
-    //_delay_us(20);
+    _delay_ms(50);
     
-    //snes_irq_hi();
-    //snes_irq_off();
     
     avr_bus_active();
-    snes_irq_off();
     snes_irq_lo();
+    snes_irq_off();
     snes_lorom();
+    snes_wr_disable(); 
     
     shared_memory_scratchpad_restore();
     shared_memory_irq_restore();
