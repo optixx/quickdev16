@@ -4,7 +4,8 @@ import sys
 import time
 
 
-LEN = 2**16+8
+LEN = 2**16
+
 TARGET="/Users/david/Devel/arch/avr/code/quickdev16/avr/usbload"
 data = open(sys.argv[1],"r").read()
 

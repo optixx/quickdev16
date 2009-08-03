@@ -45,6 +45,6 @@ run:
 	$(EMU) $(ROMFILE)
 
 clean:
-	rm -f $(ROMFILE) rom.smc $(SPCFILE) core *~ *.o *.sym *.srm data/apu/*.o data/apu/*.sym loader.c loader.h
+	rm -f $(ROMFILE) rom.smc $(SPCFILE) core *~ *.o *.sym *.srm data/apu/*.o data/apu/*.sym loader.c loader.h main.bak
 
 
