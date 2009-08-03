@@ -64,13 +64,12 @@ void shared_memory_irq_restore(){
 
 void shared_memory_put(uint8_t cmd, uint8_t value){
     
-    //return;
     info("Write shared memory 0x%04x=0x%02x 0x%04x=0x%02x \n",SHARED_MEM_LOC_CMD,cmd,SHARED_MEM_LOC_PAYLOAD,value);
 
     shared_memory_scratchpad_save();
     shared_memory_irq_hook();
     
-    sram_write(SHARED_MEM_LOC_STATE,1);
+    sram_write(SHARED_MEM_LOC_STATE,SHARED_MEM_SNES_ACK);
     sram_write(SHARED_MEM_LOC_CMD,cmd);
     sram_write(SHARED_MEM_LOC_PAYLOAD,value);
     

@@ -91,7 +91,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_bank_size = (uint32_t)1 << rq->wValue.word;
         sync_errors = 0;
         crc = 0;
-        shared_memory_put(SHARED_MEM_CMD_UPLOAD_START,0);
         debug(DEBUG_USB,"USB_UPLOAD_INIT: bank_size=0x%08lx\n", req_bank_size);
 
 /*
@@ -154,7 +153,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         debug(DEBUG_USB,"USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n", 
                 req_bank_size, req_bank_cnt, req_addr_end);
         
-        shared_memory_put(SHARED_MEM_CMD_UPLOAD_START,0);
+        shared_memory_put(SHARED_MEM_CMD_BANK_COUNT,req_bank_cnt);
         if (req_addr == 0x000000){
             timer_start();
         }
@@ -215,7 +214,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
             #endif
             req_bank++;
             timer_start();
-            shared_memory_put(SHARED_MEM_CMD_UPLOAD_PROGESS,req_bank);
+            shared_memory_put(SHARED_MEM_CMD_BANK_CURRENT,req_bank);
             sram_bulk_write_start(req_addr);
             
         }
@@ -454,7 +453,6 @@ void usb_connect(){
 
 void boot_startup_rom(){
     
-    uint8_t i = 0;
     
     info("Activate AVR bus\n");
     avr_bus_active();
@@ -495,6 +493,7 @@ void boot_startup_rom(){
     send_reset();
     _delay_ms(100);
 #if 0
+    uint8_t i = 0;
     i = 20;
     info("Wait");
     while (--i){               
@@ -507,8 +506,6 @@ void boot_startup_rom(){
 
 int main(void)
 {
-    uint8_t i;
-    uint16_t irq_count = 0;
     
     uart_init();
     stdout = &uart_stdout;
@@ -566,6 +563,8 @@ int main(void)
             usbPoll();
 
 #ifdef DO_IRQ          
+            uint8_t i;
+            uint16_t irq_count = 0;
             i = 10;
             while (--i) {
                 _delay_ms(100);
