@@ -18,12 +18,12 @@
  */
 
 
+#include "huffman-decode.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include "huffman-decode.h"
 #include "info.h"
 #include "debug.h"
 
@@ -44,7 +44,7 @@
 
 #define ALLOC_ERROR {}
 
-#undef BLOCK_ALLOC 1
+#undef BLOCK_ALLOC 
 
 typedef struct {
 	int16_t value;
@@ -125,9 +125,9 @@ uint8_t build_tree(huffman_dec_ctx_t* ctx){
 	if(treesize>0x1ff)
 		return 2;
 #if BLOCK_ALLOC	
-	ctx->tree = calloc(2*treesize-1, sizeof(node_t));
+	ctx->tree = malloc((2*treesize-1) * sizeof(node_t));
 #else
-	ctx->tree = calloc(1, sizeof(node_t));
+	ctx->tree = malloc(sizeof(node_t));
 #endif
 	((node_t*)(ctx->tree))->value = V_NODE;
 	uint16_t depth=0;
@@ -166,7 +166,7 @@ uint8_t build_tree(huffman_dec_ctx_t* ctx){
 #if BLOCK_ALLOC
 					current->left=&(((node_t*)(ctx->tree))[treeindex++]);
 #else
-					current->left=calloc(1, sizeof(node_t));
+					current->left=malloc(sizeof(node_t));
 #endif
 					((node_t*)(current->left))->value = V_NODE;
 				}
@@ -179,7 +179,7 @@ uint8_t build_tree(huffman_dec_ctx_t* ctx){
 #if BLOCK_ALLOC
 					current->right=&(((node_t*)(ctx->tree))[treeindex++]);
 #else
-					current->right=calloc(1, sizeof(node_t));
+					current->right=malloc( sizeof(node_t));
 #endif
 					((node_t*)(current->right))->value=V_NODE;
 				}

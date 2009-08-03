@@ -370,18 +370,17 @@ uint16_t read_byte_pgm(uint16_t addr){
 	return pgm_read_byte((PGM_VOID_P)addr);
 }
 
-uint16_t read_byte_ee(uint16_t addr){
-	return eeprom_read_byte((uint8_t*)addr);
-}
-
-
-void decompress(PGM_VOID_P addr, uint16_t(*fp)(uint16_t)){
+void decompress_huffman(PGM_VOID_P addr, uint16_t(*fp)(uint16_t)){
 	uint16_t c;
 	uint32_t i = 0;
 	huffman_dec_ctx_t ctx;
+	info("ok1\n");
 	huffman_dec_init(&ctx, fp);
+    info("ok2\n");
 	huffman_dec_set_addr(&ctx, (uint16_t)addr);
+    info("ok3\n");
 	while(1){
+        info("ok4\n");
         i++;
 		c=huffman_dec_byte(&ctx);
         if (i%1024==0)
@@ -393,15 +392,6 @@ void decompress(PGM_VOID_P addr, uint16_t(*fp)(uint16_t)){
         sram_bulk_write(c);
 	}
 }
-
-void decompress_huffman(void){
-    info("Decompress Rom %p to 0x000000\n",(void*)_rom);
-	sram_bulk_write_start(0x000000);
-    decompress(&_rom,read_byte_pgm);
-	sram_bulk_write_end();
-    info("Done\n");
-}
-
 
 
 void send_reset(){
@@ -464,18 +454,13 @@ void boot_startup_rom(){
     snes_lorom();
     info("Set Snes lowrom \n");
 
-/*    
-    info("Set Snes hirom\n");
-    snes_hirom();
-
-    info("Disable snes WR\n");
-    snes_wr_disable(); 
     
-    info("IRQ off\n");
-    snes_irq_lo();
-    snes_irq_off();
-*/  
-    rle_decode(&_rom, ROM_SIZE, 0x000000);
+    info("Huffman decompress to 0x010000\n",(void*)_rom);
+	sram_bulk_write_start(0x010000);
+    decompress_huffman(&_rom,read_byte_pgm);
+	sram_bulk_write_end();
+    info("RLE decompress to 0x000000\n",(void*)_rom);
+    rle_decode_sram(0x010000, ROM_RLE_SIZE, 0x000000);
     dump_memory(0x10000 - 0x100, 0x10000);
  
     snes_reset_hi();
