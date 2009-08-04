@@ -18,11 +18,11 @@
  * =====================================================================================
  */
 
- #ifndef __RLE_H__
- #define __RLE_H__
- 
-#include <avr/pgmspace.h>       
+#ifndef __RLE_H__
+#define __RLE_H__
 
-uint8_t rle_decode(PGM_VOID_P in_addr,uint32_t in_len, uint32_t out_addr);
+#include <avr/pgmspace.h>
+
+uint8_t rle_decode(PGM_VOID_P in_addr, uint32_t in_len, uint32_t out_addr);
 
 #endif
