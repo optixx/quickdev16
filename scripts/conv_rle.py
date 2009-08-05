@@ -5,7 +5,7 @@ import time
 
 
 LEN = 2**16
-
+huffman = False
 TARGET="/Users/david/Devel/arch/avr/code/quickdev16/avr/usbload"
 HUFFMAN_ENCODER="/Users/david/Devel/arch/avr/code/quickdev16/tools/huffman/huffman-encode"
 data = open(sys.argv[1],"r").read()
@@ -15,19 +15,21 @@ print "Use %i bytes" % (len(data))
 data = binascii.rlecode_hqx(data)
 print "RLE crunch (%i) bytes" % (len(data))
 
-binfile = open("/tmp/loader.rle","w")
-binfile.write(data)
-binfile.close()
 rle_size = len(data)
+huffman_size = 0
 
-cmd = "%s /tmp/loader.rle" % HUFFMAN_ENCODER
-os.system(cmd)
-data = open("/tmp/loader.rle.hfm","r").read()
-print "HUFFMAN crunch (%i) bytes" % (len(data))
-huffman_size = len(data)
+if huffman == True:
+    binfile = open("/tmp/loader.rle","w")
+    binfile.write(data)
+    binfile.close()
 
-os.unlink("/tmp/loader.rle")
-os.unlink("/tmp/loader.rle.hfm")
+    cmd = "%s /tmp/loader.rle" % HUFFMAN_ENCODER
+    os.system(cmd)
+    data = open("/tmp/loader.rle.hfm","r").read()
+    print "HUFFMAN crunch (%i) bytes" % (len(data))
+    huffman_size = len(data)
+    os.unlink("/tmp/loader.rle")
+    os.unlink("/tmp/loader.rle.hfm")
 
 cfile = open("/tmp/loader.c","w")
 hfile = open("/tmp/loader.h","w")
