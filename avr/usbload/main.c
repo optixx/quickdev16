@@ -43,6 +43,9 @@
 #include "rle.h"
 #include "loader.h"
 #include "shared_memory.h"
+#include "mmc.h"
+#include "fat.h"
+
 
 
 extern const char _rom[] PROGMEM;
@@ -309,6 +312,53 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 /*
  * ------------------------------------------------------------------------- 
  */
+ 
+#ifdef ENABLE_TEST
+ 
+void test_sdcard(){
+	uint16_t 	fat_cluster = 0;
+    uint8_t 	fat_attrib = 0;
+    uint32_t 	fat_size = 0;
+    uint32_t 	rom_addr = 0;
+    uint8_t 	bank_cnt = 0;
+ 	uint16_t 	crc = 0;
+	uint16_t 	block_cnt;
+    
+    #define FILENAME	"mrdo.smc"   //failed
+    #define ROMSIZE      2             // 4 == 4mbit == 512kb
+    #define BUFFER_SIZE 512
+    #define BLOCKS 		(ROMSIZE << 8)
+    
+    while ( mmc_init() !=0) {
+		info("No sdcard...\n");
+    }
+    info("MMC Init done\n");
+    fat_init(read_buffer);
+    info("FAT Init done.\n");
+    info("Look for %s\n",FILENAME);
+
+    if (fat_search_file((uint8_t*)FILENAME,
+						&fat_cluster,
+						&fat_size,
+						&fat_attrib,
+						read_buffer) == 1) {
+	   
+
+        for (block_cnt=0; block_cnt<BLOCKS; block_cnt++) {
+        	fat_read_file (fat_cluster,read_buffer,block_cnt);
+			
+			if (block_cnt && block_cnt % 64 == 0){
+				printf("Write Ram Bank: 0x%x Addr: 0x%lx Block: %x CRC: %x\n",bank_cnt,rom_addr,block_cnt,crc);
+				bank_cnt++;
+				crc = 0;
+			}
+        }
+		printf("Write Ram Bank: 0x%x Addr: 0x%lx Block: %x CRC: %x\n",bank_cnt,rom_addr,block_cnt,crc);
+		printf("Done\n");
+	}
+	
+}
+
 
 void test_read_write()
 {
@@ -381,17 +431,7 @@ void test_crc()
     info("test_crc: check\n");
     test_non_zero_memory(0x000000, 0x10000);
 }
-
-uint16_t read_byte_pgm(uint16_t addr)
-{
-    return pgm_read_byte((PGM_VOID_P) addr);
-}
-
-uint16_t read_byte_ee(uint16_t addr)
-{
-    return eeprom_read_byte((uint8_t *) addr);
-}
-
+#endif
 
 void send_reset()
 {
@@ -451,6 +491,7 @@ void boot_startup_rom()
     info("Activate AVR bus\n");
     avr_bus_active();
 
+
     info("IRQ off\n");
     snes_irq_lo();
     snes_irq_off();
@@ -494,9 +535,12 @@ int main(void)
     stdout = &uart_stdout;
 
     info("Sytem start\n");
+
+
     system_init();
 
 #if 0
+    test_sdcard();
     test_read_write();
     test_bulk_read_write();
     test_crc();
