@@ -22,15 +22,31 @@
 
 
 #include <stdlib.h>
-#include <stdint.h>
-#include <util/delay.h>
+#include <string.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>      
+#include <util/delay.h>         
+#include <avr/pgmspace.h>       
+#include <avr/eeprom.h>
 
-#include "shared_memory.h"
+#include "usbdrv.h"
+#include "oddebug.h"            
 #include "config.h"
+#include "requests.h"           
+#include "uart.h"
 #include "sram.h"
 #include "debug.h"
-#include "crc.h"
 #include "info.h"
+#include "dump.h"
+#include "crc.h"
+#include "usb_bulk.h"
+#include "timer.h"
+#include "watchdog.h"
+#include "rle.h"
+#include "loader.h"
+#include "command.h"
+#include "shared_memory.h"
+#include "testing.h"
 
 void test_read_write()
 {
@@ -103,4 +119,146 @@ void test_crc()
     info("test_crc: check\n");
     test_non_zero_memory(0x000000, 0x10000);
 }
+
+
+
+
+
+
+/*----------------------------------------------------------------------*/
+/* FAT file system sample project for FatFs R0.06  (C)ChaN, 2008        */
+/*----------------------------------------------------------------------*/
+
+#include "ff.h"
+#include "diskio.h"
+#include "rtc.h"
+
+
+
+DWORD acc_size;				/* Work register for fs command */
+WORD acc_files, acc_dirs;
+FILINFO finfo;
+
+
+FATFS fatfs[2];				/* File system object for each logical drive */
+BYTE Buff[1024];			/* Working buffer */
+
+volatile WORD Timer;		/* 100Hz increment timer */
+
+
+
+#if _MULTI_PARTITION != 0
+    const PARTITION Drives[] = { {0,0}, {0,1} };
+#endif
+
+/*
+ISR(TIMER2_COMP_vect)
+{
+	Timer++;			
+	disk_timerproc();	
+}
+*/
+
+DWORD get_fattime ()
+{
+	RTC rtc;
+
+
+	//rtc_gettime(&rtc);
+
+	return	  ((DWORD)(rtc.year - 1980) << 25)
+			| ((DWORD)rtc.month << 21)
+			| ((DWORD)rtc.mday << 16)
+			| ((DWORD)rtc.hour << 11)
+			| ((DWORD)rtc.min << 5)
+			| ((DWORD)rtc.sec >> 1);
+}
+
+
+
+static
+FRESULT scan_files (char* path)
+{
+	DIR dirs;
+	FRESULT res;
+	int i;
+
+	if ((res = f_opendir(&dirs, path)) == FR_OK) {
+		i = strlen(path);
+		while (((res = f_readdir(&dirs, &finfo)) == FR_OK) && finfo.fname[0]) {
+			if (finfo.fattrib & AM_DIR) {
+				acc_dirs++;
+				*(path+i) = '/'; strcpy(path+i+1, &finfo.fname[0]);
+				res = scan_files(path);
+				*(path+i) = '\0';
+				if (res != FR_OK) break;
+			} else {
+				acc_files++;
+				acc_size += finfo.fsize;
+			}
+		}
+	}
+
+	return res;
+}
+
+
+static
+void put_rc (FRESULT rc)
+{
+	const prog_char *p;
+	static const prog_char str[] =
+		"OK\0" "DISK_ERR\0" "INT_ERR\0" "NOT_READY\0" "NO_FILE\0" "NO_PATH\0"
+		"INVALID_NAME\0" "DENIED\0" "EXIST\0" "INVALID_OBJECT\0" "WRITE_PROTECTED\0"
+		"INVALID_DRIVE\0" "NOT_ENABLED\0" "NO_FILE_SYSTEM\0" "MKFS_ABORTED\0" "TIMEOUT\0";
+	FRESULT i;
+
+	for (p = str, i = 0; i != rc && pgm_read_byte_near(p); i++) {
+		while(pgm_read_byte_near(p++));
+	}
+	printf("rc=%u FR_%s\n", (WORD)rc, p);
+}
+
+
+
+
+void test_sdcard (void)
+{
+	char *ptr, *ptr2;
+	DWORD p1, p2, p3;
+	BYTE res, b1;
+	WORD w1;
+	UINT s1, s2, cnt;
+	DWORD ofs, sect = 0;
+	RTC rtc;
+	FATFS *fs;
+	DIR dir;				/* Directory object */
+	FIL file1, file2;		/* File object */
+
+
+    printf("Try to init disk\n");
+    put_rc(f_mount((BYTE) 0, &fatfs[0]));
+    res = f_getfree("", &p2, &fs);
+    if (res)
+        put_rc(res);
+
+    printf(     "FAT TYPE = %u\nBYTES/CLUSTER = %lu\nNUMBER OF FATS = %u\n"
+                "ROOT DIR ENTRIES = %u\nSECTORS/FAT = %lu\nNUMBER OF CLUSTERS = %lu\n"
+                "FAT START = %lu\nDIR START LBA,CLUSTER = %lu\nDATA START LBA = %lu\n",
+                (WORD) fs->fs_type, (DWORD) fs->csize * 512,
+                (WORD) fs->n_fats, fs->n_rootdir, (DWORD) fs->sects_fat,
+                (DWORD) fs->max_clust - 2, fs->fatbase, fs->dirbase, fs->database);
+    acc_size = acc_files = acc_dirs = 0;
+
+    printf("scan files\n");
+    res = scan_files("");
+    if (res)
+        put_rc(res);
+    printf("%u FILES, %lu BYTES\n%u FOLDERS\n"
+                "%lu KB TOTAK DISK SPACE\n%lu KB AVAILABLE\n", acc_files,
+                acc_size, acc_dirs, (fs->max_clust - 2) * (fs->csize / 2),
+                p2 * (fs->csize / 2));
+
+}
+
 

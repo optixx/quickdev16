@@ -118,8 +118,6 @@ void shared_memory_yield()
 int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer)
 {
     uint8_t state;
-
-
     state = sram_read(SHARED_MEM_RX_LOC_STATE);
     if (state != SHARED_MEM_RX_AVR_ACK){
         return 1;

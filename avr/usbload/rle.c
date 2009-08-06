@@ -22,9 +22,9 @@
 #include <avr/io.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <avr/pgmspace.h>       /* required by usbdrv.h */
-#include <util/delay.h>         /* for _delay_ms() */
-#include <avr/interrupt.h>      /* for sei() */
+#include <avr/pgmspace.h>       
+#include <util/delay.h>         
+#include <avr/interrupt.h>      
 
 #include "sram.h"
 #include "debug.h"
