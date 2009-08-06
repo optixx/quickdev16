@@ -21,16 +21,16 @@
 
 
 #include <avr/io.h>
-#include <avr/interrupt.h>      /* for sei() */
-#include <util/delay.h>         /* for _delay_ms() */
+#include <avr/interrupt.h>      
+#include <util/delay.h>         
 #include <stdlib.h>
-#include <avr/pgmspace.h>       /* required by usbdrv.h */
+#include <avr/pgmspace.h>       
 #include <avr/eeprom.h>
 
 #include "usbdrv.h"
-#include "oddebug.h"            /* This is also an example for using debug macros */
+#include "oddebug.h"            
 #include "config.h"
-#include "requests.h"           /* The custom request numbers we use */
+#include "requests.h"           
 #include "uart.h"
 #include "sram.h"
 #include "debug.h"
@@ -74,76 +74,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
     usbRequest_t *rq = (void *) data;
     uint8_t ret_len = 0;
-    /*
-     * -------------------------------------------------------------------------
-     */
-    if (rq->bRequest == USB_UPLOAD_INIT) {
 
-        if (req_state != REQ_STATUS_IDLE) {
-            debug(DEBUG_USB,
-                  "USB_UPLOAD_INIT: ERROR state is not REQ_STATUS_IDLE\n");
-            return 0;
-        }
-
-        req_bank = 0;
-        rx_remaining = 0;
-        req_bank_size = (uint32_t) 1 << rq->wValue.word;
-        sync_errors = 0;
-        crc = 0;
-        debug(DEBUG_USB, "USB_UPLOAD_INIT: bank_size=0x%08lx\n", req_bank_size);
-
-        /*
-         * -------------------------------------------------------------------------
-         */
-    } else if (rq->bRequest == USB_UPLOAD_ADDR) {
-
-        req_state = REQ_STATUS_UPLOAD;
-        req_addr = rq->wValue.word;
-        req_addr = req_addr << 16;
-        req_addr = req_addr | rq->wIndex.word;
-        if (rx_remaining) {
-            sync_errors++;
-            debug
-                (DEBUG_USB,
-                 "USB_UPLOAD_ADDR: Out of sync addr=0x%lx remain=%i packet=%i sync_error=%i\n",
-                 req_addr, rx_remaining, rq->wLength.word, sync_errors);
-            ret_len = 0;
-        }
-        rx_remaining = rq->wLength.word;
-        ret_len = USB_MAX_TRANS;
-
-
-        if (req_addr && (req_addr % 0x1000) == 0) {
-            debug(DEBUG_USB,
-                  "USB_UPLOAD_ADDR: bank=0x%02x addr=0x%08lx crc=%04x\n",
-                  req_bank, req_addr, crc_check_bulk_memory(req_addr - 0x1000,
-                                                            req_addr,
-                                                            req_bank_size));
-
-        }
-        if (req_addr && req_addr % req_bank_size == 0) {
-            debug(DEBUG_USB, "USB_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx\n",
-                  req_bank, req_addr);
-
-            req_bank++;
-            shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS,req_bank);
-        }
-        ret_len = USB_MAX_TRANS;
-        /*
-         * -------------------------------------------------------------------------
-         */
-    } else if (rq->bRequest == USB_DOWNLOAD_INIT) {
-        debug(DEBUG_USB, "USB_DOWNLOAD_INIT\n");
-
-        /*
-         * -------------------------------------------------------------------------
-         */
-    } else if (rq->bRequest == USB_DOWNLOAD_ADDR) {
-        debug(DEBUG_USB, "USB_DOWNLOAD_ADDR\n");
-        /*
-         * -------------------------------------------------------------------------
-         */
-    } else if (rq->bRequest == USB_BULK_UPLOAD_INIT) {
+    if (rq->bRequest == USB_BULK_UPLOAD_INIT) {
 
         req_bank = 0;
         rx_remaining = 0;
@@ -382,46 +314,7 @@ void test_crc()
     test_non_zero_memory(0x000000, 0x10000);
 }
 
-uint16_t read_byte_pgm(uint16_t addr)
-{
-    return pgm_read_byte((PGM_VOID_P) addr);
-}
 
-uint16_t read_byte_ee(uint16_t addr)
-{
-    return eeprom_read_byte((uint8_t *) addr);
-}
-
-
-void send_reset()
-{
-    info("Reset Snes\n");
-    snes_reset_on();
-    snes_reset_lo();
-    _delay_ms(2);
-    snes_reset_hi();
-    snes_reset_off();
-}
-
-void send_irq()
-{
-    snes_irq_on();
-    snes_irq_lo();
-    _delay_us(20);
-    snes_irq_hi();
-    snes_irq_off();
-}
-
-void set_rom_mode()
-{
-    if (req_bank_size == 0x8000) {
-        snes_lorom();
-        info("Set Snes lowrom \n");
-    } else {
-        snes_hirom();
-        info("Set Snes hirom \n");
-    }
-}
 
 
 void usb_connect()
