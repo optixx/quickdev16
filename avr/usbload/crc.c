@@ -91,31 +91,13 @@ uint16_t crc_check_bulk_memory(uint32_t bottom_addr, uint32_t top_addr, uint32_t
 
 
 
-void crc_check_memory(uint32_t bottom_addr,uint32_t top_addr,uint32_t bank_size,uint8_t *buffer)
-{
-    uint16_t crc = 0;
-    uint32_t addr;
-    uint8_t req_bank = 0;
-    for (addr = bottom_addr; addr < top_addr; addr += TRANSFER_BUFFER_SIZE) {
-        if (addr && addr % bank_size == 0) {
-            debug(DEBUG_CRC,"crc_check_memory: bank=0x%02x addr=0x%08lx crc=0x%04x\n",
-                req_bank,addr,crc);
-            req_bank++;
-            crc = 0;
-        }
-        sram_read_buffer(addr, buffer, TRANSFER_BUFFER_SIZE);
-        crc = do_crc_update(crc, buffer, TRANSFER_BUFFER_SIZE);
-    }
-}
-
-
 
 uint16_t crc_check_memory_range(uint32_t start_addr, uint32_t size,uint8_t *buffer)
 {
     uint16_t crc = 0;
     uint32_t addr;
     for (addr = start_addr; addr < start_addr + size; addr += TRANSFER_BUFFER_SIZE) {
-        sram_read_buffer(addr, buffer, TRANSFER_BUFFER_SIZE);
+        sram_bulk_read_buffer(addr, buffer, TRANSFER_BUFFER_SIZE);
         crc = do_crc_update(crc, buffer, TRANSFER_BUFFER_SIZE);
     }
     return crc;

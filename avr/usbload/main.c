@@ -309,6 +309,7 @@ void boot_startup_rom()
 #endif
 }
 
+
 int main(void)
 {
 
@@ -348,11 +349,11 @@ int main(void)
         }
         shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
         info("USB poll done\n");
-        snes_reset_hi();
-        snes_reset_off();
-        snes_irq_lo();
-        snes_irq_off();
-        info("IRQ off\n");
+        //snes_reset_hi();
+        //snes_reset_off();
+        //snes_irq_lo();
+        //snes_irq_off();
+        //info("IRQ off\n");
         set_rom_mode();
         snes_wr_disable();
         info("Disable snes WR\n");
