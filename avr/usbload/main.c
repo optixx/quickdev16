@@ -60,6 +60,8 @@ uint32_t req_size;
 uint8_t req_bank;
 uint32_t req_bank_size;
 uint16_t req_bank_cnt;
+uint8_t req_percent;
+uint8_t req_percent_last;
 uint8_t req_state = REQ_STATUS_IDLE;
 uint8_t rx_remaining = 0;
 uint8_t tx_remaining = 0;
@@ -87,7 +89,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_bank_size = (uint32_t) (1L << rq->wValue.word);
         req_bank_cnt = rq->wIndex.word;
         req_addr_end = (uint32_t) req_bank_size *req_bank_cnt;
-
+        req_percent = 0;
+        req_percent_last = 0;
         sync_errors = 0;
         debug(DEBUG_USB,
               "USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n",
@@ -107,6 +110,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
         rx_remaining = rq->wLength.word;
+
 
         if (req_addr && req_addr % req_bank_size == 0) {
 #ifdef FLT_DEBUG
@@ -138,6 +142,16 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
         rx_remaining = rq->wLength.word;
+
+        req_percent = (uint32_t)( 100 * req_addr )  / req_addr_end;
+        if (req_percent!=req_percent_last){
+            debug(DEBUG_USB,
+                "USB_BULK_UPLOAD_ADDR: precent=%i\n",  req_percent);
+            shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, req_percent);
+            sram_bulk_write_start(req_addr);
+        }
+        req_percent_last = req_percent;
+
 #if 0
         if (req_addr && (req_addr % 0x1000) == 0) {
             debug(DEBUG_USB,
