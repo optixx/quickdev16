@@ -126,7 +126,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                   req_bank, req_addr);
 
             req_bank++;
-            // shared_memory_put(SHARED_MEM_CMD_UPLOAD_PROGESS,req_bank);
+            shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS,req_bank);
         }
         ret_len = USB_MAX_TRANS;
         /*
@@ -158,7 +158,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
               "USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n",
               req_bank_size, req_bank_cnt, req_addr_end);
 
-        shared_memory_put(SHARED_MEM_CMD_BANK_COUNT, req_bank_cnt);
+        shared_memory_write(SHARED_MEM_TX_CMD_BANK_COUNT, req_bank_cnt);
         if (req_addr == 0x000000) {
             timer_start();
         }
@@ -184,7 +184,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                   req_bank, req_addr, timer_stop_int());
 #endif
             req_bank++;
-            shared_memory_put(SHARED_MEM_CMD_UPLOAD_PROGESS, req_bank);
+            shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, req_bank);
             sram_bulk_write_start(req_addr);
             timer_start();
 
@@ -226,7 +226,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 #endif
             req_bank++;
             timer_start();
-            shared_memory_put(SHARED_MEM_CMD_BANK_CURRENT, req_bank);
+            shared_memory_write(SHARED_MEM_TX_CMD_BANK_CURRENT, req_bank);
             sram_bulk_write_start(req_addr);
 
         }
@@ -243,7 +243,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         debug(DEBUG_USB, "USB_BULK_UPLOAD_END:\n");
         req_state = REQ_STATUS_IDLE;
         sram_bulk_write_end();
-        shared_memory_put(SHARED_MEM_CMD_UPLOAD_END, 0);
+        shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_END, 0);
         ret_len = 0;
 
         /*
@@ -524,7 +524,7 @@ int main(void)
         while (req_state != REQ_STATUS_SNES) {
             usbPoll();
         }
-        shared_memory_put(SHARED_MEM_CMD_TERMINATE, 0);
+        shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
         info("USB poll done\n");
         snes_reset_hi();
         snes_reset_off();

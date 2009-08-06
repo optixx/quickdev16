@@ -38,18 +38,18 @@ uint8_t scratchpad_state;
 uint8_t scratchpad_cmd;
 uint8_t scratchpad_payload;
 
-void shared_memory_scratchpad_save()
+void shared_memory_scratchpad_tx_save()
 {
-    scratchpad_state = sram_read(SHARED_MEM_LOC_STATE);
-    scratchpad_cmd = sram_read(SHARED_MEM_LOC_CMD);
-    scratchpad_payload = sram_read(SHARED_MEM_LOC_PAYLOAD);
+    scratchpad_state = sram_read(SHARED_MEM_TX_LOC_STATE);
+    scratchpad_cmd = sram_read(SHARED_MEM_TX_LOC_CMD);
+    scratchpad_payload = sram_read(SHARED_MEM_TX_LOC_PAYLOAD);
 }
 
-void shared_memory_scratchpad_restore()
+void shared_memory_scratchpad_tx_restore()
 {
-    sram_write(SHARED_MEM_LOC_STATE, scratchpad_state);
-    sram_write(SHARED_MEM_LOC_CMD, scratchpad_cmd);
-    sram_write(SHARED_MEM_LOC_PAYLOAD, scratchpad_payload);
+    sram_write(SHARED_MEM_TX_LOC_STATE, scratchpad_state);
+    sram_write(SHARED_MEM_TX_LOC_CMD, scratchpad_cmd);
+    sram_write(SHARED_MEM_TX_LOC_PAYLOAD, scratchpad_payload);
 }
 
 void shared_memory_irq_hook()
@@ -66,18 +66,18 @@ void shared_memory_irq_restore()
     sram_write(SHARED_IRQ_LOC_HI, irq_addr_hi);
 }
 
-void shared_memory_put(uint8_t cmd, uint8_t value)
+void shared_memory_write(uint8_t cmd, uint8_t value)
 {
 
     info("Write shared memory 0x%04x=0x%02x 0x%04x=0x%02x \n",
-         SHARED_MEM_LOC_CMD, cmd, SHARED_MEM_LOC_PAYLOAD, value);
+         SHARED_MEM_TX_LOC_CMD, cmd, SHARED_MEM_TX_LOC_PAYLOAD, value);
 
-    shared_memory_scratchpad_save();
+    shared_memory_scratchpad_tx_save();
     shared_memory_irq_hook();
 
-    sram_write(SHARED_MEM_LOC_STATE, SHARED_MEM_SNES_ACK);
-    sram_write(SHARED_MEM_LOC_CMD, cmd);
-    sram_write(SHARED_MEM_LOC_PAYLOAD, value);
+    sram_write(SHARED_MEM_TX_LOC_STATE, SHARED_MEM_TX_SNES_ACK);
+    sram_write(SHARED_MEM_TX_LOC_CMD, cmd);
+    sram_write(SHARED_MEM_TX_LOC_PAYLOAD, value);
 
     snes_hirom();
     snes_wr_disable();
@@ -91,7 +91,7 @@ void shared_memory_put(uint8_t cmd, uint8_t value)
     snes_lorom();
     snes_wr_disable();
 
-    shared_memory_scratchpad_restore();
+    shared_memory_scratchpad_tx_restore();
     shared_memory_irq_restore();
 
 }
