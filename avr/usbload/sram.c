@@ -309,7 +309,7 @@ void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value){
     sram_bulk_write_end();
 }
 
-void sram_setr(uint32_t addr, uint32_t len,uint8_t value)
+void sram_set(uint32_t addr, uint32_t len,uint8_t value)
 {
     uint32_t i;
     debug(DEBUG_SRAM,"sram_clear: addr=0x%08lx len=%li\n\r", addr,len);

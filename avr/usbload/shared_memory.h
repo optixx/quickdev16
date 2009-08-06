@@ -22,6 +22,9 @@
 #define __SHARED_MEMORY_H__
 
 
+#define SHARED_MEM_SWITCH_IRQ               0
+#define SHARED_MEM_SWITCH_DELAY             100
+
 #define SHARED_MEM_TX_SNES_ACK              0xa5
 #define SHARED_MEM_TX_SNES_RTS              0x5a
 

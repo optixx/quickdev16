@@ -81,15 +81,20 @@ void shared_memory_write(uint8_t cmd, uint8_t value)
     sram_write(SHARED_MEM_TX_LOC_PAYLOAD, value);
 
     snes_hirom();
-    snes_wr_disable();
     snes_bus_active();
-    _delay_ms(50);
+
+#if SHARED_MEM_SWITCH_IRQ    
+    snes_irq_on();
+    snes_irq_lo();
+    _delay_us(20);
+    snes_irq_hi();
+    snes_irq_off();
+#else
+    _delay_ms(SHARED_MEM_SWITCH_DELAY);
+#endif
 
     avr_bus_active();
-    //snes_irq_lo();
-    //snes_irq_off();
     snes_lorom();
-    snes_wr_disable();
 
     shared_memory_scratchpad_tx_restore();
     shared_memory_irq_restore();
@@ -102,9 +107,7 @@ void shared_memory_yield()
     snes_hirom();
     snes_wr_disable();
     snes_bus_active();
-
-    _delay_ms(10);
-
+    _delay_ms(SHARED_MEM_SWITCH_DELAY);
     avr_bus_active();
     snes_lorom();
     snes_wr_disable();
@@ -131,14 +134,19 @@ int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer)
     sram_write(SHARED_MEM_RX_LOC_STATE, SHARED_MEM_RX_AVR_RTS);
 
     snes_hirom();
-    snes_wr_disable();
     snes_bus_active();
-    _delay_ms(50);
+
+#if SHARED_MEM_SWITCH_IRQ    
+    snes_irq_on();
+    snes_irq_lo();
+    _delay_us(20);
+    snes_irq_hi();
+    snes_irq_off();
+#else
+    _delay_ms(SHARED_MEM_SWITCH_DELAY);
+#endif
 
     avr_bus_active();
-    //snes_irq_lo();
-    //snes_irq_off();
     snes_lorom();
-    snes_wr_disable();
     return 0;
 }
