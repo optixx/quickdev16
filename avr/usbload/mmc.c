@@ -5,21 +5,21 @@ uint8_t mmc_init()
     uint16_t Timeout = 0, i;
 
     // Konfiguration des Ports an der die MMC/SD-Karte angeschlossen wurde
-    DDRB |= ((1 << MMC_DO) | (1 << MMC_CS) | (1 << MMC_CLK));
-    DDRB &= ~(1 << MMC_DI);
-    PORTB |= ((1 << MMC_DO) | (1 << MMC_DI) | (1 << MMC_CS));
+    MMC_REG |= ((1 << MMC_DO) | (1 << MMC_CS) | (1 << MMC_CLK));
+    MMC_REG &= ~(1 << MMC_DI);
+    MMC_WRITE |= ((1 << MMC_DO) | (1 << MMC_DI) | (1 << MMC_CS));
 
     // Wartet eine kurze Zeit
     _delay_ms(20);
 
     // Initialisiere MMC/SD-Karte in den SPI-Mode
     for (i = 0; i < 250; i++) {
-        PORTB ^= (1 << MMC_CLK);
+        MMC_WRITE ^= (1 << MMC_CLK);
         _delay_us(4);
     }
-    PORTB &= ~(1 << MMC_CLK);
+    MMC_WRITE &= ~(1 << MMC_CLK);
     _delay_us(10);
-    PORTB &= ~(1 << MMC_CS);
+    MMC_WRITE &= ~(1 << MMC_CS);
     _delay_us(3);
 
     // Sendet Commando CMD0 an MMC/SD-Karte
@@ -77,7 +77,7 @@ uint8_t mmc_read_byte(void)
     uint8_t Byte = 0, j;
     for (j = 0; j < 8; j++) {
         Byte = (Byte << 1);
-        PORTB |= (1 << MMC_CLK);
+        MMC_WRITE |= (1 << MMC_CLK);
         _delay_us(4);
         if (PINB & (1 << MMC_DI)) {
             Byte |= 1;
@@ -86,7 +86,7 @@ uint8_t mmc_read_byte(void)
         else {
             Byte &= ~1;
         }
-        PORTB &= ~(1 << MMC_CLK);
+        MMC_WRITE &= ~(1 << MMC_CLK);
         _delay_us(4);
     }
     return (Byte);
@@ -100,19 +100,19 @@ void mmc_write_byte(uint8_t Byte)
     uint8_t i;
     for (i = 0; i < 8; i++) {
         if (Byte & 0x80) {
-            PORTB |= (1 << MMC_DO);
+            MMC_WRITE |= (1 << MMC_DO);
         }
 
         else {
-            PORTB &= ~(1 << MMC_DO);
+            MMC_WRITE &= ~(1 << MMC_DO);
         }
         Byte = (Byte << 1);
-        PORTB |= (1 << MMC_CLK);
+        MMC_WRITE |= (1 << MMC_CLK);
         _delay_us(4);
-        PORTB &= ~(1 << MMC_CLK);
+        MMC_WRITE &= ~(1 << MMC_CLK);
         _delay_us(4);
     }
-    PORTB |= (1 << MMC_DO);
+    MMC_WRITE |= (1 << MMC_DO);
 }
 
     // ############################################################################
