@@ -26,7 +26,7 @@ uint8_t mmc_init()
     uint8_t CMD[] = { 0x40, 0x00, 0x00, 0x00, 0x00, 0x95 };
     while (mmc_write_command(CMD) != 1) {
         if (Timeout++ > 20) {
-            MMC_Disable();
+            mmc_disable();
             return (1);         // Abbruch bei Commando1 (Return Code1)
         }
     }
@@ -37,7 +37,7 @@ uint8_t mmc_init()
     CMD[5] = 0xFF;
     while (mmc_write_command(CMD) != 0) {
         if (Timeout++ > 800) {
-            MMC_Disable();
+            mmc_disable();
             return (9);         // Abbruch bei Commando2 (Return Code2)
         }
     }

@@ -22,11 +22,9 @@ extern uint8_t mmc_write_command(uint8_t *);
 extern uint8_t mmc_read_csd(uint8_t *);
 extern uint8_t mmc_read_cid(uint8_t *);
 
-    // set MMC_Chip_Select to high (MMC/SD-Karte Inaktiv)
-#define MMC_Disable() MMC_WRITE|= (1<<MMC_CS);
+#define mmc_disable() MMC_WRITE|= (1<<MMC_CS);
 
-    // set MMC_Chip_Select to low (MMC/SD-Karte Aktiv)
-#define MMC_Enable() MMC_WRITE&=~(1<<MMC_CS);
+#define mmc_enable() MMC_WRITE&=~(1<<MMC_CS);
 
 #define nop()  __asm__ __volatile__ ("nop" ::)
 
