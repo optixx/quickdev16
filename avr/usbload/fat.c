@@ -1,5 +1,4 @@
 /*
- * ####################################################################################### FAT for AVR (MMC/SD)   Copyright (C) 2004
  * Ulrich Radig  Bei Fragen und Verbesserungen wendet euch per EMail an  mail@ulrichradig.de  oder im Forum meiner Web Page :
  * www.ulrichradig.de   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der  GNU General Public License, wie
  * von der Free Software Foundation veröffentlicht,  weitergeben und/oder modifizieren, entweder gemäß Version 2 der Lizenz oder  (nach
@@ -7,7 +6,6 @@
  * wird, aber OHNE IRGENDEINE GARANTIE,  sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT  FÜR EINEN BESTIMMTEN
  * ZWECK. Details finden Sie in der GNU General Public License.   Sie sollten eine Kopie der GNU General Public License zusammen mit
  * diesem  Programm erhalten haben.  Falls nicht, schreiben Sie an die Free Software Foundation,  Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.  #######################################################################################
  */
 
 #include "fat.h"
@@ -16,11 +14,9 @@ uint16_t fat_offset;
 uint16_t cluster_offset;
 uint16_t volume_boot_record_addr;
 
-    // ############################################################################
     // Auslesen Cluster Size der MMC/SD Karte und Speichern der größe ins EEprom
     // Auslesen Cluster Offset der MMC/SD Karte und Speichern der größe ins EEprom
 void fat_init(uint8_t * Buffer)
-// ############################################################################
 {
     struct BootSec *bootp;      // Zeiger auf Bootsektor Struktur
 
@@ -53,10 +49,8 @@ void fat_init(uint8_t * Buffer)
     cluster_offset = ((bootp->BPB_BytesPerSec * 32) / BlockSize);
     cluster_offset += fat_root_dir_addr(Buffer);
 }
-    // ############################################################################
     // Auslesen der Adresse des First Root Directory von Volume Boot Record
 uint16_t fat_root_dir_addr(uint8_t *Buffer)
-// ############################################################################
 {
     struct BootSec *bootp;      // Zeiger auf Bootsektor Struktur
     uint16_t FirstRootDirSecNum;
@@ -72,7 +66,6 @@ uint16_t fat_root_dir_addr(uint8_t *Buffer)
     return (FirstRootDirSecNum);
 }
 
-    // ############################################################################
     // Ausgabe des angegebenen Directory Eintrag in Entry_Count
     // ist kein Eintrag vorhanden, ist der Eintrag im 
     // Rückgabe Cluster 0xFFFF. Es wird immer nur ein Eintrag ausgegeben
@@ -82,7 +75,6 @@ uint16_t fat_read_dir_ent(uint16_t dir_cluster, // Angabe Dir Cluster
                               uint32_t *Size,      // Rückgabe der File Größe
                               uint8_t *Dir_Attrib,        // Rückgabe des Dir Attributs
                               uint8_t *Buffer)    // Working Buffer
-// ############################################################################
 {
     uint8_t *pointer;
     uint16_t TMP_Entry_Count = 0;
@@ -151,7 +143,6 @@ uint16_t fat_read_dir_ent(uint16_t dir_cluster, // Angabe Dir Cluster
     return (0xFFFF);            // Kein Eintrag mehr gefunden Rücksprung mit 0xFFFF
 }
 
-    // ############################################################################
     // Auslesen der Cluster für ein File aus der FAT
     // in den Buffer(512Byte). Bei einer 128MB MMC/SD 
     // Karte ist die Cluster größe normalerweise 16KB groß
@@ -161,7 +152,6 @@ uint16_t fat_read_dir_ent(uint16_t dir_cluster, // Angabe Dir Cluster
     // Cluster = Start Clusterangabe aus dem Directory 
 void fat_load(uint16_t Cluster,     // Angabe Startcluster
               uint32_t *Block, uint8_t *TMP_Buffer)  // Workingbuffer
-// ############################################################################
 {
 
     // Zum Überprüfen ob der FAT Block schon geladen wurde
@@ -206,13 +196,11 @@ void fat_load(uint16_t Cluster,     // Angabe Startcluster
     return;
 }
 
-    // ############################################################################
     // Lesen eines 512Bytes Blocks von einem File
 void fat_read_file(uint16_t Cluster,        // Angabe des Startclusters vom File
                    uint8_t *Buffer,       // Workingbuffer
                    uint32_t BlockCount)    // Angabe welcher Bock vom File geladen 
                                                                                       // werden soll a 512 Bytes
-// ############################################################################
 {
 
     // Berechnung des Blocks aus BlockCount und Cluster aus FATTabelle
@@ -231,13 +219,11 @@ void fat_read_file(uint16_t Cluster,        // Angabe des Startclusters vom File
     return;
 }
 
-    // ############################################################################
     // Lesen eines 512Bytes Blocks von einem File
 void fat_write_file(uint16_t cluster,       // Angabe des Startclusters vom File
                     uint8_t *buffer,      // Workingbuffer
                     uint32_t blockCount)   // Angabe welcher Bock vom File gespeichert 
                                                                           // werden soll a 512 Bytes
-// ############################################################################
 {
 
     // Berechnung des Blocks aus BlockCount und Cluster aus FATTabelle
@@ -257,7 +243,6 @@ void fat_write_file(uint16_t cluster,       // Angabe des Startclusters vom File
     return;
 }
 
-    // ####################################################################################
     // Sucht ein File im Directory
 uint8_t fat_search_file(uint8_t *File_Name, // Name des zu suchenden Files
                               uint16_t *Cluster,    // Angabe Dir Cluster welches
@@ -268,7 +253,6 @@ uint8_t fat_search_file(uint8_t *File_Name, // Name des zu suchenden Files
                               uint32_t *Size,      // Rückgabe der File Größe
                               uint8_t *Dir_Attrib,        // Rückgabe des Dir Attributs
                               uint8_t *Buffer)    // Working Buffer
-// ####################################################################################
 {
     uint16_t Dir_Cluster_Store = *Cluster;
     uint8_t a ;

@@ -44,10 +44,8 @@ uint8_t mmc_init()
     return (0);
 }
 
-    // ############################################################################
     // Sendet ein Commando an die MMC/SD-Karte
 uint8_t mmc_write_command(uint8_t *cmd)
-// ############################################################################
 {
     uint8_t tmp = 0xff;
     uint16_t Timeout = 0;
@@ -69,10 +67,8 @@ uint8_t mmc_write_command(uint8_t *cmd)
     return (tmp);
 }
 
-    // ############################################################################
     // Routine zum Empfangen eines Bytes von der MMC-Karte 
 uint8_t mmc_read_byte(void)
-// ############################################################################
 {
     uint8_t Byte = 0, j;
     for (j = 0; j < 8; j++) {
@@ -92,10 +88,8 @@ uint8_t mmc_read_byte(void)
     return (Byte);
 }
 
-    // ############################################################################
     // Routine zum Senden eines Bytes zur MMC-Karte
 void mmc_write_byte(uint8_t Byte)
-// ############################################################################
 {
     uint8_t i;
     for (i = 0; i < 8; i++) {
@@ -115,10 +109,8 @@ void mmc_write_byte(uint8_t Byte)
     MMC_WRITE |= (1 << MMC_DO);
 }
 
-    // ############################################################################
     // Routine zum schreiben eines Blocks(512Byte) auf die MMC/SD-Karte
 uint8_t mmc_write_sector(uint32_t addr, uint8_t *Buffer)
-// ############################################################################
 {
     uint8_t tmp;
 
@@ -168,11 +160,9 @@ uint8_t mmc_write_sector(uint32_t addr, uint8_t *Buffer)
     return (0);
 }
 
-    // ############################################################################
     // Routine zum lesen des CID Registers von der MMC/SD-Karte (16Bytes)
 void mmc_read_block(uint8_t *cmd, uint8_t *Buffer,
                     uint16_t Bytes)
-// ############################################################################
 {
     uint16_t a;
 
@@ -195,10 +185,8 @@ void mmc_read_block(uint8_t *cmd, uint8_t *Buffer,
     return;
 }
 
-    // ############################################################################
     // Routine zum lesen eines Blocks(512Byte) von der MMC/SD-Karte
 uint8_t mmc_read_sector(uint32_t addr, uint8_t *Buffer)
-// ############################################################################
 {
 
     // Commando 16 zum lesen eines Blocks von der MMC/SD - Karte
@@ -216,10 +204,8 @@ uint8_t mmc_read_sector(uint32_t addr, uint8_t *Buffer)
     return (0);
 }
 
-    // ############################################################################
     // Routine zum lesen des CID Registers von der MMC/SD-Karte (16Bytes)
 uint8_t mmc_read_cid(uint8_t *Buffer)
-// ############################################################################
 {
 
     // Commando zum lesen des CID Registers
@@ -228,10 +214,8 @@ uint8_t mmc_read_cid(uint8_t *Buffer)
     return (0);
 }
 
-    // ############################################################################
     // Routine zum lesen des CSD Registers von der MMC/SD-Karte (16Bytes)
 uint8_t mmc_read_csd(uint8_t *Buffer)
-// ############################################################################
 {
 
     // Commando zum lesen des CSD Registers
