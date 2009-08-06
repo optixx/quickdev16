@@ -4,7 +4,7 @@
 #include <avr/io.h>
 
 
-#define MMC_WRITE			PORTB   // Port an der die MMC/SD-Karte angeschlossen ist also des SPI
+#define MMC_WRITE			PORTB
 #define MMC_READ			PINB
 #define MMC_REG	DDRB
 
@@ -25,7 +25,5 @@ extern uint8_t mmc_read_cid(uint8_t *);
 #define mmc_disable() MMC_WRITE|= (1<<MMC_CS);
 
 #define mmc_enable() MMC_WRITE&=~(1<<MMC_CS);
-
-#define nop()  __asm__ __volatile__ ("nop" ::)
 
 #endif
