@@ -60,16 +60,7 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
                rx_remaining, len);
         len = rx_remaining;
     }
-    if (req_state == REQ_STATUS_UPLOAD) {
-
-        rx_remaining -= len;
-        debug(DEBUG_USB_TRANS,"usbFunctionWrite REQ_STATUS_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n",
-               req_addr, len, rx_remaining);
-        debug(DEBUG_USB_TRANS,"usbFunctionWrite %02x %02x %02x %02x %02x %02x %02x %x\n",
-        data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);         
-        sram_copy(req_addr, data, len);
-        req_addr += len;
-    } else if (req_state == REQ_STATUS_BULK_UPLOAD) {
+    if (req_state == REQ_STATUS_BULK_UPLOAD) {
 
         rx_remaining -= len;
         debug(DEBUG_USB_TRANS,"usbFunctionWrite REQ_STATUS_BULK_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n",

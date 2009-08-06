@@ -309,27 +309,6 @@ void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value){
     sram_bulk_write_end();
 }
 
-void sram_set(uint32_t addr, uint32_t len,uint8_t value)
-{
-    uint32_t i;
-    debug(DEBUG_SRAM,"sram_clear: addr=0x%08lx len=%li\n\r", addr,len);
-    for (i = addr; i < (addr + len); i++) {
-        if (0 == i % 0xfff)
-            debug(DEBUG_SRAM,"sram_clear: addr=0x%08lx\n\r", i);
-        sram_write(i, value);
-    }
-}
-
-void sram_copy(uint32_t addr, uint8_t * src, uint32_t len)
-{
-
-    uint32_t i;
-    uint8_t *ptr = src;
-    debug(DEBUG_SRAM,"sram_copy: addr=0x%08lx src=0x%p len=%li\n\r", addr,src,len);
-    for (i = addr; i < (addr + len); i++)
-        sram_write(i, *ptr++);
-}
-
 void sram_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 {
 
