@@ -52,6 +52,7 @@ void shared_memory_scratchpad_tx_restore()
     sram_write(SHARED_MEM_TX_LOC_PAYLOAD, scratchpad_payload);
 }
 
+
 void shared_memory_irq_hook()
 {
     irq_addr_lo = sram_read(SHARED_IRQ_LOC_LO);
@@ -84,14 +85,60 @@ void shared_memory_write(uint8_t cmd, uint8_t value)
     snes_bus_active();
     _delay_ms(50);
 
-
     avr_bus_active();
-    snes_irq_lo();
-    snes_irq_off();
+    //snes_irq_lo();
+    //snes_irq_off();
     snes_lorom();
     snes_wr_disable();
 
     shared_memory_scratchpad_tx_restore();
     shared_memory_irq_restore();
 
+}
+
+void shared_memory_yield()
+{
+
+    snes_hirom();
+    snes_wr_disable();
+    snes_bus_active();
+
+    _delay_ms(10);
+
+    avr_bus_active();
+    snes_lorom();
+    snes_wr_disable();
+
+}
+
+
+int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer)
+{
+    uint8_t state;
+
+
+    state = sram_read(SHARED_MEM_RX_LOC_STATE);
+    if (state != SHARED_MEM_RX_AVR_ACK){
+        return 1;
+    }
+
+    *cmd = sram_read(SHARED_MEM_RX_LOC_CMD);
+    *len = sram_read(SHARED_MEM_RX_LOC_LEN);
+    info("Read shared memory 0x%04x=0x%02x 0x%04x=0x%02x \n",
+         SHARED_MEM_RX_LOC_CMD, *cmd, SHARED_MEM_RX_LOC_LEN, *len);
+
+    sram_bulk_read_buffer(SHARED_MEM_RX_LOC_PAYLOAD,buffer, *len);
+    sram_write(SHARED_MEM_RX_LOC_STATE, SHARED_MEM_RX_AVR_RTS);
+
+    snes_hirom();
+    snes_wr_disable();
+    snes_bus_active();
+    _delay_ms(50);
+
+    avr_bus_active();
+    //snes_irq_lo();
+    //snes_irq_off();
+    snes_lorom();
+    snes_wr_disable();
+    return 0;
 }

@@ -55,6 +55,6 @@
 #define SHARED_IRQ_HANDLER_HI               0x10
 
 void shared_memory_write(uint8_t cmd, uint8_t value);
-void shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer);
+int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer);
 
 #endif
