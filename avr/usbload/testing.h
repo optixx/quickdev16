@@ -19,11 +19,13 @@
  */
 
 
-#ifndef __COMMAND_H__
-#define __COMMAND_H__
+#ifndef __TESTING_H__
+#define __TESTING_H__
 
-void send_reset();
-void send_irq();
-void set_rom_mode();
 
+void test_read_write();
+void test_bulk_read_write();
+void test_non_zero_memory(uint32_t bottom_addr, uint32_t top_addr);
+void test_crc();
+ 
 #endif
