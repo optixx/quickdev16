@@ -70,7 +70,7 @@ void shared_memory_irq_restore()
 void shared_memory_write(uint8_t cmd, uint8_t value)
 {
 
-    info("Write shared memory 0x%04x=0x%02x 0x%04x=0x%02x \n",
+    debug(DEBUG_SHM,"shared_memory_write:  0x%04x=0x%02x 0x%04x=0x%02x \n",
          SHARED_MEM_TX_LOC_CMD, cmd, SHARED_MEM_TX_LOC_PAYLOAD, value);
 
     shared_memory_scratchpad_tx_save();
@@ -127,7 +127,7 @@ int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer)
 
     *cmd = sram_read(SHARED_MEM_RX_LOC_CMD);
     *len = sram_read(SHARED_MEM_RX_LOC_LEN);
-    info("Read shared memory 0x%04x=0x%02x 0x%04x=0x%02x \n",
+    debug(DEBUG_SHM,"shared_memory_read: 0x%04x=0x%02x 0x%04x=0x%02x \n",
          SHARED_MEM_RX_LOC_CMD, *cmd, SHARED_MEM_RX_LOC_LEN, *len);
 
     sram_bulk_read_buffer(SHARED_MEM_RX_LOC_PAYLOAD,buffer, *len);
