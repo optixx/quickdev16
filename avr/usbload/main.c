@@ -312,7 +312,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 /*
  * ------------------------------------------------------------------------- 
  */
- 
+#define ENABLE_TEST
 #ifdef ENABLE_TEST
  
 void test_sdcard(){
@@ -535,12 +535,10 @@ int main(void)
     stdout = &uart_stdout;
 
     info("Sytem start\n");
-
-
     system_init();
+    test_sdcard();
 
 #if 0
-    test_sdcard();
     test_read_write();
     test_bulk_read_write();
     test_crc();

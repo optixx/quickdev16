@@ -11,10 +11,10 @@
  */
 
 #include "fat.h"
-unsigned char cluster_size;
-unsigned int fat_offset;
-unsigned int cluster_offset;
-unsigned int volume_boot_record_addr;
+uint8_t cluster_size;
+uint16_t fat_offset;
+uint16_t cluster_offset;
+uint16_t volume_boot_record_addr;
 
     // ############################################################################
     // Auslesen Cluster Size der MMC/SD Karte und Speichern der größe ins EEprom
@@ -24,7 +24,7 @@ void fat_init(uint8_t * Buffer)
 {
     struct BootSec *bootp;      // Zeiger auf Bootsektor Struktur
 
-    // unsigned char Buffer[BlockSize];
+    // uint8_t Buffer[BlockSize];
 
     // volume_boot_record_addr = fat_addr (Buffer); 
     mmc_read_sector(MASTER_BOOT_RECORD, Buffer);        // Read Master Boot Record 
@@ -55,11 +55,11 @@ void fat_init(uint8_t * Buffer)
 }
     // ############################################################################
     // Auslesen der Adresse des First Root Directory von Volume Boot Record
-unsigned int fat_root_dir_addr(unsigned char *Buffer)
+uint16_t fat_root_dir_addr(uint8_t *Buffer)
 // ############################################################################
 {
     struct BootSec *bootp;      // Zeiger auf Bootsektor Struktur
-    unsigned int FirstRootDirSecNum;
+    uint16_t FirstRootDirSecNum;
 
     // auslesen des Volume Boot Record von der MMC/SD Karte 
     mmc_read_sector(volume_boot_record_addr, Buffer);
@@ -77,20 +77,20 @@ unsigned int fat_root_dir_addr(unsigned char *Buffer)
     // ist kein Eintrag vorhanden, ist der Eintrag im 
     // Rückgabe Cluster 0xFFFF. Es wird immer nur ein Eintrag ausgegeben
     // um Speicherplatz zu sparen um es auch für kleine Atmels zu benutzen
-unsigned int fat_read_dir_ent(unsigned int dir_cluster, // Angabe Dir Cluster
-                              unsigned char Entry_Count,        // Angabe welcher Direintrag
-                              unsigned long *Size,      // Rückgabe der File Größe
-                              unsigned char *Dir_Attrib,        // Rückgabe des Dir Attributs
-                              unsigned char *Buffer)    // Working Buffer
+uint16_t fat_read_dir_ent(uint16_t dir_cluster, // Angabe Dir Cluster
+                              uint8_t Entry_Count,        // Angabe welcher Direintrag
+                              uint32_t *Size,      // Rückgabe der File Größe
+                              uint8_t *Dir_Attrib,        // Rückgabe des Dir Attributs
+                              uint8_t *Buffer)    // Working Buffer
 // ############################################################################
 {
-    unsigned char *pointer;
-    unsigned int TMP_Entry_Count = 0;
-    unsigned long Block = 0;
+    uint8_t *pointer;
+    uint16_t TMP_Entry_Count = 0;
+    uint32_t Block = 0;
     struct DirEntry *dir;       // Zeiger auf einen Verzeichniseintrag
-    unsigned int blk;
-    unsigned int a;
-    unsigned char b;
+    uint16_t blk;
+    uint16_t a;
+    uint8_t b;
     pointer = Buffer;
     if (dir_cluster == 0) {
         Block = fat_root_dir_addr(Buffer);
@@ -159,20 +159,20 @@ unsigned int fat_read_dir_ent(unsigned int dir_cluster, // Angabe Dir Cluster
     // Bei größeren Files muß der Buffer größer definiert
     // werden! (Ready)
     // Cluster = Start Clusterangabe aus dem Directory 
-void fat_load(unsigned int Cluster,     // Angabe Startcluster
-              unsigned long *Block, unsigned char *TMP_Buffer)  // Workingbuffer
+void fat_load(uint16_t Cluster,     // Angabe Startcluster
+              uint32_t *Block, uint8_t *TMP_Buffer)  // Workingbuffer
 // ############################################################################
 {
 
     // Zum Überprüfen ob der FAT Block schon geladen wurde
-    unsigned int FAT_Block_Store = 0;
+    uint16_t FAT_Block_Store = 0;
 
     // Byte Adresse innerhalb des Fat Blocks
-    unsigned int FAT_Byte_Addresse;
+    uint16_t FAT_Byte_Addresse;
 
     // FAT Block Adresse
-    unsigned int FAT_Block_Addresse;
-    unsigned int a;
+    uint16_t FAT_Block_Addresse;
+    uint16_t a;
 
     // Berechnung für den ersten FAT Block (FAT Start Addresse)
     for (a = 0;; a++) {
@@ -208,16 +208,16 @@ void fat_load(unsigned int Cluster,     // Angabe Startcluster
 
     // ############################################################################
     // Lesen eines 512Bytes Blocks von einem File
-void fat_read_file(unsigned int Cluster,        // Angabe des Startclusters vom File
-                   unsigned char *Buffer,       // Workingbuffer
-                   unsigned long BlockCount)    // Angabe welcher Bock vom File geladen 
+void fat_read_file(uint16_t Cluster,        // Angabe des Startclusters vom File
+                   uint8_t *Buffer,       // Workingbuffer
+                   uint32_t BlockCount)    // Angabe welcher Bock vom File geladen 
                                                                                       // werden soll a 512 Bytes
 // ############################################################################
 {
 
     // Berechnung des Blocks aus BlockCount und Cluster aus FATTabelle
     // Berechnung welcher Cluster zu laden ist
-    unsigned long Block = (BlockCount / cluster_size);
+    uint32_t Block = (BlockCount / cluster_size);
 
     // Auslesen der FAT - Tabelle
     fat_load(Cluster, &Block, Buffer);
@@ -233,17 +233,17 @@ void fat_read_file(unsigned int Cluster,        // Angabe des Startclusters vom 
 
     // ############################################################################
     // Lesen eines 512Bytes Blocks von einem File
-void fat_write_file(unsigned int cluster,       // Angabe des Startclusters vom File
-                    unsigned char *buffer,      // Workingbuffer
-                    unsigned long blockCount)   // Angabe welcher Bock vom File gespeichert 
+void fat_write_file(uint16_t cluster,       // Angabe des Startclusters vom File
+                    uint8_t *buffer,      // Workingbuffer
+                    uint32_t blockCount)   // Angabe welcher Bock vom File gespeichert 
                                                                           // werden soll a 512 Bytes
 // ############################################################################
 {
 
     // Berechnung des Blocks aus BlockCount und Cluster aus FATTabelle
     // Berechnung welcher Cluster zu speichern ist
-    unsigned char tmp_buffer[513];
-    unsigned long block = (blockCount / cluster_size);
+    uint8_t tmp_buffer[513];
+    uint32_t block = (blockCount / cluster_size);
 
     // Auslesen der FAT - Tabelle
     fat_load(cluster, &block, tmp_buffer);
@@ -259,19 +259,19 @@ void fat_write_file(unsigned int cluster,       // Angabe des Startclusters vom 
 
     // ####################################################################################
     // Sucht ein File im Directory
-unsigned char fat_search_file(unsigned char *File_Name, // Name des zu suchenden Files
-                              unsigned int *Cluster,    // Angabe Dir Cluster welches
+uint8_t fat_search_file(uint8_t *File_Name, // Name des zu suchenden Files
+                              uint16_t *Cluster,    // Angabe Dir Cluster welches
                               // durchsucht werden soll
                               // und Rückgabe des clusters
                               // vom File welches gefunden
                               // wurde
-                              unsigned long *Size,      // Rückgabe der File Größe
-                              unsigned char *Dir_Attrib,        // Rückgabe des Dir Attributs
-                              unsigned char *Buffer)    // Working Buffer
+                              uint32_t *Size,      // Rückgabe der File Größe
+                              uint8_t *Dir_Attrib,        // Rückgabe des Dir Attributs
+                              uint8_t *Buffer)    // Working Buffer
 // ####################################################################################
 {
-    unsigned int Dir_Cluster_Store = *Cluster;
-    unsigned char a ;
+    uint16_t Dir_Cluster_Store = *Cluster;
+    uint8_t a ;
     for (a = 0; a < 100; a++) {
         *Cluster =
             fat_read_dir_ent(Dir_Cluster_Store, a, Size, Dir_Attrib, Buffer);
