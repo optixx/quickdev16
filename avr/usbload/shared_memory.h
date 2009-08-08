@@ -54,8 +54,11 @@
 #define SHARED_IRQ_LOC_LO                   0x00fffe
 #define SHARED_IRQ_LOC_HI                   0x00ffff
 
-#define SHARED_IRQ_HANDLER_LO               0x00
-#define SHARED_IRQ_HANDLER_HI               0x10
+/* Use COP IRQ LOC for hooked IRQ handler */
+#define SHARED_IRQ_HANDLER_LO               0x0ffe4
+#define SHARED_IRQ_HANDLER_HI               0x0ffe5
+
+
 
 void shared_memory_write(uint8_t cmd, uint8_t value);
 int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer);

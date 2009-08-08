@@ -145,8 +145,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         req_percent = (uint32_t)( 100 * req_addr )  / req_addr_end;
         if (req_percent!=req_percent_last){
-            debug(DEBUG_USB,
-                "USB_BULK_UPLOAD_ADDR: precent=%i\n",  req_percent);
+            //debug(DEBUG_USB,
+            //    "USB_BULK_UPLOAD_ADDR: precent=%i\n",  req_percent);
             shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, req_percent);
             sram_bulk_write_start(req_addr);
         }
@@ -283,20 +283,15 @@ void usb_connect()
 void boot_startup_rom()
 {
 
-
     info("Activate AVR bus\n");
     avr_bus_active();
-
     info("IRQ off\n");
     snes_irq_lo();
     snes_irq_off();
-
     snes_lorom();
     info("Set Snes lowrom \n");
-
     rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
     dump_memory(0x10000 - 0x100, 0x10000);
-
     snes_reset_hi();
     snes_reset_off();
     snes_irq_lo();
@@ -307,20 +302,9 @@ void boot_startup_rom()
     info("Disable snes WR\n");
     snes_bus_active();
     info("Activate Snes bus\n");
-    _delay_ms(100);
-    info("Reset Snes\n");
+    _delay_ms(20);
     send_reset();
-    _delay_ms(100);
-#if 0
-    uint8_t i = 0;
-    i = 20;
-    info("Wait");
-    while (--i) {
-        _delay_ms(500);
-        info(".");
-    }
-    info("\n");
-#endif
+    _delay_ms(200);
 }
 
 
@@ -343,10 +327,12 @@ int main(void)
     info("Boot startup rom\n");
     boot_startup_rom();
 
+
     usbInit();
     usb_connect();
 
     while (1) {
+        
         avr_bus_active();
         info("Activate AVR bus\n");
         info("IRQ off\n");
@@ -369,7 +355,6 @@ int main(void)
         snes_bus_active();
         info("Activate Snes bus\n");
         _delay_ms(100);
-        info("Reset Snes\n");
         send_reset();
 
         info("Poll\n");
@@ -411,6 +396,8 @@ int main(void)
             info("Read 0x3000=%c\n", c);
 #endif
         }
+        info("Boot startup rom\n");
+        boot_startup_rom();
     }
 
     return 0;

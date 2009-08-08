@@ -124,7 +124,7 @@ inline void sram_bulk_addr_save()
 
 inline void sram_bulk_addr_restore()
 {
-    sram_bulk_read_start(addr_stash);
+    sreg_set(addr_stash);
 }
 
 
