@@ -31,6 +31,10 @@
 #include "debug.h"
 #include "info.h"
 
+uint32_t addr_current = 0;
+uint32_t addr_stash = 0;
+
+
 void system_init(void)
 {
     /*-------------------------------------------------*/
@@ -113,11 +117,23 @@ void sreg_set(uint32_t addr)
     
 }
 
+inline void sram_bulk_addr_save()
+{
+    addr_stash = addr_current;
+}
+
+inline void sram_bulk_addr_restore()
+{
+    sram_bulk_read_start(addr_stash);
+}
 
 
 void sram_bulk_read_start(uint32_t addr)
 {
     debug(DEBUG_SRAM,"sram_bulk_read_start: addr=0x%08lx\n\r", addr);
+
+    addr_current = addr;
+
     avr_data_in();
 
     AVR_CS_PORT &= ~(1 << AVR_CS_PIN);
@@ -138,6 +154,7 @@ void sram_bulk_read_start(uint32_t addr)
 
 inline void sram_bulk_read_next(void)
 {
+    addr_current++;
     AVR_RD_PORT |= (1 << AVR_RD_PIN);
     counter_up();
     AVR_RD_PORT &= ~(1 << AVR_RD_PIN);

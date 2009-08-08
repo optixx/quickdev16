@@ -201,4 +201,9 @@ void sram_bulk_copy(uint32_t addr, uint8_t * src, uint32_t len);
 void sram_bulk_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len);
 void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value);
 
+inline void sram_bulk_addr_save();
+inline void sram_bulk_addr_restore();
+
+
+
 #endif
