@@ -27,5 +27,6 @@ void test_read_write();
 void test_bulk_read_write();
 void test_non_zero_memory(uint32_t bottom_addr, uint32_t top_addr);
 void test_crc();
+void test_sdcard();
  
 #endif

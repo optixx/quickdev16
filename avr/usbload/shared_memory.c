@@ -103,7 +103,7 @@ void shared_memory_write(uint8_t cmd, uint8_t value)
 
     shared_memory_scratchpad_tx_restore();
     shared_memory_irq_restore();
-    //sram_bulk_addr_restore();
+    sram_bulk_addr_restore();
 
 }
 
