@@ -26,16 +26,18 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #######################################################################################*/
 
 #include <avr/io.h>
-#include <stdio.h>
+
 #include "mmc.h"
 
+#include <util/delay.h>         
 
 //############################################################################
 //Routine zur Initialisierung der MMC/SD-Karte (SPI-MODE)
-unsigned char mmc_init (){
-  unsigned int Timeout = 0;
+unsigned char mmc_init (void){
+
   unsigned char a;
-  unsigned char b; 
+  unsigned int Timeout = 0;
+   
   //Konfiguration des Ports an der die MMC/SD-Karte angeschlossen wurde
   MMC_Direction_REG &=~(1<<SPI_DI);         //Setzen von Pin MMC_DI auf Input
   MMC_Direction_REG |= (1<<SPI_Clock);      //Setzen von Pin MMC_Clock auf Output
@@ -46,24 +48,28 @@ unsigned char mmc_init (){
 
   for(a=0;a<200;a++){
 	nop();
+	nop();
+	nop();
 	};      //Wartet eine kurze Zeit
  
    //Aktiviren des SPI - Bus, Clock = Idel LOW
    //SPI Clock teilen durch 128
-   SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1); //Enable SPI, SPI in Master Mode   
-   //SPSR = (0<<SPI2X); 
+   SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1); //Enable SPI, SPI in Master Mode     
    
+  _delay_ms(10);
   //Initialisiere MMC/SD-Karte in den SPI-Mode
-  for (b = 0;b<0x0f;b++){ //Sendet min 74+ Clocks an die MMC/SD-Karte
+  for (a = 0;a<0x0f;a++){ //Sendet min 74+ Clocks an die MMC/SD-Karte
     mmc_write_byte(0xff);
-	}
+    _delay_us(100);
+    
+  }
    
   //Sendet Commando CMD0 an MMC/SD-Karte
   unsigned char CMD[] = {0x40,0x00,0x00,0x00,0x00,0x95};
   while(mmc_write_command (CMD) !=1){
-	if (Timeout++ > 200){
+      _delay_us(100);
+ 	if (Timeout++ > 200){
 	 MMC_Disable();
-     printf("fail1\n");
      return(1); //Abbruch bei Commando1 (Return Code1)
      }
   }
@@ -74,7 +80,6 @@ unsigned char mmc_init (){
   while( mmc_write_command (CMD) !=0){
 	if (Timeout++ > 400){
 	  MMC_Disable();
-      printf("fail2\n");
       return(2); //Abbruch bei Commando2 (Return Code2)
       }
 	}
@@ -92,9 +97,10 @@ unsigned char mmc_init (){
 //############################################################################
 //Sendet ein Commando an die MMC/SD-Karte
 unsigned char mmc_write_command (unsigned char *cmd){
+	unsigned char a;
    unsigned char tmp = 0xff;
    unsigned int Timeout = 0;
-   unsigned char a;
+
    //set MMC_Chip_Select to high (MMC/SD-Karte Inaktiv) 
    MMC_Disable();
 
@@ -121,23 +127,17 @@ unsigned char mmc_write_command (unsigned char *cmd){
 
 //############################################################################
 //Routine zum Empfangen eines Bytes von der MMC-Karte 
-unsigned char mmc_read_byte (void){
-
-  //unsigned char Byte = 0;
-
+unsigned char mmc_read_byte (void){ 
   SPDR = 0xff;
-  while(!(SPSR & (1<<SPIF))){};
-  //Byte = SPDR;
-
+  while(!(SPSR & (1<<SPIF))){}; 
   return (SPDR);
 }
 
 //############################################################################
 //Routine zum Senden eines Bytes zur MMC-Karte
 void mmc_write_byte (unsigned char Byte){
-
    SPDR = Byte;    //Sendet ein Byte
-   while(!(SPSR & (1<<SPIF))){ //Wartet bis Byte gesendet wurde	
+   while(!(SPSR & (1<<SPIF))){ ; //Wartet bis Byte gesendet wurde	
    }
 }
 
@@ -146,13 +146,15 @@ void mmc_write_byte (unsigned char Byte){
 //Routine zum schreiben eines Blocks(512Byte) auf die MMC/SD-Karte
 unsigned char mmc_write_sector (unsigned long addr,unsigned char *Buffer){
    unsigned char tmp;
+	unsigned int a;
+	unsigned char b;
+
    //Commando 24 zum schreiben eines Blocks auf die MMC/SD - Karte
    unsigned char cmd[] = {0x58,0x00,0x00,0x00,0x00,0xFF}; 
-   unsigned char a;
-   unsigned int i;
+   
    /*Die Adressierung der MMC/SD-Karte wird in Bytes angegeben,
      addr wird von Blocks zu Bytes umgerechnet danach werden 
-     diese in das Commando eingef�gt*/
+     diese in das Commando eingefuegt*/
      
    addr = addr << 9; //addr = addr * 512
    
@@ -162,13 +164,11 @@ unsigned char mmc_write_sector (unsigned long addr,unsigned char *Buffer){
 
    //Sendet Commando cmd24 an MMC/SD-Karte (Write 1 Block/512 Bytes)
    tmp = mmc_write_command (cmd);
-   if (tmp != 0)
-      {
-      return(tmp);
-      }
+
+   if (tmp != 0)  return(tmp);
          
    //Wartet einen Moment und sendet einen Clock an die MMC/SD-Karte
-   for (a=0;a<100;a++)
+   for (b=0;b<100;b++)
       {
       mmc_read_byte();
       }
@@ -177,10 +177,13 @@ unsigned char mmc_write_sector (unsigned long addr,unsigned char *Buffer){
    mmc_write_byte(0xFE);   
    
    //Schreiben des Bolcks (512Bytes) auf MMC/SD-Karte
-   for (i=0;i<512;i++)
-      {
-      mmc_write_byte(*Buffer++);
-      }
+	a=511;				// do while konstrukt weils schneller geht
+	tmp=*Buffer++;		// holt neues byte aus ram in register   
+	do{   
+		SPDR = tmp;    //Sendet ein Byte
+		tmp=*Buffer++;	// holt schonmal neues aus ram in register
+		while( !(SPSR & (1<<SPIF)) ){ ;}//Wartet bis Byte gesendet wurde	
+      }while(a--);
    
    //CRC-Byte schreiben
    mmc_write_byte(0xFF); //Schreibt Dummy CRC
@@ -201,8 +204,10 @@ return(0);
 //############################################################################
 //Routine zum lesen des CID Registers von der MMC/SD-Karte (16Bytes)
 void mmc_read_block(unsigned char *cmd,unsigned char *Buffer,unsigned int Bytes){   
+
+  unsigned int a;
+
    //Sendet Commando cmd an MMC/SD-Karte
-    unsigned int a;
    if (mmc_write_command (cmd) != 0)
          {
           return;
@@ -249,3 +254,26 @@ unsigned char mmc_read_sector (unsigned long addr,unsigned char *Buffer){
 }
 
 
+/*
+//############################################################################
+//Routine zum lesen des CID Registers von der MMC/SD-Karte (16Bytes)
+unsigned char mmc_read_cid (unsigned char *Buffer){
+   //Commando zum lesen des CID Registers
+   unsigned char cmd[] = {0x4A,0x00,0x00,0x00,0x00,0xFF}; 
+   
+   mmc_read_block(cmd,Buffer,16);
+
+   return(0);
+}
+
+//############################################################################
+//Routine zum lesen des CSD Registers von der MMC/SD-Karte (16Bytes)
+unsigned char mmc_read_csd (unsigned char *Buffer){   
+   //Commando zum lesen des CSD Registers
+   unsigned char cmd[] = {0x49,0x00,0x00,0x00,0x00,0xFF};
+   
+   mmc_read_block(cmd,Buffer,16);
+
+   return(0);
+}
+*/

@@ -13,13 +13,16 @@ Copyright (C) 2004 Ulrich Radig
   #define MMC_Direction_REG	DDRB	
 
 
-  #define SPI_DI   		    6  //Port Pin an dem Data Output der MMC/SD-Karte angeschlossen ist 
-  #define SPI_DO    		5  //Port Pin an dem Data Input der MMC/SD-Karte angeschlossen ist
-  #define SPI_Clock  		7  //Port Pin an dem die Clock der MMC/SD-Karte angeschlossen ist (clk)
-  #define MMC_Chip_Select   4 //Port Pin an dem Chip Select der MMC/SD-Karte angeschlossen ist 
-  //#define SPI_SS			4  //Nicht Benutz mu� aber definiert werden
+  #if defined (__AVR_ATmega644__)
+	#define SPI_DI   		6  //Port Pin an dem Data Output der MMC/SD-Karte angeschlossen ist 
+	#define SPI_DO    		5  //Port Pin an dem Data Input der MMC/SD-Karte angeschlossen ist
+	#define SPI_Clock  		7  //Port Pin an dem die Clock der MMC/SD-Karte angeschlossen ist (clk)
+	#define MMC_Chip_Select 4  //Port Pin an dem Chip Select der MMC/SD-Karte angeschlossen ist
+	//#define SPI_SS			4  //Nicht Benutz mu� aber definiert werden
+  #endif
 
 
+  //Prototypes
   extern  unsigned char mmc_read_byte(void);
   extern  void 			mmc_write_byte(unsigned char);
   extern  void 			mmc_read_block(unsigned char *,unsigned char *,unsigned in);
@@ -27,10 +30,15 @@ Copyright (C) 2004 Ulrich Radig
   extern  unsigned char mmc_read_sector (unsigned long,unsigned char *);
   extern  unsigned char mmc_write_sector (unsigned long,unsigned char *);
   extern  unsigned char mmc_write_command (unsigned char *);
+  //extern unsigned char mmc_read_csd (unsigned char *);
+  //extern unsigned char mmc_read_cid (unsigned char *);
   
+	  //set MMC_Chip_Select to high (MMC/SD-Karte Inaktiv)
   #define MMC_Disable() MMC_Write|= (1<<MMC_Chip_Select);
 
+	  //set MMC_Chip_Select to low (MMC/SD-Karte Aktiv)
   #define MMC_Enable() MMC_Write&=~(1<<MMC_Chip_Select);
 
- #define nop()  __asm__ __volatile__ ("nop" ::)
+  #define nop()  __asm__ __volatile__ ("nop" ::)
+
 #endif

@@ -1,6 +1,6 @@
 /*
 File: main.smc 
-Time: Thu, 06 Aug 2009 20:01:38
+Time: Sun, 09 Aug 2009 11:41:19
 */
 #include <avr/pgmspace.h>       
 #include <loader.h>       
