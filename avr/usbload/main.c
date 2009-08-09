@@ -315,6 +315,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 #define ENABLE_TEST
 #ifdef ENABLE_TEST
  
+ 
+uint8_t buffer[512];
+ 
 void test_sdcard(){
 	uint16_t 	fat_cluster = 0;
     uint8_t 	fat_attrib = 0;
@@ -323,6 +326,10 @@ void test_sdcard(){
     uint8_t 	bank_cnt = 0;
  	uint16_t 	crc = 0;
 	uint16_t 	block_cnt;
+	uint16_t    clustervar;
+	uint8_t     dir_attrib = 0;
+	uint32_t    file_size = 0;
+    uint8_t 	i = 0;
     
     #define FILENAME	"mrdo.smc"   //failed
     #define ROMSIZE      2             // 4 == 4mbit == 512kb
@@ -335,6 +342,17 @@ void test_sdcard(){
     info("MMC Init done\n");
     fat_init(read_buffer);
     info("FAT Init done.\n");
+    
+    
+	info("\r\nDirectory\r\n");
+	for (i = 1;i < 240;i++){
+	    clustervar = fat_read_dir_ent(0,i,&file_size,&dir_attrib,buffer);
+	    if (clustervar == 0xffff){
+				break;
+		}
+		info("Cluster = %4x DirA = %2x FileName = %s size=%li\n",clustervar,dir_attrib,buffer,file_size));
+	}
+    
     info("Look for %s\n",FILENAME);
 
     if (fat_search_file((uint8_t*)FILENAME,
