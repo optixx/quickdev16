@@ -350,7 +350,7 @@ void test_sdcard(){
 	    if (clustervar == 0xffff){
 				break;
 		}
-		info("Cluster = %4x DirA = %2x FileName = %s size=%li\n",clustervar,dir_attrib,buffer,file_size));
+		info("Cluster = %4x DirA = %2x FileName = %s size=%li\n",clustervar,dir_attrib,buffer,file_size);
 	}
     
     info("Look for %s\n",FILENAME);
