@@ -314,10 +314,11 @@ int main(void)
     uart_init();
     stdout = &uart_stdout;
 
+    test_sdcard();
+
     info("Sytem start\n");
     system_init();
 
-    test_sdcard();
 #if 0
     test_read_write();
     test_bulk_read_write();

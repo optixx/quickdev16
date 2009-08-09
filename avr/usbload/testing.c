@@ -122,10 +122,10 @@ void test_sdcard(void){
     }  
 	
  
-    if (fat_initfat()){	
+    if (fat_initfat()==0){	
         printf("fatinit ok\n");
     } else {
-      printf("fatinit failed\n");
+        printf("fatinit failed\n");
       return;
     }
 

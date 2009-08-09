@@ -13,11 +13,11 @@ Copyright (C) 2004 Ulrich Radig
   #define MMC_Direction_REG	DDRB	
 
 
-  #define SPI_DI   		6  //Port Pin an dem Data Output der MMC/SD-Karte angeschlossen ist 
+  #define SPI_DI   		    6  //Port Pin an dem Data Output der MMC/SD-Karte angeschlossen ist 
   #define SPI_DO    		5  //Port Pin an dem Data Input der MMC/SD-Karte angeschlossen ist
   #define SPI_Clock  		7  //Port Pin an dem die Clock der MMC/SD-Karte angeschlossen ist (clk)
-  #define MMC_Chip_Select 4 //Port Pin an dem Chip Select der MMC/SD-Karte angeschlossen ist 
-  #define SPI_SS			4  //Nicht Benutz mu� aber definiert werden
+  #define MMC_Chip_Select   4 //Port Pin an dem Chip Select der MMC/SD-Karte angeschlossen ist 
+  //#define SPI_SS			4  //Nicht Benutz mu� aber definiert werden
 
 
   extern  unsigned char mmc_read_byte(void);

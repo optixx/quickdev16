@@ -26,7 +26,7 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #######################################################################################*/
 
 #include <avr/io.h>
-
+#include <stdio.h>
 #include "mmc.h"
 
 
@@ -41,7 +41,7 @@ unsigned char mmc_init (){
   MMC_Direction_REG |= (1<<SPI_Clock);      //Setzen von Pin MMC_Clock auf Output
   MMC_Direction_REG |= (1<<SPI_DO);         //Setzen von Pin MMC_DO auf Output
   MMC_Direction_REG |= (1<<MMC_Chip_Select);//Setzen von Pin MMC_Chip_Select auf Output
-  MMC_Direction_REG |= (1<<SPI_SS);   
+  //MMC_Direction_REG |= (1<<SPI_SS);   
   MMC_Write |= (1<<MMC_Chip_Select);        //Setzt den Pin MMC_Chip_Select auf High Pegel
 
   for(a=0;a<200;a++){
@@ -63,6 +63,7 @@ unsigned char mmc_init (){
   while(mmc_write_command (CMD) !=1){
 	if (Timeout++ > 200){
 	 MMC_Disable();
+     printf("fail1\n");
      return(1); //Abbruch bei Commando1 (Return Code1)
      }
   }
@@ -73,6 +74,7 @@ unsigned char mmc_init (){
   while( mmc_write_command (CMD) !=0){
 	if (Timeout++ > 400){
 	  MMC_Disable();
+      printf("fail2\n");
       return(2); //Abbruch bei Commando2 (Return Code2)
       }
 	}
