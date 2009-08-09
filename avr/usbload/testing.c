@@ -1,5 +1,3 @@
-
-
 /*
  * =====================================================================================
  *
@@ -120,8 +118,6 @@ void test_sdcard(void){
     while (mmc_init() !=0){ 		//ist der Rückgabewert ungleich NULL ist ein Fehler aufgetreten	
 	    printf("no sdcard\n");	
     }  
-	
- 
     if (fat_initfat()==0){	
         printf("fatinit ok\n");
     } else {
@@ -130,49 +126,24 @@ void test_sdcard(void){
     }
     ffls();
     char datei[12]="test.txt";		// hier muss platz für 11 zeichen sein (8.3), da fat_str diesen string benutzt !!
-    fat_str(datei);						// wandelt "test.txt" in das fat format 8.3 der form: "TEST    TXT" muss immer dieses Format haben, auch ordner !!
-    printf("rmove %s\n",datei);
-
-    // 0.) ______________löschen von dateien/ordnern (ordner rekursiv)____________________________________________
+    fat_str(datei);	
     ffrm( datei );								// löschen der datei/ordner falls vorhanden
-
-    // 1.) ______________anlegen und schreiben____________________________________________________________________
-    /* 	öffnet datei, wenn nicht vorhanden, legt ffopen datei an (rückgabewert = 1 datei existiert, also nur öffnen, 2 = angelegt). */  
     printf("open %s\n",datei);
     ffopen( datei );						
     printf("write %s\n",datei);
-
-    /* schreibt string  */
     ffwrites((char*)"Hallo Datei :)");
-    // neue zeile in der datei
     ffwrite(0x0D);
     ffwrite(0x0A);
     printf("close %s\n",datei);
-
-    /* schließt datei */
     ffclose();
     printf("open %s\n",datei);
-
-    // 2.)________________ändern von vorhandenen daten in dateien__________________________________________________
-    ffopen( datei );		// siehe oben...
-    printf("seek %s\n",datei);
-    ffseek(12);				// spult in datei auf position 12 vor (fängt immer bei 0 an zu zählen !)
-    printf("write %s\n",datei);
-    ffwrite(';');			// schreibt dann ab position 12 (überschreibt daten der datei, hier nur 1 zeichen)
-    printf("close %s\n",datei);
-    ffclose();				// schließt datei  
-
-    // 3.)________________lesen von dateien_________________________________________________________________________
     ffopen( datei );
-    ffls();
-    							// siehe oben...
     printf("open %s\n",datei);
     unsigned long int seek=file.length;	// eine variable setzen und runterzählen bis 0 geht am schnellsten !
     do{
-  	 printf("%c",ffread());							// liest ein zeichen und gibt es über uart aus !
-  	 }while(--seek);							// liest solange bytes da sind (von datei länge bis 0)
+  	    printf("%c",ffread());							// liest ein zeichen und gibt es über uart aus !
+  	}while(--seek);							// liest solange bytes da sind (von datei länge bis 0)
     ffclose();									// schließt datei
-
 
 }
 
