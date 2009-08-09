@@ -31,6 +31,7 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 #include <util/delay.h>         
 
+
 //############################################################################
 //Routine zur Initialisierung der MMC/SD-Karte (SPI-MODE)
 unsigned char mmc_init (void){
@@ -43,12 +44,10 @@ unsigned char mmc_init (void){
   MMC_Direction_REG |= (1<<SPI_Clock);      //Setzen von Pin MMC_Clock auf Output
   MMC_Direction_REG |= (1<<SPI_DO);         //Setzen von Pin MMC_DO auf Output
   MMC_Direction_REG |= (1<<MMC_Chip_Select);//Setzen von Pin MMC_Chip_Select auf Output
-  //MMC_Direction_REG |= (1<<SPI_SS);   
+  MMC_Direction_REG |= (1<<SPI_SS);   
   MMC_Write |= (1<<MMC_Chip_Select);        //Setzt den Pin MMC_Chip_Select auf High Pegel
 
   for(a=0;a<200;a++){
-	nop();
-	nop();
 	nop();
 	};      //Wartet eine kurze Zeit
  
@@ -56,19 +55,15 @@ unsigned char mmc_init (void){
    //SPI Clock teilen durch 128
    SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1); //Enable SPI, SPI in Master Mode     
    
-  _delay_ms(10);
   //Initialisiere MMC/SD-Karte in den SPI-Mode
   for (a = 0;a<0x0f;a++){ //Sendet min 74+ Clocks an die MMC/SD-Karte
     mmc_write_byte(0xff);
-    _delay_us(100);
-    
-  }
+	}
    
   //Sendet Commando CMD0 an MMC/SD-Karte
   unsigned char CMD[] = {0x40,0x00,0x00,0x00,0x00,0x95};
   while(mmc_write_command (CMD) !=1){
-      _delay_us(100);
- 	if (Timeout++ > 200){
+	if (Timeout++ > 200){
 	 MMC_Disable();
      return(1); //Abbruch bei Commando1 (Return Code1)
      }
@@ -92,7 +87,6 @@ unsigned char mmc_init (void){
    MMC_Disable();
    return(0);
 }
-
 
 //############################################################################
 //Sendet ein Commando an die MMC/SD-Karte
