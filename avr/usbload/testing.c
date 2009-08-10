@@ -124,26 +124,12 @@ void test_sdcard(void){
         printf("fatinit failed\n");
       return;
     }
+    
+    printf("Root dirlist\n");
     ffls();
-    char datei[12]="test.txt";		// hier muss platz für 11 zeichen sein (8.3), da fat_str diesen string benutzt !!
-    fat_str(datei);	
-    ffrm( datei );								// löschen der datei/ordner falls vorhanden
-    printf("open %s\n",datei);
-    ffopen( datei );						
-    printf("write %s\n",datei);
-    ffwrites((char*)"Hallo Datei :)");
-    ffwrite(0x0D);
-    ffwrite(0x0A);
-    printf("close %s\n",datei);
-    ffclose();
-    printf("open %s\n",datei);
-    ffopen( datei );
-    printf("open %s\n",datei);
-    unsigned long int seek=file.length;	// eine variable setzen und runterzählen bis 0 geht am schnellsten !
-    do{
-  	    printf("%c",ffread());							// liest ein zeichen und gibt es über uart aus !
-  	}while(--seek);							// liest solange bytes da sind (von datei länge bis 0)
-    ffclose();									// schließt datei
+    printf("FOLDER2 dirlist\n");
+    ffcd("FOLDER1");
+    ffls();
 
 }
 
