@@ -1,0 +1,428 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.7	//
+AVR_ADDR_DIR	sram.h	103;"	d
+AVR_ADDR_DOWN_DIR	sram.h	133;"	d
+AVR_ADDR_DOWN_PIN	sram.h	134;"	d
+AVR_ADDR_DOWN_PORT	sram.h	132;"	d
+AVR_ADDR_LATCH_DIR	sram.h	105;"	d
+AVR_ADDR_LATCH_PIN	sram.h	106;"	d
+AVR_ADDR_LATCH_PORT	sram.h	104;"	d
+AVR_ADDR_LOAD_DIR	sram.h	126;"	d
+AVR_ADDR_LOAD_PIN	sram.h	127;"	d
+AVR_ADDR_LOAD_PORT	sram.h	125;"	d
+AVR_ADDR_PORT	sram.h	102;"	d
+AVR_ADDR_SCK_DIR	sram.h	112;"	d
+AVR_ADDR_SCK_PIN	sram.h	113;"	d
+AVR_ADDR_SCK_PORT	sram.h	111;"	d
+AVR_ADDR_SER_DIR	sram.h	119;"	d
+AVR_ADDR_SER_PIN	sram.h	120;"	d
+AVR_ADDR_SER_PORT	sram.h	118;"	d
+AVR_ADDR_UP_DIR	sram.h	140;"	d
+AVR_ADDR_UP_PIN	sram.h	141;"	d
+AVR_ADDR_UP_PORT	sram.h	139;"	d
+AVR_CS_DIR	sram.h	71;"	d
+AVR_CS_PIN	sram.h	72;"	d
+AVR_CS_PORT	sram.h	70;"	d
+AVR_DATA_DIR	sram.h	35;"	d
+AVR_DATA_PIN	sram.h	36;"	d
+AVR_DATA_PORT	sram.h	34;"	d
+AVR_DIR	sram.h	55;"	d
+AVR_PORT	sram.h	54;"	d
+AVR_RD_DIR	sram.h	57;"	d
+AVR_RD_PIN	sram.h	58;"	d
+AVR_RD_PORT	sram.h	56;"	d
+AVR_SNES_DIR	sram.h	153;"	d
+AVR_SNES_PORT	sram.h	152;"	d
+AVR_SNES_SW_DIR	sram.h	155;"	d
+AVR_SNES_SW_PIN	sram.h	156;"	d
+AVR_SNES_SW_PORT	sram.h	154;"	d
+AVR_WR_DIR	sram.h	64;"	d
+AVR_WR_PIN	sram.h	65;"	d
+AVR_WR_PORT	sram.h	63;"	d
+CR	uart.h	25;"	d
+DEBOUNCE	timer.c	44;"	d	file:
+DEBUG	config.h	25;"	d
+DEBUG_CRC	config.h	31;"	d
+DEBUG_SHM	config.h	32;"	d
+DEBUG_SRAM	config.h	28;"	d
+DEBUG_SRAM_RAW	config.h	29;"	d
+DEBUG_SREG	config.h	30;"	d
+DEBUG_USB	config.h	26;"	d
+DEBUG_USB_TRANS	config.h	27;"	d
+FILE_MKDIR	config.h	48;"	d
+FILE_RM	config.h	49;"	d
+FILE_WRITE	config.h	47;"	d
+Fat	fat.h	/^  extern struct Fat{						\/\/ fat daten (1.cluster, root-dir, dir usw.)$/;"	s
+File	fat.h	/^  extern struct File{					\/\/ datei infos$/;"	s
+HI_LOROM_SW_DIR	sram.h	166;"	d
+HI_LOROM_SW_PIN	sram.h	167;"	d
+HI_LOROM_SW_PORT	sram.h	165;"	d
+INBYTE	rle.c	44;"	d	file:
+ISR	timer.c	/^ISR (SIG_OUTPUT_COMPARE1A)$/;"	f
+ISR	uart.c	/^ISR(USART0_RX_vect)$/;"	f
+LED_DIR	sram.h	44;"	d
+LED_PIN	sram.h	45;"	d
+LED_PORT	sram.h	43;"	d
+MAX_CLUSTERS_IN_ROW	fat.h	11;"	d
+MMC_CLK	mmc.h	21;"	d
+MMC_CS	mmc.h	18;"	d
+MMC_DI	mmc.h	20;"	d
+MMC_DO	mmc.h	19;"	d
+MMC_READ	mmc.h	15;"	d
+MMC_READ	mmc.h	24;"	d
+MMC_REG	mmc.h	16;"	d
+MMC_REG	mmc.h	25;"	d
+MMC_WRITE	mmc.h	14;"	d
+MMC_WRITE	mmc.h	23;"	d
+OCR1A	timer.c	34;"	d	file:
+OUTBYTE	rle.c	54;"	d	file:
+OVER_WRITE	fat.h	10;"	d
+PROGMEM	loader.c	/^const char _rom[ROM_BUFFER_SIZE] PROGMEM = {$/;"	v
+REQ_STATUS_AVR	config.h	40;"	d
+REQ_STATUS_BULK_NEXT	config.h	37;"	d
+REQ_STATUS_BULK_UPLOAD	config.h	36;"	d
+REQ_STATUS_CRC	config.h	38;"	d
+REQ_STATUS_IDLE	config.h	34;"	d
+REQ_STATUS_SNES	config.h	39;"	d
+REQ_STATUS_UPLOAD	config.h	35;"	d
+ROM_BUFFER_SIZE	loader.h	5;"	d
+ROM_HUFFMAN_SIZE	loader.h	6;"	d
+ROM_RLE_SIZE	loader.h	7;"	d
+RUNCHAR	rle.c	33;"	d	file:
+SHARED_IRQ_HANDLER_HI	shared_memory.h	59;"	d
+SHARED_IRQ_HANDLER_LO	shared_memory.h	58;"	d
+SHARED_IRQ_LOC_HI	shared_memory.h	55;"	d
+SHARED_IRQ_LOC_LO	shared_memory.h	54;"	d
+SHARED_MEM_RX_AVR_ACK	shared_memory.h	43;"	d
+SHARED_MEM_RX_AVR_RTS	shared_memory.h	44;"	d
+SHARED_MEM_RX_CMD_FILESEL	shared_memory.h	47;"	d
+SHARED_MEM_RX_CMD_PRINFT	shared_memory.h	46;"	d
+SHARED_MEM_RX_LOC_CMD	shared_memory.h	50;"	d
+SHARED_MEM_RX_LOC_LEN	shared_memory.h	51;"	d
+SHARED_MEM_RX_LOC_PAYLOAD	shared_memory.h	52;"	d
+SHARED_MEM_RX_LOC_STATE	shared_memory.h	49;"	d
+SHARED_MEM_SWITCH_DELAY	shared_memory.h	26;"	d
+SHARED_MEM_SWITCH_IRQ	shared_memory.h	25;"	d
+SHARED_MEM_TX_CMD_BANK_COUNT	shared_memory.h	31;"	d
+SHARED_MEM_TX_CMD_BANK_CURRENT	shared_memory.h	32;"	d
+SHARED_MEM_TX_CMD_TERMINATE	shared_memory.h	37;"	d
+SHARED_MEM_TX_CMD_UPLOAD_END	shared_memory.h	35;"	d
+SHARED_MEM_TX_CMD_UPLOAD_PROGESS	shared_memory.h	36;"	d
+SHARED_MEM_TX_CMD_UPLOAD_START	shared_memory.h	34;"	d
+SHARED_MEM_TX_LOC_CMD	shared_memory.h	40;"	d
+SHARED_MEM_TX_LOC_PAYLOAD	shared_memory.h	41;"	d
+SHARED_MEM_TX_LOC_STATE	shared_memory.h	39;"	d
+SHARED_MEM_TX_SNES_ACK	shared_memory.h	28;"	d
+SHARED_MEM_TX_SNES_RTS	shared_memory.h	29;"	d
+SMALL_FILE_SYSTEM	config.h	50;"	d
+SMALL_FILE_SYSTEM	fat.h	8;"	d
+SNES_IRQ_DIR	sram.h	78;"	d
+SNES_IRQ_PIN	sram.h	79;"	d
+SNES_IRQ_PORT	sram.h	77;"	d
+SNES_RESET_DIR	sram.h	89;"	d
+SNES_RESET_PIN	sram.h	90;"	d
+SNES_RESET_PORT	sram.h	88;"	d
+SNES_WR_DIR	sram.h	147;"	d
+SNES_WR_EN_DIR	sram.h	173;"	d
+SNES_WR_EN_PIN	sram.h	174;"	d
+SNES_WR_EN_PORT	sram.h	172;"	d
+SNES_WR_PIN	sram.h	148;"	d
+SNES_WR_PORT	sram.h	146;"	d
+SPI_Mode	mmc.h	12;"	d
+TRANSFER_BUFFER_SIZE	config.h	45;"	d
+USB_AVR_RESET	requests.h	40;"	d
+USB_BULK_UPLOAD_ADDR	requests.h	35;"	d
+USB_BULK_UPLOAD_END	requests.h	37;"	d
+USB_BULK_UPLOAD_INIT	requests.h	34;"	d
+USB_BULK_UPLOAD_NEXT	requests.h	36;"	d
+USB_CFG_CHECK_CRC	usbconfig.h	72;"	d
+USB_CFG_CHECK_DATA_TOGGLING	usbconfig.h	211;"	d
+USB_CFG_CLOCK_KHZ	usbconfig.h	65;"	d
+USB_CFG_DESCR_PROPS_CONFIGURATION	usbconfig.h	346;"	d
+USB_CFG_DESCR_PROPS_DEVICE	usbconfig.h	345;"	d
+USB_CFG_DESCR_PROPS_HID	usbconfig.h	352;"	d
+USB_CFG_DESCR_PROPS_HID_REPORT	usbconfig.h	353;"	d
+USB_CFG_DESCR_PROPS_STRINGS	usbconfig.h	347;"	d
+USB_CFG_DESCR_PROPS_STRING_0	usbconfig.h	348;"	d
+USB_CFG_DESCR_PROPS_STRING_PRODUCT	usbconfig.h	350;"	d
+USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER	usbconfig.h	351;"	d
+USB_CFG_DESCR_PROPS_STRING_VENDOR	usbconfig.h	349;"	d
+USB_CFG_DESCR_PROPS_UNKNOWN	usbconfig.h	354;"	d
+USB_CFG_DEVICE_CLASS	usbconfig.h	266;"	d
+USB_CFG_DEVICE_ID	usbconfig.h	231;"	d
+USB_CFG_DEVICE_NAME	usbconfig.h	251;"	d
+USB_CFG_DEVICE_NAME_LEN	usbconfig.h	252;"	d
+USB_CFG_DEVICE_SUBCLASS	usbconfig.h	267;"	d
+USB_CFG_DEVICE_VERSION	usbconfig.h	238;"	d
+USB_CFG_DMINUS_BIT	usbconfig.h	52;"	d
+USB_CFG_DPLUS_BIT	usbconfig.h	56;"	d
+USB_CFG_EP3_NUMBER	usbconfig.h	106;"	d
+USB_CFG_HAVE_FLOWCONTROL	usbconfig.h	161;"	d
+USB_CFG_HAVE_INTRIN_ENDPOINT	usbconfig.h	95;"	d
+USB_CFG_HAVE_INTRIN_ENDPOINT3	usbconfig.h	100;"	d
+USB_CFG_HAVE_MEASURE_FRAME_LENGTH	usbconfig.h	219;"	d
+USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH	usbconfig.h	279;"	d
+USB_CFG_IMPLEMENT_FN_READ	usbconfig.h	149;"	d
+USB_CFG_IMPLEMENT_FN_WRITE	usbconfig.h	144;"	d
+USB_CFG_IMPLEMENT_FN_WRITEOUT	usbconfig.h	155;"	d
+USB_CFG_IMPLEMENT_HALT	usbconfig.h	116;"	d
+USB_CFG_INTERFACE_CLASS	usbconfig.h	271;"	d
+USB_CFG_INTERFACE_PROTOCOL	usbconfig.h	273;"	d
+USB_CFG_INTERFACE_SUBCLASS	usbconfig.h	272;"	d
+USB_CFG_INTR_POLL_INTERVAL	usbconfig.h	130;"	d
+USB_CFG_IOPORTNAME	usbconfig.h	48;"	d
+USB_CFG_IS_SELF_POWERED	usbconfig.h	135;"	d
+USB_CFG_LONG_TRANSFERS	usbconfig.h	166;"	d
+USB_CFG_MAX_BUS_POWER	usbconfig.h	139;"	d
+USB_CFG_SUPPRESS_INTR_CODE	usbconfig.h	122;"	d
+USB_CFG_VENDOR_ID	usbconfig.h	226;"	d
+USB_CFG_VENDOR_NAME	usbconfig.h	241;"	d
+USB_CFG_VENDOR_NAME_LEN	usbconfig.h	242;"	d
+USB_COUNT_SOF	usbconfig.h	187;"	d
+USB_CRC	requests.h	31;"	d
+USB_CRC_ADDR	requests.h	32;"	d
+USB_CRC_CHECK	config.h	43;"	d
+USB_DOWNLOAD_ADDR	requests.h	29;"	d
+USB_DOWNLOAD_INIT	requests.h	28;"	d
+USB_MAX_TRANS	config.h	42;"	d
+USB_MODE_AVR	requests.h	39;"	d
+USB_MODE_SNES	requests.h	38;"	d
+USB_UPLOAD_ADDR	requests.h	26;"	d
+USB_UPLOAD_INIT	requests.h	25;"	d
+WGM12	timer.c	38;"	d	file:
+WRITE	fat.h	9;"	d
+XTAL	timer.c	42;"	d	file:
+_FAT_H	fat.h	4;"	d
+_FILE_H	file.h	6;"	d
+_HARDWARE_H	hardware.h	7;"	d
+_MMC_H	mmc.h	9;"	d
+__COMMAND_H__	command.h	23;"	d
+__CONFIH_H__	config.h	22;"	d
+__CRC_H__	crc.h	23;"	d
+__DEBUG_H__	debug.h	24;"	d
+__DUMP_H__	dump.h	23;"	d
+__FIFO_H__	fifo.h	21;"	d
+__FIFO_H__	loader.h	3;"	d
+__INFO_H__	info.h	24;"	d
+__REQUESTS_H__	requests.h	23;"	d
+__RLE_H__	rle.h	22;"	d
+__SHARED_MEMORY_H__	shared_memory.h	22;"	d
+__SRAM_H__	sram.h	24;"	d
+__TESTING_H__	testing.h	23;"	d
+__TIMER_H__	timer.h	22;"	d
+__UART_H__	uart.h	23;"	d
+__USB_BULK_H__	usb_bulk.h	23;"	d
+__WATCHDOG_H__	watchdog.h	27;"	d
+__usbconfig_h_included__	usbconfig.h	34;"	d
+_inline_fifo_get	fifo.h	/^static inline uint8_t _inline_fifo_get(fifo_t * f)$/;"	f
+_inline_fifo_put	fifo.h	/^static inline uint8_t _inline_fifo_put(fifo_t * f, const uint8_t data)$/;"	f
+adc_int	uart.c	/^    uint8_t adc_int:1;$/;"	m	struct:__anon2	file:
+addr	main.c	/^uint32_t addr;$/;"	v
+addr_current	sram.c	/^uint32_t addr_current = 0;$/;"	v
+addr_stash	sram.c	/^uint32_t addr_stash = 0;$/;"	v
+attrib	fat.h	/^	unsigned char 		attrib;			\/\/ 11,1			datei Attribut: 8=value name, 32=datei, 16=Verzeichniss, 15=linux kleingeschrieben eintrag$/;"	m	struct:File
+avr_addr_latch_hi	sram.h	108;"	d
+avr_addr_latch_lo	sram.h	109;"	d
+avr_addr_sck_hi	sram.h	115;"	d
+avr_addr_sck_lo	sram.h	116;"	d
+avr_addr_ser_hi	sram.h	122;"	d
+avr_addr_ser_lo	sram.h	123;"	d
+avr_bus_active	sram.h	158;"	d
+avr_cs_hi	sram.h	74;"	d
+avr_cs_lo	sram.h	75;"	d
+avr_data_in	sram.h	38;"	d
+avr_data_out	sram.h	41;"	d
+avr_rd_hi	sram.h	60;"	d
+avr_rd_lo	sram.h	61;"	d
+avr_wr_hi	sram.h	67;"	d
+avr_wr_lo	sram.h	68;"	d
+boot_startup_rom	main.c	/^void boot_startup_rom()$/;"	f
+bufferDirty	fat.h	/^	unsigned char 		bufferDirty;	\/\/ puffer wurde beschrieben, sector muss geschrieben werden bevor er neu geladen wird$/;"	m	struct:Fat
+cntOfBytes	fat.h	/^	unsigned int 			cntOfBytes;		\/\/ -nicht direkt aus dem dateisystem- zäht geschriebene bytes eines sektors$/;"	m	struct:File
+count	fifo.h	/^    uint8_t volatile count;     \/\/ # Zeichen im Puffer$/;"	m	struct:__anon1
+counter_down	sram.h	136;"	d
+counter_load	sram.h	129;"	d
+counter_up	sram.h	143;"	d
+crc	main.c	/^uint16_t crc = 0;$/;"	v
+crc_check_bulk_memory	crc.c	/^uint16_t crc_check_bulk_memory(uint32_t bottom_addr, uint32_t top_addr, uint32_t bank_size)$/;"	f
+crc_check_memory_range	crc.c	/^uint16_t crc_check_memory_range(uint32_t start_addr, uint32_t size,uint8_t *buffer)$/;"	f
+crc_xmodem_update	crc.c	/^uint16_t crc_xmodem_update(uint16_t crc, uint8_t data)$/;"	f
+currentSectorNr	fat.h	/^	unsigned long int 	currentSectorNr;\/\/ aktuell geladener Sektor (in sector)  \/\/beschleunigt wenn z.b 2* 512 byte puffer vorhanden, oder bei fat operationen im gleichen sektor$/;"	m	struct:Fat
+dataDirSec	fat.h	/^	unsigned long int  	dataDirSec;		\/\/ Sektor nr data area $/;"	m	struct:Fat
+data_buffer	main.c	/^uint8_t data_buffer[4];$/;"	v
+debug	debug.c	/^void debug(int level, char* format, ...) {$/;"	f
+debug	debug.h	34;"	d
+debug_level	main.c	/^uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC);$/;"	v
+dir	fat.h	/^	unsigned long int 	dir; 		  	\/\/ Direktory zeiger rootDir=='0' sonst(1.Cluster des dir; start auf root)$/;"	m	struct:Fat
+do_crc	crc.c	/^uint16_t do_crc(uint8_t * data, uint16_t size)$/;"	f
+do_crc_update	crc.c	/^uint16_t do_crc_update(uint16_t crc, uint8_t * data, uint16_t size)$/;"	f
+dump_memory	dump.c	/^void dump_memory(uint32_t bottom_addr, uint32_t top_addr)$/;"	f
+dump_packet	dump.c	/^void dump_packet(uint32_t addr, uint32_t len, uint8_t * packet)$/;"	f
+endSectors	fat.h	/^	unsigned long int 	endSectors;	$/;"	m	struct:Fat
+fat	fat.c	/^struct Fat fat;   					\/\/ wichtige daten\/variablen der fat$/;"	v	typeref:struct:Fat
+fatSec	fat.h	/^	unsigned long int  	fatSec;	 		\/\/ Sektor nr fat area$/;"	m	struct:Fat
+fatType	fat.h	/^	unsigned char  		fatType;		\/\/ fat16 oder fat32 (16 oder 32)$/;"	m	struct:Fat
+fat_cd	fat.c	/^unsigned char fat_cd(char name[]){$/;"	f
+fat_clustToSec	fat.c	/^unsigned long int fat_clustToSec(unsigned long int clust){$/;"	f
+fat_delClusterChain	fat.c	/^void fat_delClusterChain(unsigned long int startCluster){$/;"	f
+fat_getFatChainClustersInRow	fat.c	/^void fat_getFatChainClustersInRow(unsigned long int offsetCluster){$/;"	f
+fat_getFreeClustersInRow	fat.c	/^void fat_getFreeClustersInRow(unsigned long int offsetCluster){$/;"	f
+fat_getFreeRowOfCluster	fat.c	/^unsigned char fat_getFreeRowOfCluster(unsigned long secStart){$/;"	f
+fat_getFreeRowOfDir	fat.c	/^void fat_getFreeRowOfDir(unsigned long int dir){$/;"	f
+fat_getNextCluster	fat.c	/^unsigned long int fat_getNextCluster(unsigned long int oneCluster){	$/;"	f
+fat_initfat	fat.c	/^unsigned char fat_initfat(void){					$/;"	f
+fat_loadFatData	fat.c	/^unsigned char fat_loadFatData(unsigned long int sec){$/;"	f
+fat_loadFileDataFromCluster	fat.c	/^unsigned char fat_loadFileDataFromCluster(unsigned long int sec , char name[]){$/;"	f
+fat_loadFileDataFromDir	fat.c	/^unsigned char fat_loadFileDataFromDir(char name[]){ $/;"	f
+fat_loadRowOfSector	fat.c	/^unsigned char fat_loadRowOfSector(unsigned int row){$/;"	f
+fat_loadSector	fat.c	/^unsigned char fat_loadSector(unsigned long int sec){$/;"	f
+fat_makeFileEntry	fat.c	/^void fat_makeFileEntry(char name[],unsigned char attrib,unsigned long int length){$/;"	f
+fat_makeRowDataEntry	fat.c	/^void fat_makeRowDataEntry(unsigned int row,char name[],unsigned char attrib,unsigned long int cluster,unsigned long int length){$/;"	f
+fat_secToClust	fat.c	/^unsigned long int fat_secToClust(unsigned long int sec){$/;"	f
+fat_setCluster	fat.c	/^void fat_setCluster(unsigned long int cluster, unsigned long int content){  $/;"	f
+fat_setClusterChain	fat.c	/^void fat_setClusterChain(unsigned long int startCluster,unsigned int endCluster){$/;"	f
+fat_str	fat.c	/^char * fat_str(char *str){$/;"	f
+fat_writeSector	fat.c	/^unsigned char fat_writeSector(unsigned long int sec){	$/;"	f
+ffcd	file.c	/^unsigned char ffcd(char name[]){		$/;"	f
+ffcdLower	file.c	/^unsigned char ffcdLower(void){$/;"	f
+ffclose	file.c	/^unsigned char ffclose(void){$/;"	f
+ffls	file.c	/^void ffls(void){$/;"	f
+ffmkdir	file.c	/^void ffmkdir(char name[]){$/;"	f
+ffopen	file.c	/^unsigned char ffopen(char name[]){		$/;"	f
+ffread	file.c	/^inline unsigned char ffread(void){  	 $/;"	f
+ffrm	file.c	/^unsigned char ffrm(char name[]){ $/;"	f
+ffseek	file.c	/^void ffseek(unsigned long int offset){	$/;"	f
+ffwrite	file.c	/^inline void ffwrite(unsigned char c){$/;"	f
+ffwrites	file.c	/^inline void ffwrites(const char *s ){$/;"	f
+fifo_get_nowait	fifo.c	/^int fifo_get_nowait(fifo_t * f)$/;"	f
+fifo_get_wait	fifo.c	/^uint8_t fifo_get_wait(fifo_t * f)$/;"	f
+fifo_init	fifo.c	/^void fifo_init(fifo_t * f, uint8_t * buffer, const uint8_t size)$/;"	f
+fifo_put	fifo.c	/^uint8_t fifo_put(fifo_t * f, const uint8_t data)$/;"	f
+fifo_t	fifo.h	/^} fifo_t;$/;"	t	typeref:struct:__anon1
+file	fat.c	/^struct File file;					\/\/ wichtige dateibezogene daten\/variablen$/;"	v	typeref:struct:File
+fileUpdate	file.c	/^void fileUpdate(void){$/;"	f
+firstCluster	fat.h	/^	unsigned long int 	firstCluster;	\/\/ 20,2 \/26,2	datei 1.cluster hi,low(möglicherweise der einzige)	(4-byte)$/;"	m	struct:File
+info	info.c	/^void info(char* format, ...) {$/;"	f
+info	info.c	34;"	d	file:
+info	info.h	34;"	d
+intflags	uart.c	/^} intflags;$/;"	v	typeref:struct:__anon2
+irq_addr_hi	shared_memory.c	/^uint8_t irq_addr_hi;$/;"	v
+irq_addr_lo	shared_memory.c	/^uint8_t irq_addr_lo;$/;"	v
+lastCluster	fat.h	/^	unsigned long int 	lastCluster;	\/\/ -nicht direkt aus dem dateisystem- letzter cluster der ersten kette$/;"	m	struct:File
+led_off	sram.h	49;"	d
+led_on	sram.h	47;"	d
+length	fat.h	/^	unsigned long int 	length;			\/\/ 28,4			datei Länge (4-byte)$/;"	m	struct:File
+lsRowsOfClust	file.c	/^void lsRowsOfClust (unsigned long int start_sec){$/;"	f
+main	main.c	/^int main(void)$/;"	f
+mmc_disable	mmc.h	38;"	d
+mmc_enable	mmc.h	40;"	d
+mmc_init	mmc.c	/^uint8_t mmc_init()$/;"	f
+mmc_read_block	mmc.c	/^void mmc_read_block(uint8_t * cmd, uint8_t * Buffer, uint16_t Bytes)$/;"	f
+mmc_read_byte	mmc.c	/^uint8_t mmc_read_byte(void)$/;"	f
+mmc_read_cid	mmc.c	/^uint8_t mmc_read_cid(uint8_t * Buffer)$/;"	f
+mmc_read_csd	mmc.c	/^uint8_t mmc_read_csd(uint8_t * Buffer)$/;"	f
+mmc_read_sector	mmc.c	/^uint8_t mmc_read_sector(uint32_t addr, uint8_t * Buffer)$/;"	f
+mmc_write_byte	mmc.c	/^void mmc_write_byte(uint8_t Byte)$/;"	f
+mmc_write_command	mmc.c	/^uint8_t mmc_write_command(uint8_t * cmd)$/;"	f
+mmc_write_sector	mmc.c	/^uint8_t mmc_write_sector(uint32_t addr, uint8_t * Buffer)$/;"	f
+name	fat.h	/^	unsigned char 		name[13];		\/\/ 0,10			datei Name.ext (8.3 = max 11)(MUSS unsigned char weil E5)$/;"	m	struct:File
+nop	mmc.h	42;"	d
+pread	fifo.h	/^    uint8_t *pread;             \/\/ Lesezeiger$/;"	m	struct:__anon1
+prescaler	timer.c	/^uint16_t prescaler;$/;"	v
+pwrite	fifo.h	/^    uint8_t *pwrite;            \/\/ Schreibzeiger$/;"	m	struct:__anon1
+read2end	fifo.h	/^    uint8_t read2end, write2end;        \/\/ # Zeichen bis zum Überlauf Lese-\/Schreibzeiger$/;"	m	struct:__anon1
+read_buffer	main.c	/^uint8_t read_buffer[TRANSFER_BUFFER_SIZE];$/;"	v
+req_addr	main.c	/^uint32_t req_addr = 0;$/;"	v
+req_addr_end	main.c	/^uint32_t req_addr_end = 0;$/;"	v
+req_bank	main.c	/^uint8_t req_bank;$/;"	v
+req_bank_cnt	main.c	/^uint16_t req_bank_cnt;$/;"	v
+req_bank_size	main.c	/^uint32_t req_bank_size;$/;"	v
+req_percent	main.c	/^uint8_t req_percent;$/;"	v
+req_percent_last	main.c	/^uint8_t req_percent_last;$/;"	v
+req_size	main.c	/^uint32_t req_size;$/;"	v
+req_state	main.c	/^uint8_t req_state = REQ_STATUS_IDLE;$/;"	v
+rle_decode	rle.c	/^uint8_t rle_decode(PGM_VOID_P in_addr, int32_t in_len, uint32_t out_addr)$/;"	f
+rootDir	fat.h	/^	unsigned long int  	rootDir;		\/\/ Sektor(f16)\/Cluster(f32) nr root directory$/;"	m	struct:Fat
+row	fat.h	/^	unsigned char 		row;			\/\/ reihe im sektor in der die datei infos stehen (reihe 0-15)$/;"	m	struct:File
+rx_int	uart.c	/^    uint8_t rx_int:1;$/;"	m	struct:__anon2	file:
+rx_remaining	main.c	/^uint8_t rx_remaining = 0;$/;"	v
+rxbuff	uart.c	/^volatile char rxbuff;$/;"	v
+scratchpad_cmd	shared_memory.c	/^uint8_t scratchpad_cmd;$/;"	v
+scratchpad_payload	shared_memory.c	/^uint8_t scratchpad_payload;$/;"	v
+scratchpad_state	shared_memory.c	/^uint8_t scratchpad_state;$/;"	v
+secPerClust	fat.h	/^	unsigned char 		secPerClust;	\/\/ anzahl der sektoren pro cluster$/;"	m	struct:Fat
+second	timer.c	/^uint16_t volatile second;          \/\/ count seconds$/;"	v
+sector	fat.h	/^	unsigned char 		sector[512];	\/\/ der puffer für sektoren !$/;"	m	struct:Fat
+seek	fat.h	/^	unsigned long int 	seek;			\/\/ schreib position in der datei$/;"	m	struct:File
+send_irq	command.c	/^void send_irq()$/;"	f
+send_reset	command.c	/^void send_reset()$/;"	f
+set_rom_mode	command.c	/^void set_rom_mode()$/;"	f
+shared_memory_irq_hook	shared_memory.c	/^void shared_memory_irq_hook()$/;"	f
+shared_memory_irq_restore	shared_memory.c	/^void shared_memory_irq_restore()$/;"	f
+shared_memory_read	shared_memory.c	/^int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer)$/;"	f
+shared_memory_scratchpad_tx_restore	shared_memory.c	/^void shared_memory_scratchpad_tx_restore()$/;"	f
+shared_memory_scratchpad_tx_save	shared_memory.c	/^void shared_memory_scratchpad_tx_save()$/;"	f
+shared_memory_write	shared_memory.c	/^void shared_memory_write(uint8_t cmd, uint8_t value)$/;"	f
+shared_memory_yield	shared_memory.c	/^void shared_memory_yield()$/;"	f
+size	fifo.h	/^    uint8_t size;               \/\/ Puffer-Größe$/;"	m	struct:__anon1
+snes_bus_active	sram.h	162;"	d
+snes_hirom	sram.h	169;"	d
+snes_irq_hi	sram.h	83;"	d
+snes_irq_lo	sram.h	86;"	d
+snes_irq_off	sram.h	85;"	d
+snes_irq_on	sram.h	82;"	d
+snes_lorom	sram.h	170;"	d
+snes_reset_hi	sram.h	94;"	d
+snes_reset_lo	sram.h	97;"	d
+snes_reset_off	sram.h	96;"	d
+snes_reset_on	sram.h	93;"	d
+snes_wr_disable	sram.h	176;"	d
+snes_wr_enable	sram.h	178;"	d
+soft_reset	watchdog.h	32;"	d
+sram_bulk_addr_restore	sram.c	/^inline void sram_bulk_addr_restore()$/;"	f
+sram_bulk_addr_save	sram.c	/^inline void sram_bulk_addr_save()$/;"	f
+sram_bulk_copy	sram.c	/^void sram_bulk_copy(uint32_t addr, uint8_t * src, uint32_t len)$/;"	f
+sram_bulk_read	sram.c	/^inline uint8_t sram_bulk_read(void)$/;"	f
+sram_bulk_read_buffer	sram.c	/^void sram_bulk_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len)$/;"	f
+sram_bulk_read_end	sram.c	/^void sram_bulk_read_end(void)$/;"	f
+sram_bulk_read_next	sram.c	/^inline void sram_bulk_read_next(void)$/;"	f
+sram_bulk_read_start	sram.c	/^void sram_bulk_read_start(uint32_t addr)$/;"	f
+sram_bulk_set	sram.c	/^void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value){$/;"	f
+sram_bulk_write	sram.c	/^inline void sram_bulk_write( uint8_t data)$/;"	f
+sram_bulk_write_end	sram.c	/^void sram_bulk_write_end(void)$/;"	f
+sram_bulk_write_next	sram.c	/^inline void sram_bulk_write_next(void)$/;"	f
+sram_bulk_write_start	sram.c	/^void sram_bulk_write_start(uint32_t addr)$/;"	f
+sram_read	sram.c	/^uint8_t sram_read(uint32_t addr)$/;"	f
+sram_write	sram.c	/^void sram_write(uint32_t addr, uint8_t data)$/;"	f
+sreg_set	sram.c	/^void sreg_set(uint32_t addr)$/;"	f
+startSectors	fat.h	/^	unsigned long int   startSectors;	\/\/ der erste sektor in einer reihe (freie oder verkettete)$/;"	m	struct:Fat
+sync_errors	main.c	/^uint16_t sync_errors = 0;$/;"	v
+system_init	sram.c	/^void system_init(void)$/;"	f
+test_bulk_read_write	testing.c	/^void test_bulk_read_write()$/;"	f
+test_crc	testing.c	/^void test_crc()$/;"	f
+test_non_zero_memory	testing.c	/^void test_non_zero_memory(uint32_t bottom_addr, uint32_t top_addr)$/;"	f
+test_read_write	testing.c	/^void test_read_write()$/;"	f
+test_sdcard	testing.c	/^void test_sdcard(void){$/;"	f
+timer_start	timer.c	/^void timer_start( void )$/;"	f
+timer_stop_int	timer.c	/^uint16_t timer_stop_int(void)$/;"	f
+tmr_int	uart.c	/^    uint8_t tmr_int:1;$/;"	m	struct:__anon2	file:
+tx_buffer	main.c	/^uint8_t tx_buffer[32];$/;"	v
+tx_remaining	main.c	/^uint8_t tx_remaining = 0;$/;"	v
+uart_init	uart.c	/^void uart_init(void)$/;"	f
+uart_putc	uart.c	/^void uart_putc(uint8_t c)$/;"	f
+uart_puts	uart.c	/^void uart_puts(const char *s)$/;"	f
+uart_puts_P	uart.c	/^void uart_puts_P(PGM_P s)$/;"	f
+uart_stdout	uart.c	/^FILE uart_stdout = FDEV_SETUP_STREAM(uart_stream, NULL, _FDEV_SETUP_WRITE);$/;"	v
+uart_stream	uart.c	/^static int uart_stream(char c, FILE * stream)$/;"	f	file:
+uint	timer.c	47;"	d	file:
+uint8_t	timer.c	46;"	d	file:
+usbFunctionRead	usb_bulk.c	/^uint8_t usbFunctionRead(uint8_t * data, uint8_t len)$/;"	f
+usbFunctionSetup	main.c	/^usbMsgLen_t usbFunctionSetup(uchar data[8])$/;"	f
+usbFunctionWrite	usb_bulk.c	/^uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)$/;"	f
+usb_connect	main.c	/^void usb_connect()$/;"	f
+wdt_init	watchdog.c	/^void wdt_init(void)$/;"	f
+write2end	fifo.h	/^    uint8_t read2end, write2end;        \/\/ # Zeichen bis zum Überlauf Lese-\/Schreibzeiger$/;"	m	struct:__anon1
