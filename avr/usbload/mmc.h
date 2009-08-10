@@ -27,13 +27,13 @@
 
 
 
-extern unsigned char mmc_read_byte(void);
-extern void mmc_write_byte(unsigned char);
-extern void mmc_read_block(unsigned char *, unsigned char *, unsigned in);
-extern unsigned char mmc_init(void);
-extern unsigned char mmc_read_sector(unsigned long, unsigned char *);
-extern unsigned char mmc_write_sector(unsigned long, unsigned char *);
-extern unsigned char mmc_write_command(unsigned char *);
+extern uint8_t mmc_read_byte(void);
+extern void mmc_write_byte(uint8_t);
+extern void mmc_read_block(uint8_t *, uint8_t *, unsigned in);
+extern uint8_t mmc_init(void);
+extern uint8_t mmc_read_sector(unsigned long, uint8_t *);
+extern uint8_t mmc_write_sector(unsigned long, uint8_t *);
+extern uint8_t mmc_write_command(uint8_t *);
 
 #define mmc_disable() MMC_WRITE|= (1<<MMC_CS);
 

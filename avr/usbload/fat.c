@@ -1,6 +1,8 @@
 
-#include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h> 
 
 #include "fat.h"
 #include "file.h"
@@ -16,7 +18,7 @@ struct File file;               // wichtige dateibezogene daten/variablen
 // schreibt sektor nummer:sec auf die karte (puffer:sector) !!
 // setzt bufferFlag=0 da puffer nicht dirty sein kann nach schreiben !
 // ***************************************************************************************************************
-unsigned char fat_writeSector(unsigned long int sec)
+uint8_t fat_writeSector(uint32_t sec)
 {
 
     fat.bufferDirty = 0;        // buffer kann nicht dirty sein weil wird geschrieben 
@@ -29,7 +31,7 @@ unsigned char fat_writeSector(unsigned long int sec)
 // ***************************************************************************************************************
 // umrechnung cluster auf 1.sektor des clusters (möglicherweise mehrere sektoren/cluster) !
 // ***************************************************************************************************************
-unsigned long int fat_clustToSec(unsigned long int clust)
+uint32_t fat_clustToSec(uint32_t clust)
 {
 
     return (fat.dataDirSec + 2 + ((clust - 2) * fat.secPerClust));      // errechnet den 1. sektor der sektoren des clusters
@@ -38,7 +40,7 @@ unsigned long int fat_clustToSec(unsigned long int clust)
 // ***************************************************************************************************************
 // umrechnung sektor auf cluster (nicht die position im cluster selber!!)
 // ***************************************************************************************************************
-unsigned long int fat_secToClust(unsigned long int sec)
+uint32_t fat_secToClust(uint32_t sec)
 {
 
     return ((sec - fat.dataDirSec - 2 + 2 * fat.secPerClust) / fat.secPerClust);        // umkerhrfunktion von fat_clustToSec
@@ -50,7 +52,7 @@ unsigned long int fat_secToClust(unsigned long int sec)
 // setzt currentSectorNr auf richtigen wert (also den sektor der gepuffert ist). es wird geprüft
 // ob der gepufferte sektor geändert wurde, wenn ja muss erst geschrieben werden, um diese daten nicht zu verlieren !
 // ***************************************************************************************************************
-unsigned char fat_loadSector(unsigned long int sec)
+uint8_t fat_loadSector(uint32_t sec)
 {
 
     if (sec != fat.currentSectorNr) {   // nachladen nötig 
@@ -84,10 +86,10 @@ unsigned char fat_loadSector(unsigned long int sec)
 // läd die reihe:row des gepufferten sektors auf das struct:file. dort stehen dann
 // alle wichgigen daten wie: 1.cluster,länge bei dateien, name des eintrags, reihen nummer (im sektor), attribut use...
 // ***************************************************************************************************************
-unsigned char fat_loadRowOfSector(unsigned int row)
+uint8_t fat_loadRowOfSector(uint16_t row)
 {
 
-    unsigned char i;
+    uint8_t i;
     row = row << 5;             // multipliziert mit 32 um immer auf zeilen anfang zu kommen (zeile 0=0,zeile 1=32,zeile 2=62 usw).
 
     void *vsector;              // void, damit man schoen umbiegen kann :)
@@ -98,13 +100,13 @@ unsigned char fat_loadRowOfSector(unsigned int row)
     file.attrib = fat.sector[row + 11]; // datei attribut, byte 11.
 
     vsector = &fat.sector[row + 26];    // low word von fist.cluster
-    file.firstCluster = *(unsigned short *) vsector;
+    file.firstCluster = *(uint16_t *) vsector;
 
     vsector = &fat.sector[row + 20];    // high word von first.cluster
-    file.firstCluster |= (*(unsigned short *) vsector) << 16;
+    file.firstCluster |= (*(uint16_t *) vsector) << 16;
 
     vsector = &fat.sector[row + 28];    // 4 byte von file.length
-    file.length = *(unsigned long int *) vsector;
+    file.length = *(uint32_t *) vsector;
 
     return (0);
 }
@@ -115,11 +117,11 @@ unsigned char fat_loadRowOfSector(unsigned int row)
 // namen:name. es werden die einzelnen sektoren nachgeladen auf puffer:sector vor dem bearbeiten.
 // wird die datei in dem cluster gefunden ist return 0 , sonst return1.
 // ***************************************************************************************************************
-unsigned char fat_loadFileDataFromCluster(unsigned long int sec, char name[])
+uint8_t fat_loadFileDataFromCluster(uint32_t sec, char name[])
 {
 
-    unsigned char r;
-    unsigned char s = 0;
+    uint8_t r;
+    uint8_t s = 0;
 
     do {                        // sektoren des clusters prüfen
         r = 0;                  // neuer sektor, dann reihen von 0 an.
@@ -149,13 +151,13 @@ unsigned char fat_loadFileDataFromCluster(unsigned long int sec, char name[])
 // die datei zu finden. es wird das komplette directory in dem man sich befindet durchsucht.
 // bei fat16 wird der rootDir berreich durchsucht, bei fat32 die cluster chain des rootDir.
 // ***************************************************************************************************************
-unsigned char fat_loadFileDataFromDir(char name[])
+uint8_t fat_loadFileDataFromDir(char name[])
 {
 
-    unsigned int s;
+    uint16_t s;
 
     if (fat.dir == 0 && fat.fatType == 16) {    // IM ROOTDIR. fat16 
-        for (s = 0; s < (unsigned int) (fat.dataDirSec + 2 - fat.rootDir); s++) {       // zählt durch RootDir sektoren (errechnet anzahl
+        for (s = 0; s < (uint16_t) (fat.dataDirSec + 2 - fat.rootDir); s++) {       // zählt durch RootDir sektoren (errechnet anzahl
                                                                                         // rootDir sektoren).
             if (0 == fat_loadFileDataFromCluster(fat.rootDir + s, name))
                 return (0);     // sucht die datei, wenn da, läd daten (1.cluster usw)
@@ -163,7 +165,7 @@ unsigned char fat_loadFileDataFromDir(char name[])
     }
 
     else {
-        unsigned long int i;
+        uint32_t i;
         if (fat.dir == 0 && fat.fatType == 32)
             i = fat.rootDir;    // IM ROOTDIR. fat32 
         else
@@ -186,7 +188,7 @@ unsigned char fat_loadFileDataFromDir(char name[])
 // start immer im root Dir. start in root dir (dir==0).
 // es MUSS in das direktory gewechselt werden, in dem die datei zum lesen/anhängen ist (außer root, da startet mann)!
 // ***************************************************************************************************************
-unsigned char fat_cd(char name[])
+uint8_t fat_cd(char name[])
 {
 
     if (name[0] == 0) {         // ZUM ROOTDIR FAT16/32
@@ -218,11 +220,11 @@ unsigned char fat_cd(char name[])
 // wird ein freier eintrag gefunden, ist die position der freien reihe auf file.row abzulesen und return (0).
 // der sektor mit der freien reihe ist auf dem puffer:sector gepuffert.
 // ****************************************************************************************************************
-unsigned char fat_getFreeRowOfCluster(unsigned long secStart)
+uint8_t fat_getFreeRowOfCluster(unsigned long secStart)
 {
 
-    unsigned int b;             // zum durchgenen der sektor bytes
-    unsigned char s = 0;        // sektoren des clusters.
+    uint16_t b;             // zum durchgenen der sektor bytes
+    uint8_t s = 0;        // sektoren des clusters.
 
     do {
         file.row = 0;           // neuer sektor(oder 1.sektor), reihen von vorne.
@@ -246,10 +248,10 @@ unsigned char fat_getFreeRowOfCluster(unsigned long secStart)
 // 1. sektor des freien clusters geladen. die reihe wird auf den ersten eintrag gesetzt, da frei.
 // anhand der reihe kann man nun den direktory eintrag vornehmen, und auf die karte schreiben.
 // ****************************************************************************************************************
-void fat_getFreeRowOfDir(unsigned long int dir)
+void fat_getFreeRowOfDir(uint32_t dir)
 {
 
-    unsigned long int start = dir;
+    uint32_t start = dir;
 
     // solange bis ende cluster chain.
     while (!
@@ -272,12 +274,12 @@ void fat_getFreeRowOfDir(unsigned long int dir)
 
     fat.currentSectorNr = fat_clustToSec(dir);  // setzen des richtigen sektors, also auf den 1. der neu verketteten
 
-    unsigned int j = 511;
+    uint16_t j = 511;
     do {
         fat.sector[j] = 0x00;   // schreibt puffer fat.sector voll mit 0x00==leer
     } while (j--);
 
-    unsigned char i = 1;        // ab 1 weil der 1.sektor des clusters eh noch beschrieben wird...
+    uint8_t i = 1;        // ab 1 weil der 1.sektor des clusters eh noch beschrieben wird...
     do {
         fat_writeSector(fat.currentSectorNr + i);       // löschen des cluster (überschreibt mit 0x00), wichtig bei ffls,
         i++;
@@ -292,8 +294,8 @@ void fat_getFreeRowOfDir(unsigned long int dir)
 // erstellt eintrag in reihe:row, mit namen:name usw... !! 
 // muss noch auf die karte geschrieben werden ! nicht optimiert auf geschwindigkeit.
 // ***************************************************************************************************************
-void fat_makeRowDataEntry(unsigned int row, char name[], unsigned char attrib,
-                          unsigned long int cluster, unsigned long int length)
+void fat_makeRowDataEntry(uint16_t row, char name[], uint8_t attrib,
+                          uint32_t cluster, uint32_t length)
 {
 
     fat.bufferDirty = 1;        // puffer beschrieben, also neue daten darin(vor lesen muss geschrieben werden)
@@ -301,8 +303,8 @@ void fat_makeRowDataEntry(unsigned int row, char name[], unsigned char attrib,
     row = row << 5;             // multipliziert mit 32 um immer auf zeilen anfang zu kommen (zeile 0=0,zeile 1=32,zeile 2=62 ... zeile
                                 // 15=480) 
 
-    unsigned char i;            // byte zähler in reihe von sektor (32byte eintrag)
-    unsigned char *bytesOfSec = &fat.sector[row];       // zeiger auf sector bytes
+    uint8_t i;            // byte zähler in reihe von sektor (32byte eintrag)
+    uint8_t *bytesOfSec = &fat.sector[row];       // zeiger auf sector bytes
     void *vsector;
 
     for (i = 0; i < 11; i++)
@@ -311,20 +313,20 @@ void fat_makeRowDataEntry(unsigned int row, char name[], unsigned char attrib,
     *bytesOfSec++ = attrib;     // attrib schreiben
 
     vsector = &fat.sector[row + 12];
-    *(unsigned long int *) vsector++ = 0x01010101;      // unnoetige felder beschreiben
-    *(unsigned long int *) vsector = 0x01010101;
+    *(uint32_t *) vsector++ = 0x01010101;      // unnoetige felder beschreiben
+    *(uint32_t *) vsector = 0x01010101;
 
     vsector = &fat.sector[row + 20];
-    *(unsigned short *) vsector = (cluster & 0xffff0000) >> 16; // low word von cluster
+    *(uint16_t *) vsector = (cluster & 0xffff0000) >> 16; // low word von cluster
 
     vsector = &fat.sector[row + 22];
-    *(unsigned long int *) vsector = 0x01010101;        // unnoetige felder beschreiben
+    *(uint32_t *) vsector = 0x01010101;        // unnoetige felder beschreiben
 
     vsector = &fat.sector[row + 26];
-    *(unsigned short *) vsector = (cluster & 0x0000ffff);       // high word von cluster
+    *(uint16_t *) vsector = (cluster & 0x0000ffff);       // high word von cluster
 
     vsector = &fat.sector[row + 28];
-    *(unsigned long int *) vsector = length;    // laenge
+    *(uint32_t *) vsector = length;    // laenge
 }
 
 
@@ -334,17 +336,17 @@ void fat_makeRowDataEntry(unsigned int row, char name[], unsigned char attrib,
 // sektor gepuffert. für fat16 im root dir muss andere funktion genutzt werden, als fat_getFreeRowOfDir (durchsucht nur dirs).
 // fat.rootDir enthält bei fat32 den start cluster des directory, bei fat16 den 1. sektor des rootDir bereichs!
 // ***************************************************************************************************************
-void fat_makeFileEntry(char name[], unsigned char attrib,
-                       unsigned long int length)
+void fat_makeFileEntry(char name[], uint8_t attrib,
+                       uint32_t length)
 {
 
-    unsigned int s;             // zähler für root dir sektoren fat16
+    uint16_t s;             // zähler für root dir sektoren fat16
 
     if (fat.dir == 0 && fat.fatType == 32)
         fat_getFreeRowOfDir(fat.rootDir);       // IM ROOT DIR (fat32)
 
     else if (fat.dir == 0 && fat.fatType == 16) {       // IM ROOT DIR (fat16) 
-        for (s = 0; s < (unsigned int) (fat.dataDirSec + 2 - fat.rootDir); s++) {       // zählt durch RootDir sektoren (errechnet anzahl
+        for (s = 0; s < (uint16_t) (fat.dataDirSec + 2 - fat.rootDir); s++) {       // zählt durch RootDir sektoren (errechnet anzahl
                                                                                         // rootDir sektoren).  
             if (0 == fat_getFreeRowOfCluster(fat.rootDir + s))
                 break;          // geht durch sektoren des root dir.
@@ -371,29 +373,29 @@ void fat_makeFileEntry(char name[], unsigned char attrib,
 // erster daten cluster = 2, ende einer cluster chain 0xFFFF (fat16) oder 0xFFFFFFF, 0xFFFFFF8 (fat32), 
 // stelle des clusters in der fat, hat als wert, den nächsten cluster. (1:1 gemapt)!
 // ***************************************************************************************************************
-unsigned long int fat_getNextCluster(unsigned long int oneCluster)
+uint32_t fat_getNextCluster(uint32_t oneCluster)
 {
 
     // FAT 16**************FAT 16 
     if (fat.fatType == 16) {
-        unsigned long int i = oneCluster >> 8;; // (i=oneCluster/256)errechnet den sektor der fat in dem oneCluster ist (rundet immer ab)
-        unsigned long int j = (oneCluster << 1) - (i << 9);     // (j=(oneCluster-256*i)*2 == 2*oneCluster-512*i)errechnet das low byte von 
+        uint32_t i = oneCluster >> 8;; // (i=oneCluster/256)errechnet den sektor der fat in dem oneCluster ist (rundet immer ab)
+        uint32_t j = (oneCluster << 1) - (i << 9);     // (j=(oneCluster-256*i)*2 == 2*oneCluster-512*i)errechnet das low byte von 
                                                                 // oneCluster
 
         if (0 == fat_loadSector(i + fat.fatSec)) {      // ob neu laden nötig, wird von fat_loadSector geprüft
             void *bytesOfSec = &fat.sector[j];  // zeiger auf puffer
-            return *(unsigned short *) bytesOfSec;      // da der ram auch little endian ist, kann einfach gecastet werden und gut :)
+            return *(uint16_t *) bytesOfSec;      // da der ram auch little endian ist, kann einfach gecastet werden und gut :)
         }
     }
     // FAT 32**************FAT 32 
     else {
-        unsigned long int i = oneCluster >> 7;  // (i=oneCluster/128)errechnet den sektor der fat in dem oneCluster ist (rundet immer ab)
-        unsigned long int j = (oneCluster << 2) - (i << 9);     // (j=(oneCluster-128*i)*4 == oneCluster*4-512*i)errechnet das low byte von 
+        uint32_t i = oneCluster >> 7;  // (i=oneCluster/128)errechnet den sektor der fat in dem oneCluster ist (rundet immer ab)
+        uint32_t j = (oneCluster << 2) - (i << 9);     // (j=(oneCluster-128*i)*4 == oneCluster*4-512*i)errechnet das low byte von 
                                                                 // oneCluster
 
         if (0 == fat_loadSector(i + fat.fatSec)) {      // ob neu laden nötig wird von fat_loadSector geprüft
             void *bytesOfSec = &fat.sector[j];  // zeiger auf puffer
-            return *(unsigned long int *) bytesOfSec;   // da der ram auch little endian ist, kann einfach gecastet werden und gut :)
+            return *(uint32_t *) bytesOfSec;   // da der ram auch little endian ist, kann einfach gecastet werden und gut :)
         }
     }
 
@@ -407,10 +409,10 @@ unsigned long int fat_getNextCluster(unsigned long int oneCluster)
 // am stück,falls möglich. prüft ob der cluster neben offsetCluster dazu gehört...
 // setzt dann fat.endSectors und fat.startSectors. das -1 weil z.b. [95,98] = {95,96,97,98} = 4 sektoren
 // ***************************************************************************************************************
-void fat_getFatChainClustersInRow(unsigned long int offsetCluster)
+void fat_getFatChainClustersInRow(uint32_t offsetCluster)
 {
 
-    unsigned int i = 0;
+    uint16_t i = 0;
     fat.startSectors = fat_clustToSec(offsetCluster);   // setzen des 1. sektors der datei
     fat.endSectors = fat.startSectors;
     do {
@@ -432,10 +434,10 @@ void fat_getFatChainClustersInRow(unsigned long int offsetCluster)
 // erst wir der erste frei cluster gesucht, ab offsetCluster(iklusive) und dann wird geschaut, ob der
 // daneben auch frei ist. setzt dann fat.endSectors und fat.startSectors. das -1 weil z.b. [95,98] = {95,96,97,98} = 4 sektoren
 // ***************************************************************************************************************
-void fat_getFreeClustersInRow(unsigned long int offsetCluster)
+void fat_getFreeClustersInRow(uint32_t offsetCluster)
 {
 
-    unsigned int i = 1;         // variable für anzahl der zu suchenden sektoren
+    uint16_t i = 1;         // variable für anzahl der zu suchenden sektoren
     while (fat_getNextCluster(offsetCluster))
         offsetCluster++;        // suche des 1. freien clusters 
 
@@ -458,8 +460,8 @@ void fat_getFreeClustersInRow(unsigned long int offsetCluster)
 // es ist wegen der fragmentierung der fat nötig, sich den letzten bekannten cluster zu merken, 
 // damit man bei weiteren cluster in einer reihe die alten cluster noch dazu verketten kann (so sind lücken im verketten möglich).
 // ***************************************************************************************************************
-void fat_setClusterChain(unsigned long int startCluster,
-                         unsigned int endCluster)
+void fat_setClusterChain(uint32_t startCluster,
+                         uint16_t endCluster)
 {
 
     fat_setCluster(file.lastCluster, startCluster);     // ende der chain setzen, bzw verketten der ketten
@@ -482,30 +484,30 @@ void fat_setClusterChain(unsigned long int startCluster,
 // prüft ob buffer dirty (zu setztender cluster nicht in jetzt gepuffertem).
 // prüfung erfolgt in fat_loadSector, dann wird alter vorher geschrieben, sonst gehen dort daten verloren !!
 // ***************************************************************************************************************
-void fat_setCluster(unsigned long int cluster, unsigned long int content)
+void fat_setCluster(uint32_t cluster, uint32_t content)
 {
 
     // FAT 16**************FAT 16 
     if (fat.fatType == 16) {
-        unsigned long int i = cluster >> 8;     // (i=cluster/256)errechnet den sektor der fat in dem cluster ist (rundet immer ab)
-        unsigned long int j = (cluster << 1) - (i << 9);        // (j=(cluster-256*i)*2 == 2*cluster-512*i)errechnet das low byte von
+        uint32_t i = cluster >> 8;     // (i=cluster/256)errechnet den sektor der fat in dem cluster ist (rundet immer ab)
+        uint32_t j = (cluster << 1) - (i << 9);        // (j=(cluster-256*i)*2 == 2*cluster-512*i)errechnet das low byte von
                                                                 // cluster
 
         if (0 == fat_loadSector(i + fat.fatSec)) {      // neu laden (fat_loadSector prüft ob schon gepuffert)
             void *bytesOfSec = &fat.sector[j];  // init des zeigers auf unterste adresse
-            *(unsigned short *) bytesOfSec = content;   // weil ram auch little endian geht das so :)
+            *(uint16_t *) bytesOfSec = content;   // weil ram auch little endian geht das so :)
             fat.bufferDirty = 1;        // zeigt an, dass im aktuellen sector geschrieben wurde
         }
     }
     // FAT 32**************FAT 32 
     else {
-        unsigned long int i = cluster >> 7;     // (i=cluster/128)errechnet den sektor der fat in dem cluster ist (rundet immer ab)
-        unsigned long int j = (cluster << 2) - (i << 9);        // (j=(cluster-128*i)*4 == cluster*4-512*i)errechnet das low byte von
+        uint32_t i = cluster >> 7;     // (i=cluster/128)errechnet den sektor der fat in dem cluster ist (rundet immer ab)
+        uint32_t j = (cluster << 2) - (i << 9);        // (j=(cluster-128*i)*4 == cluster*4-512*i)errechnet das low byte von
                                                                 // cluster 
 
         if (0 == fat_loadSector(i + fat.fatSec)) {      // neu laden (fat_loadSector prüft ob schon gepuffert)
             void *bytesOfSec = &fat.sector[j];  // init des zeigers auf unterste adresse
-            *(unsigned long int *) bytesOfSec = content;        // weil ram auch little endian geht das so :)
+            *(uint32_t *) bytesOfSec = content;        // weil ram auch little endian geht das so :)
             fat.bufferDirty = 1;        // zeigt an, dass im aktuellen sector geschrieben wurde
         }
     }
@@ -516,10 +518,10 @@ void fat_setCluster(unsigned long int cluster, unsigned long int content)
 // löscht cluster chain, beginnend ab dem startCluster.
 // sucht cluster, setzt inhalt usw.. abschließend noch den cluster-chain ende markierten cluster löschen.
 // ***************************************************************************************************************
-void fat_delClusterChain(unsigned long int startCluster)
+void fat_delClusterChain(uint32_t startCluster)
 {
 
-    unsigned long int nextCluster = startCluster;       // tmp variable, wegen verketteter cluster..  
+    uint32_t nextCluster = startCluster;       // tmp variable, wegen verketteter cluster..  
 
     do {
         startCluster = nextCluster;
@@ -539,13 +541,13 @@ void fat_delClusterChain(unsigned long int startCluster)
 // siehe auch Fatgen103.pdf. ist NICHT auf performance optimiert!
 // byte/sector, byte/cluster, anzahl der fats, sector/fat ... (halt alle wichtigen daten zum lesen ders datei systems!)
 // *****************************************************************<**********************************************
-unsigned char fat_loadFatData(unsigned long int sec)
+uint8_t fat_loadFatData(uint32_t sec)
 {
 
     // offset,size
-    unsigned int rootEntCnt;    // 17,2 größe die eine fat belegt
-    unsigned int fatSz16;       // 22,2 sectors occupied by one fat16
-    unsigned long int fatSz32;  // 36,4 sectors occupied by one fat32
+    uint16_t rootEntCnt;    // 17,2 größe die eine fat belegt
+    uint16_t fatSz16;       // 22,2 sectors occupied by one fat16
+    uint32_t fatSz32;  // 36,4 sectors occupied by one fat32
 
     void *vsector;
 
@@ -556,23 +558,23 @@ unsigned char fat_loadFatData(unsigned long int sec)
         fat.secPerClust = fat.sector[13];       // fat.secPerClust, 13 only (power of 2)
 
         vsector = &fat.sector[14];
-        fat.fatSec = *(unsigned short *) vsector;
+        fat.fatSec = *(uint16_t *) vsector;
 
         vsector = &fat.sector[17];
-        rootEntCnt = *(unsigned short *) vsector;
+        rootEntCnt = *(uint16_t *) vsector;
 
         vsector = &fat.sector[22];
-        fatSz16 = *(unsigned short *) vsector;
+        fatSz16 = *(uint16_t *) vsector;
 
         fat.rootDir = (((rootEntCnt << 5) + 512) / 512) - 1;    // ist 0 bei fat 32, sonst der root dir sektor
 
         if (fat.rootDir == 0) { // FAT32 spezifisch (die prüfung so, ist nicht spezifikation konform !).
 
             vsector = &fat.sector[36];
-            fatSz32 = *(unsigned long int *) vsector;
+            fatSz32 = *(uint32_t *) vsector;
 
             vsector = &fat.sector[44];
-            fat.rootDir = *(unsigned long int *) vsector;
+            fat.rootDir = *(uint32_t *) vsector;
 
             fat.dataDirSec = fat.fatSec + (fatSz32 * fat.sector[16]);   // data sector (beginnt mit cluster 2)
             fat.fatType = 32;   // fat typ
@@ -600,15 +602,15 @@ unsigned char fat_loadFatData(unsigned long int sec)
 // ************************************************************************************************<<***************
 // int fat sucht den 1. cluster des dateisystems (fat16/32) auch VBR genannt, 
 // ************************************************************************************************<<***************
-unsigned char fat_initfat(void)
+uint8_t fat_initfat(void)
 {
 
-    unsigned long int secOfFirstPartition = 0;  // ist 1. sektor der 1. partition aus dem MBR 
+    uint32_t secOfFirstPartition = 0;  // ist 1. sektor der 1. partition aus dem MBR 
 
     if (0 == mmc_read_sector(0, fat.sector)) {
 
         void *vsector = &fat.sector[454];       // startsektor bestimmen
-        secOfFirstPartition = *(unsigned long int *) vsector;
+        secOfFirstPartition = *(uint32_t *) vsector;
 
         // prüfung ob man schon im VBR gelesen hat (0x6964654d = "Medi")
         if (secOfFirstPartition == 0x6964654d)
@@ -633,9 +635,9 @@ unsigned char fat_initfat(void)
 char *fat_str(char *str)
 {
 
-    unsigned char i;
-    unsigned char j = 0;
-    unsigned char c;
+    uint8_t i;
+    uint8_t j = 0;
+    uint8_t c;
     char tmp[12];               // tmp string zum einfacheren umwandeln
 
     strcpy(tmp, str);
