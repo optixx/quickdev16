@@ -29,6 +29,7 @@
 #include "sram.h"
 #include "debug.h"
 #include "crc.h"
+#include "config.h"
 #include "info.h"
 
 #include "mmc.h"
@@ -127,13 +128,18 @@ void test_sdcard(void){
     ffls();
     char datei[12]="test.txt";		// hier muss platz für 11 zeichen sein (8.3), da fat_str diesen string benutzt !!
     fat_str(datei);	
+#if (WRITE==1)
     ffrm( datei );								// löschen der datei/ordner falls vorhanden
+#endif
     printf("open %s\n",datei);
     ffopen( datei );						
+#if (WRITE==1)
     printf("write %s\n",datei);
     ffwrites((char*)"Hallo Datei :)");
     ffwrite(0x0D);
     ffwrite(0x0A);
+#endif
+
     printf("close %s\n",datei);
     ffclose();
     printf("open %s\n",datei);
