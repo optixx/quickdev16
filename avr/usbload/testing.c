@@ -37,9 +37,6 @@
 #include "file.h"
 
 
-
-
-
 void test_read_write()
 {
 
