@@ -2,11 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "hardware.h"
+#include "mmc.h"
 #include "fat.h"
 #include "file.h"
-
-
+#include "config.h"
 
 // *******************************************************************************************************************************
 // 2 möglichkeiten beim öffnen, datei existiert(return 1) oder muss angelegt werden(return 2)
@@ -16,35 +15,33 @@
 // -beim anlegen werden freie cluster gesucht, maximal MAX_CLUSTERS_IN_ROW in reihe. dann wird das struct file gefüllt.
 // danach wird der dateieintrag gemacht(auf karte). dort wird auch geprüft ob genügend platz im aktuellen verzeichniss existiert.
 // möglicherweise wird der 1. cluster der datei nochmal geändert. jetzt ist der erste frei sektor bekannt und es kann geschrieben werden.
-// *******************************************************************************************************************************
-uint8_t ffopen(char name[])
-{
+//*******************************************************************************************************************************
+unsigned char ffopen(char name[]){		
 
-    uint8_t file_flag = fat_loadFileDataFromDir(name);    // prüfung ob datei vorhanden und evetuelles laden des file struct
+  unsigned char file_flag=fat_loadFileDataFromDir(name);		//prüfung ob datei vorhanden und evetuelles laden des file struct
 
-    if (file_flag == 0) {                       /** Datei existiert, anlegen nicht nötig! **/
-        fat_getFatChainClustersInRow(file.firstCluster);        // verkettete cluster aus der fat-chain suchen.
-        fat_loadSector(fat_clustToSec(file.firstCluster));      // lät die ersten 512 bytes der datei auf puffer:sector. 
-        file.lastCluster = fat_secToClust(fat.endSectors);      // letzter bekannter cluster der datei 
-        return 1;
-    }
-#if (WRITE==1)                  // anlegen ist schreiben !
-    else {                                              /** Datei existiert nicht, also anlegen !	(nur wenn schreiben option an ist)**/
-        fat_getFreeClustersInRow(2);    // leere cluster suchen, ab cluster 2.
-        strcpy((char *) file.name, (char *) name);      // --- füllen des file struct, zum abschließenden schreiben.
-        file.firstCluster = fat_secToClust(fat.startSectors);   // 1. cluster der datei
-        file.lastCluster = file.firstCluster;   // fat_secToClust(fat.endSectors); // letzter bekannter cluster der datei
-        file.attrib = 32;       // --- file.row wird in der funktion fat_getFreeRowOfDir geschrieben !!
-        file.length = 0;        // damit da nix drin steht ^^
-        fat_makeFileEntry((char *) file.name, file.attrib, 0);  // DATEI ANLEGEN auf karte
-        fat.currentSectorNr = fat_clustToSec(file.firstCluster);        // setzen des ersten sektors
-        return 2;
-    }
-#endif
+  if( file_flag==0 ){				/** Datei existiert, anlegen nicht nötig! **/
+	 fat_getFatChainClustersInRow( file.firstCluster );			// verkettete cluster aus der fat-chain suchen.
+	 fat_loadSector( fat_clustToSec(file.firstCluster) );		// lät die ersten 512 bytes der datei auf puffer:sector.	
+	 file.lastCluster=fat_secToClust(fat.endSectors);			// letzter bekannter cluster der datei	 
+	 return 1;
+	 }
+  #if (WRITE==1)					// anlegen ist schreiben !
+  else{							/** Datei existiert nicht, also anlegen !	(nur wenn schreiben option an ist)**/
+	 fat_getFreeClustersInRow(2);								// leere cluster suchen, ab cluster 2.
+	 strcpy((char*)file.name,(char*)name);					// ---	füllen des file struct, zum abschließenden schreiben.
+	 file.firstCluster=fat_secToClust(fat.startSectors);		// 		1. cluster der datei
+	 file.lastCluster=file.firstCluster;//fat_secToClust(fat.endSectors);			// 		letzter bekannter cluster der datei
+	 file.attrib=32;											// ---	file.row wird in der funktion fat_getFreeRowOfDir geschrieben !!
+	 file.length=0;												// damit da nix drin steht ^^
+	 fat_makeFileEntry((char *)file.name,file.attrib,0);		// DATEI ANLEGEN auf karte
+	 fat.currentSectorNr=fat_clustToSec(file.firstCluster);		// setzen des ersten sektors
+	 return 2;
+	 }
+	#endif
 }
 
-
-// *******************************************************************************************************************************
+//*******************************************************************************************************************************
 // schließt die datei operation ab. eigentlich nur nötig wenn geschrieben wurde. es gibt 2 möglichkeiten :
 // 1. die datei wird geschlossen und es wurde über die alte datei länge hinaus geschrieben.
 // 2. die datei wird geschlossen und man war innerhalb der datei größe, dann muss nur der aktuelle sektor geschrieben werden.
@@ -75,25 +72,27 @@ uint8_t ffclose(void)
 // füllt den aktuell beschriebenen sektor mit 0x00, da sonst die datei nicht richtig angezeigt wird.
 // darf nur während schreibe operationen aufgerufen werden !
 // *******************************************************************************************************************************
-void fileUpdate(void)
-{
+#if (WRITE==1)
 
-    uint16_t comp_cntOfBytes = file.cntOfBytes;     // sicher nötig wegen schleife...
-    while (comp_cntOfBytes < 512) {     // sektor ist beschrieben worden, daher nötigenfalls mit 00 füllen 
-        fat.sector[comp_cntOfBytes] = 0x00;     // beschreibt ungenutzte bytes mit 0x00 
-        comp_cntOfBytes++;
-    }
-    char name[13];              // zum sichern des dateinamens
-    uint32_t save_length = file.cntOfBytes + file.seek;        // muss gesichert werden, wird sonst von der karte geladen und
-                                                                        // verändert ! 
-    strcpy(name, (char *) file.name);   // muss gesichert werden, wird sonst von der karte geladen und verändert !
+void fileUpdate(void){
 
-    fat_setClusterChain(fat_secToClust(fat.startSectors), fat_secToClust(fat.currentSectorNr)); // verketten der geschriebenen cluster 
-    fat_loadFileDataFromDir(name);      // läd sektor, des datei eintrags, und läd daten von karte auf struct file! 
-    fat_makeRowDataEntry(file.row, name, 32, file.firstCluster, save_length);   // macht eintrag im puffer 
+  unsigned int comp_cntOfBytes=file.cntOfBytes;		// sicher nötig wegen schleife...
+  while( comp_cntOfBytes < 512 ){						// sektor ist beschrieben worden, daher nötigenfalls mit 00 füllen				
+	 fat.sector[comp_cntOfBytes]=0x00;					// beschreibt ungenutzte bytes mit 0x00 	
+	 comp_cntOfBytes++;			
+	 }	 
+  char name[13];														// zum sichern des dateinamens
+  unsigned long int save_length = file.cntOfBytes + file.seek;		// muss gesichert werden, wird sonst von der karte geladen und verändert !	  
+  strcpy(name,(char *)file.name);										// muss gesichert werden, wird sonst von der karte geladen und verändert !
+	 
+  fat_setClusterChain(fat_secToClust(fat.startSectors),fat_secToClust(fat.currentSectorNr));	// verketten der geschriebenen cluster				
+  fat_loadFileDataFromDir(name);							// läd sektor, des datei eintrags, und läd daten von karte auf struct file!			 
+  fat_makeRowDataEntry(file.row,name,32,file.firstCluster,save_length);	 	// macht eintrag im puffer				
 
-    fat_writeSector(fat.currentSectorNr);
+  fat_writeSector(fat.currentSectorNr);					
 }
+
+#endif
 
 
 // *******************************************************************************************************************************
@@ -101,30 +100,31 @@ void fileUpdate(void)
 // ist, dann wird der sektor geladen und der zähler für die bytes eines sektors gesetzt. wenn das byte nicht in den sektoren ist,
 // die "vorgesucht" wurden, müssen noch weitere sektoren der datei gesucht werden (sec > fat.endSectors).
 // *******************************************************************************************************************************
-void ffseek(uint32_t offset)
-{
+void ffseek(unsigned long int offset){	
 
-#if (OVER_WRITE==1)             // man muss den dateieintrag updaten, um die daten zu retten !!
-    if (file.seek > file.length)
-        fileUpdate();           // fat verketten und datei update auf der karte !
+#if (WRITE==1)
+	
+  #if (OVER_WRITE==1)  									// man  muss den dateieintrag updaten, um die daten zu retten !!
+	if( file.seek > file.length ) fileUpdate();			// fat verketten und datei update auf der karte !
+  #endif
 #endif
 
-    fat_getFatChainClustersInRow(file.firstCluster);    // suchen von anfang der cluster chain aus !
-    uint32_t sec = fat.startSectors;   // sektor variable zum durchgehen durch die sektoren 
-    file.seek = 0;              // weil auch von anfang an der chain gesucht wird mit 0 initialisiert
+  fat_getFatChainClustersInRow(file.firstCluster);		// suchen von anfang der cluster chain aus !
+  unsigned long int sec=fat.startSectors;			// sektor variable zum durchgehen durch die sektoren  
+  file.seek=0;											// weil auch von anfang an der chain gesucht wird mit 0 initialisiert
 
-    while (offset >= 512) {                                                             /** suchen des sektors in dem offset ist  **/
-        sec++;                  // da byte nicht in diesem sektor ist, muss hochgezählt werden
-        offset -= 512;          // ein sektor weniger in dem das byte sein kann
-        file.seek += 512;       // file.seek update, damit bei ffclose() die richtige file.length herauskommt
-        if (sec > fat.endSectors) {     // es müssen mehr sektoren der datei gesucht werden 
-            fat_getFatChainClustersInRow(fat_getNextCluster(file.lastCluster)); // nachladen von clustern in der chain 
-            sec = fat.startSectors;     // setzen des 1. sektors der neu geladenen, zum weitersuchen !
-        }
-    }
-    file.lastCluster = fat_secToClust(fat.endSectors);  // letzter bekannter cluster der datei
-    fat_loadSector(sec);        // sektor mit offset byte laden
-    file.cntOfBytes = offset;   // setzen des lese zählers 
+  while(offset>=512){ 	 								/** suchen des sektors in dem offset ist  **/	 
+	 sec++;												// da byte nicht in diesem sektor ist, muss hochgezählt werden
+	 offset-=512;										// ein sektor weniger in dem das byte sein kann
+	 file.seek+=512;									// file.seek update, damit bei ffclose() die richtige file.length herauskommt
+	 if ( sec > fat.endSectors ){						// es müssen mehr sektoren der datei gesucht werden  
+		fat_getFatChainClustersInRow(fat_getNextCluster( file.lastCluster ) );	// nachladen von clustern in der chain		
+		sec=fat.startSectors;							// setzen des 1. sektors der neu geladenen, zum weitersuchen !
+		} 				
+	 }
+  file.lastCluster=fat_secToClust(fat.endSectors);		// letzter bekannter cluster der datei
+  fat_loadSector(sec);  								// sektor mit offset byte laden
+  file.cntOfBytes = offset;								// setzen des lese zählers   
 }
 
 
@@ -229,39 +229,39 @@ uint8_t ffcdLower(void)
 // der "." hat den 1. cluster des eigenen dirs. der ".." eintrag ist der 1. cluster des parent dirs.
 // ein dir wird immer mit 0x00 initialisiert ! also alle einträge der sektoren des clusters ( bis auf . und .. einträge)!
 // *******************************************************************************************************************************
-void ffmkdir(char name[])
-{
+#if (WRITE==1)
 
-    uint8_t i;
-    uint16_t j;
+void ffmkdir(char name[]){
 
-    if (0 == fat_loadFileDataFromDir(name))
-        return;                 // prüft ob dirname im dir schon vorhanden, wenn ja, abbruch !
+  unsigned char i;
+  unsigned int j;
 
-    // cluster in fat setzen, und ordner eintrg im aktuellen verzeichniss machen.
-    fat_getFreeClustersInRow(2);        // holt neue freie cluster, ab cluster 2 ...
-    fat_setCluster(fat_secToClust(fat.startSectors), 0x0fffffff);       // fat16/32 cluster chain ende setzen. (neuer ordner in fat)
-    file.firstCluster = fat_secToClust(fat.startSectors);       // dammit fat_makeFileEntry den cluster richtig setzen kann
-    fat_makeFileEntry(name, 0x10, 0);   // macht dir eintrag im aktuellen verzeichniss (legt ordner im partent verzeichniss an)
+  if(0==fat_loadFileDataFromDir(name))return ;	// prüft ob dirname im dir schon vorhanden, wenn ja, abbruch !
 
-    // aufbereiten des puffers
-    j = 511;
-    do {
-        fat.sector[j] = 0x00;   // schreibt puffer fat.sector voll mit 0x00==leer
-    } while (j--);
+  // cluster in fat setzen, und ordner eintrg im aktuellen verzeichniss machen.
+  fat_getFreeClustersInRow(2);										// holt neue freie cluster, ab cluster 2 ...
+  fat_setCluster(fat_secToClust(fat.startSectors),0x0fffffff);		// fat16/32 cluster chain ende setzen.	(neuer ordner in fat)
+  file.firstCluster=fat_secToClust(fat.startSectors);				// dammit fat_makeFileEntry den cluster richtig setzen kann
+  fat_makeFileEntry(name,0x10,0); 			// macht dir eintrag im aktuellen verzeichniss (legt ordner im partent verzeichniss an)
 
-    // aufbereiten des clusters
-    for (i = 1; i < fat.secPerClust; i++) {     // ein dir cluster muss mit 0x00 initialisiert werden !
-        fat_writeSector(fat.startSectors + i);  // löschen des cluster (überschreibt mit 0x00), wichtig bei ffls!
-    }
+  // aufbereiten des puffers
+  j=511;
+  do{
+	fat.sector[j]=0x00;						//schreibt puffer fat.sector voll mit 0x00==leer
+	}while(j--);
 
-    // aufbereiten des neuen dir sektors mit "." und ".." eintraegen !
-    fat_makeRowDataEntry(0, ".           ", 0x10, file.firstCluster, 0);        // macht "." eintrag des dirs
-    fat_makeRowDataEntry(1, "..          ", 0x10, fat.dir, 0);  // macht ".." eintrag des dirs
-    fat_writeSector(fat_clustToSec(file.firstCluster)); // schreibt einträge auf karte ! 
+  // aufbereiten des clusters
+  for(i=1;i<fat.secPerClust;i++){			// ein dir cluster muss mit 0x00 initialisiert werden !
+	fat_writeSector(fat.startSectors+i);	// löschen des cluster (überschreibt mit 0x00), wichtig bei ffls!
+	} 
+
+  // aufbereiten des neuen dir sektors mit "." und ".." eintraegen !
+  fat_makeRowDataEntry(0,".           ",0x10,file.firstCluster,0);	// macht "." eintrag des dirs
+  fat_makeRowDataEntry(1,"..          ",0x10,fat.dir,0);			// macht ".." eintrag des dirs
+  fat_writeSector(fat_clustToSec(file.firstCluster));				// schreibt einträge auf karte !  
 }
-
-#endif                          // ffmkdir wegen atmega8
+#endif //WRITE 
+#endif		// ffmkdir wegen atmega8
 #endif
 
 

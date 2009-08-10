@@ -6,7 +6,8 @@
 
 #include "fat.h"
 #include "file.h"
-#include "hardware.h"
+#include "mmc.h"
+#include "config.h"
 
 struct Fat fat;                 // wichtige daten/variablen der fat
 struct File file;               // wichtige dateibezogene daten/variablen

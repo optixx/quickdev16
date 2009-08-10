@@ -5,14 +5,15 @@
 
   // **************************************************************************************************************************
   // WICHTIGE SCHLATER: -> hier kann die code größe angepasst werden, zu lasten der funktionalität ! 
-#define SMALL_FILE_SYSTEM 0     // wenn 1 dann ist kleines file system, wenn 0 dann komplette file unterstützung !
-#define WRITE 1                 // wenn 1 dann ist write an, wenn 0 dann read only !
-#define OVER_WRITE 1            // wenn 1 dann kann ffwrite dateien überschreiben (nicht performant), wenn 0 dann nur normales schreiben !
-#define MAX_CLUSTERS_IN_ROW	256     // gibt an wie viele cluster am stück ohne fat lookup geschrieben bzw gelesen werden können, wenn 
                                         // die fat nicht fragmentiert ist !
 
-  // 1. fat_getFreeRowOfCluster -> fat_getFreeRowOfDir -> fat_makeRowDataEntry -> fat_makeFileEntry -> fat_writeSector "eintrag gemacht !!"
-  // 2. fat_loadSector -> fat_loadRowOfSector -> fat_loadFileDataFromCluster -> fat_loadFileDataFromDir (-> fat_cd) "daten chain"
+  #define SMALL_FILE_SYSTEM 0	// wenn 1 dann ist kleines file system, wenn 0 dann komplette file unterstützung !
+  #define WRITE 0 				// wenn 1 dann ist write an, wenn 0 dann read only !
+  #define OVER_WRITE 0			// wenn 1 dann kann ffwrite dateien überschreiben (nicht performant), wenn 0 dann nur normales schreiben !
+  #define MAX_CLUSTERS_IN_ROW	256 // gibt an wie viele cluster am stück ohne fat lookup geschrieben bzw gelesen werden können, wenn die fat nicht fragmentiert ist !
+ 
+  // 1. fat_getFreeRowOfCluster -> fat_getFreeRowOfDir -> fat_makeRowDataEntry -> fat_makeFileEntry -> fat_writeSector  "eintrag gemacht !!"
+  // 2. fat_loadSector -> fat_loadRowOfSector -> fat_loadFileDataFromCluster -> fat_loadFileDataFromDir (-> fat_cd)   "daten chain"
 
   // **************************************************************************************************************************
   // funktionen
