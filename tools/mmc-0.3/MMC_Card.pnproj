@@ -1,0 +1,1 @@
+<Project name="MMC_Card"><File path="fat.c"></File><File path="fat.h"></File><File path="main.c"></File><File path="makefile"></File><File path="mmc.c"></File><File path="mmc.h"></File><File path="usart.c"></File><File path="usart.h"></File></Project>

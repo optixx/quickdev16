@@ -1,0 +1,117 @@
+\documentclass[a4paper,fleqn]{article}
+
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{array}
+\usepackage{verbatim}
+\usepackage{longtable}
+
+\newcommand{\filename}[1]{
+	\textsf{#1}
+}
+\newcommand{\code}[1]{
+	\texttt{#1}
+}
+\newcommand{\external}[1]{
+	\textbf{#1}
+}
+
+\newcommand{\thead}[1]{
+	\textbf{#1}
+}
+
+%\usepackage[latin1]{inputenc}
+%\usepackage[T1]{fontenc}
+
+\lstset{language=C}
+
+\begin{document}
+\title{\Huge{EFSL}\\\Large{Embedded Filesystems Library - 0.3}}
+\author{Lennart Yseboodt\\Michael De Nil}
+\date{$\copyright$ 2005}
+\maketitle
+
+\newpage
+\tableofcontents
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+
+\newpage
+\section{Document Outdated!}
+{\Huge{
+This document is outdated and is in the progress of being renewed.\\
+\newline\newline
+If you are just starting with Efsl, we recommend you to start with the stable
+0.2-branch. This version is currently not really usable, and is intended for people
+working on the code.
+}}
+\newpage
+\section{Preface}
+\input{pages/preface}
+\newpage
+\section{Getting started}
+\subsection{On Linux (file) (0.2)}
+	\input{pages/linux}
+\newpage
+\subsection{On AVR (SD-Card) (0.3)}
+	\input{pages/avr}
+\newpage
+\subsection{On DSP (SD-Card) (0.2)}
+	\input{pages/tms6713}
+
+\newpage
+\section{Configuring EFSL (0.2)}
+	\input{pages/config}
+	
+\newpage
+\section{EFSL Functions}
+\subsection{Date and time support (0.2)}
+	\input{pages/dateandtime}
+	\newpage
+\subsection{efs\_init (0.2)}
+	\input{pages/efs_init}
+	\newpage
+\subsection{file\_fopen (0.2)}
+	\input{pages/file_fopen}
+	\newpage
+\subsection{file\_fclose (0.2)}
+	\input{pages/file_fclose}
+	\newpage
+\subsection{file\_read (0.2)}
+	\input{pages/file_read}
+	\newpage
+\subsection{file\_write (0.2)}
+	\input{pages/file_write}
+	\newpage
+\subsection{mkdir (0.2)}
+	\input{pages/mkdir}
+	\newpage
+\subsection{ls\_openDir (0.2)}
+	\input{pages/lsopendir}
+	\newpage
+\subsection{ls\_getNext (0.2)}
+	\input{pages/lsgetnext}
+	\newpage
+
+\newpage
+\section{Developer notes}
+\subsection{Integer types (0.2)}
+	\input{pages/types}
+\subsection{Debugging (0.2)}
+	\input{pages/debug}
+\subsection{Adding support for a new endpoint (0.2)}
+	\input{pages/driver}
+\subsection{I/O Manager (0.2)}
+	\input{pages/ioman}
+\subsection{C library for EFSL (0.2)}
+	\input{pages/plibc}
+	
+\newpage
+\section{Legal notes}
+	\input{pages/license}
+
+\end{document}
