@@ -1,4 +1,4 @@
-FatFs/Tiny-FatFs Module Source Files R0.07a                 (C)ChaN, 2009
+FatFs Module Source Files R0.07c                        (C)ChaN, 2009
 
 
 FILES
@@ -27,7 +27,7 @@ AGREEMENTS
 
  * The FatFs module is a free software and there is NO WARRANTY.
  * No restriction on use. You can use, modify and redistribute it for
-   personal, non-profit or commercial use UNDER YOUR RESPONSIBILITY.
+   personal, non-profit or commercial product UNDER YOUR RESPONSIBILITY.
  * Redistributions of source code must retain the above copyright notice.
 
 
@@ -94,3 +94,11 @@ REVISION HISTORY
 
   Apr 14, 2009, R0.07a Separated out OS dependent code on reentrant cfg.
                        Added multiple sector size support.
+
+  Jun 21, 2009, R0.07c Fixed f_unlink() may return FR_OK on error.
+                       Fixed wrong cache control in f_lseek().
+                       Added relative path feature.
+                       Added f_chdir().
+                       Added f_chdrive().
+                       Added proper case conversion to extended char.
+
