@@ -178,6 +178,7 @@ void ffls(void)
     uint16_t s;             // fat16 root dir sektoren
 
     if (fat.dir == 0 && fat.fatType == 16) {    // IM ROOTDIR. fat16 
+        printf("Fat16\n");
         for (s = 0; s < (uint16_t) (fat.dataDirSec + 2 - fat.rootDir); s++) {       // zählt durch RootDir sektoren (errechnet anzahl
                                                                                         // rootDir sektoren). 
             lsRowsOfClust(fat.rootDir + s);     // zeigt reihen eines root dir clust an
@@ -185,6 +186,7 @@ void ffls(void)
     }
 
     else {
+        printf("Fat32\n");
         if (fat.dir == 0 && fat.fatType == 32)
             clust = fat.rootDir;        // IM ROOTDIR. fat32
         else
