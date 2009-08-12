@@ -39,8 +39,13 @@ void dir_add_entry(uint16_t id, uint8_t file_name,uint32_t file_size,uint8_t fil
     addr = DIR_ENTRY_LOC + (positon << DIR_ENTRY_SIZE_SHIFT );
     sram_bulk_copy(addr, (uint8_t *) &ent, DIR_ENTRY_SIZE );
     positon++;
-
 }
 
+void dir_add_header(uint16_t position, uint8_t * header){
+    uint32_t addr;
+    dir_ent_t ent;
+    addr = DIR_ENTRY_LOC + ( position << DIR_ENTRY_SIZE_SHIFT ) + DIR_ENTRY_HEADER_OFF;
+    sram_bulk_copy(addr, (uint8_t *) header, DIR_ENTRY_HEADER_SIZE);
+}
 
 

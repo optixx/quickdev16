@@ -28,7 +28,8 @@
 #define DIR_ENTRY_LOC           0x010000
 #define DIR_ENTRY_SIZE          64
 #define DIR_ENTRY_SIZE_SHIFT    6
-
+#define DIR_ENTRY_HEADER_SIZE   44
+#define DIR_ENTRY_HEADER_OFF    20
 
 typedef struct {             
     uint16_t    id;                 // 1
@@ -40,7 +41,6 @@ typedef struct {
 
 void dir_entry_start();
 void dir_entry_add_(uint16_t id, uint8_t file_name,uint32_t file_size,uint8_t file_attr);
-void dir_entry_header(uint16_t id, uint8_t header);
-
+void dir_entry_header(uint16_t position, uint8_t * header);
 
 #endif
