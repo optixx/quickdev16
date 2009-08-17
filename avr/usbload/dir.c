@@ -30,7 +30,7 @@ void dir_entry_start(){
     positon = 0;
 }
 
-void dir_add_entry(uint16_t id, uint8_t file_name,uint32_t file_size,uint8_t file_attr){
+void dir_entry_add(uint16_t id, uint8_t file_name,uint32_t file_size,uint8_t file_attr){
     uint32_t addr;
     dir_ent_t ent;
     strncpy(ent.file_name,file_name,13);
@@ -41,7 +41,7 @@ void dir_add_entry(uint16_t id, uint8_t file_name,uint32_t file_size,uint8_t fil
     positon++;
 }
 
-void dir_add_header(uint16_t position, uint8_t * header){
+void dir_entry_header(uint16_t position, uint8_t * header){
     uint32_t addr;
     dir_ent_t ent;
     addr = DIR_ENTRY_LOC + ( position << DIR_ENTRY_SIZE_SHIFT ) + DIR_ENTRY_HEADER_OFF;
