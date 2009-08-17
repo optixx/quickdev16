@@ -33,8 +33,8 @@ void dir_entry_start(){
     positon = 0;
 }
 
-void dir_entry_dump(dir_ent_t* ent){
-    debug(DEBUG_FAT,"dir_entry_dump: id=%i name=%s size=%i attr=%d\n", ent->id, ent->file_name, 
+void dir_entry_dump(uint32_t addr, dir_ent_t* ent){
+    debug(DEBUG_FAT,"dir_entry_dump: addr=0x%06lx id=%i name=%s size=%li attr=%i\n", addr, ent->id, ent->file_name, 
                     ent->file_size, ent->file_attr);
 }
 
@@ -48,7 +48,7 @@ void dir_entry_add(uint16_t id, uint8_t* file_name,uint32_t file_size,uint8_t fi
     ent.file_attr = file_attr;
     addr = DIR_ENTRY_LOC + (positon << DIR_ENTRY_SIZE_SHIFT );
     sram_bulk_copy(addr, (uint8_t *) &ent, DIR_ENTRY_SIZE );
-    dir_entry_dump(&ent);
+    dir_entry_dump(addr, &ent);
     positon++;
 }
 

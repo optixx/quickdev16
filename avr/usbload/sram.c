@@ -97,7 +97,7 @@ void system_init(void)
 void sreg_set(uint32_t addr)
 {
     uint8_t i = 24;
-    debug(DEBUG_SRAM,"sreg_set: addr=0x%08lx",addr);
+    debug(DEBUG_SRAM,"sreg_set: addr=0x%08lx\n",addr);
     while(i--) {
         if ((addr & ( 1L << i))){
             debug(DEBUG_SRAM,"1");
