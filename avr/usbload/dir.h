@@ -1,4 +1,4 @@
-˝/*
+/*
  * =====================================================================================
  *
  * ________        .__        __    ________               ____  ________
@@ -40,7 +40,7 @@ typedef struct {
 } dir_ent_t;                        // 64
 
 void dir_entry_start();
-void dir_entry_add(uint16_t id, uint8_t file_name,uint32_t file_size,uint8_t file_attr);
+void dir_entry_add(uint16_t id, uint8_t* file_name,uint32_t file_size,uint8_t file_attr);
 void dir_entry_header(uint16_t position, uint8_t * header);
 
 /*

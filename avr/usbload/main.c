@@ -51,7 +51,7 @@
 extern const char _rom[] PROGMEM;
 extern FILE uart_stdout;
 
-uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC);
+uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_FAT);
 
 uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;

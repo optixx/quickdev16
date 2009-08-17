@@ -5,6 +5,8 @@
 #include "mmc.h"
 #include "fat.h"
 #include "file.h"
+#include "dir.h"
+
 #include "config.h"
 
 // *******************************************************************************************************************************
@@ -148,59 +150,90 @@ uint8_t ffcd(char name[])
 // eintrag in der reihe ist (nicht gelöscht, nicht frei usw). die sektoren des clusters werden nachgeladen.
 // die dateien werden mit namen und datei größe angezeigt.
 // *******************************************************************************************************************************
+
 void lsRowsOfClust(uint32_t start_sec)
 {
-
     uint8_t row;          // reihen
     uint8_t sec = 0;      // sektoren 
     do {
         fat_loadSector(start_sec + sec);        // sektoren des clusters laden 
         for (row = 0; row < 16; row++) {        // geht durch reihen des sektors 
             fat_loadRowOfSector(row);   // reihe eines sektors (auf dem puffer) laden 
-            if ((file.attrib == 0x20 || file.attrib == 0x10)
-                && (file.name[0] != 0xE5 && file.name[0] != 0x00)) {
-                printf("Name:%s Size:%li\n", file.name, file.length);
+            if ((file.name[0] != 0xE5 && file.name[0] != 0x00)) {
+                if (file.attrib == 0x20) 
+                    printf("Name: %s Size:%li\n", file.name, file.length);
+                if (file.attrib == 0x10)
+                    printf("Dir:  %s\n", file.name);
             }
         }
     } while (++sec < fat.secPerClust);
 }
 
 
-// *******************************************************************************************************************************
-// zeigt inhalt eines direktory an.
-// unterscheidung ob man sich im rootDir befindet nötig, weil bei fat16 im root dir eine bestimmt anzahl sektoren durchsucht
-// werden müssen und bei fat32 ab einem start cluster ! ruft lsRowsOfClust auf um cluster/sektoren anzuzeigen.
-// *******************************************************************************************************************************
 void ffls(void)
 {
 
     uint32_t clust;    // cluster
     uint16_t s;             // fat16 root dir sektoren
-
     if (fat.dir == 0 && fat.fatType == 16) {    // IM ROOTDIR. fat16 
-        printf("Fat16\n");
         for (s = 0; s < (uint16_t) (fat.dataDirSec + 2 - fat.rootDir); s++) {       // zählt durch RootDir sektoren (errechnet anzahl
-                                                                                        // rootDir sektoren). 
             lsRowsOfClust(fat.rootDir + s);     // zeigt reihen eines root dir clust an
         }
-    }
-
-    else {
-        printf("Fat32\n");
+        printf("Fat16\n");
+    } else {
         if (fat.dir == 0 && fat.fatType == 32)
             clust = fat.rootDir;        // IM ROOTDIR. fat32
         else
             clust = fat.dir;    // NICHT ROOT DIR
         while (!((clust == 0xfffffff && fat.fatType == 32) || (clust == 0xffff && fat.fatType == 16))) {        // prüft ob weitere
-                                                                                                                // sektoren zum lesen da
-                                                                                                                // sind (fat32||fat16) 
             lsRowsOfClust(fat_clustToSec(clust));       // zeigt reihen des clusters an
             clust = fat_getNextCluster(clust);  // liest nächsten cluster des dir-eintrags
         }
+        printf("Fat32\n");
     }
 }
 
 
+
+void lsRowsOfClust_smc(uint32_t start_sec)
+{
+    uint8_t row;          // reihen
+    uint8_t sec = 0;      // sektoren 
+    do {
+        fat_loadSector(start_sec + sec);        // sektoren des clusters laden 
+        for (row = 0; row < 16; row++) {        // geht durch reihen des sektors 
+            fat_loadRowOfSector(row);   // reihe eines sektors (auf dem puffer) laden 
+            if ((file.name[0] != 0xE5 && file.name[0] != 0x00)) {
+                if (file.attrib == 0x20)
+                    dir_entry_add((uint16_t)file.firstCluster, file.name, file.length ,file.attrib);
+            }
+        }
+    } while (++sec < fat.secPerClust);
+}
+
+
+void ffls_smc(void)
+{
+
+    uint32_t clust;    // cluster
+    uint16_t s;             // fat16 root dir sektoren
+    if (fat.dir == 0 && fat.fatType == 16) {    // IM ROOTDIR. fat16 
+        for (s = 0; s < (uint16_t) (fat.dataDirSec + 2 - fat.rootDir); s++) {       // zählt durch RootDir sektoren (errechnet anzahl
+            lsRowsOfClust_smc(fat.rootDir + s);     // zeigt reihen eines root dir clust an
+        }
+        printf("Fat16\n");
+    } else {
+        if (fat.dir == 0 && fat.fatType == 32)
+            clust = fat.rootDir;        // IM ROOTDIR. fat32
+        else
+            clust = fat.dir;    // NICHT ROOT DIR
+        while (!((clust == 0xfffffff && fat.fatType == 32) || (clust == 0xffff && fat.fatType == 16))) {        // prüft ob weitere
+            lsRowsOfClust_smc(fat_clustToSec(clust));       // zeigt reihen des clusters an
+            clust = fat_getNextCluster(clust);  // liest nächsten cluster des dir-eintrags
+        }
+        printf("Fat32\n");
+    }
+}
 
 // *******************************************************************************************************************************
 // wechselt in das parent verzeichniss (ein verzeichniss zurück !)

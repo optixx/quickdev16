@@ -27,7 +27,7 @@
 #define DEBUG_USB_TRANS             4
 #define DEBUG_SRAM                  8
 #define DEBUG_SRAM_RAW              16
-#define DEBUG_SREG                  32
+#define DEBUG_FAT                   32
 #define DEBUG_CRC                   64
 #define DEBUG_SHM                   128
 

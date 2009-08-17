@@ -35,6 +35,7 @@
 #include "mmc.h"
 #include "fat.h"
 #include "file.h"
+#include "dir.h"
 
 
 void test_read_write()
@@ -109,7 +110,6 @@ void test_crc()
     test_non_zero_memory(0x000000, 0x10000);
 }
 
-
 void test_sdcard(void){
 
 
@@ -124,7 +124,8 @@ void test_sdcard(void){
     }
     
     printf("Root dirlist\n");
-    ffls();
+    ffls_smc();
+    dump_memory(DIR_ENTRY_LOC , DIR_ENTRY_LOC + (64 * 2));
 
 #if (WRITE==1)
     char datei[12]="test.txt";		// hier muss platz für 11 zeichen sein (8.3), da fat_str diesen string benutzt !!

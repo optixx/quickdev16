@@ -97,19 +97,19 @@ void system_init(void)
 void sreg_set(uint32_t addr)
 {
     uint8_t i = 24;
-    debug(DEBUG_SREG,"sreg_set: addr=0x%08lx",addr);
+    debug(DEBUG_SRAM,"sreg_set: addr=0x%08lx",addr);
     while(i--) {
         if ((addr & ( 1L << i))){
-            debug(DEBUG_SREG,"1");
+            debug(DEBUG_SRAM,"1");
             AVR_ADDR_SER_PORT |= ( 1 << AVR_ADDR_SER_PIN);
         } else {
             AVR_ADDR_SER_PORT &= ~( 1 << AVR_ADDR_SER_PIN);
-            debug(DEBUG_SREG,"0");
+            debug(DEBUG_SRAM,"0");
         }
         AVR_ADDR_SCK_PORT |= (1 << AVR_ADDR_SCK_PIN);
         AVR_ADDR_SCK_PORT &= ~(1 << AVR_ADDR_SCK_PIN);
     }
-    debug(DEBUG_SREG,"\n");
+    debug(DEBUG_SRAM,"\n");
     AVR_ADDR_LATCH_PORT |= (1 << AVR_ADDR_LATCH_PIN);
     AVR_ADDR_LATCH_PORT &= ~(1 << AVR_ADDR_LATCH_PIN);
     
