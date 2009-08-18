@@ -126,6 +126,7 @@ void test_sdcard(void){
     printf("Root dirlist\n");
     ffls_smc();
     dump_memory(DIR_ENTRY_LOC , DIR_ENTRY_LOC + (64 * 2));
+    dir_entry_loop();
     while(1);
 
 #if (WRITE==1)
