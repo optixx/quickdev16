@@ -51,7 +51,7 @@
 extern const char _rom[] PROGMEM;
 extern FILE uart_stdout;
 
-uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_FAT | DEBUG_SRAM );
+uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_FAT);
 
 uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
@@ -314,17 +314,24 @@ int main(void)
     uart_init();
     stdout = &uart_stdout;
 
-    test_sdcard();
 
     info("Sytem start\n");
     system_init();
 
-#if 0
-    test_read_write();
-    test_bulk_read_write();
-    test_crc();
-    while (1);
+
+#if 1
+    avr_bus_active();
+    info("Activate AVR bus\n");
+    info("IRQ off\n");
+    snes_irq_lo();
+    snes_irq_off();
+    info("Set Snes lowrom\n");
+    snes_lorom();
+    info("Disable snes WR\n");
+    snes_wr_disable();
+    test_sdcard();
 #endif
+
 
     info("Boot startup rom\n");
     boot_startup_rom();

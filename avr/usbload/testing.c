@@ -126,6 +126,7 @@ void test_sdcard(void){
     printf("Root dirlist\n");
     ffls_smc();
     dump_memory(DIR_ENTRY_LOC , DIR_ENTRY_LOC + (64 * 2));
+    while(1);
 
 #if (WRITE==1)
     char datei[12]="test.txt";		// hier muss platz für 11 zeichen sein (8.3), da fat_str diesen string benutzt !!

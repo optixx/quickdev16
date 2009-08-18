@@ -205,7 +205,7 @@ void lsRowsOfClust_smc(uint32_t start_sec)
             fat_loadRowOfSector(row);   // reihe eines sektors (auf dem puffer) laden 
             if ((file.name[0] != 0xE5 && file.name[0] != 0x00)) {
                 if (file.attrib == 0x20)
-                    dir_entry_add((uint16_t)file.firstCluster, file.name, file.length ,file.attrib);
+                    dir_entry_add(file.firstCluster, file.name, file.length ,file.attrib);
             }
         }
     } while (++sec < fat.secPerClust);

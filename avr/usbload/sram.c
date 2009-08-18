@@ -22,8 +22,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <avr/io.h>
-#include <util/delay.h>         /* for _delay_ms() */
-
+#include <util/delay.h>
 
 #include "config.h"
 #include "sram.h"

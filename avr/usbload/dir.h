@@ -32,15 +32,15 @@
 #define DIR_ENTRY_HEADER_OFF    20
 
 typedef struct {             
-    uint16_t    id;                 // 2
+    uint32_t    id;                 // 4
     uint8_t     file_name[13];      // 8.3  = 12 + 1 = 13
     uint32_t    file_size;          // 4
     uint8_t     file_attr;          // 1
-    uint8_t     snes_header[43];    // 44
+    uint8_t     snes_header[41];    // 41
 } dir_ent_t;                        // 64
 
 void dir_entry_start();
-void dir_entry_add(uint16_t id, uint8_t* file_name,uint32_t file_size,uint8_t file_attr);
+void dir_entry_add(uint32_t id, uint8_t* file_name,uint32_t file_size,uint8_t file_attr);
 void dir_entry_header(uint16_t position, uint8_t * header);
 
 /*
