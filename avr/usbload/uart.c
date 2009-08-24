@@ -31,10 +31,7 @@ volatile struct {
     uint8_t rx_int:1;
 } intflags;
 
-/*
- *  * Last character read from the UART.
- *   
- */
+
 volatile char rxbuff;
 
 
