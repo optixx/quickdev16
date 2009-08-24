@@ -37,6 +37,7 @@
 #define SHARED_MEM_TX_CMD_TERMINATE         0x06
 
 #define SHARED_MEM_TX_LOC_STATE             0x000000
+#define SHARED_MEM_TX_LOC_SIZE              0x000100
 #define SHARED_MEM_TX_LOC_CMD               0x000001
 #define SHARED_MEM_TX_LOC_PAYLOAD           0x000002
 
@@ -47,6 +48,7 @@
 #define SHARED_MEM_RX_CMD_FILESEL           0x01
 
 #define SHARED_MEM_RX_LOC_STATE             0x001000
+#define SHARED_MEM_RX_LOC_SIZE              0x000400
 #define SHARED_MEM_RX_LOC_CMD               0x001001
 #define SHARED_MEM_RX_LOC_LEN               0x001002
 #define SHARED_MEM_RX_LOC_PAYLOAD           0x001003
@@ -60,6 +62,11 @@
 
 
 
+void shared_memory_scratchpad_region_saye_helper(uint32_t addr);
+void shared_memory_scratchpad_region_tx_save();
+void shared_memory_scratchpad_region_tx_restore();
+void shared_memory_scratchpad_region_rx_save();
+void shared_memory_scratchpad_region_rx_restore();
 void shared_memory_write(uint8_t cmd, uint8_t value);
 int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer);
 

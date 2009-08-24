@@ -62,11 +62,8 @@ help:
 	@echo "make clean ..... to delete objects and hex file"
 
 hex: main.hex
-	@echo "==============================="
 	@echo "$(TARGET) compiled for: $(DEVICE)"
-	@echo -n "size is: "
-	@$(SIZE) -A $(TARGET).hex | grep "\.sec1" | tr -s " " | cut -d" " -f2
-	@echo "==============================="
+	@./checksize $(TARGET).elf
 
 program: flash fuse
 

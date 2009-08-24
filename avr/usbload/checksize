@@ -5,11 +5,11 @@
 # Creation Date: 2004-12-29
 # Tabsize: 4
 # Copyright: (c) 2005 OBJECTIVE DEVELOPMENT Software GmbH.
-# Revision: $Id: checksize 83 2006-01-05 22:20:53Z cs $
+# Revision: $:Id: checksize 83 2006-01-05 22:20:53Z cs $
 
 error=0
-codelimit=16384  # default value
-datalimit=992   # default value; leave 32 bytes for stack
+codelimit=65536  # default value
+datalimit=4064   # default value; leave 32 bytes for stack
 
 if [ $# -gt 1 ]; then
 	codelimit="$2"
