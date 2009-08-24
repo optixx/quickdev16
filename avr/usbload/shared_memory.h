@@ -62,7 +62,7 @@
 
 
 
-void shared_memory_scratchpad_region_saye_helper(uint32_t addr);
+uint8_t shared_memory_scratchpad_region_save_helper(uint32_t addr);
 void shared_memory_scratchpad_region_tx_save();
 void shared_memory_scratchpad_region_tx_restore();
 void shared_memory_scratchpad_region_rx_save();

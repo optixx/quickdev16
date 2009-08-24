@@ -163,6 +163,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         }
         sram_bulk_write_start(req_addr);
 #endif
+
+        if (!shared_memory_scratchpad_region_save_helper(req_addr)){
+            sram_bulk_write_start(req_addr);
+        }
+
+
         if (req_addr && (req_addr % req_bank_size) == 0) {
 #ifdef FLT_DEBUG
             debug(DEBUG_USB,

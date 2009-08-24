@@ -45,14 +45,18 @@ uint8_t scratchpad_locked_rx = 1;
 uint8_t scratchpad_locked_tx = 1;
 
 
-void shared_memory_scratchpad_region_saye_helper(uint32_t addr){
+uint8_t shared_memory_scratchpad_region_save_helper(uint32_t addr){
     
-    if(addr > (SHARED_MEM_TX_LOC_STATE +  SHARED_MEM_TX_LOC_SIZE ))
+    if(addr > (SHARED_MEM_TX_LOC_STATE +  SHARED_MEM_TX_LOC_SIZE )){
         shared_memory_scratchpad_region_tx_save();
-    
-    if(addr > (SHARED_MEM_RX_LOC_STATE +  SHARED_MEM_RX_LOC_SIZE ))
+        return 0;
+    }
+    if(addr > (SHARED_MEM_RX_LOC_STATE +  SHARED_MEM_RX_LOC_SIZE )){
         shared_memory_scratchpad_region_rx_save();
-        }
+        return 0;
+    }
+    return 1;
+}
 
 
 void shared_memory_scratchpad_region_tx_save()
