@@ -47,11 +47,11 @@ uint8_t scratchpad_locked_tx = 1;
 
 uint8_t shared_memory_scratchpad_region_save_helper(uint32_t addr){
     
-    if(addr > (SHARED_MEM_TX_LOC_STATE +  SHARED_MEM_TX_LOC_SIZE )){
+    if(addr > (SHARED_MEM_TX_LOC_STATE +  SHARED_MEM_TX_LOC_SIZE ) &&  scratchpad_locked_tx){
         shared_memory_scratchpad_region_tx_save();
         return 0;
     }
-    if(addr > (SHARED_MEM_RX_LOC_STATE +  SHARED_MEM_RX_LOC_SIZE )){
+    if(addr > (SHARED_MEM_RX_LOC_STATE +  SHARED_MEM_RX_LOC_SIZE ) &&  scratchpad_locked_rx){
         shared_memory_scratchpad_region_rx_save();
         return 0;
     }
@@ -62,28 +62,33 @@ uint8_t shared_memory_scratchpad_region_save_helper(uint32_t addr){
 void shared_memory_scratchpad_region_tx_save()
 {
     debug(DEBUG_SHM,"shared_memory_scratchpad_region_tx_save: unlock\n");
-    sram_bulk_read_buffer(SHARED_MEM_TX_LOC_STATE,scratchpad_region_tx,SHARED_MEM_TX_LOC_SIZE);
+    sram_bulk_copy_into_buffer(SHARED_MEM_TX_LOC_STATE,scratchpad_region_tx,SHARED_MEM_TX_LOC_SIZE);
     scratchpad_locked_tx = 0;
-}
-
-void shared_memory_scratchpad_region_tx_restore()
-{
-    debug(DEBUG_SHM,"shared_memory_scratchpad_region_tx_restore: lock\n");
-    sram_bulk_copy(SHARED_MEM_TX_LOC_STATE,scratchpad_region_tx,SHARED_MEM_TX_LOC_SIZE);
-    scratchpad_locked_tx = 1;
 }
 
 void shared_memory_scratchpad_region_rx_save()
 {
     debug(DEBUG_SHM,"shared_memory_scratchpad_region_rx_save: unlock\n");
-    sram_bulk_read_buffer(SHARED_MEM_RX_LOC_STATE,scratchpad_region_rx,SHARED_MEM_RX_LOC_SIZE);
+    sram_bulk_copy_into_buffer(SHARED_MEM_RX_LOC_STATE,scratchpad_region_rx,SHARED_MEM_RX_LOC_SIZE);
     scratchpad_locked_rx = 0;
 }
 
+void shared_memory_scratchpad_region_tx_restore()
+{
+    if (scratchpad_locked_tx)
+        return;
+    debug(DEBUG_SHM,"shared_memory_scratchpad_region_tx_restore: lock\n");
+    sram_bulk_copy_from_buffer(SHARED_MEM_TX_LOC_STATE,scratchpad_region_tx,SHARED_MEM_TX_LOC_SIZE);
+    scratchpad_locked_tx = 1;
+}
+
+
 void shared_memory_scratchpad_region_rx_restore()
 {
+    if (scratchpad_locked_rx)
+        return;
     debug(DEBUG_SHM,"shared_memory_scratchpad_region_tx_save: lock\n");
-    sram_bulk_copy(SHARED_MEM_RX_LOC_STATE,scratchpad_region_rx,SHARED_MEM_RX_LOC_SIZE);
+    sram_bulk_copy_from_buffer(SHARED_MEM_RX_LOC_STATE,scratchpad_region_rx,SHARED_MEM_RX_LOC_SIZE);
     scratchpad_locked_rx = 1;
 }
 
@@ -193,7 +198,7 @@ int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer)
     debug(DEBUG_SHM,"shared_memory_read: 0x%04x=0x%02x 0x%04x=0x%02x \n",
          SHARED_MEM_RX_LOC_CMD, *cmd, SHARED_MEM_RX_LOC_LEN, *len);
 
-    sram_bulk_read_buffer(SHARED_MEM_RX_LOC_PAYLOAD,buffer, *len);
+    sram_bulk_copy_into_buffer(SHARED_MEM_RX_LOC_PAYLOAD,buffer, *len);
     sram_write(SHARED_MEM_RX_LOC_STATE, SHARED_MEM_RX_AVR_RTS);
 
     snes_hirom();

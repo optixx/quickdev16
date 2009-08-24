@@ -284,12 +284,12 @@ void sram_write(uint32_t addr, uint8_t data)
 }
 
 
-void sram_bulk_copy(uint32_t addr, uint8_t * src, uint32_t len)
+void sram_bulk_copy_from_buffer(uint32_t addr, uint8_t * src, uint32_t len)
 {
 
     uint32_t i;
     uint8_t *ptr = src;
-    debug(DEBUG_SRAM,"sram_copy: addr=0x%08lx src=0x%p len=%li\n\r", addr,src,len);
+    debug(DEBUG_SRAM,"sram_bulk_copy_from_buffer: addr=0x%08lx src=0x%p len=%li\n\r", addr,src,len);
     sram_bulk_write_start(addr);
     for (i = addr; i < (addr + len); i++){
         sram_bulk_write(*ptr++);
@@ -298,12 +298,12 @@ void sram_bulk_copy(uint32_t addr, uint8_t * src, uint32_t len)
     sram_bulk_write_end();
 }
 
-void sram_bulk_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
+void sram_bulk_copy_into_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 {
 
     uint32_t i;
     uint8_t *ptr = dst;
-    debug(DEBUG_SRAM,"sram_bulk_read_buffer: addr=0x%08lx dst=0x%p len=%li\n\r", addr,dst,len);
+    debug(DEBUG_SRAM,"sram_bulk_copy_into_buffer: addr=0x%08lx dst=0x%p len=%li\n\r", addr,dst,len);
     sram_bulk_read_start(addr);
     for (i = addr; i < (addr + len); i++) {
         *ptr = sram_bulk_read();

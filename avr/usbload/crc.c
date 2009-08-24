@@ -97,7 +97,7 @@ uint16_t crc_check_memory_range(uint32_t start_addr, uint32_t size,uint8_t *buff
     uint16_t crc = 0;
     uint32_t addr;
     for (addr = start_addr; addr < start_addr + size; addr += TRANSFER_BUFFER_SIZE) {
-        sram_bulk_read_buffer(addr, buffer, TRANSFER_BUFFER_SIZE);
+        sram_bulk_copy_into_buffer(addr, buffer, TRANSFER_BUFFER_SIZE);
         crc = do_crc_update(crc, buffer, TRANSFER_BUFFER_SIZE);
     }
     return crc;

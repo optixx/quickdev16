@@ -51,7 +51,7 @@
 extern const char _rom[] PROGMEM;
 extern FILE uart_stdout;
 
-uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC);
+uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM);
 
 uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
@@ -353,7 +353,13 @@ int main(void)
         while (req_state != REQ_STATUS_SNES) {
             usbPoll();
         }
+        
+        
         shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
+
+        shared_memory_scratchpad_region_tx_restore();
+        shared_memory_scratchpad_region_rx_restore();
+        
         info("USB poll done\n");
         set_rom_mode();
         snes_wr_disable();
