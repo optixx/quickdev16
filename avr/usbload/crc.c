@@ -71,6 +71,8 @@ uint16_t crc_check_bulk_memory(uint32_t bottom_addr, uint32_t top_addr, uint32_t
     uint32_t addr = 0;
     uint8_t req_bank = 0;
     sram_bulk_read_start(bottom_addr);
+    debug(DEBUG_CRC,"crc_check_bulk_memory: bottom_addr=0x%08lx top_addr=0x%08lx\n",
+        bottom_addr,top_addr);
     
     for (addr = bottom_addr; addr < top_addr; addr++) {
         if (addr && addr % bank_size == 0) {

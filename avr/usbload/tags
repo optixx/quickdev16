@@ -385,9 +385,9 @@ snes_wr_enable	sram.h	178;"	d
 soft_reset	watchdog.h	32;"	d
 sram_bulk_addr_restore	sram.c	/^inline void sram_bulk_addr_restore()$/;"	f
 sram_bulk_addr_save	sram.c	/^inline void sram_bulk_addr_save()$/;"	f
-sram_bulk_copy	sram.c	/^void sram_bulk_copy(uint32_t addr, uint8_t * src, uint32_t len)$/;"	f
+sram_bulk_copy	sram.c	/^void sram_bulk_copy_from_buffer(uint32_t addr, uint8_t * src, uint32_t len)$/;"	f
 sram_bulk_read	sram.c	/^inline uint8_t sram_bulk_read(void)$/;"	f
-sram_bulk_read_buffer	sram.c	/^void sram_bulk_read_buffer(uint32_t addr, uint8_t * dst, uint32_t len)$/;"	f
+sram_bulk_copy_into_buffer	sram.c	/^void sram_bulk_copy_into_buffer(uint32_t addr, uint8_t * dst, uint32_t len)$/;"	f
 sram_bulk_read_end	sram.c	/^void sram_bulk_read_end(void)$/;"	f
 sram_bulk_read_next	sram.c	/^inline void sram_bulk_read_next(void)$/;"	f
 sram_bulk_read_start	sram.c	/^void sram_bulk_read_start(uint32_t addr)$/;"	f
