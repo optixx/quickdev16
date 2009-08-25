@@ -29,6 +29,7 @@
 #include "config.h"
 #include "sram.h"
 #include "debug.h"
+#include "dump.h"
 #include "info.h"
 
 uint8_t irq_addr_lo;
@@ -64,6 +65,12 @@ void shared_memory_scratchpad_region_tx_save()
     debug(DEBUG_SHM,"shared_memory_scratchpad_region_tx_save: unlock\n");
     sram_bulk_copy_into_buffer(SHARED_MEM_TX_LOC_STATE,scratchpad_region_tx,SHARED_MEM_TX_LOC_SIZE);
     scratchpad_locked_tx = 0;
+#if 0 
+    dump_packet(SHARED_MEM_TX_LOC_STATE, SHARED_MEM_TX_LOC_SIZE, scratchpad_region_tx);
+    dump_memory(SHARED_MEM_TX_LOC_STATE, SHARED_MEM_TX_LOC_STATE + SHARED_MEM_TX_LOC_SIZE);
+#endif
+    
+
 }
 
 void shared_memory_scratchpad_region_rx_save()
@@ -71,6 +78,10 @@ void shared_memory_scratchpad_region_rx_save()
     debug(DEBUG_SHM,"shared_memory_scratchpad_region_rx_save: unlock\n");
     sram_bulk_copy_into_buffer(SHARED_MEM_RX_LOC_STATE,scratchpad_region_rx,SHARED_MEM_RX_LOC_SIZE);
     scratchpad_locked_rx = 0;
+#if 0    
+    dump_packet(SHARED_MEM_RX_LOC_STATE, SHARED_MEM_RX_LOC_SIZE, scratchpad_region_tx);
+    dump_memory(SHARED_MEM_RX_LOC_STATE, SHARED_MEM_RX_LOC_STATE + SHARED_MEM_RX_LOC_SIZE);
+#endif
 }
 
 void shared_memory_scratchpad_region_tx_restore()
@@ -80,6 +91,10 @@ void shared_memory_scratchpad_region_tx_restore()
     debug(DEBUG_SHM,"shared_memory_scratchpad_region_tx_restore: lock\n");
     sram_bulk_copy_from_buffer(SHARED_MEM_TX_LOC_STATE,scratchpad_region_tx,SHARED_MEM_TX_LOC_SIZE);
     scratchpad_locked_tx = 1;
+#if 0    
+    dump_packet(SHARED_MEM_TX_LOC_STATE, SHARED_MEM_TX_LOC_SIZE, scratchpad_region_tx);
+    dump_memory(SHARED_MEM_TX_LOC_STATE, SHARED_MEM_TX_LOC_STATE + SHARED_MEM_TX_LOC_SIZE);
+#endif
 }
 
 

@@ -165,6 +165,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 #endif
 
         if (!shared_memory_scratchpad_region_save_helper(req_addr)){
+            debug(DEBUG_USB,
+                  "USB_BULK_UPLOAD_NEXT: scratchpad_region_save_helper was dirty\n");
             sram_bulk_write_start(req_addr);
         }
 
