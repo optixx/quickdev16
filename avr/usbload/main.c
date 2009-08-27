@@ -311,14 +311,9 @@ void boot_startup_rom()
     send_reset();
 }
 
-
-int main(void)
-{
-
+void banner(){
     uint8_t i;
-    uart_init();
-    stdout = &uart_stdout;
-    for (i=0;i<30;i++)
+    for (i=0;i<40;i++)
         info("\n");
     info(" ________        .__        __    ________               ____  ________\n");
     info(" \\_____  \\  __ __|__| ____ |  | __\\______ \\   _______  _/_   |/  _____/\n");
@@ -328,7 +323,17 @@ int main(void)
     info("        \\__>             \\/     \\/        \\/     \\/                 \\/ \n");
     info("\n");
     info("                               www.optixx.org\n");
+    info("\n");
     info("System Hw: %s Sw: %s\n",HW_VERSION,SW_VERSION);
+    
+}
+
+int main(void)
+{
+
+    uart_init();
+    stdout = &uart_stdout;
+    banner();
     system_init();
     info("Boot startup rom\n");
     boot_startup_rom();

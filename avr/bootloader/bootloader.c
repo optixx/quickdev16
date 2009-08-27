@@ -406,9 +406,10 @@ void leave_bootloader(void)
      * disconnect usb 
      */
     usbDeviceDisconnect();
+#if 0    
     for (uint8_t i = 0; i < 50; i++)
         _delay_ms(10);          /* 0 means 0x10000, 38*1/f*0x10000 =~ 498ms */
-
+#endif
     /*
      * enable watchdog to soft-reset the uC for clean startup of new application 
      */
@@ -421,6 +422,13 @@ void leave_bootloader(void)
 
 }
 
+void banner(){
+    uart_puts("\n\r");
+    uart_puts("\n\r");
+    uart_puts("\n\r");
+    uart_puts("Quickdev16 Bootloader v0.2\n\r"); 
+    uart_puts("www.optixx.org\n\r");
+}
 
 int __attribute__ ((noreturn, OS_main)) main(void)
 {
@@ -441,16 +449,12 @@ int __attribute__ ((noreturn, OS_main)) main(void)
     uint16_t delay = 0;
     timeout = TIMEOUT;
 
-    uart_puts("\n\r");
-    uart_puts("\n\r");
-    uart_puts("\n\r");
-    uart_puts("Quickdev16 Bootloader v0.2\n\r"); 
-    uart_puts("www.optixx.org\n\r");
 
     /*
      * if power-on reset, quit bootloader via watchdog reset 
      */
     if (reset & _BV(PORF)) {
+        banner();
         uart_puts("Found power on reset\n\r");
         MCUSR = 0;
         leave_bootloader();
@@ -466,6 +470,7 @@ int __attribute__ ((noreturn, OS_main)) main(void)
         jump_to_app();
     }
 
+    banner();
     uart_puts("Enter programming mode\n\r");
     /*
      * else: enter programming mode 
