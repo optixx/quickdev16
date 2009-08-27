@@ -77,17 +77,6 @@
 #define snes_irq_off()          (SNES_IRQ_DIR &= ~(1 << SNES_IRQ_PIN))
 #define snes_irq_lo()           (SNES_IRQ_PORT &= ~(1 << SNES_IRQ_PIN))
 
-#define SNES_RESET_PORT           PORTB
-#define SNES_RESET_DIR            DDRB
-#define SNES_RESET_PIN            PB4
-
-
-#define snes_reset_on()          (SNES_RESET_DIR |= (1 << SNES_RESET_PIN))
-#define snes_reset_hi()          (SNES_RESET_PORT |= (1 << SNES_RESET_PIN))
-
-#define snes_reset_off()          (SNES_RESET_DIR &= ~(1 << SNES_RESET_PIN))
-#define snes_reset_lo()           (SNES_RESET_PORT &= ~(1 << SNES_RESET_PIN))
-
 
 /* ---------------------------- PORT C ---------------------------- */
 
@@ -127,8 +116,6 @@
 
 #define btldr_down()	        ((AVR_BTLDR_EN_PORT &= ~(1 << AVR_BTLDR_EN_PIN)),\
                                 (AVR_BTLDR_EN_PORT |= (1 << AVR_BTLDR_EN_PIN)))
-
-
 
 #define AVR_ADDR_UP_PORT	    PORTC
 #define AVR_ADDR_UP_DIR	        DDRC
@@ -180,6 +167,25 @@
 #define snes_wr_disable()	    (SNES_WR_EN_PORT &= ~(1 << SNES_WR_EN_PIN))
 
 #define snes_wr_enable()	    (SNES_WR_EN_PORT |= (1 << SNES_WR_EN_PIN))
+
+#define SNES_RESET_PORT         PORTD
+#define SNES_RESET_DIR          DDRD
+#define SNES_RESET_PIN          PD3
+
+#define snes_reset_on()         (SNES_RESET_DIR |= (1 << SNES_RESET_PIN))
+#define snes_reset_hi()         (SNES_RESET_PORT |= (1 << SNES_RESET_PIN))
+
+#define snes_reset_off()        (SNES_RESET_DIR &= ~(1 << SNES_RESET_PIN))
+#define snes_reset_lo()         (SNES_RESET_PORT &= ~(1 << SNES_RESET_PIN))
+
+
+#define MMC_PORT                PORTB
+#define MMC_DIR                 DDRB
+
+#define MMC_MISO_PIN            PB6
+#define MMC_MOSI_PIN            PB5
+#define MMC_SCK_PIN             PB7
+#define MMC_CS_PIN              PB4
 
 
 
