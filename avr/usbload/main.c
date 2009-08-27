@@ -339,7 +339,7 @@ int main(void)
     snes_reset_off();
     info("Boot startup rom\n");
     boot_startup_rom();
-    irq_init();
+    //irq_init();
     usbInit();
     usb_connect();
     while (1) {
