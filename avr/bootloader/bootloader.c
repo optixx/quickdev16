@@ -286,7 +286,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                 boot_page_erase(flash_address.word);
                 sei();
             }
-            uart_puts("\n\r");
+            uart_puts("\n\rWrite Flash");
         }
 
         /*
@@ -441,7 +441,11 @@ int __attribute__ ((noreturn, OS_main)) main(void)
     uint16_t delay = 0;
     timeout = TIMEOUT;
 
-    uart_puts("Quickdev Bootloader v0.2 www.optixx.org\n\r");
+    uart_puts("\n\r");
+    uart_puts("\n\r");
+    uart_puts("\n\r");
+    uart_puts("Quickdev16 Bootloader v0.2\n\r"); 
+    uart_puts("www.optixx.org\n\r");
 
     /*
      * if power-on reset, quit bootloader via watchdog reset 
@@ -461,7 +465,6 @@ int __attribute__ ((noreturn, OS_main)) main(void)
         uart_puts("Jump to 0x0000\n\r");
         jump_to_app();
     }
-
 
     uart_puts("Enter programming mode\n\r");
     /*

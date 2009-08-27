@@ -32,7 +32,7 @@ extern uint32_t req_bank_size;
 
 void send_reset()
 {
-    info("Reset Snes\n");
+    info("Reset SNES\n");
     snes_reset_on();
     snes_reset_lo();
     _delay_ms(2);
@@ -53,9 +53,9 @@ void set_rom_mode()
 {
     if (req_bank_size == 0x8000) {
         snes_lorom();
-        info("Set Snes lowrom \n");
+        info("Set SNES lowrom \n");
     } else {
         snes_hirom();
-        info("Set Snes hirom \n");
+        info("Set SNES hirom \n");
     }
 }

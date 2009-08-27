@@ -44,5 +44,7 @@
 
 #define TRANSFER_BUFFER_SIZE        0x200
 
+#define HW_VERSION                  "2.6"
+#define SW_VERSION                  "1.0"
 
 #endif 

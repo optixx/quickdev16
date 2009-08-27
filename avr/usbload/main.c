@@ -297,58 +297,48 @@ void boot_startup_rom()
     snes_irq_lo();
     snes_irq_off();
     snes_lorom();
-    info("Set Snes lowrom \n");
     rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
+    info("\n");
+#if 0
     dump_memory(0x10000 - 0x100, 0x10000);
+#endif
     snes_reset_hi();
     snes_reset_off();
-    snes_irq_lo();
-    snes_irq_off();
-    info("IRQ off\n");
     snes_hirom();
     snes_wr_disable();
-    info("Disable snes WR\n");
     snes_bus_active();
-    info("Activate Snes bus\n");
-    _delay_ms(20);
+    info("Activate SNES bus\n");
     send_reset();
-    _delay_ms(200);
 }
 
 
 int main(void)
 {
 
+    uint8_t i;
     uart_init();
     stdout = &uart_stdout;
-
-    info("Sytem start\n");
+    for (i=0;i<30;i++)
+        info("\n");
+    info(" ________        .__        __    ________               ____  ________\n");
+    info(" \\_____  \\  __ __|__| ____ |  | __\\______ \\   _______  _/_   |/  _____/\n");
+    info("  /  / \\  \\|  |  \\  |/ ___\\|  |/ / |    |  \\_/ __ \\  \\/ /|   /   __  \\ \n");
+    info(" /   \\_/.  \\  |  /  \\  \\___|    <  |    `   \\  ___/\\   / |   \\  |__\\  \\ \n");
+    info(" \\_____\\ \\_/____/|__|\\___  >__|_ \\/_______  /\\___  >\\_/  |___|\\_____  / \n");
+    info("        \\__>             \\/     \\/        \\/     \\/                 \\/ \n");
+    info("\n");
+    info("                               www.optixx.org\n");
+    info("System Hw: %s Sw: %s\n",HW_VERSION,SW_VERSION);
     system_init();
-
-#if 0
-    test_read_write();
-    test_bulk_read_write();
-    test_crc();
-    while (1);
-#endif
-
     info("Boot startup rom\n");
     boot_startup_rom();
-
-
     usbInit();
     usb_connect();
-
     while (1) {
-        
         avr_bus_active();
         info("Activate AVR bus\n");
-        info("IRQ off\n");
-        snes_irq_lo();
-        snes_irq_off();
-        info("Set Snes lowrom\n");
         snes_lorom();
-        info("Disable snes WR\n");
+        info("Disable SNES WR\n");
         snes_wr_disable();
         sei();
         info("USB poll\n");
@@ -358,20 +348,16 @@ int main(void)
         
         
         shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
-
         //shared_memory_scratchpad_region_tx_restore();
         //shared_memory_scratchpad_region_rx_restore();
-        
         info("USB poll done\n");
         set_rom_mode();
         snes_wr_disable();
-        info("Disable snes WR\n");
+        info("Disable SNES WR\n");
         snes_bus_active();
-        info("Activate Snes bus\n");
-        _delay_ms(100);
+        info("Activate SNES bus\n");
         send_reset();
-
-        info("Poll\n");
+        info("Poll USB\n");
         while (req_state != REQ_STATUS_AVR) {
             usbPoll();
 
@@ -398,15 +384,13 @@ int main(void)
 
             if (req_bank_size == 0x8000) {
                 snes_lorom();
-                info("Set Snes lowrom \n");
             } else {
                 snes_hirom();
-                info("Set Snes hirom \n");
             }
             snes_wr_disable();
-            info("Disable snes WR\n");
+            info("Disable SNES WR\n");
             snes_bus_active();
-            info("Activate Snes bus\n");
+            info("Activate SNES bus\n");
             info("Read 0x3000=%c\n", c);
 #endif
         }
