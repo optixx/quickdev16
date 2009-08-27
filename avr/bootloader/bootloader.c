@@ -441,7 +441,7 @@ int __attribute__ ((noreturn, OS_main)) main(void)
     uint16_t delay = 0;
     timeout = TIMEOUT;
 
-    uart_puts("Snesram Bootloader v0.1\n\r");
+    uart_puts("Quickdev Bootloader v0.2 www.optixx.org\n\r");
 
     /*
      * if power-on reset, quit bootloader via watchdog reset 
@@ -458,11 +458,7 @@ int __attribute__ ((noreturn, OS_main)) main(void)
         uart_puts("Found watchdog reset\n\r");
         MCUSR = 0;
         wdt_disable();
-        DLED_TGL;
-        _delay_ms(500);
-        DLED_TGL;
-        _delay_ms(500);
-        uart_puts("Jump to main\n\r");
+        uart_puts("Jump to 0x0000\n\r");
         jump_to_app();
     }
 
