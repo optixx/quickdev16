@@ -302,13 +302,13 @@ void boot_startup_rom()
 #if 0
     dump_memory(0x10000 - 0x100, 0x10000);
 #endif
-    snes_reset_hi();
-    snes_reset_off();
     snes_hirom();
     snes_wr_disable();
     snes_bus_active();
     info("Activate SNES bus\n");
+    _delay_ms(50);
     send_reset();
+    _delay_ms(50);
 }
 
 void banner(){
@@ -335,8 +335,11 @@ int main(void)
     stdout = &uart_stdout;
     banner();
     system_init();
+    snes_reset_hi();
+    snes_reset_off();
     info("Boot startup rom\n");
     boot_startup_rom();
+    irq_init();
     usbInit();
     usb_connect();
     while (1) {
@@ -347,11 +350,9 @@ int main(void)
         snes_wr_disable();
         sei();
         info("USB poll\n");
-        while (req_state != REQ_STATUS_SNES) {
+        while ((req_state != REQ_STATUS_SNES)) {
             usbPoll();
         }
-        
-        
         shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
         //shared_memory_scratchpad_region_tx_restore();
         //shared_memory_scratchpad_region_rx_restore();
@@ -363,7 +364,7 @@ int main(void)
         info("Activate SNES bus\n");
         send_reset();
         info("Poll USB\n");
-        while (req_state != REQ_STATUS_AVR) {
+        while ((req_state != REQ_STATUS_AVR)) {
             usbPoll();
 
 #ifdef DO_IRQ
@@ -402,6 +403,5 @@ int main(void)
         info("Boot startup rom\n");
         boot_startup_rom();
     }
-
     return 0;
 }

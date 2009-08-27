@@ -171,6 +171,7 @@
 #define SNES_RESET_PORT         PORTD
 #define SNES_RESET_DIR          DDRD
 #define SNES_RESET_PIN          PD3
+#define SNES_RESET_INP          PIND
 
 #define snes_reset_on()         (SNES_RESET_DIR |= (1 << SNES_RESET_PIN))
 #define snes_reset_hi()         (SNES_RESET_PORT |= (1 << SNES_RESET_PIN))
@@ -178,6 +179,7 @@
 #define snes_reset_off()        (SNES_RESET_DIR &= ~(1 << SNES_RESET_PIN))
 #define snes_reset_lo()         (SNES_RESET_PORT &= ~(1 << SNES_RESET_PIN))
 
+#define snes_reset_test()       ((SNES_RESET_INP & (1 << SNES_RESET_PIN)) == 0)
 
 #define MMC_PORT                PORTB
 #define MMC_DIR                 DDRB

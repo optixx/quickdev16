@@ -29,7 +29,11 @@
 
 #include "debug.h" 
 #include "info.h"
+#include "sram.h"
  
+ 
+extern uint8_t snes_reset_line;
+  
 #ifndef OCR1A
     #define OCR1A OCR1  // 2313 support
 #endif
@@ -52,6 +56,7 @@ uint16_t volatile second;          // count seconds
  
 ISR (SIG_OUTPUT_COMPARE1A)
 {
+
  
 #if XTAL % DEBOUNCE                     // bei rest
     OCR1A = 20000000UL / DEBOUNCE - 1;      // compare DEBOUNCE - 1 times

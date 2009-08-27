@@ -19,6 +19,7 @@
  */
 
 #include <avr/io.h>
+#include <avr/interrupt.h>      
 #include <util/delay.h>         
 #include <stdlib.h>
 
@@ -33,11 +34,14 @@ extern uint32_t req_bank_size;
 void send_reset()
 {
     info("Reset SNES\n");
+    cli();
     snes_reset_on();
     snes_reset_lo();
     _delay_ms(2);
     snes_reset_hi();
     snes_reset_off();
+    sei();
+    
 }
 
 void send_irq()

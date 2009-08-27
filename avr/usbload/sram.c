@@ -34,7 +34,6 @@
 uint32_t addr_current = 0;
 uint32_t addr_stash = 0;
 
-
 void system_init(void)
 {
     /*-------------------------------------------------*/
@@ -91,7 +90,6 @@ void system_init(void)
                 	    
     
 }   
-
 
 void sreg_set(uint32_t addr)
 {
