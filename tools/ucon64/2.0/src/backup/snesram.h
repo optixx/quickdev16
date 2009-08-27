@@ -65,8 +65,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * obdev's free shared VID/PID pair. See the file USBID-License.txt for
  * details.
  */
-#define USB_CFG_DEVICE_NAME     'S', 'N', 'E', 'S', 'R', 'A', 'M'
-#define USB_CFG_DEVICE_NAME_LEN 7
+#define USB_CFG_DEVICE_NAME     'Q', 'U', 'I', 'C', 'K', 'D', 'E', 'V', '1', '6'
+#define USB_CFG_DEVICE_NAME_LEN 10
 /* Same as above for the device name. If you don't want a device name, undefine
  * the macros. See the file USBID-License.txt before you assign a name if you
  * use a shared VID/PID.
