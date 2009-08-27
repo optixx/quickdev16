@@ -2,9 +2,9 @@
 Signature = "$Chicago$"
 provider  = %manufacturer%
 DriverVer = 07/07/2009,0.1.12.2
-CatalogFile = quickdev.cat
-CatalogFile.NT = quickdev.cat
-CatalogFile.NTAMD64 = quickdev_x64.cat
+CatalogFile = quickdev16.cat
+CatalogFile.NT = quickdev16.cat
+CatalogFile.NTAMD64 = quickdev16_x64.cat
 
 Class = LibUsbDevices
 ClassGUID = {EB781AAF-9C70-4523-A5DF-642A87ECA567}
@@ -119,13 +119,13 @@ ServiceBinary  = %12%\libusb0.sys
 ;--------------------------------------------------------------------------
 
 [Devices]
-"SNESRAM"=LIBUSB_DEV, USB\VID_16c0&PID_05dd
+"Quickdev16"=LIBUSB_DEV, USB\VID_16c0&PID_05dd
 
 [Devices.NT]
-"SNESRAM"=LIBUSB_DEV, USB\VID_16c0&PID_05dd
+"Quickdev16"=LIBUSB_DEV, USB\VID_16c0&PID_05dd
 
 [Devices.NTAMD64]
-"SNESRAM"=LIBUSB_DEV, USB\VID_16c0&PID_05dd
+"Quickdev16"=LIBUSB_DEV, USB\VID_16c0&PID_05dd
 
 
 ;--------------------------------------------------------------------------
