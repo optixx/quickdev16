@@ -48,18 +48,17 @@ void system_init(void)
                 | (1 << AVR_ADDR_SCK_PIN)	    
                 | (1 << AVR_ADDR_SER_PIN)	    
                 | (1 << AVR_ADDR_LOAD_PIN)	    
-                | (1 << AVR_ADDR_DOWN_PIN)	    
-                | (1 << AVR_ADDR_UP_PIN));
+                | (1 << AVR_ADDR_UP_PIN));	    
     
-    DDRC &=     ~ (1 << SNES_WR_PIN);	    
+    DDRC &=     ~ ((1 << SNES_WR_PIN)	    
+                | (1 << AVR_BTLDR_EN_PIN));
  
     PORTC &=    ~((1 << AVR_ADDR_LATCH_PIN)	    
                 | (1 << AVR_ADDR_SCK_PIN)
                 | (1 << SNES_WR_PIN));
  
     
-    PORTC |=    ( (1 << AVR_ADDR_DOWN_PIN)	    
-                | (1 << AVR_ADDR_UP_PIN)
+    PORTC |=    ( (1 << AVR_ADDR_UP_PIN)
                 | (1 << AVR_ADDR_LOAD_PIN));    
                 
                 //| (1 << SNES_WR_PIN));

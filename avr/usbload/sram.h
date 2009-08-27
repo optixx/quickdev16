@@ -40,14 +40,6 @@
 
 #define avr_data_out()          (AVR_DATA_DIR = 0xff)
 
-#define LED_PORT	            PORTC
-#define LED_DIR		            DDRC
-#define LED_PIN		            PC7
-
-#define led_on()	            ((LED_PORT &=~ (1 << LED_PIN)),\
-                                (LED_DIR &=~ (1 << LED_PIN)))
-#define led_off()	            ((LED_PORT &=~ (1 << LED_PIN)),\
-                                (LED_DIR |= (1 << LED_PIN)))
 
 /* ---------------------------- PORT B ---------------------------- */
 
@@ -129,12 +121,14 @@
 #define counter_load()	        ((AVR_ADDR_LOAD_PORT &= ~(1 << AVR_ADDR_LOAD_PIN)),\
                                 (AVR_ADDR_LOAD_PORT |= (1 << AVR_ADDR_LOAD_PIN)))
 
-#define AVR_ADDR_DOWN_PORT	    PORTC
-#define AVR_ADDR_DOWN_DIR	    DDRC
-#define AVR_ADDR_DOWN_PIN	    PC1
+#define AVR_BTLDR_EN_PORT	    PORTC
+#define AVR_BTLDR_EN_DIR	    DDRC
+#define AVR_BTLDR_EN_PIN	    PC1
 
-#define counter_down()	        ((AVR_ADDR_DOWN_PORT &= ~(1 << AVR_ADDR_DOWN_PIN)),\
-                                (AVR_ADDR_DOWN_PORT |= (1 << AVR_ADDR_DOWN_PIN)))
+#define btldr_down()	        ((AVR_BTLDR_EN_PORT &= ~(1 << AVR_BTLDR_EN_PIN)),\
+                                (AVR_BTLDR_EN_PORT |= (1 << AVR_BTLDR_EN_PIN)))
+
+
 
 #define AVR_ADDR_UP_PORT	    PORTC
 #define AVR_ADDR_UP_DIR	        DDRC
@@ -146,6 +140,16 @@
 #define SNES_WR_PORT	        PORTC
 #define SNES_WR_DIR	            DDRC
 #define SNES_WR_PIN	            PC3
+
+#define LED_PORT	            PORTC
+#define LED_DIR		            DDRC
+#define LED_PIN		            PC7
+
+#define led_on()	            ((LED_PORT &=~ (1 << LED_PIN)),\
+                                (LED_DIR &=~ (1 << LED_PIN)))
+#define led_off()	            ((LED_PORT &=~ (1 << LED_PIN)),\
+                                (LED_DIR |= (1 << LED_PIN)))
+
 
 /* ---------------------------- PORT D ---------------------------- */
 

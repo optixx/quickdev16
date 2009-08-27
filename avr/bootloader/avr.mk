@@ -67,7 +67,7 @@ clean:
 
 .PHONY: all clean interactive-isp interactive-serial launch-bootloader
 
-flash: 
+flash: bootloader.hex
 	$(AVRDUDE) $(AVRDUDE_FLAGS) -c $(ISP_PROG) -U flash:w:$<
 
 flash-eeprom-%: %.eep.hex
