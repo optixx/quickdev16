@@ -27,5 +27,12 @@
 *.vfat
 *.wla*
 *.rcc
+*.log
 bootloader
 snesuploader
+tmtags
+bsnes
+web
+ucon64.exe
+
+
