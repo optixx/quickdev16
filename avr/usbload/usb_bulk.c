@@ -63,7 +63,7 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
     if (req_state == REQ_STATUS_BULK_UPLOAD) {
 
         rx_remaining -= len;
-        debug(DEBUG_USB_TRANS,"usbFunctionWrite REQ_STATUS_BULK_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n",
+        debug_P(DEBUG_USB_TRANS, PSTR("usbFunctionWrite REQ_STATUS_BULK_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n"),
                req_addr, len, rx_remaining);
         ptr = data;
         i = len;
@@ -81,7 +81,7 @@ uint8_t usbFunctionRead(uint8_t * data, uint8_t len)
     if (len > tx_remaining)
         len = tx_remaining;
     tx_remaining -= len;
-    debug(DEBUG_USB_TRANS,"usbFunctionRead len=%i tx_remaining=%i \n", len, tx_remaining);
+    debug_P(DEBUG_USB_TRANS, PSTR("usbFunctionRead len=%i tx_remaining=%i \n"), len, tx_remaining);
 
     for (i = 0; i < len; i++) {
         *data = tx_buffer[len];

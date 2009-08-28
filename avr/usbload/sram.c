@@ -94,19 +94,19 @@ void system_init(void)
 void sreg_set(uint32_t addr)
 {
     uint8_t i = 24;
-    debug(DEBUG_SREG,"sreg_set: addr=0x%08lx",addr);
+    debug_P(DEBUG_SREG, PSTR("sreg_set: addr=0x%08lx"),addr);
     while(i--) {
         if ((addr & ( 1L << i))){
-            debug(DEBUG_SREG,"1");
+            debug_P(DEBUG_SREG, PSTR("1"));
             AVR_ADDR_SER_PORT |= ( 1 << AVR_ADDR_SER_PIN);
         } else {
             AVR_ADDR_SER_PORT &= ~( 1 << AVR_ADDR_SER_PIN);
-            debug(DEBUG_SREG,"0");
+            debug_P(DEBUG_SREG, PSTR("0"));
         }
         AVR_ADDR_SCK_PORT |= (1 << AVR_ADDR_SCK_PIN);
         AVR_ADDR_SCK_PORT &= ~(1 << AVR_ADDR_SCK_PIN);
     }
-    debug(DEBUG_SREG,"\n");
+    debug_P(DEBUG_SREG, PSTR("\n"));
     AVR_ADDR_LATCH_PORT |= (1 << AVR_ADDR_LATCH_PIN);
     AVR_ADDR_LATCH_PORT &= ~(1 << AVR_ADDR_LATCH_PIN);
     
@@ -127,7 +127,7 @@ inline void sram_bulk_addr_restore()
 
 void sram_bulk_read_start(uint32_t addr)
 {
-    debug(DEBUG_SRAM,"sram_bulk_read_start: addr=0x%08lx\n\r", addr);
+    debug_P(DEBUG_SRAM, PSTR("sram_bulk_read_start: addr=0x%08lx\n\r"), addr);
 
     addr_current = addr;
 
@@ -173,7 +173,7 @@ inline uint8_t sram_bulk_read(void)
 
 void sram_bulk_read_end(void)
 {
-    debug(DEBUG_SRAM,"sram_bulk_read_end:\n");
+    debug_P(DEBUG_SRAM, PSTR("sram_bulk_read_end:\n"));
 
     AVR_RD_PORT |= (1 << AVR_RD_PIN);
     AVR_CS_PORT |= (1 << AVR_CS_PIN);
@@ -183,7 +183,7 @@ void sram_bulk_read_end(void)
 uint8_t sram_read(uint32_t addr)
 {
     uint8_t byte;
-    debug(DEBUG_SRAM_RAW,"sram_read: addr=0x%08lx\n\r", addr);
+    debug_P(DEBUG_SRAM_RAW, PSTR("sram_read: addr=0x%08lx\n\r"), addr);
     
     avr_data_in();
     
@@ -215,7 +215,7 @@ uint8_t sram_read(uint32_t addr)
 
 void sram_bulk_write_start(uint32_t addr)
 {
-    debug(DEBUG_SRAM,"sram_bulk_write_start: addr=0x%08lx\n\r", addr);
+    debug_P(DEBUG_SRAM, PSTR("sram_bulk_write_start: addr=0x%08lx\n\r"), addr);
 
     avr_data_out();
 
@@ -243,7 +243,7 @@ inline void sram_bulk_write( uint8_t data)
 
 void sram_bulk_write_end(void)
 {
-    debug(DEBUG_SRAM,"sram_bulk_write_end:");
+    debug_P(DEBUG_SRAM, PSTR("sram_bulk_write_end:"));
     AVR_WR_PORT |= (1 << AVR_WR_PIN);
     AVR_CS_PORT |= (1 << AVR_CS_PIN);
     avr_data_in();
@@ -252,7 +252,7 @@ void sram_bulk_write_end(void)
 
 void sram_write(uint32_t addr, uint8_t data)
 {
-    debug(DEBUG_SRAM_RAW,"sram_write: addr=0x%08lx data=%x\n\r", addr, data);
+    debug_P(DEBUG_SRAM_RAW, PSTR("sram_write: addr=0x%08lx data=%x\n\r"), addr, data);
 
     avr_data_out();
     
@@ -286,7 +286,7 @@ void sram_bulk_copy_from_buffer(uint32_t addr, uint8_t * src, uint32_t len)
 
     uint32_t i;
     uint8_t *ptr = src;
-    debug(DEBUG_SRAM,"sram_bulk_copy_from_buffer: addr=0x%08lx src=0x%p len=%li\n\r", 
+    debug_P(DEBUG_SRAM, PSTR("sram_bulk_copy_from_buffer: addr=0x%08lx src=0x%p len=%li\n\r"), 
         addr, src, len);
     sram_bulk_write_start(addr);
     for (i = addr; i < (addr + len); i++){
@@ -301,7 +301,7 @@ void sram_bulk_copy_into_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 
     uint32_t i;
     uint8_t *ptr = dst;
-    debug(DEBUG_SRAM,"sram_bulk_copy_into_buffer: addr=0x%08lx dst=0x%p len=%li\n\r", 
+    debug_P(DEBUG_SRAM, PSTR("sram_bulk_copy_into_buffer: addr=0x%08lx dst=0x%p len=%li\n\r"), 
         addr, dst, len);
     sram_bulk_read_start(addr);
     for (i = addr; i < (addr + len); i++) {
@@ -314,11 +314,11 @@ void sram_bulk_copy_into_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 
 void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value){
     uint32_t i;
-    debug(DEBUG_SRAM,"sram_bulk_set: addr=0x%08lx len=%li\n\r", addr,len);
+    debug_P(DEBUG_SRAM, PSTR("sram_bulk_set: addr=0x%08lx len=%li\n\r"), addr,len);
     sram_bulk_write_start(addr);
     for (i = addr; i < (addr + len); i++) {
         if (0 == i % 0xfff)
-            debug(DEBUG_SRAM,"sram_bulk_set: addr=0x%08lx\n\r", i);
+            debug_P(DEBUG_SRAM, PSTR("sram_bulk_set: addr=0x%08lx\n\r"), i);
         sram_bulk_write(value);
         sram_bulk_write_next();
     }

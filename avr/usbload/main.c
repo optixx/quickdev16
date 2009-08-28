@@ -84,7 +84,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         req_bank = 0;
         rx_remaining = 0;
-        debug(DEBUG_USB, "USB_BULK_UPLOAD_INIT: %i %i\n", rq->wValue.word,
+        debug_P(DEBUG_USB, PSTR("USB_BULK_UPLOAD_INIT: %i %i\n"), rq->wValue.word,
               rq->wIndex.word);
         req_bank_size = (uint32_t) (1L << rq->wValue.word);
         req_bank_cnt = rq->wIndex.word;
@@ -199,7 +199,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                   "USB_BULK_UPLOAD_END: ERROR state is not REQ_STATUS_BULK_UPLOAD\n");
             return 0;
         }
-        debug(DEBUG_USB, "USB_BULK_UPLOAD_END:\n");
+        debug_P(DEBUG_USB, PSTR("USB_BULK_UPLOAD_END:\n"));
         req_state = REQ_STATUS_IDLE;
         sram_bulk_write_end();
         shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_END, 0);
@@ -212,7 +212,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
-        debug(DEBUG_USB, "USB_CRC: addr=0x%08lx \n", req_addr);
+        debug_P(DEBUG_USB, PSTR("USB_CRC: addr=0x%08lx \n"), req_addr);
         crc_check_bulk_memory(0x000000, req_addr, req_bank_size);
         ret_len = 0;
         /*
@@ -220,20 +220,20 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          */
     } else if (rq->bRequest == USB_MODE_SNES) {
         req_state = REQ_STATUS_SNES;
-        debug(DEBUG_USB, "USB_MODE_SNES:\n");
+        debug_P(DEBUG_USB, PSTR("USB_MODE_SNES:\n"));
         ret_len = 0;
         /*
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_MODE_AVR) {
         req_state = REQ_STATUS_AVR;
-        debug(DEBUG_USB, "USB_MODE_AVR:\n");
+        debug_P(DEBUG_USB, PSTR("USB_MODE_AVR:\n"));
         ret_len = 0;
         /*
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_AVR_RESET) {
-        debug(DEBUG_USB, "USB_AVR_RESET:\n");
+        debug_P(DEBUG_USB, PSTR("USB_AVR_RESET:\n"));
         soft_reset();
         ret_len = 0;
         /*
@@ -245,12 +245,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
-        debug(DEBUG_USB, "USB_CRC_ADDR: addr=0x%lx size=%i\n", req_addr,
+        debug_P(DEBUG_USB, PSTR("USB_CRC_ADDR: addr=0x%lx size=%i\n"), req_addr,
               rq->wLength.word);
         req_size = rq->wLength.word;
         req_size = req_size << 2;
         tx_remaining = 2;
-        debug(DEBUG_USB, "USB_CRC_ADDR: addr=0x%lx size=%li\n", req_addr,
+        debug_P(DEBUG_USB, PSTR("USB_CRC_ADDR: addr=0x%lx size=%li\n"), req_addr,
               req_size);
 
         crc = crc_check_memory_range(req_addr, req_size, read_buffer);
