@@ -20,9 +20,12 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <avr/pgmspace.h>
 
 #include "info.h"
 #include "uart.h"
+#include "config.h"
+
 
 
 
@@ -46,4 +49,26 @@ void info(char* format, ...) {
 }
 #endif 
 
+
+#ifndef NO_INFO
+    uint8_t buffer_info[FORMAT_BUFFER_LEN];
+#endif
+
+#if defined(NO_INFO) && defined(__GNUC__)
+
+#define info(format, args...) ((void)0)
+
+#else
+void info_P(PGM_P format, ...) {
+#ifdef NO_INFO
+
+#else
+    strlcpy_P(buffer_info,format,FORMAT_BUFFER_LEN);
+    va_list args;
+    va_start(args, format);
+    vprintf(buffer_info, args);
+    va_end(args);
+#endif
+}
+#endif
    
