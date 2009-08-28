@@ -27,3 +27,5 @@
 *.vfat
 *.wla*
 *.rcc
+bootloader
+snesuploader
