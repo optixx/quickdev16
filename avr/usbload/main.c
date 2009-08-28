@@ -273,10 +273,10 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 void usb_connect()
 {
     uint8_t i = 0;
-    info("USB init\n");
+    info_P(PSTR("USB init\n"));
     usbDeviceDisconnect();      /* enforce re-enumeration, do this while */
     cli();
-    info("USB disconnect\n");
+    info_P(PSTR("USB disconnect\n"));
     i = 10;
     while (--i) {               /* fake USB disconnect for > 250 ms */
         led_on();
@@ -286,28 +286,28 @@ void usb_connect()
     }
     led_on();
     usbDeviceConnect();
-    info("USB connect\n");
+    info_P(PSTR("USB connect\n"));
 }
 
 
 void boot_startup_rom()
 {
-    info("Boot startup rom\n");
-    info("Activate AVR bus\n");
+    info_P(PSTR("Boot startup rom\n"));
+    info_P(PSTR("Activate AVR bus\n"));
     avr_bus_active();
-    info("IRQ off\n");
+    info_P(PSTR("IRQ off\n"));
     snes_irq_lo();
     snes_irq_off();
     snes_lorom();
     rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
-    info("\n");
+    info_P(PSTR("\n"));
 #if 1
     dump_memory(0x10000 - 0x100, 0x10000);
 #endif
     snes_hirom();
     snes_wr_disable();
     snes_bus_active();
-    info("Activate SNES bus\n");
+    info_P(PSTR("Activate SNES bus\n"));
     send_reset();
     _delay_ms(50);
     send_reset();
@@ -317,17 +317,17 @@ void boot_startup_rom()
 void banner(){
     uint8_t i;
     for (i=0;i<40;i++)
-        info("\n");
-    info(" ________        .__        __    ________               ____  ________\n");
-    info(" \\_____  \\  __ __|__| ____ |  | __\\______ \\   _______  _/_   |/  _____/\n");
-    info("  /  / \\  \\|  |  \\  |/ ___\\|  |/ / |    |  \\_/ __ \\  \\/ /|   /   __  \\ \n");
-    info(" /   \\_/.  \\  |  /  \\  \\___|    <  |    `   \\  ___/\\   / |   \\  |__\\  \\ \n");
-    info(" \\_____\\ \\_/____/|__|\\___  >__|_ \\/_______  /\\___  >\\_/  |___|\\_____  / \n");
-    info("        \\__>             \\/     \\/        \\/     \\/                 \\/ \n");
-    info("\n");
-    info("                               www.optixx.org\n");
-    info("\n");
-    info("System Hw: %s Sw: %s\n",HW_VERSION,SW_VERSION);
+        info_P(PSTR("\n"));
+    info_P(PSTR(" ________        .__        __    ________               ____  ________\n"));
+    info_P(PSTR(" \\_____  \\  __ __|__| ____ |  | __\\______ \\   _______  _/_   |/  _____/\n"));
+    info_P(PSTR("  /  / \\  \\|  |  \\  |/ ___\\|  |/ / |    |  \\_/ __ \\  \\/ /|   /   __  \\ \n"));
+    info_P(PSTR(" /   \\_/.  \\  |  /  \\  \\___|    <  |    `   \\  ___/\\   / |   \\  |__\\  \\ \n"));
+    info_P(PSTR(" \\_____\\ \\_/____/|__|\\___  >__|_ \\/_______  /\\___  >\\_/  |___|\\_____  / \n"));
+    info_P(PSTR("        \\__>             \\/     \\/        \\/     \\/                 \\/ \n"));
+    info_P(PSTR("\n"));
+    info_P(PSTR("                               www.optixx.org\n"));
+    info_P(PSTR("\n"));
+    info_P(PSTR("System Hw: %s Sw: %s\n"),HW_VERSION,SW_VERSION);
     
 }
 
@@ -356,12 +356,12 @@ int main(void)
     usb_connect();
     while (1) {
         avr_bus_active();
-        info("Activate AVR bus\n");
+        info_P(PSTR("Activate AVR bus\n"));
         snes_lorom();
-        info("Disable SNES WR\n");
+        info_P(PSTR("Disable SNES WR\n"));
         snes_wr_disable();
         sei();
-        info("USB poll\n");
+        info_P(PSTR("USB poll\n"));
         while (req_state != REQ_STATUS_SNES) {
             usbPoll();
         }
@@ -371,15 +371,15 @@ int main(void)
         shared_memory_scratchpad_region_tx_restore();
         shared_memory_scratchpad_region_rx_restore();
 #endif
-        info("USB poll done\n");
+        info_P(PSTR("USB poll done\n"));
         set_rom_mode();
         snes_wr_disable();
-        info("Disable SNES WR\n");
+        info_P(PSTR("Disable SNES WR\n"));
         snes_bus_active();
-        info("Activate SNES bus\n");
+        info_P(PSTR("Activate SNES bus\n"));
         irq_stop();
         send_reset();
-        info("Poll USB\n");
+        info_P(PSTR("Poll USB\n"));
         while ((req_state != REQ_STATUS_AVR)) {
             usbPoll();
 
@@ -390,7 +390,7 @@ int main(void)
             while (--i) {
                 _delay_ms(100);
             }
-            info("Send IRQ %i\n", ++irq_count);
+            info_P(PSTR("Send IRQ %i\n"), ++irq_count);
             send_irq();
 #endif
 
@@ -401,7 +401,7 @@ int main(void)
             i = 5;
             while (--i) {
                 _delay_ms(500);
-                info("Wait to switch to snes mode %i\n", i);
+                info_P(PSTR("Wait to switch to snes mode %i\n"), i);
             }
 
             if (req_bank_size == 0x8000) {
@@ -410,10 +410,10 @@ int main(void)
                 snes_hirom();
             }
             snes_wr_disable();
-            info("Disable SNES WR\n");
+            info_P(PSTR("Disable SNES WR\n"));
             snes_bus_active();
-            info("Activate SNES bus\n");
-            info("Read 0x3000=%c\n", c);
+            info_P(PSTR("Activate SNES bus\n"));
+            info_P(PSTR("Read 0x3000=%c\n"), c);
 #endif
         }
         irq_init();

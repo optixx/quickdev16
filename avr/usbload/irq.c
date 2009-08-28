@@ -64,8 +64,8 @@ void leave_application(void)
 ISR (SIG_PIN_CHANGE3)
 {
     if (snes_reset_test()){
-        info("Catch SNES reset button\n");
-        info("Set watchdog...\n");
+        info_P(PSTR("Catch SNES reset button\n"));
+        info_P(PSTR("Set watchdog...\n"));
         leave_application();
     }    
 }
