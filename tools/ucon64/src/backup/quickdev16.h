@@ -1,5 +1,5 @@
 /*
-snesram.h - Snesram support for uCON64
+quickdev16.h - Quickdev16 support for uCON64
 
 Copyright (c) 2009 david@optixx.org
 
@@ -72,10 +72,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * use a shared VID/PID.
  */
 
-extern const st_getopt2_t snesram_usage[];
+extern const st_getopt2_t quickdev16_usage[];
 
 #ifdef USE_USB
-extern int snesram_write_rom (const char *filename);
+extern int quickdev16_write_rom (const char *filename);
 #endif
 
 #endif // SNESRAM_H

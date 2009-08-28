@@ -1,5 +1,5 @@
 /*
-snesram.c - Snesram support for uCON64
+quickdev16.c - Quickdev16 support for uCON64
 
 Copyright (c) 2009 david@optixx.org
 
@@ -40,23 +40,23 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "ucon64_misc.h"
 #include "ffe.h"
 #include "smc.h"
-#include "snesram.h"
+#include "quickdev16.h"
 
 #include "console/snes.h"
 
 #define SNES_HEADER_LEN (sizeof (st_snes_header_t))
 
-const st_getopt2_t snesram_usage[] =
+const st_getopt2_t quickdev16_usage[] =
   {
     {
       NULL, 0, 0, 0,
-      NULL, "Snesram"/* http://www.optixx.org */,
+      NULL, "Quickdev16"/* http://www.optixx.org */,
       NULL
     },
 #ifdef  USE_USB
     {
-      "xsnesram", 0, 0, UCON64_XSNESRAM, // send only
-      NULL, "send ROM (in FFE format) to Snesram",
+      "xquickdev16", 0, 0, UCON64_XSNESRAM, // send only
+      NULL, "send ROM (in FFE format) to Quickdev16",
       &ucon64_wf[WF_OBJ_NES_DEFAULT_STOP_NO_SPLIT]
     },
 #endif
@@ -72,7 +72,7 @@ const st_getopt2_t snesram_usage[] =
 #define SNES_LOROM_SHIFT    15
 
 int
-snesram_write_rom (const char *filename)
+quickdev16_write_rom (const char *filename)
 {
   FILE *file;
   int bytesread, bytessend, size;

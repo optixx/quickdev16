@@ -2084,7 +2084,7 @@ ucon64_options (st_ucon64_t *p)
           fputs ("ERROR: This ROM has no header. Convert to an SMC compatible format with -ffe\n",
                  stderr);
         else
-          snesram_write_rom (ucon64.rom);
+          quickdev16_write_rom (ucon64.rom);
         fputc ('\n', stdout);
         break;
 

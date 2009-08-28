@@ -60,7 +60,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #endif
 
 #ifdef USE_USB
-#include "snesram.h"
+#include "quickdev16.h"
 #endif // USE_PARALLEL
 
 
