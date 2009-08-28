@@ -35,11 +35,9 @@
 uint8_t rle_decode(PGM_VOID_P in_addr, int32_t in_len, uint32_t out_addr)
 {
     uint8_t in_byte, in_repeat, last_byte;
-    uint32_t out_len, out_len_left;
     info("RLE decode len=%li addr=0x%08lx\n", in_len, out_addr);
     last_byte = 0;
 
-    out_len_left = out_len;
     sram_bulk_write_start(out_addr);
 #define INBYTE(b) \
 	do { \

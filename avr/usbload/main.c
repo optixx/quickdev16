@@ -44,6 +44,7 @@
 #include "loader.h"
 #include "command.h"
 #include "shared_memory.h"
+#include "irq.h"
 #include "testing.h"
 
 

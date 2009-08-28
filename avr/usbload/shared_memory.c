@@ -31,6 +31,8 @@
 #include "debug.h"
 #include "dump.h"
 #include "info.h"
+#include "crc.h"
+
 
 uint8_t irq_addr_lo;
 uint8_t irq_addr_hi;
