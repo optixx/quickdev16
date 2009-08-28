@@ -64,7 +64,7 @@ uint8_t shared_memory_scratchpad_region_save_helper(uint32_t addr){
 
 void shared_memory_scratchpad_region_tx_save()
 {
-#if 1 
+#if 0 
     uint16_t crc;
     crc = crc_check_bulk_memory((uint32_t)SHARED_MEM_TX_LOC_STATE, 
         (uint32_t)(SHARED_MEM_TX_LOC_STATE + SHARED_MEM_TX_LOC_SIZE), 0x8000);
@@ -86,7 +86,7 @@ void shared_memory_scratchpad_region_tx_save()
 
 void shared_memory_scratchpad_region_rx_save()
 {
-#if 1    
+#if 0    
     uint16_t crc;
     crc = crc_check_bulk_memory((uint32_t)SHARED_MEM_RX_LOC_STATE, 
         (uint32_t)(SHARED_MEM_RX_LOC_STATE + SHARED_MEM_RX_LOC_SIZE), 0x8000);
@@ -118,7 +118,7 @@ void shared_memory_scratchpad_region_tx_restore()
     dump_memory(SHARED_MEM_TX_LOC_STATE, SHARED_MEM_TX_LOC_STATE + SHARED_MEM_TX_LOC_SIZE);
 #endif
 
-#if 1    
+#if 0    
     uint16_t crc;
     crc = crc_check_bulk_memory((uint32_t)SHARED_MEM_TX_LOC_STATE, 
         (uint32_t)(SHARED_MEM_TX_LOC_STATE + SHARED_MEM_TX_LOC_SIZE), 0x8000);

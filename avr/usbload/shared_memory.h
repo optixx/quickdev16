@@ -37,7 +37,7 @@
 #define SHARED_MEM_TX_CMD_TERMINATE         0x06
 
 #define SHARED_MEM_TX_LOC_STATE             0x000000
-#define SHARED_MEM_TX_LOC_SIZE              0x000100
+#define SHARED_MEM_TX_LOC_SIZE              0x000040
 #define SHARED_MEM_TX_LOC_CMD               0x000001
 #define SHARED_MEM_TX_LOC_PAYLOAD           0x000002
 
@@ -48,7 +48,7 @@
 #define SHARED_MEM_RX_CMD_FILESEL           0x01
 
 #define SHARED_MEM_RX_LOC_STATE             0x001000
-#define SHARED_MEM_RX_LOC_SIZE              0x000100
+#define SHARED_MEM_RX_LOC_SIZE              0x000040
 #define SHARED_MEM_RX_LOC_CMD               0x001001
 #define SHARED_MEM_RX_LOC_LEN               0x001002
 #define SHARED_MEM_RX_LOC_PAYLOAD           0x001003

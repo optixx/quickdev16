@@ -18,48 +18,55 @@
  * =====================================================================================
  */
 
+
+
+
+#include <stdint.h>
+#include <stdio.h>
 #include <avr/io.h>
-#include <avr/interrupt.h>      
-#include <util/delay.h>         
-#include <stdlib.h>
+#include <avr/interrupt.h>      /* for sei() */
+#include <avr/wdt.h>
 
-#include "config.h"
-#include "requests.h"           
-#include "sram.h"
+
+#include "usbdrv.h"
+#include "oddebug.h"            /* This is also an example for using debug
+                                 * macros */
+#include "debug.h" 
 #include "info.h"
-#include "irq.h"
-
-extern uint32_t req_bank_size;
-
-
-void send_reset()
-{
-    info("Reset SNES\n");
+#include "sram.h"
+ 
+  
+void (*jump_to_app) (void) = 0x0000;
+  
+void irq_init(){
     cli();
-    snes_reset_on();
-    snes_reset_lo();
-    _delay_ms(2);
-    snes_reset_hi();
-    snes_reset_off();
+    PCMSK3 |=(1<<PCINT27);
+    PCICR  |= (1<<PCIE3);
     sei();
+} 
+
+void irq_stop(){
+    cli();
+    PCMSK3 &=~(1<<PCINT27);
+    sei();
+} 
+
+void leave_application(void)
+{
+    cli();
+    usbDeviceDisconnect();
+    wdt_enable(WDTO_15MS);
+    while (1);
+
 }
 
-void send_irq()
+ 
+ISR (SIG_PIN_CHANGE3)
 {
-    snes_irq_on();
-    snes_irq_lo();
-    _delay_us(20);
-    snes_irq_hi();
-    snes_irq_off();
+    if (snes_reset_test()){
+        info("Catch SNES reset button\n");
+        info("Set watchdog...\n");
+        leave_application();
+    }    
 }
-
-void set_rom_mode()
-{
-    if (req_bank_size == 0x8000) {
-        snes_lorom();
-        info("Set SNES lowrom \n");
-    } else {
-        snes_hirom();
-        info("Set SNES hirom \n");
-    }
-}
+ 

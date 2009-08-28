@@ -51,7 +51,7 @@
 extern const char _rom[] PROGMEM;
 extern FILE uart_stdout;
 
-uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
+uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM);
 
 uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
@@ -164,11 +164,13 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         sram_bulk_write_start(req_addr);
 #endif
 
+#if SHM_SCRATCHPAD
         if (!shared_memory_scratchpad_region_save_helper(req_addr)){
             debug(DEBUG_USB,
                   "USB_BULK_UPLOAD_NEXT: scratchpad_region_save_helper was dirty\n");
             sram_bulk_write_start(req_addr);
         }
+#endif
 
 
         if (req_addr && (req_addr % req_bank_size) == 0) {
@@ -278,9 +280,9 @@ void usb_connect()
     i = 10;
     while (--i) {               /* fake USB disconnect for > 250 ms */
         led_on();
-        _delay_ms(35);
+        _delay_ms(15);
         led_off();
-        _delay_ms(65);
+        _delay_ms(35);
     }
     led_on();
     usbDeviceConnect();
@@ -290,7 +292,7 @@ void usb_connect()
 
 void boot_startup_rom()
 {
-
+    info("Boot startup rom\n");
     info("Activate AVR bus\n");
     avr_bus_active();
     info("IRQ off\n");
@@ -299,13 +301,14 @@ void boot_startup_rom()
     snes_lorom();
     rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
     info("\n");
-#if 0
+#if 1
     dump_memory(0x10000 - 0x100, 0x10000);
 #endif
     snes_hirom();
     snes_wr_disable();
     snes_bus_active();
     info("Activate SNES bus\n");
+    send_reset();
     _delay_ms(50);
     send_reset();
     _delay_ms(50);
@@ -328,6 +331,15 @@ void banner(){
     
 }
 
+void globals_init(){
+    req_addr = 0;
+    req_addr_end = 0;
+    req_state = REQ_STATUS_IDLE;
+    rx_remaining = 0;
+    tx_remaining = 0;
+    sync_errors = 0;
+}
+
 int main(void)
 {
 
@@ -337,9 +349,9 @@ int main(void)
     system_init();
     snes_reset_hi();
     snes_reset_off();
-    info("Boot startup rom\n");
+    irq_init();
     boot_startup_rom();
-    //irq_init();
+    globals_init();
     usbInit();
     usb_connect();
     while (1) {
@@ -350,18 +362,22 @@ int main(void)
         snes_wr_disable();
         sei();
         info("USB poll\n");
-        while ((req_state != REQ_STATUS_SNES)) {
+        while (req_state != REQ_STATUS_SNES) {
             usbPoll();
         }
         shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
-        //shared_memory_scratchpad_region_tx_restore();
-        //shared_memory_scratchpad_region_rx_restore();
+
+#if SHM_SCRATCHPAD
+        shared_memory_scratchpad_region_tx_restore();
+        shared_memory_scratchpad_region_rx_restore();
+#endif
         info("USB poll done\n");
         set_rom_mode();
         snes_wr_disable();
         info("Disable SNES WR\n");
         snes_bus_active();
         info("Activate SNES bus\n");
+        irq_stop();
         send_reset();
         info("Poll USB\n");
         while ((req_state != REQ_STATUS_AVR)) {
@@ -400,8 +416,9 @@ int main(void)
             info("Read 0x3000=%c\n", c);
 #endif
         }
-        info("Boot startup rom\n");
+        irq_init();
         boot_startup_rom();
+        globals_init();
     }
     return 0;
 }
