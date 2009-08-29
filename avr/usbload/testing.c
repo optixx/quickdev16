@@ -45,7 +45,7 @@ void test_read_write()
     }
     addr = 0x000000;
     while (addr++ <= 0x0000ff) {
-        info("read addr=0x%08lx %x\n", addr, sram_read(addr));
+        info_P(PSTR("read addr=0x%08lx %x\n"), addr, sram_read(addr));
     }
 }
 
@@ -69,7 +69,7 @@ void test_bulk_read_write()
     addr = 0x000000;
     sram_bulk_read_start(addr);
     while (addr <= 0x8000) {
-        info("addr=0x%08lx %x\n", addr, sram_bulk_read());
+        info_P(PSTR("addr=0x%08lx %x\n"), addr, sram_bulk_read());
         sram_bulk_read_next();
         addr++;
     }
@@ -85,7 +85,7 @@ void test_non_zero_memory(uint32_t bottom_addr, uint32_t top_addr)
     for (addr = bottom_addr; addr < top_addr; addr++) {
         c = sram_bulk_read();
         if (c != 0xff)
-            info("addr=0x%08lx c=0x%x\n", addr, c);
+            info_P(PSTR("addr=0x%08lx c=0x%x\n"), addr, c);
         sram_bulk_read_next();
     }
     sram_bulk_read_end();
@@ -95,12 +95,12 @@ void test_non_zero_memory(uint32_t bottom_addr, uint32_t top_addr)
 
 void test_crc()
 {
-    info("test_crc: clear\n");
+    info_P(PSTR("test_crc: clear\n"));
     avr_bus_active();
     sram_bulk_set(0x000000, 0x10000, 0xff);
-    info("test_crc: crc\n");
+    info_P(PSTR("test_crc: crc\n"));
     crc_check_bulk_memory(0x000000, 0x10000, 0x8000);
-    info("test_crc: check\n");
+    info_P(PSTR("test_crc: check\n"));
     test_non_zero_memory(0x000000, 0x10000);
 }
 

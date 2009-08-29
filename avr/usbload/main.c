@@ -85,7 +85,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         req_bank = 0;
         rx_remaining = 0;
-        debug(DEBUG_USB, "USB_BULK_UPLOAD_INIT: %i %i\n", rq->wValue.word,
+        debug_P(DEBUG_USB, PSTR("USB_BULK_UPLOAD_INIT: %i %i\n"), rq->wValue.word,
               rq->wIndex.word);
         req_bank_size = (uint32_t) (1L << rq->wValue.word);
         req_bank_cnt = rq->wIndex.word;
@@ -93,8 +93,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_percent = 0;
         req_percent_last = 0;
         sync_errors = 0;
-        debug(DEBUG_USB,
-              "USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n",
+        debug_P(DEBUG_USB,
+              PSTR("USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n"),
               req_bank_size, req_bank_cnt, req_addr_end);
 
         shared_memory_write(SHARED_MEM_TX_CMD_BANK_COUNT, req_bank_cnt);
@@ -115,12 +115,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         if (req_addr && req_addr % req_bank_size == 0) {
 #ifdef FLT_DEBUG
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n"),
                   req_bank, req_addr, timer_stop());
 #else
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%i\n",
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%i\n"),
                   req_bank, req_addr, timer_stop_int());
 #endif
             req_bank++;
@@ -146,8 +146,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         req_percent = (uint32_t)( 100 * req_addr )  / req_addr_end;
         if (req_percent!=req_percent_last){
-            //debug(DEBUG_USB,
-            //    "USB_BULK_UPLOAD_ADDR: precent=%i\n",  req_percent);
+            //debug_P(DEBUG_USB,
+            //    PSTR("USB_BULK_UPLOAD_ADDR: precent=%i\n",  req_percent);
             shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, req_percent);
             sram_bulk_write_start(req_addr);
         }
@@ -155,8 +155,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
 #if 0
         if (req_addr && (req_addr % 0x1000) == 0) {
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_NEXT: bank=0x%02x addr=0x%08lx crc=%04x\n",
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_NEXT: bank=0x%02x addr=0x%08lx crc=%04x\n",
                   req_bank, req_addr, crc_check_bulk_memory(req_addr - 0x1000,
                                                             req_addr,
                                                             req_bank_size));
@@ -167,8 +167,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
 #if SHM_SCRATCHPAD
         if (!shared_memory_scratchpad_region_save_helper(req_addr)){
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_NEXT: scratchpad_region_save_helper was dirty\n");
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_NEXT: scratchpad_region_save_helper was dirty\n"));
             sram_bulk_write_start(req_addr);
         }
 #endif
@@ -176,12 +176,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         if (req_addr && (req_addr % req_bank_size) == 0) {
 #ifdef FLT_DEBUG
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%.4f\n"),
                   req_bank, req_addr, timer_stop());
 #else
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%i\n",
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%i\n"),
                   req_bank, req_addr, timer_stop_int());
 #endif
             req_bank++;
@@ -196,11 +196,11 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          */
     } else if (rq->bRequest == USB_BULK_UPLOAD_END) {
         if (req_state != REQ_STATUS_BULK_UPLOAD) {
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_END: ERROR state is not REQ_STATUS_BULK_UPLOAD\n");
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_END: ERROR state is not REQ_STATUS_BULK_UPLOAD\n"));
             return 0;
         }
-        debug(DEBUG_USB, "USB_BULK_UPLOAD_END:\n");
+        debug_P(DEBUG_USB, PSTR("USB_BULK_UPLOAD_END:\n"));
         req_state = REQ_STATUS_IDLE;
         sram_bulk_write_end();
         shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_END, 0);
@@ -213,7 +213,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
-        debug(DEBUG_USB, "USB_CRC: addr=0x%08lx \n", req_addr);
+        debug_P(DEBUG_USB, PSTR("USB_CRC: addr=0x%08lx \n"), req_addr);
         crc_check_bulk_memory(0x000000, req_addr, req_bank_size);
         ret_len = 0;
         /*
@@ -221,20 +221,20 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          */
     } else if (rq->bRequest == USB_MODE_SNES) {
         req_state = REQ_STATUS_SNES;
-        debug(DEBUG_USB, "USB_MODE_SNES:\n");
+        debug_P(DEBUG_USB, PSTR("USB_MODE_SNES:\n"));
         ret_len = 0;
         /*
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_MODE_AVR) {
         req_state = REQ_STATUS_AVR;
-        debug(DEBUG_USB, "USB_MODE_AVR:\n");
+        debug_P(DEBUG_USB, PSTR("USB_MODE_AVR:\n"));
         ret_len = 0;
         /*
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_AVR_RESET) {
-        debug(DEBUG_USB, "USB_AVR_RESET:\n");
+        debug_P(DEBUG_USB, PSTR("USB_AVR_RESET:\n"));
         soft_reset();
         ret_len = 0;
         /*
@@ -246,12 +246,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
         req_addr = req_addr | rq->wIndex.word;
-        debug(DEBUG_USB, "USB_CRC_ADDR: addr=0x%lx size=%i\n", req_addr,
+        debug_P(DEBUG_USB, PSTR("USB_CRC_ADDR: addr=0x%lx size=%i\n"), req_addr,
               rq->wLength.word);
         req_size = rq->wLength.word;
         req_size = req_size << 2;
         tx_remaining = 2;
-        debug(DEBUG_USB, "USB_CRC_ADDR: addr=0x%lx size=%li\n", req_addr,
+        debug_P(DEBUG_USB, PSTR("USB_CRC_ADDR: addr=0x%lx size=%li\n"), req_addr,
               req_size);
 
         crc = crc_check_memory_range(req_addr, req_size, read_buffer);
@@ -274,10 +274,10 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 void usb_connect()
 {
     uint8_t i = 0;
-    info("USB init\n");
+    info_P(PSTR("USB init\n"));
     usbDeviceDisconnect();      /* enforce re-enumeration, do this while */
     cli();
-    info("USB disconnect\n");
+    info_P(PSTR("USB disconnect\n"));
     i = 10;
     while (--i) {               /* fake USB disconnect for > 250 ms */
         led_on();
@@ -287,28 +287,28 @@ void usb_connect()
     }
     led_on();
     usbDeviceConnect();
-    info("USB connect\n");
+    info_P(PSTR("USB connect\n"));
 }
 
 
 void boot_startup_rom()
 {
-    info("Boot startup rom\n");
-    info("Activate AVR bus\n");
+    info_P(PSTR("Boot startup rom\n"));
+    info_P(PSTR("Activate AVR bus\n"));
     avr_bus_active();
-    info("IRQ off\n");
+    info_P(PSTR("IRQ off\n"));
     snes_irq_lo();
     snes_irq_off();
     snes_lorom();
     rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
-    info("\n");
+    info_P(PSTR("\n"));
 #if 1
     dump_memory(0x10000 - 0x100, 0x10000);
 #endif
     snes_hirom();
     snes_wr_disable();
     snes_bus_active();
-    info("Activate SNES bus\n");
+    info_P(PSTR("Activate SNES bus\n"));
     send_reset();
     _delay_ms(50);
     send_reset();
@@ -318,17 +318,17 @@ void boot_startup_rom()
 void banner(){
     uint8_t i;
     for (i=0;i<40;i++)
-        info("\n");
-    info(" ________        .__        __    ________               ____  ________\n");
-    info(" \\_____  \\  __ __|__| ____ |  | __\\______ \\   _______  _/_   |/  _____/\n");
-    info("  /  / \\  \\|  |  \\  |/ ___\\|  |/ / |    |  \\_/ __ \\  \\/ /|   /   __  \\ \n");
-    info(" /   \\_/.  \\  |  /  \\  \\___|    <  |    `   \\  ___/\\   / |   \\  |__\\  \\ \n");
-    info(" \\_____\\ \\_/____/|__|\\___  >__|_ \\/_______  /\\___  >\\_/  |___|\\_____  / \n");
-    info("        \\__>             \\/     \\/        \\/     \\/                 \\/ \n");
-    info("\n");
-    info("                               www.optixx.org\n");
-    info("\n");
-    info("System Hw: %s Sw: %s\n",HW_VERSION,SW_VERSION);
+        info_P(PSTR("\n"));
+    info_P(PSTR(" ________        .__        __    ________               ____  ________\n"));
+    info_P(PSTR(" \\_____  \\  __ __|__| ____ |  | __\\______ \\   _______  _/_   |/  _____/\n"));
+    info_P(PSTR("  /  / \\  \\|  |  \\  |/ ___\\|  |/ / |    |  \\_/ __ \\  \\/ /|   /   __  \\ \n"));
+    info_P(PSTR(" /   \\_/.  \\  |  /  \\  \\___|    <  |    `   \\  ___/\\   / |   \\  |__\\  \\ \n"));
+    info_P(PSTR(" \\_____\\ \\_/____/|__|\\___  >__|_ \\/_______  /\\___  >\\_/  |___|\\_____  / \n"));
+    info_P(PSTR("        \\__>             \\/     \\/        \\/     \\/                 \\/ \n"));
+    info_P(PSTR("\n"));
+    info_P(PSTR("                               www.optixx.org\n"));
+    info_P(PSTR("\n"));
+    info_P(PSTR("System Hw: %s Sw: %s\n"),HW_VERSION,SW_VERSION);
     
 }
 
@@ -357,12 +357,12 @@ int main(void)
     usb_connect();
     while (1) {
         avr_bus_active();
-        info("Activate AVR bus\n");
+        info_P(PSTR("Activate AVR bus\n"));
         snes_lorom();
-        info("Disable SNES WR\n");
+        info_P(PSTR("Disable SNES WR\n"));
         snes_wr_disable();
         sei();
-        info("USB poll\n");
+        info_P(PSTR("USB poll\n"));
         while (req_state != REQ_STATUS_SNES) {
             usbPoll();
         }
@@ -372,15 +372,15 @@ int main(void)
         shared_memory_scratchpad_region_tx_restore();
         shared_memory_scratchpad_region_rx_restore();
 #endif
-        info("USB poll done\n");
+        info_P(PSTR("USB poll done\n"));
         set_rom_mode();
         snes_wr_disable();
-        info("Disable SNES WR\n");
+        info_P(PSTR("Disable SNES WR\n"));
         snes_bus_active();
-        info("Activate SNES bus\n");
+        info_P(PSTR("Activate SNES bus\n"));
         irq_stop();
         send_reset();
-        info("Poll USB\n");
+        info_P(PSTR("Poll USB\n"));
         while ((req_state != REQ_STATUS_AVR)) {
             usbPoll();
 
@@ -391,7 +391,7 @@ int main(void)
             while (--i) {
                 _delay_ms(100);
             }
-            info("Send IRQ %i\n", ++irq_count);
+            info_P(PSTR("Send IRQ %i\n"), ++irq_count);
             send_irq();
 #endif
 
@@ -402,7 +402,7 @@ int main(void)
             i = 5;
             while (--i) {
                 _delay_ms(500);
-                info("Wait to switch to snes mode %i\n", i);
+                info_P(PSTR("Wait to switch to snes mode %i\n"), i);
             }
 
             if (req_bank_size == 0x8000) {
@@ -411,10 +411,10 @@ int main(void)
                 snes_hirom();
             }
             snes_wr_disable();
-            info("Disable SNES WR\n");
+            info_P(PSTR("Disable SNES WR\n"));
             snes_bus_active();
-            info("Activate SNES bus\n");
-            info("Read 0x3000=%c\n", c);
+            info_P(PSTR("Activate SNES bus\n"));
+            info_P(PSTR("Read 0x3000=%c\n"), c);
 #endif
         }
         irq_init();

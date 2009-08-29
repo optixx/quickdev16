@@ -47,21 +47,21 @@ void dump_packet(uint32_t addr, uint32_t len, uint8_t * packet)
             continue;
         }
         if (clear) {
-            info("*\n");
+            info_P(PSTR("*\n"));
             clear = 0;
         }
-        info("%08lx:", addr + i);
+        info_P(PSTR("%08lx:"), addr + i);
         for (j = 0; j < 16; j++) {
-            info(" %02x", packet[i + j]);
+            info_P(PSTR(" %02x"), packet[i + j]);
         }
-        info(" |");
+        info_P(PSTR(" |"));
         for (j = 0; j < 16; j++) {
             if (packet[i + j] >= 33 && packet[i + j] <= 126)
-                info("%c", packet[i + j]);
+                info_P(PSTR("%c"), packet[i + j]);
             else
-                info(".");
+                info_P(PSTR("."));
         }
-        info("|\n");
+        info_P(PSTR("|\n"));
     }
 }
 
@@ -72,11 +72,11 @@ void dump_memory(uint32_t bottom_addr, uint32_t top_addr)
     sram_bulk_read_start(bottom_addr);
     for ( addr = bottom_addr; addr < top_addr; addr++) {
         if (addr%0x10 == 0)
-            info("\n%08lx:", addr);
+            info_P(PSTR("\n%08lx:"), addr);
         byte = sram_bulk_read();
         sram_bulk_read_next();
-        info(" %02x", byte);
+        info_P(PSTR(" %02x"), byte);
     }
-    info("\n");
+    info_P(PSTR("\n"));
     sram_bulk_read_end();
 }

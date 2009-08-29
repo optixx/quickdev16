@@ -20,11 +20,11 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <avr/pgmspace.h>
 
 #include "debug.h"
 #include "uart.h"
-
-
+#include "config.h"
 
 extern FILE uart_stdout;
 
@@ -46,4 +46,23 @@ void debug(int level, char* format, ...) {
 }
 #endif 
 
+#ifndef NO_INFO
+    uint8_t buffer_debug[FORMAT_BUFFER_LEN];
+#endif
    
+#if defined(NO_DEBUG) && defined(__GNUC__)
+#else
+void debug_P(int level, PGM_P format, ...) {
+#ifdef NO_DEBUG
+
+#else
+    va_list args;
+    if (!(debug_level & level))
+        return;
+    strlcpy_P(buffer_debug,format,FORMAT_BUFFER_LEN);
+    va_start(args, format);
+    vprintf(buffer_debug, args);
+    va_end(args);
+#endif
+}
+#endif 
