@@ -92,8 +92,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_percent = 0;
         req_percent_last = 0;
         sync_errors = 0;
-        debug(DEBUG_USB,
-              "USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n",
+        debug_P(DEBUG_USB,
+              PSTR("USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n"),
               req_bank_size, req_bank_cnt, req_addr_end);
 
         shared_memory_write(SHARED_MEM_TX_CMD_BANK_COUNT, req_bank_cnt);
@@ -114,12 +114,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         if (req_addr && req_addr % req_bank_size == 0) {
 #ifdef FLT_DEBUG
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n"),
                   req_bank, req_addr, timer_stop());
 #else
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%i\n",
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%i\n"),
                   req_bank, req_addr, timer_stop_int());
 #endif
             req_bank++;
@@ -145,8 +145,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         req_percent = (uint32_t)( 100 * req_addr )  / req_addr_end;
         if (req_percent!=req_percent_last){
-            //debug(DEBUG_USB,
-            //    "USB_BULK_UPLOAD_ADDR: precent=%i\n",  req_percent);
+            //debug_P(DEBUG_USB,
+            //    PSTR("USB_BULK_UPLOAD_ADDR: precent=%i\n",  req_percent);
             shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, req_percent);
             sram_bulk_write_start(req_addr);
         }
@@ -154,8 +154,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
 #if 0
         if (req_addr && (req_addr % 0x1000) == 0) {
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_NEXT: bank=0x%02x addr=0x%08lx crc=%04x\n",
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_NEXT: bank=0x%02x addr=0x%08lx crc=%04x\n",
                   req_bank, req_addr, crc_check_bulk_memory(req_addr - 0x1000,
                                                             req_addr,
                                                             req_bank_size));
@@ -166,8 +166,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
 #if SHM_SCRATCHPAD
         if (!shared_memory_scratchpad_region_save_helper(req_addr)){
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_NEXT: scratchpad_region_save_helper was dirty\n");
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_NEXT: scratchpad_region_save_helper was dirty\n"));
             sram_bulk_write_start(req_addr);
         }
 #endif
@@ -175,12 +175,12 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         if (req_addr && (req_addr % req_bank_size) == 0) {
 #ifdef FLT_DEBUG
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%.4f\n",
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%.4f\n"),
                   req_bank, req_addr, timer_stop());
 #else
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%i\n",
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%i\n"),
                   req_bank, req_addr, timer_stop_int());
 #endif
             req_bank++;
@@ -195,8 +195,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          */
     } else if (rq->bRequest == USB_BULK_UPLOAD_END) {
         if (req_state != REQ_STATUS_BULK_UPLOAD) {
-            debug(DEBUG_USB,
-                  "USB_BULK_UPLOAD_END: ERROR state is not REQ_STATUS_BULK_UPLOAD\n");
+            debug_P(DEBUG_USB,
+                  PSTR("USB_BULK_UPLOAD_END: ERROR state is not REQ_STATUS_BULK_UPLOAD\n"));
             return 0;
         }
         debug_P(DEBUG_USB, PSTR("USB_BULK_UPLOAD_END:\n"));
