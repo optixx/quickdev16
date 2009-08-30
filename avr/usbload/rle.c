@@ -97,5 +97,6 @@ uint8_t rle_decode(PGM_VOID_P in_addr, int32_t in_len, uint32_t out_addr)
         last_byte = in_byte;
     }
     sram_bulk_write_end();
+    info_P(PSTR("\nDone addr=0x%08lx\n"), out_addr);
     return 0;
 }

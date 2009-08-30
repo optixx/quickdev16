@@ -266,7 +266,7 @@ void usb_connect()
 }
 
 
-void boot_startup_rom()
+void boot_startup_rom(uint16_t init_delay)
 {
     info_P(PSTR("Fetch loader rom\n"));
     info_P(PSTR("Activate AVR bus\n"));
@@ -277,15 +277,20 @@ void boot_startup_rom()
     snes_lorom();
     rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
     info_P(PSTR("\n"));
+
 #if 0
-    dump_memory(0x10000 - 0x100, 0x10000);
+    dump_memory(0x010000 - 0x100, 0x010000);
+    uint16_t crc;
+    crc = crc_check_bulk_memory((uint32_t)0x000000,0x010000, 0x010000);
+    info(PSTR("crc=%x\n"),crc);
 #endif
+
     snes_hirom();
     snes_wr_disable();
     snes_bus_active();
     info_P(PSTR("Activate SNES bus\n"));
     send_reset();
-    _delay_ms(50);
+    _delay_ms(init_delay);
 }
 
 void banner(){
@@ -320,15 +325,18 @@ int main(void)
     uart_init();
     stdout = &uart_stdout;
     banner();
+    
     system_init();
     shared_memory_init();
     snes_reset_hi();
     snes_reset_off();
     irq_init();
-    boot_startup_rom();
+    boot_startup_rom(50);
+    
     globals_init();
     usbInit();
     usb_connect();
+    
     while (1) {
         avr_bus_active();
         info_P(PSTR("Activate AVR bus\n"));
@@ -346,7 +354,7 @@ int main(void)
         shared_memory_scratchpad_region_rx_restore();
 #endif
         
-        info_P(PSTR("USB poll done\n"));
+        info_P(PSTR("-->Switch TO SNES\n"));
         set_rom_mode();
         snes_wr_disable();
         info_P(PSTR("Disable SNES WR\n"));
@@ -358,11 +366,13 @@ int main(void)
         while ((req_state != REQ_STATUS_AVR)) {
             usbPoll();
         }
-        system_init();
+        info_P(PSTR("-->Switch TO AVR\n"));
+        
         shared_memory_init();
         irq_init();
-        boot_startup_rom();
-        globals_init();
+        boot_startup_rom(500);
+        
+        
     }
     return 0;
 }
