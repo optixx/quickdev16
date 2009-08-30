@@ -156,6 +156,9 @@ quickdev16_write_rom (const char *filename)
                       USB_ENDPOINT_OUT, USB_MODE_AVR, 0, 0, NULL,
                       0, 5000);
   
+  /* wait for the loader to depack */
+  usleep(500000);
+  
  
   cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,

@@ -48,6 +48,13 @@ uint8_t scratchpad_locked_rx = 1;
 uint8_t scratchpad_locked_tx = 1;
 
 
+void shared_memory_init(void){
+    scratchpad_locked_rx = 1;
+    scratchpad_locked_tx = 1;
+    
+}
+
+
 uint8_t shared_memory_scratchpad_region_save_helper(uint32_t addr){
     
     if(addr > (SHARED_MEM_TX_LOC_STATE +  SHARED_MEM_TX_LOC_SIZE) &&  scratchpad_locked_tx){
@@ -183,10 +190,11 @@ void shared_memory_irq_restore()
 
 void shared_memory_write(uint8_t cmd, uint8_t value)
 {
-
-    if (scratchpad_locked_tx) 
+    return 0;
+    if (scratchpad_locked_tx){ 
         debug_P(DEBUG_SHM, PSTR("shared_memory_write:  locked_tx\n"));
-    
+        return 1;
+    }
     debug_P(DEBUG_SHM, PSTR("shared_memory_write:  0x%04x=0x%02x 0x%04x=0x%02x \n"),
          SHARED_MEM_TX_LOC_CMD, cmd, SHARED_MEM_TX_LOC_PAYLOAD, value);
 
@@ -242,9 +250,10 @@ int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer)
 {
     uint8_t state;
     
-    if (scratchpad_locked_rx) 
+    if (scratchpad_locked_rx){ 
         debug_P(DEBUG_SHM, PSTR("shared_memory_write:  locked_tx\n"));
-
+        return 1;
+    }
 
     state = sram_read(SHARED_MEM_RX_LOC_STATE);
     if (state != SHARED_MEM_RX_AVR_ACK){

@@ -137,7 +137,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_BULK_UPLOAD_NEXT) {
-
         req_state = REQ_STATUS_BULK_UPLOAD;
         req_addr = rq->wValue.word;
         req_addr = req_addr << 16;
@@ -146,8 +145,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         req_percent = (uint32_t)( 100 * req_addr )  / req_addr_end;
         if (req_percent!=req_percent_last){
-            //debug_P(DEBUG_USB,
-            //    PSTR("USB_BULK_UPLOAD_ADDR: precent=%i\n",  req_percent);
             shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, req_percent);
             sram_bulk_write_start(req_addr);
         }
@@ -165,7 +162,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         sram_bulk_write_start(req_addr);
 #endif
 
-#if SHM_SCRATCHPAD
+#if 1
         if (!shared_memory_scratchpad_region_save_helper(req_addr)){
             debug_P(DEBUG_USB,
                   PSTR("USB_BULK_UPLOAD_NEXT: scratchpad_region_save_helper was dirty\n"));
@@ -293,7 +290,7 @@ void usb_connect()
 
 void boot_startup_rom()
 {
-    info_P(PSTR("Boot startup rom\n"));
+    info_P(PSTR("Fetch loader rom\n"));
     info_P(PSTR("Activate AVR bus\n"));
     avr_bus_active();
     info_P(PSTR("IRQ off\n"));
@@ -302,7 +299,7 @@ void boot_startup_rom()
     snes_lorom();
     rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
     info_P(PSTR("\n"));
-#if 1
+#if 0
     dump_memory(0x10000 - 0x100, 0x10000);
 #endif
     snes_hirom();
@@ -310,9 +307,7 @@ void boot_startup_rom()
     snes_bus_active();
     info_P(PSTR("Activate SNES bus\n"));
     send_reset();
-    _delay_ms(50);
-    send_reset();
-    _delay_ms(50);
+    _delay_ms(100);
 }
 
 void banner(){
@@ -348,6 +343,7 @@ int main(void)
     stdout = &uart_stdout;
     banner();
     system_init();
+    shared_memory_init();
     snes_reset_hi();
     snes_reset_off();
     irq_init();
@@ -417,6 +413,8 @@ int main(void)
             info_P(PSTR("Read 0x3000=%c\n"), c);
 #endif
         }
+        system_init();
+        shared_memory_init();
         irq_init();
         boot_startup_rom();
         globals_init();
