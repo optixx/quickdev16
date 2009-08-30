@@ -52,7 +52,7 @@
 extern const char _rom[] PROGMEM;
 extern FILE uart_stdout;
 
-uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM);
+uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
 
 uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
 uint32_t req_addr = 0;
@@ -97,6 +97,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
               PSTR("USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n"),
               req_bank_size, req_bank_cnt, req_addr_end);
 
+        shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_START, 0);
         shared_memory_write(SHARED_MEM_TX_CMD_BANK_COUNT, req_bank_cnt);
         if (req_addr == 0x000000) {
             timer_start();
@@ -124,8 +125,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                   req_bank, req_addr, timer_stop_int());
 #endif
             req_bank++;
-            shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, req_bank);
-            sram_bulk_write_start(req_addr);
             timer_start();
 
         } else {
@@ -146,30 +145,10 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_percent = (uint32_t)( 100 * req_addr )  / req_addr_end;
         if (req_percent!=req_percent_last){
             shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, req_percent);
-            sram_bulk_write_start(req_addr);
         }
         req_percent_last = req_percent;
 
-#if 0
-        if (req_addr && (req_addr % 0x1000) == 0) {
-            debug_P(DEBUG_USB,
-                  PSTR("USB_BULK_UPLOAD_NEXT: bank=0x%02x addr=0x%08lx crc=%04x\n",
-                  req_bank, req_addr, crc_check_bulk_memory(req_addr - 0x1000,
-                                                            req_addr,
-                                                            req_bank_size));
-
-        }
-        sram_bulk_write_start(req_addr);
-#endif
-
-#if 1
-        if (!shared_memory_scratchpad_region_save_helper(req_addr)){
-            debug_P(DEBUG_USB,
-                  PSTR("USB_BULK_UPLOAD_NEXT: scratchpad_region_save_helper was dirty\n"));
-            sram_bulk_write_start(req_addr);
-        }
-#endif
-
+        shared_memory_scratchpad_region_save_helper(req_addr);
 
         if (req_addr && (req_addr % req_bank_size) == 0) {
 #ifdef FLT_DEBUG
@@ -184,7 +163,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
             req_bank++;
             timer_start();
             shared_memory_write(SHARED_MEM_TX_CMD_BANK_CURRENT, req_bank);
-            sram_bulk_write_start(req_addr);
 
         }
         ret_len = USB_MAX_TRANS;
@@ -363,11 +341,11 @@ int main(void)
             usbPoll();
         }
         shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
-
-#if SHM_SCRATCHPAD
+#if 0
         shared_memory_scratchpad_region_tx_restore();
         shared_memory_scratchpad_region_rx_restore();
 #endif
+        
         info_P(PSTR("USB poll done\n"));
         set_rom_mode();
         snes_wr_disable();
@@ -379,39 +357,6 @@ int main(void)
         info_P(PSTR("Poll USB\n"));
         while ((req_state != REQ_STATUS_AVR)) {
             usbPoll();
-
-#ifdef DO_IRQ
-            uint8_t i;
-            uint16_t irq_count = 0;
-            i = 10;
-            while (--i) {
-                _delay_ms(100);
-            }
-            info_P(PSTR("Send IRQ %i\n"), ++irq_count);
-            send_irq();
-#endif
-
-#ifdef DO_BUS_STEALING
-            avr_bus_active();
-            sram_bulk_read_start(0x003000);
-            c = sram_bulk_read();
-            i = 5;
-            while (--i) {
-                _delay_ms(500);
-                info_P(PSTR("Wait to switch to snes mode %i\n"), i);
-            }
-
-            if (req_bank_size == 0x8000) {
-                snes_lorom();
-            } else {
-                snes_hirom();
-            }
-            snes_wr_disable();
-            info_P(PSTR("Disable SNES WR\n"));
-            snes_bus_active();
-            info_P(PSTR("Activate SNES bus\n"));
-            info_P(PSTR("Read 0x3000=%c\n"), c);
-#endif
         }
         system_init();
         shared_memory_init();

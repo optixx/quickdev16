@@ -79,10 +79,11 @@ void shared_memory_scratchpad_region_tx_save()
         (uint32_t)(SHARED_MEM_TX_LOC_STATE + SHARED_MEM_TX_LOC_SIZE), 0x8000);
     debug_P(DEBUG_SHM, PSTR("shared_memory_scratchpad_region_tx_save: crc=%x\n"),crc);
 #endif
-
+    sram_bulk_addr_save();
     debug_P(DEBUG_SHM, PSTR("shared_memory_scratchpad_region_tx_save: unlock\n"));
     sram_bulk_copy_into_buffer((uint32_t)SHARED_MEM_TX_LOC_STATE,scratchpad_region_tx,
         (uint32_t)SHARED_MEM_TX_LOC_SIZE);
+    sram_bulk_addr_restore();
     scratchpad_locked_tx = 0;
 
 #if 0 
@@ -102,9 +103,11 @@ void shared_memory_scratchpad_region_rx_save()
     debug_P(DEBUG_SHM, PSTR("shared_memory_scratchpad_region_tx_save: crc=%x\n"),crc);
 #endif
 
+    sram_bulk_addr_save();
     debug_P(DEBUG_SHM, PSTR("shared_memory_scratchpad_region_rx_save: unlock\n"));
     sram_bulk_copy_into_buffer((uint32_t)SHARED_MEM_RX_LOC_STATE,scratchpad_region_rx,
         (uint32_t)SHARED_MEM_RX_LOC_SIZE);
+    sram_bulk_addr_restore();
     scratchpad_locked_rx = 0;
 
 #if 0    
@@ -190,7 +193,6 @@ void shared_memory_irq_restore()
 
 void shared_memory_write(uint8_t cmd, uint8_t value)
 {
-    return 0;
     if (scratchpad_locked_tx){ 
         debug_P(DEBUG_SHM, PSTR("shared_memory_write:  locked_tx\n"));
         return 1;
@@ -228,7 +230,7 @@ void shared_memory_write(uint8_t cmd, uint8_t value)
 
     shared_memory_scratchpad_tx_restore();
     shared_memory_irq_restore();
-    //sram_bulk_addr_restore();
+    sram_bulk_addr_restore();
 
 }
 

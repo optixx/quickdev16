@@ -117,11 +117,13 @@ void sreg_set(uint32_t addr)
 inline void sram_bulk_addr_save()
 {
     addr_stash = addr_current;
+    debug_P(DEBUG_SRAM, PSTR("sram_bulk_addr_save: addr=0x%08lx\n\r"), addr_stash);
 }
 
 inline void sram_bulk_addr_restore()
 {
-    sreg_set(addr_stash);
+    debug_P(DEBUG_SRAM, PSTR("sram_bulk_addr_restore: addr=0x%08lx\n\r"), addr_stash);
+    sram_bulk_write_start(addr_stash);
 }
 
 
@@ -216,6 +218,7 @@ uint8_t sram_read(uint32_t addr)
 void sram_bulk_write_start(uint32_t addr)
 {
     debug_P(DEBUG_SRAM, PSTR("sram_bulk_write_start: addr=0x%08lx\n\r"), addr);
+    addr_current = addr;
 
     avr_data_out();
 
@@ -231,6 +234,7 @@ void sram_bulk_write_start(uint32_t addr)
 
 inline void sram_bulk_write_next(void)
 {
+    addr_current++;
     AVR_WR_PORT |= (1 << AVR_WR_PIN);
     counter_up();
     AVR_WR_PORT &= ~(1 << AVR_WR_PIN);
