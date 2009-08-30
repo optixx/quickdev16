@@ -60,6 +60,7 @@
 #define SHARED_IRQ_HANDLER_LO               0x0ffe4
 #define SHARED_IRQ_HANDLER_HI               0x0ffe5
 
+#define SHARED_SCRATCHPAD_DUMP              0
 
 
 void shared_memory_init(void);
