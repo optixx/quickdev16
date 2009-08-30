@@ -307,7 +307,7 @@ void boot_startup_rom()
     snes_bus_active();
     info_P(PSTR("Activate SNES bus\n"));
     send_reset();
-    _delay_ms(100);
+    _delay_ms(50);
 }
 
 void banner(){
