@@ -1,9 +1,34 @@
 // !$*UTF8*$!
 {
+	256AC3D80F4B6AC300CF3369 /* Quickdev16AppDelegate.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {593, 472}}";
+			sepNavSelRange = "{353, 0}";
+			sepNavVisRange = "{0, 353}";
+			sepNavWindowFrame = "{{15, 60}, {992, 818}}";
+		};
+	};
+	256AC3D90F4B6AC300CF3369 /* Quickdev16AppDelegate.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {593, 472}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 384}";
+		};
+	};
+	256AC3F00F4B6AF500CF3369 /* Quickdev16_Prefix.pch */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {656, 183}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 151}";
+		};
+	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeBuildConfigurationName = Debug;
 		activeExecutable = 631E1874104C5D72001A8B18 /* Quickdev16 */;
 		activeTarget = 8D1107260486CEB800E47090 /* Quickdev16 */;
+		addToTargets = (
+			8D1107260486CEB800E47090 /* Quickdev16 */,
+		);
 		codeSenseManager = 631E1888104C5D80001A8B18 /* Code sense */;
 		executables = (
 			631E1874104C5D72001A8B18 /* Quickdev16 */,

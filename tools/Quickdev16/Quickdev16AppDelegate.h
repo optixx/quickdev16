@@ -15,3 +15,5 @@
 @property (assign) IBOutlet NSWindow *window;
 
 @end
+#import <Cocoa/Cocoa.h>
+
