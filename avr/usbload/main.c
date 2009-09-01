@@ -348,6 +348,8 @@ int main(void)
         while (req_state != REQ_STATUS_SNES) {
             usbPoll();
         }
+        
+        
         shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
 #if 0
         shared_memory_scratchpad_region_tx_restore();
