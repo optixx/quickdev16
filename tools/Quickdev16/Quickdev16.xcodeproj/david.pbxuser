@@ -63,6 +63,21 @@
 		userBuildSettings = {
 		};
 	};
+	631A51A6104CF59900E73564 /* AppController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {593, 449}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 614}";
+		};
+	};
+	631A51A9104CF5B700E73564 /* AppController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {933, 1261}}";
+			sepNavSelRange = "{782, 0}";
+			sepNavVisRange = "{597, 1402}";
+			sepNavWindowFrame = "{{15, 60}, {992, 818}}";
+		};
+	};
 	631E1874104C5D72001A8B18 /* Quickdev16 */ = {
 		isa = PBXExecutable;
 		activeArgIndices = (
