@@ -41,9 +41,8 @@
 								 encoding:NSASCIIStringEncoding]; // convert NSData -> NSString
    
 	
- 	NSLog(@"doPipedCommand: %@", textField);
  	NSLog(@"doPipedCommand: %@", string);
-    [textField setString:string];
+    [textField setStringValue:string];
     
     [string release];
     [pipe release];

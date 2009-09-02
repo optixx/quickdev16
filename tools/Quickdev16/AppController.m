@@ -24,8 +24,19 @@
 
 - (IBAction)romUpload:(id)sender {
 	NSLog(@"romUpload");
+    
 	CommandWrapper *cw=[[CommandWrapper alloc] init];
     [cw doPipedCommand];
+	
+	
+	NSString* myString = [[NSString alloc] init];
+	myString = @"test"; 
+    [textField setStringValue:myString];
+	if ( [myString length] != 0) {
+		NSLog(@"message: %@", myString);
+		return;
+	}
+	
 	
 }
 

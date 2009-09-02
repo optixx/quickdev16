@@ -197,48 +197,7 @@
 	<key>Notifications</key>
 	<array/>
 	<key>OpenEditors</key>
-	<array>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>630AE62A104D6EC40091039C</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>CommandWrapper.m</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>630AE62B104D6EC40091039C</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>CommandWrapper.m</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>630AE62C104D6EC40091039C</string>
-						<key>history</key>
-						<array>
-							<string>630AE624104D6E950091039C</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {992, 721}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>15 116 992 762 0 0 1440 878 </string>
-			</dict>
-		</dict>
-	</array>
+	<array/>
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>-1</integer>
@@ -270,8 +229,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -316,8 +273,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>7</integer>
-									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -352,12 +307,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>CommandWrapper.h</string>
+								<string>AppController.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -365,19 +322,19 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>CommandWrapper.h</string>
+										<string>AppController.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>630AE629104D6EC40091039C</string>
+										<string>630AE65F104D76D60091039C</string>
 										<key>history</key>
 										<array>
-											<string>630AE5FB104D6B680091039C</string>
 											<string>630AE608104D6C580091039C</string>
-											<string>630AE618104D6D240091039C</string>
-											<string>630AE619104D6D240091039C</string>
-											<string>630AE627104D6EC40091039C</string>
-											<string>630AE628104D6EC40091039C</string>
+											<string>630AE63B104D74E40091039C</string>
+											<string>630AE648104D753E0091039C</string>
+											<string>630AE649104D753E0091039C</string>
+											<string>630AE64A104D753E0091039C</string>
+											<string>630AE64B104D753E0091039C</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -575,13 +532,13 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>630AE660104D76D60091039C</string>
 		<string>630AE57D104D18A40091039C</string>
 		<string>630AE57E104D18A40091039C</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>631E1885104C5D80001A8B18</string>
 		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/david/Devel/arch/avr/code/quickdev16/tools/Quickdev16/Quickdev16.xcodeproj</string>
-		<string>630AE62A104D6EC40091039C</string>
 	</array>
 	<key>WindowString</key>
 	<string>0 115 936 763 0 0 1440 878 </string>
