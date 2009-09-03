@@ -31,6 +31,7 @@
 #include "debug.h"
 #include "crc.h"
 #include "info.h"
+#include "dump.h"
 
 void test_read_write()
 {
@@ -92,6 +93,30 @@ void test_non_zero_memory(uint32_t bottom_addr, uint32_t top_addr)
 }
 
 
+void test_memory_pattern(uint32_t bottom_addr, uint32_t top_addr, uint32_t bank_size)
+{
+    uint32_t addr = 0;
+    uint8_t pattern = 0x55;
+    info_P(PSTR("test_memory_pattern: bottom_addr=0x%08lx top_addr=0x%08lx\n"), bottom_addr, top_addr);
+    sram_bulk_write_start(bottom_addr);
+    for (addr = bottom_addr; addr < top_addr; addr++) {
+        if (addr % bank_size == 0){
+            pattern++;
+            info_P(PSTR("test_memory_pattern: write addr=0x%08lx pattern=0x%08lx\n"), addr, pattern);
+        }
+        sram_bulk_write(pattern);
+    }
+    sram_bulk_write_end();
+
+
+    for (addr = bottom_addr; addr < top_addr; addr+=bank_size) {
+        info_P(PSTR("test_memory_pattern: dump bottom_addr=0x%08lx top_addr=0x%08lx\n"), addr, addr + bank_size);
+        dump_memory(addr, addr + bank_size );
+        info_P(PSTR("----------------------------------------------------------------\n"));
+    }
+
+    crc_check_bulk_memory((uint32_t)bottom_addr,top_addr, bank_size);
+}
 
 void test_crc()
 {
