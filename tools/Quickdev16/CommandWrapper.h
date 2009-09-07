@@ -10,11 +10,9 @@
 
 
 @interface CommandWrapper : NSObject {
-
-    
-    IBOutlet NSTextField *textField;
 }
 - (void)doCommand;
-- (void)doPipedCommand;
+- (NSString *)doPipedCommand;
+- (void)doThreadedCommand;
 
 @end

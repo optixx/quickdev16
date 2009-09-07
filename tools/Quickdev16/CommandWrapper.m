@@ -11,27 +11,27 @@
 
 @implementation CommandWrapper
 
+
+- (void)awakeFromNib {
+	NSLog(@"awakeFromNib");
+}
+
 - (void)doCommand {
-    
 	NSTask *command=[[NSTask alloc] init];
-    
     [command setLaunchPath:@"/bin/ls"];
     [command setArguments:[NSArray arrayWithObjects:@"-l",@"/System",nil]];
     [command launch];
-    
     [command release];
 }
 
-
-
-- (void)doPipedCommand {
+- (NSString *)doPipedCommand {
     NSTask *ls=[[NSTask alloc] init];
     NSPipe *pipe=[[NSPipe alloc] init];
     NSFileHandle *handle;
     NSString *string;
     
-    [ls setLaunchPath:@"/bin/ls"];
-    [ls setArguments:[NSArray arrayWithObjects:@"-l",@"/System",nil]];
+    [ls setLaunchPath:@"/usr/local/bin/ucon64"];
+    [ls setArguments:[NSArray arrayWithObjects:@"/Users/david/Devel/arch/avr/code/quickdev16/roms/super01.smc",nil]];
     [ls setStandardOutput:pipe];
     handle=[pipe fileHandleForReading];
     
@@ -40,14 +40,13 @@
     string=[[NSString alloc] initWithData:[handle readDataToEndOfFile]
 								 encoding:NSASCIIStringEncoding]; // convert NSData -> NSString
    
-	
  	NSLog(@"doPipedCommand: %@", string);
-    [textField setStringValue:string];
-    
-    [string release];
+    //[string retain];
     [pipe release];
     [ls release];
+	return string;
 }
+
 
 @end
 
