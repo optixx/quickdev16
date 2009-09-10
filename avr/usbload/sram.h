@@ -151,7 +151,8 @@
                                 (AVR_CS_DIR |= (1 << AVR_CS_PIN)))
 
 #define snes_bus_active()	    ((AVR_SNES_SW_PORT |= (1 << AVR_SNES_SW_PIN)),\
-                                (AVR_CS_DIR &= ~(1 << AVR_CS_PIN)))
+                                (AVR_CS_DIR &= ~(1 << AVR_CS_PIN)),\
+                                (AVR_CS_PORT |= (1 << AVR_CS_PIN)))
 
 #define HI_LOROM_SW_PORT	    PORTD
 #define HI_LOROM_SW_DIR	        DDRD
