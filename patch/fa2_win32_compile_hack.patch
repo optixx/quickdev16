@@ -1,0 +1,64 @@
+--- ucon64-2.0.0-src/src/backup/f2a.c	2009-09-16 09:43:42.000000000 +0000
++++ ucon64/src/backup/f2a.c	2009-08-28 10:00:36.000000000 +0000
+@@ -53,8 +53,10 @@
+ #include "console/gba.h"
+ #ifdef  USE_USB
+ #include <stdarg.h>
++#if 0
+ #include <sys/wait.h>
+ #include <sys/utsname.h>
++#endif
+ #include "misc/usb.h"
+ #endif
+ #ifdef  USE_PARALLEL
+@@ -253,9 +255,9 @@
+   than that. - dbjh
+ */
+ {
+-  va_list argptr;
+   int status;
+-
++#if 0
++  va_list argptr;
+   argc++;
+   va_start (argptr, argc);
+   if (fork () == 0)
+@@ -294,7 +296,7 @@
+     }
+   wait (&status);
+   va_end (argptr);
+-
++#endif
+   return status;
+ }
+ 
+@@ -343,6 +345,7 @@
+ static int
+ f2a_connect_usb (void)
+ {
++#if 0
+   int fp, result, firmware_loaded = 0;
+   unsigned char f2afirmware[F2A_FIRM_SIZE];
+   char f2afirmware_fname[FILENAME_MAX];
+@@ -367,13 +370,11 @@
+             {
+               struct utsname info;
+               int version;
+-
+               if (uname (&info) == -1)
+                 {
+                   fputs ("ERROR: Could not determine version of the running kernel\n", stderr);
+                   return -1;
+                 }
+-
+               version = strtol (&info.release[0], NULL, 10) * 10 +
+                         strtol (&info.release[2], NULL, 10);
+               // example contents of info.release: "2.4.18-14custom"
+@@ -477,6 +478,7 @@
+                        "       %s\n", usb_strerror ());
+       return -1;
+     }
++#endif
+ 
+   return 0;
+ }
