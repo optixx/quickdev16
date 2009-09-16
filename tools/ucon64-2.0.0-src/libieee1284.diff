@@ -1,0 +1,372 @@
+--- parallel.c	2004-09-02 19:09:23.000000000 +0200
++++ parallel.c.libieee1284	2004-09-04 03:07:38.000000000 +0200
+@@ -25,6 +25,11 @@
+ #include "config.h"
+ #endif
+ 
++#define USE_LIBIEEE1284
++#if     defined USE_LIBIEEE1284 && defined USE_PPDEV
++#undef  USE_PPDEV
++#endif
++
+ #ifdef  USE_PARALLEL
+ 
+ #include <stdio.h>
+@@ -40,7 +45,9 @@
+ #include <sys/time.h>
+ #include <linux/ppdev.h>
+ #include <linux/parport.h>
+-#elif   defined __linux__ && defined __GLIBC__  // USE_PPDEV
++#elif   defined USE_LIBIEEE1284                 // USE_PPDEV
++#include <ieee1284.h>
++#elif   defined __linux__ && defined __GLIBC__  // USE_LIBIEEE1284
+ #ifdef  HAVE_SYS_IO_H                           // necessary for some Linux/PPC configs
+ #include <sys/io.h>                             // ioperm() (glibc), in{b, w}(), out{b, w}()
+ #else
+@@ -78,8 +85,12 @@
+ #include "getopt2.h"
+ #include "ucon64.h"
+ 
++#if     defined USE_LIBIEEE1284 && defined USE_PPDEV
++#undef  USE_PPDEV
++#endif
++
+ 
+-#if     defined USE_PPDEV || defined __BEOS__ || defined __FreeBSD__ || defined AMIGA
++#if     defined USE_PPDEV || defined __BEOS__ || defined __FreeBSD__ || defined AMIGA || defined USE_LIBIEEE1284
+ static void close_io_port (void);
+ #endif
+ #if     defined __i386__ || defined __x86_64__  // GCC && x86
+@@ -92,8 +103,12 @@
+ 
+ #if     defined USE_PPDEV || defined __BEOS__ || defined __FreeBSD__
+ static int parport_io_fd;
+-#ifdef  USE_PPDEV
++#endif
++#if     defined USE_PPDEV || defined USE_LIBIEEE1284
+ static enum { FORWARD = 0, REVERSE } parport_io_direction;
++#ifdef  USE_LIBIEEE1284
++struct parport *libieee1284_port;
++#else
+ static int parport_io_mode;
+ #endif
+ #endif
+@@ -113,7 +128,7 @@
+ #endif
+ 
+ 
+-#if     defined _WIN32 || defined __CYGWIN__
++#if     (defined _WIN32 || defined __CYGWIN__) && !defined USE_LIBIEEE1284
+ 
+ #define NODRIVER_MSG "ERROR: No (working) I/O port driver. Please see the FAQ, question 4\n"
+ 
+@@ -172,7 +187,7 @@
+ static void (*output_word) (unsigned short, unsigned short) = outpw_func;
+ 
+ #endif
+-#endif // _WIN32 || __CYGWIN__
++#endif // (_WIN32 || __CYGWIN__) && !USE_LIBIEEE1284
+ 
+ 
+ #if     defined __i386__ || defined __x86_64__  // GCC && x86
+@@ -275,6 +290,43 @@
+       exit (1);
+     }
+   return byte;
++#elif   defined USE_LIBIEEE1284
++  int ppreg = port - ucon64.parport;
++  unsigned char byte;
++
++  switch (ppreg)
++    {
++    case 0:                                     // data
++      if (parport_io_direction == FORWARD)      // dir is forward?
++        {
++          parport_io_direction = REVERSE;       // change it to reverse
++          ieee1284_data_dir (libieee1284_port, parport_io_direction);
++        }
++      byte = (unsigned char) ieee1284_read_data (libieee1284_port);
++      break;
++    case 1:                                     // status
++      byte = (unsigned char) (ieee1284_read_status (libieee1284_port) ^ S1284_INVERTED);
++      break;
++    case 2:                                     // control
++      byte = (unsigned char) (ieee1284_read_control (libieee1284_port) ^ C1284_INVERTED);
++      break;
++    case 3:                                     // EPP/ECP address
++      ieee1284_epp_read_addr (libieee1284_port, F1284_NONBLOCK, (char *) &byte, 1);
++      break;
++    case 4:                                     // EPP/ECP data
++      ieee1284_epp_read_data (libieee1284_port, F1284_NONBLOCK, (char *) &byte, 1);
++      break;
++    case 0x402:                                 // ECP register
++      printf ("WARNING: Ignored read from ECP register, returning 0\n");
++      byte = 0;
++      break;
++    default:
++      fprintf (stderr,
++               "ERROR: inportb() tried to read from an unsupported port (0x%x)\n",
++               port);
++      exit (1);
++    }
++  return byte;
+ #elif   defined __BEOS__
+   st_ioport_t temp;
+ 
+@@ -358,6 +410,26 @@
+       exit (1);
+     }
+   return buf[0] | buf[1] << 8;                  // words are read in little endian format
++#elif   defined USE_LIBIEEE1284
++  int ppreg = port - ucon64.parport;
++  unsigned char buf[2];
++
++  switch (ppreg)
++    {
++    case 3:                                     // EPP/ECP address
++      ieee1284_epp_read_addr (libieee1284_port, F1284_NONBLOCK | F1284_FASTEPP, (char *) buf, 2);
++      break;
++    case 4:                                     // EPP/ECP data
++      ieee1284_epp_read_data (libieee1284_port, F1284_NONBLOCK | F1284_FASTEPP, (char *) buf, 2);
++      break;
++    // the data, status, control and ECP registers should only be accessed in "8-bit mode"
++    default:
++      fprintf (stderr,
++               "ERROR: inportw() tried to read from an unsupported port (0x%x)\n",
++               port);
++      exit (1);
++    }
++  return buf[0] | buf[1] << 8;                  // words are read in little endian format
+ #elif   defined __BEOS__
+   st_ioport_t temp;
+ 
+@@ -434,6 +506,37 @@
+                port);
+       exit (1);
+     }
++#elif   defined USE_LIBIEEE1284
++  int ppreg = port - ucon64.parport;
++
++  switch (ppreg)
++    {
++    case 0:                                     // data
++      if (parport_io_direction == REVERSE)      // dir is reverse?
++        {
++          parport_io_direction = FORWARD;       // change it to forward
++          ieee1284_data_dir (libieee1284_port, parport_io_direction);
++        }
++      ieee1284_write_data (libieee1284_port, byte);
++      break;
++    case 2:                                     // control
++      ieee1284_write_control (libieee1284_port, (unsigned char) (byte ^ C1284_INVERTED));
++      break;
++    case 3:                                     // EPP/ECP address
++      ieee1284_epp_write_addr (libieee1284_port, F1284_NONBLOCK, (char *) &byte, 1);
++      break;
++    case 4:                                     // EPP/ECP data
++      ieee1284_epp_write_data (libieee1284_port, F1284_NONBLOCK, (char *) &byte, 1);
++      break;
++    case 0x402:                                 // ECP register
++      printf ("WARNING: Ignored write to ECP register\n");
++      break;
++    default:
++      fprintf (stderr,
++               "ERROR: outportb() tried to write to an unsupported port (0x%x)\n",
++               port);
++      exit (1);
++    }
+ #elif   defined __BEOS__
+   st_ioport_t temp;
+ 
+@@ -499,6 +602,28 @@
+                port);
+       exit (1);
+     }
++#elif   defined USE_LIBIEEE1284
++  int ppreg = port - ucon64.parport;
++  unsigned char buf[2];
++
++  // words are written in little endian format
++  buf[0] = (unsigned char) word;
++  buf[1] = word >> 8;
++  switch (ppreg)
++    {
++    case 3:                                     // EPP/ECP address
++      ieee1284_epp_write_addr (libieee1284_port, F1284_NONBLOCK | F1284_FASTEPP, (char *) buf, 2);
++      break;
++    case 4:                                     // EPP/ECP data
++      ieee1284_epp_write_data (libieee1284_port, F1284_NONBLOCK | F1284_FASTEPP, (char *) buf, 2);
++      break;
++    // the data, control and ECP registers should only be accessed in "8-bit mode"
++    default:
++      fprintf (stderr,
++               "ERROR: outportw() tried to write to an unsupported port (0x%x)\n",
++               port);
++      exit (1);
++    }
+ #elif   defined __BEOS__
+   st_ioport_t temp;
+ 
+@@ -529,7 +654,7 @@
+ }
+ 
+ 
+-#if     (defined __i386__ || defined __x86_64__ || defined _WIN32) && !defined USE_PPDEV
++#if     (defined __i386__ || defined __x86_64__ || defined _WIN32) && !defined USE_PPDEV && !defined USE_LIBIEEE1284
+ #define DETECT_MAX_CNT 1000
+ static int
+ parport_probe (unsigned int port)
+@@ -557,6 +682,7 @@
+ #endif
+ 
+ 
++#ifndef USE_LIBIEEE1284
+ #ifdef  _WIN32
+ static LONG
+ new_exception_filter (LPEXCEPTION_POINTERS exception_pointers)
+@@ -584,6 +710,7 @@
+   return EXCEPTION_CONTINUE_SEARCH;
+ }
+ #endif
++#endif
+ 
+ 
+ int
+@@ -637,6 +764,48 @@
+ 
+   parport_io_direction = FORWARD;               // set forward direction as default
+   ioctl (parport_io_fd, PPDATADIR, &parport_io_direction);
++#elif   defined USE_LIBIEEE1284
++  struct parport_list list;
++  int capabilities, ucon64_parport;
++
++  if (port == PARPORT_UNKNOWN)
++    port = 0;
++
++  if (ieee1284_find_ports (&list, 0) != E1284_OK)
++    {
++      fputs ("ERROR: Could not get port list\n", stderr);
++      exit (1);
++    }
++
++  if (port < list.portc)
++    libieee1284_port = list.portv[port];
++  else
++    {
++      fprintf (stderr, "ERROR: libieee1284 port %d not available\n", port);
++      exit (1);
++    }
++
++  if (ieee1284_open (libieee1284_port, F1284_EXCL, &capabilities) != E1284_OK)
++    {
++      fprintf (stderr, "ERROR: Could not open libieee1284 port %d\n", port);
++      exit (1);
++    }
++  // TODO: Handle ECP mode correctly
++  if (ucon64.parport_mode == UCON64_EPP || ucon64.parport_mode == UCON64_ECP)
++    if ((capabilities & (CAP1284_EPP | CAP1284_ECP)) == 0)
++      printf ("WARNING: EPP or ECP mode was requested, but not available\n");
++
++  ieee1284_free_ports (&list);
++
++  if (ieee1284_claim (libieee1284_port) != E1284_OK)
++    {
++      fprintf (stderr, "ERROR: Could not claim libieee1284 port %d\n", port);
++      ieee1284_close (libieee1284_port);
++      exit (1);
++    }
++
++  parport_io_direction = FORWARD;
++  ieee1284_data_dir (libieee1284_port, parport_io_direction);
+ #elif   defined __BEOS__
+   parport_io_fd = open ("/dev/misc/ioport", O_RDWR | O_NONBLOCK);
+   if (parport_io_fd == -1)
+@@ -710,16 +879,18 @@
+     }
+ #endif
+ 
+-#if     defined USE_PPDEV || defined __BEOS__ || defined __FreeBSD__
++#if     defined USE_PPDEV || defined __BEOS__ || defined __FreeBSD__ || defined USE_LIBIEEE1284
+   if (register_func (close_io_port) == -1)
+     {
++#ifndef USE_LIBIEEE1284
+       close (parport_io_fd);
++#endif
+       fprintf (stderr, "ERROR: Could not register function with register_func()\n");
+       exit(1);
+     }
+ #endif
+ 
+-#if     defined __linux__ && (defined __i386__ || defined __x86_64__) && !defined USE_PPDEV
++#if     defined __linux__ && (defined __i386__ || defined __x86_64__) && !defined USE_PPDEV && !defined USE_LIBIEEE1284
+   /*
+     Some code needs us to switch to the real uid and gid. However, other code
+     needs access to I/O ports other than the standard printer port registers.
+@@ -751,7 +922,7 @@
+     }
+ #endif
+ 
+-#if     (defined __i386__ || defined __x86_64__ || defined _WIN32) && !defined USE_PPDEV
++#if     (defined __i386__ || defined __x86_64__ || defined _WIN32) && !defined USE_PPDEV && !defined USE_LIBIEEE1284
+ 
+ #if     defined _WIN32 || defined __CYGWIN__
+   /*
+@@ -914,9 +1085,9 @@
+           exit (1);
+         }
+     }
+-#endif // (__i386__ || __x86_64__ || _WIN32) && !USE_PPDEV
++#endif // (__i386__ || __x86_64__ || _WIN32) && !USE_PPDEV && !USE_LIBIEEE1284
+ 
+-#ifdef  USE_PPDEV
++#if     defined USE_PPDEV || defined USE_LIBIEEE1284
+   // the following two calls need a valid value for ucon64.parport
+   ucon64_parport = ucon64.parport;
+   ucon64.parport = port;
+@@ -924,7 +1095,7 @@
+   outportb ((unsigned short) (port + PARPORT_CONTROL),
+             (unsigned char) (inportb ((unsigned short) (port + PARPORT_CONTROL)) & 0x0f));
+   // bit 4 = 0 -> IRQ disable for ACK, bit 5-7 unused
+-#ifdef  USE_PPDEV
++#if     defined USE_PPDEV || defined USE_LIBIEEE1284
+   ucon64.parport = ucon64_parport;
+ #endif
+ 
+@@ -932,7 +1103,7 @@
+ }
+ 
+ 
+-#if     defined USE_PPDEV || defined __BEOS__ || defined __FreeBSD__ || defined AMIGA
++#if     defined USE_PPDEV || defined __BEOS__ || defined __FreeBSD__ || defined AMIGA || defined USE_LIBIEEE1284
+ void
+ close_io_port (void)
+ {
+@@ -947,6 +1118,9 @@
+   //  it ppdev will do it for us...
+   ioctl (parport_io_fd, PPNEGOT, &parport_io_mode);
+   ioctl (parport_io_fd, PPRELEASE);
++#elif   defined USE_LIBIEEE1284
++  ieee1284_release (libieee1284_port);
++  ieee1284_close (libieee1284_port);
+ #else                                           // __BEOS__ || __FreeBSD__
+   close (parport_io_fd);
+ #endif
+@@ -958,7 +1132,7 @@
+ parport_close (int parport)
+ {
+   (void) parport;
+-#if     defined USE_PPDEV || defined __BEOS__ || defined __FreeBSD__ || defined AMIGA
++#if     defined USE_PPDEV || defined __BEOS__ || defined __FreeBSD__ || defined AMIGA || defined USE_LIBIEEE1284
+   if (unregister_func (close_io_port) == 0)     // call func only if it can be removed!
+     close_io_port ();                           //  (or else it will be called twice)
+ #elif   defined _WIN32 || defined __CYGWIN__
+@@ -976,6 +1150,9 @@
+ {
+ #ifdef  USE_PPDEV
+   printf ("Using parallel port device: %s\n", ucon64.parport_dev);
++#elif   defined USE_LIBIEEE1284
++  printf ("Using parallel port device: %s, base address 0x%lx\n",
++          libieee1284_port->filename, libieee1284_port->base_addr); // ->name
+ #elif   defined AMIGA
+   printf ("Using parallel port device: %s, port %d\n", ucon64.parport_dev, ucon64.parport);
+ #else

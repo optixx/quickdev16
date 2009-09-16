@@ -1,0 +1,73 @@
+DLOPEN=1
+#USE_ZLIB=1
+
+CC=cl.exe
+CFLAGS=/nologo /I. /W3 /O2 /DHAVE_CONFIG_H /DDLL
+!ifdef DLOPEN
+CFLAGS=$(CFLAGS) /DDLOPEN
+!endif
+
+LIBNAME=discmage
+OBJECTS=libdm_misc.obj dllinit.obj misc.obj misc_wav.obj format/format.obj \
+        format/cdi.obj format/nero.obj format/cue.obj format/toc.obj format/other.obj
+!ifdef USE_ZLIB
+LIBS=zlib.lib
+OBJECTS=$(OBJECTS) unzip.obj map.obj misc_z.obj
+!else
+LIBS=
+!endif
+
+
+FULLLIBNAME=$(LIBNAME).dll
+DLLFLAGS=/NOLOGO /DLL $(OBJECTS) $(LIBS) /DEF:$(LIBNAME).def /OUT:$(LIBNAME).dll
+
+
+all: $(FULLLIBNAME)
+
+
+clean:
+	del $(LIBNAME).dll
+	del $(LIBNAME).lib
+	del *.obj
+	del format\*.obj
+	del $(LIBNAME).exp
+
+
+distclean: clean
+	del config.h
+
+
+.c.obj:
+	$(CC) $(CFLAGS) /c $< /Fo$@
+
+
+$(LIBNAME).dll: $(OBJECTS)
+	link.exe $(DLLFLAGS)
+# link.exe automatically creates the import library. "/IMPLIB:filename.lib"
+#  could be used to give the import library another name
+#	lib.exe $(DLLFLAGS) /OUT:$(LIBNAME).lib
+
+install:
+
+uninstall:
+
+
+# Dependencies
+LIBDM_STD_H=libdiscmage.h misc.h dxedll_priv.h format/format.h config.h
+
+libdm_misc.obj: $(LIBDM_STD_H)
+format/format.obj: $(LIBDM_STD_H)
+format/ccd.obj: format/ccd.h $(LIBDM_STD_H)
+format/cdi.obj: format/cdi.h $(LIBDM_STD_H)
+format/nero.obj: format/nero.h $(LIBDM_STD_H)
+format/cue.obj: format/cue.h $(LIBDM_STD_H)
+format/toc.obj: format/toc.h $(LIBDM_STD_H)
+format/other.obj: format/other.h $(LIBDM_STD_H)
+misc_wav.obj: $(LIBDM_STD_H)
+dllinit.obj: $(LIBDM_STD_H)
+misc.obj: misc.h dxedll_priv.h
+misc_z.obj: misc_z.h misc.h dxedll_priv.h
+dxe_misc.obj: dxedll_pub.h
+djimport.obj: libdiscmage.h dlopen.h dxedll_pub.h
+dlopen.obj: dlopen.h dxedll_pub.h
+map.obj: map.h
