@@ -1,0 +1,66 @@
+# These codes have been put here for your convenience and as a reference so
+# that you don't have to look at the source code. Read the FAQ for the format.
+#
+# Of the following two groups of three only one should be enabled at one time
+# 02 01 01 70 02 01 01 70 d0 : 01:  02: ea ea : 0:   8f 9f : cf df
+# Kirby's Dream Course, Lufia II - Rise of the Sinistrals
+# 02 01 01 70 02 01 01 70 f0 : 01:  02: 80    : 0:   8f 9f : cf df
+# 02 01 01 02 02 01 01 02 f0 : 01:  02: 80    : 0:   8f 9f : 30 31 32 33 : cf df : 30 31 32 33
+#
+# 02 01 01 70 02 01 01 70 d0 : 01:  02: 80    : 0:   8f 9f : cf df
+# Mega Man X
+# 02 01 01 70 02 01 01 70 f0 : 01:  02: ea ea : 0:   8f 9f : cf df
+# 02 01 01 02 02 01 01 02 f0 : 01:  02: ea ea : 0:   8f 9f : 30 31 32 33 : cf df : 30 31 32 33
+#
+# Uniracers/Unirally
+# 8f 01 01 77 e2 01 af 01 01 77 c9 01 f0:1:2:80:0
+# Donkey Kong Country (8f, 30, cf, 30)
+# Note that this code must be searched for before the less specific uCON code.
+# 02 02 02 02 02 02 60 02 d0 : 01:  02: ea ea : 0:   8f 9f : 57 59 : 60 68 : 30 31 32 33 : cf df : 57 59 : 30 31 32 33
+# 02 01 01 02 02 01 01 02 d0 : 01:  02: 80    : 0:   8f 9f : 30 31 32 33 : cf df : 30 31 32 33
+# Mario no Super Picross
+# 02 01 01 b0 cf 01 01 b1 d0 : 01:  02: ea ea : 0:   8f af
+# 02 01 01 02 af 01 01 02 c9 01 01 d0:01:02:80: 0:   8f 9f : 30 31 32 33 : 30 31 32 33
+# Super Metroid
+# a9 00 00 a2 fe 1f df 00 00 70 d0:01:02:ea ea: 0
+# Breath of Fire II (bf, 30, df, 31)
+# 02 01 01 02 02 01 01 02 f0 : 01:  02: 80    : 0:   af bf : 30 31 32 33 : cf df : 30 31 32 33
+#
+# Mega Man X
+# 02 01 80 00 02 01 80 40 f0 : 01:  02: 80    : 0:   af bf : cf df
+# Demon's Crest (af, 80, cf) / Breath of Fire II (bf, c0, df)
+# 02 01 ff 02 02 01 ff 40 f0 : 01:  02: 80    : 0:   af bf : 80 c0 : cf df
+#
+# Killer Instinct
+# 5c 7f d0 83 18 fb 78 c2 30 : 01:  02: ea ea ea ea ea ea ea ea ea : -8
+# Diddy's Kong Quest (the three below)
+# 4b 4f 4e 47 00 f8 f7 :       01:  02: f8    : 0
+# 26 38 e9 48 12 c9 af 71 f0 : 01:  02: 80    : 0
+# a0 5c 2f 77 32 e9 c7 04 f0 : 01:  02: 80    : 0
+#
+# BS The Legend of Zelda Remix
+# 22 08 5c 10 b0 28 :          01:  02: ea ea ea ea ea ea : -5
+# BS The Legend of Zelda Remix (the next two enable music)
+# da e2 30 c9 01 f0 18 c9 02 : 03:  04: 09 f0 18 c9 07 : -4
+# 29 ff 00 c9 07 00 90 16 :    01:  02: 00    : -3
+#
+# Kirby's Dream Course (the two below)
+# ca 10 f8 38 ef 1a 80 81 8d : 01:  02: 9c    : 0
+# 81 ca 10 f8 cf 39 80 87 f0 : 01:  02: 80    : 0
+#
+# Earthbound (internal codes, the three below)
+# 84 26 ad 39 b5 d0 1a :       01:  02: ea ea : -1
+# 10 f8 38 ef ef ff c1 :       01:  02: ea a9 00 00 : -3
+# 10 f8 38 ef f2 fd c3 f0 :    01:  02: ea a9 00 00 80 : -4
+# Earthbound (alternative code, should be used alone; do not combine with -f!)
+# 22 1c a1 c0 22 56 87 c0 :    01:  02: 51    : -6
+#
+# Tetris Attack (the two below)
+# c2 30 ad fc 1f c9 50 44 d0 :   01: 02: 4c d1 80 : -6
+# 8f 01 01 70 af 01 01 70 c9 01 01 d0 : 01: 02: 80 : 0
+#
+# Dixie Kong's Double Trouble E. U version looks like it already has been "patched"
+# a9 c3 80 dd ff ff f0 6c :      01:  02: f0 cc ff ff 80 7d : -5
+#
+# Front Mission - Gun Hazard
+# d0 f4 ab cf ae ff 00 d0 01:  03: 04:  00:     0

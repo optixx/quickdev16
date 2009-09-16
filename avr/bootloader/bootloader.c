@@ -33,6 +33,10 @@
 #include "config.h"
 #include "usbdrv/usbdrv.c"
 
+
+
+
+
 /*
  * USBasp requests, taken from the original USBasp sourcecode 
  */
@@ -74,6 +78,10 @@
                   (LED_DIR ^= (1 << LED_PIN)));}
 
 
+#define AVR_BTLDR_EN_PORT	    PORTC
+#define AVR_BTLDR_EN_DIR	    DDRC
+#define AVR_BTLDR_EN_PIN	    PC1
+#define AVR_BTLDR_EN_IN	        PINC
 
 
 /*
@@ -449,6 +457,28 @@ int __attribute__ ((noreturn, OS_main)) main(void)
     uint16_t delay = 0;
     timeout = TIMEOUT;
 
+    DDRC &= ~(1 << AVR_BTLDR_EN_PIN);	    
+    PORTC &= ~(1 << AVR_BTLDR_EN_PIN);	    
+
+    /*
+     * if watchdog reset, disable watchdog and jump to app 
+     */
+    if (reset & _BV(WDRF)) {
+        uart_puts("Found watchdog reset\n\r");
+        MCUSR = 0;
+        wdt_disable();
+        uart_puts("Jump to 0x0000\n\r");
+        jump_to_app();
+    }
+
+
+    if ((AVR_BTLDR_EN_IN & ( 1 << AVR_BTLDR_EN_PIN)) == 0){
+        banner();
+        uart_puts("Bootloader flashing is disabled\n\r");
+        MCUSR = 0;
+        leave_bootloader();
+        
+    }
 
     /*
      * if power-on reset, quit bootloader via watchdog reset 
@@ -459,17 +489,6 @@ int __attribute__ ((noreturn, OS_main)) main(void)
         MCUSR = 0;
         leave_bootloader();
     }
-    /*
-     * if watchdog reset, disable watchdog and jump to app 
-     */
-    else if (reset & _BV(WDRF)) {
-        uart_puts("Found watchdog reset\n\r");
-        MCUSR = 0;
-        wdt_disable();
-        uart_puts("Jump to 0x0000\n\r");
-        jump_to_app();
-    }
-
     banner();
     uart_puts("Enter programming mode\n\r");
     /*

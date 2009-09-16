@@ -1,0 +1,783 @@
+<html><head>
+<link rel="icon" href="images/icon.png" type="image/png">
+<title>uCON64 - Changes</title></head><body bgcolor="#ffffff"><tt><br>
+The original uCON for SNES and Genesis was written by Chicken &amp; chp in
+1993-1995<br>
+<br>
+<p>
+<a name="190">1.9.0</a><br>
+- completely re-written<br>
+- this is the first real version with support for the most consoles<br>
+<p>
+<a name="191">1.9.1</a><br>
+- bug fixes<br>
+- fixed the -xv64 routine for receive and emulation on N64<br>
+- cosmetical changes<br>
+- removed the stupid curses GUI<br>
+- optimized noisette.h for speed<br>
+- added more OPTIONS and CONSOLE SYSTEMS<br>
+<p>
+<a name="192">1.9.2</a><br>
+- started to add missing Sega System16(A/B)/System 18/dual 68000 support<br>
+- -xv64 shows now the filename on the Doctor instead of "UCON64" (sorry)<br>
+- removed -xmp3 option for SongBoy (latest information says that it will
+  be a USB device with copyprotected MPE standard instead of MP3.. HAHAHAHA!!!)<br>
+- TODO:  -xmp3 send MP3 file(s) to SongBoy (MP3 player for Game Boy)<br>
+- removed options which were added by mistake (like parallel transfer for Z64)<br>
+- added -ispad (looks for repeating bytes at the end of a probably padded ROM)<br>
+- added -rn (some people might find it useful)<br>
+- added -mg, -bin and 'show ROM' support for PC-Engine<br>
+- added -usms for Jos Kwanten's ultraSMS an Sega Master System/Game Gear
+  emulator for the Nintendo64<br>
+- fixed aps (GRRNNNNN!!!)<br>
+- added an universal frontend (in Java) for all platforms and all programs that
+  need a filename<br>
+- added CD32, CD-i and Real 3DO support<br>
+- added -bin and -ffe option for Sega Master System/Game Gear<br>
+- added database for NES roms (that enlarged the ucon64 executable by 190kb
+  grnnn...) "You gotta do what you gotta do." (Futurama)<br>
+- added -db and -dbv database commands... now everyone can check if the
+  uCON64 version he uses has new database entries for a console system<br>
+<p>
+<a name="193">1.9.3</a><br>
+- added -mka create APS patch support<br>
+- added -na change APS description<br>
+- added -hd, -nhd switches for SMS/Game Gear<br>
+- added auto-detection and some information for Jaguar ROMs<br>
+- added -ssc convert to Super Smart Card (Game Boy)<br>
+- fixed/added -chk fix checksum (Game Boy)<br>
+- added -gg Game Genie support for SNES<br>
+- cleaned up the usage output<br>
+- added -chk fix checksum for Super NES/Super Famicom<br>
+- removed most CDROM based consoles from usage since uCON64 could support
+  them only by showing some informations about the CDROM itself (option -cdrom)<br>
+- added -gd3 convert to Professor SF(2) Game Doctor SF3/6/7 (autojoin)<br>
+- added -gdf fix Professor SF(2) Game Doctor SF3/6/7 savegame problems<br>
+<p>
+<a name="194">1.9.4</a><br>
+- included all databases for every console system that has ROMs without a
+  header with text<br>
+- added 324 entries to SMS database<br>
+- added -sam convert SAM/M.A.M.E. sound to WAV; --rom=SAMFILE<br>
+- added -b2i convert BIN/RAW(2352)/Mode2(2336) to ISO; --rom=BIN_IMAGE<br>
+- added -ppf apply PPF patch (&#60;=2.0); --rom=ISO_IMAGE --file=PATCHFILE<br>
+- added -nppf change PPF description; --rom=PATCHFILE --file=DESCRIPTION<br>
+- added -mkppf create PPF patch; --rom=ISO_IMAGE --file=CHANGED_IMAGE<br>
+- added -ip extract ip0000.bin (GD-ROM header/256 bytes); --rom=/dev/&#60;cdrom&#62;<br>
+- added -fds convert Famicom Disk System file (diskimage) from FAM to FDS<br>
+- changed the FAQ a bit<br>
+- overworked the whole tool to make it easier to develop<br>
+- searched a new site for it (<a href="http://ucon64.sourceforge.net" target="_blank">http://ucon64.sourceforge.net</a>)<br>
+<p>
+<a name="195">1.9.5</a><br>
+- after the update release of 1.9.4 I had a closer look at my sources
+  and realized that my style heavily changed since 1.9.3 the result is
+  that I had to make more changes in the source starting from ucon64.c<br>
+- Gilligan wrote a nice routine to read out NeoGeo Pocket roms (added)<br>
+- reorganized the whole source<br>
+- added Game Boy Advance support<br>
+- added (GBA) -n change ROM name; --file=NEWNAME<br>
+- added (GBA) -logo restore ROM logo character data 0x04-0x9F<br>
+- added (GBA) -chk fix ROM checksum<br>
+- added (GB/Game Gear/NES) -gg apply Game Genie code (permanent)<br>
+- added (GB/Game Gear/NES/GEN/SNES) -gge encode Game Genie code<br>
+- added (GB/Game Gear/NES/GEN/SNES) -ggd decode Game Genie code<br>
+- added (LYNX) -lyx convert to LYX/RAW (strip 64 Bytes LNX header)<br>
+- added (LYNX) -lnx convert to LNX (uses default values for the header)<br>
+- added (LYNX) -n change ROM name (LNX only); --file=NEWNAME<br>
+- added (LYNX) -nrot set no rotation (LNX only)<br>
+- added (LYNX) -rotl set rotation left (LNX only)<br>
+- added (LYNX) -rotr set rotation right (LNX only)<br>
+- added (LYNX) -b0 change Bank0 kBytes size (LNX only); --file={0,64,128,256,512}<br>
+- added (LYNX) -b1 change Bank1 kBytes size (LNX only); --file={0,64,128,256,512}<br>
+- added -idppf change PPF FILE_ID.DIZ (2.0); --rom=PATCHFILE --file=FILE_ID.DIZ<br>
+- added -strip strip Bytes from end of ROM; --file=VALUE<br>
+- added -e emulate/run ROM (check INSTALL and $HOME/.ucon64rc for more)<br>
+- added (GBA) -sram patch ROM for SRAM saving<br>
+- added (GBA) -crp slow down Flash Advance Linker access for ROM (crash patch)<br>
+- added (GBA) -strip strip Bytes from end of ROM (use -ispad before); --file=VALUE<br>
+- added (GBA) -xfal send/receive to/from Flash Advance Linker; --file=PORT<br>
+<p>
+<a name="196">1.9.6</a><br>
+- this release brings you full support for the Super Wild Card<br>
+- added (SNES) -xswc send/receive to/from Super Wild Card*/(all)SWC; --file=PORT
+  (by dbjh)<br>
+- added (SNES) -xswcs send/receive SRAM to/from Super Wild Card*/(all)SWC;
+  --file=PORT (by dbjh)<br>
+- added (GB) -sgb convert from GB Xchanger/GB/GBC to Super Backup Card/GX/GBX
+  (by NoisyB)<br>
+- added (GB) -gbx convert from Super Backup Card/GX/GBX to GB Xchanger/GB/GBC
+  (by NoisyB)<br>
+- made a few small bug fixes and code cleanups (by NoisyB; thanks to dbjh)<br>
+- DOS port of uCON64 available (by dbjh)<br>
+- BeOS port of uCON64 available (by dbjh)<br>
+- added wildcard support to -find find string in ROM (by NoisyB)<br>
+- added (SNES) some new NTSC/PAL and SlowROM fix codes (by NoisyB)<br>
+- added (SNES) -swcs convert emulator *.srm to Super Wild Card*/(all)SWC (by
+  NoisyB)<br>
+<p>
+<a name="197">1.9.7</a><br>
+- added (NES) -fdsl list Famicom Disk System/FDS (diskimage) contents (by
+  NoisyB)<br>
+- updated (GBA) -xfal send/receive ROM to/from Flash Advance Linker; --file=PORT
+  (by dbjh)<br>
+- added (GBA) -xfalc&#60;n&#62; specify chip size in Mbits of ROM in Flash
+  Advance Linker when receiving (by dbjh)<br>
+- added (GBA) -xfalm use SPP mode, default is EPP (by dbjh)<br>
+- added (Neo Geo) -bios convert NeoCD Bios to work with NeoCD emulator (by
+  NoisyB; thanks to Caz)<br>
+- changed the whole internal ROM database code (by NoisyB)<br>
+- added -dbs search ROM database (all entries) by CRC32; --rom=0xCRC32 (by
+  NoisyB)<br>
+- added (Virtual Boy) show info (by NoisyB)<br>
+- added (WonderSwan) show info (by NoisyB)<br>
+- added (ColecoVision) show info (by NoisyB)<br>
+- added (Vectrex) show info (by NoisyB)<br>
+- added ROMs to database for Virtual Boy, WonderSwan, ColecoVision and Vectrex
+  (by NoisyB)<br>
+- added (Intellivision) show info (by NoisyB)<br>
+- made the internal ROM Database optional; compiled without DB uCON64 will be
+  only ~250kB in size! (by NoisyB)<br>
+- updated (all) fixed -cs (file compare) (by dbjh)<br>
+- updated (SNES) fixed dumping of `special' SNES cartridges (for the meaning of
+  special, see src/backup/swc.c) (by dbjh; thanks to Caz)<br>
+- updated (SNES) fixed -k (crack) (by dbjh)<br>
+- updated (SNES) fixed -f (NTSC/PAL fix) (by dbjh)<br>
+- uCON64 will recognize *ANY* kind of ROM or Console System via DB now...<br>
+  give it a Atari2600 ROM and it will just recognize it :) (by NoisyB)<br>
+- updated the internal DB; it can recognize 12387 different ROMs (by NoisyB)<br>
+- updated (SNES) fixed -s (split ROM) (by dbjh)<br>
+- updated (Genesis) fixed -s (by NoisyB)<br>
+- updated (all) fixed -swc &amp; -ins (and others) for files with a size a
+  multiple of 32kB (by dbjh)<br>
+- updated (SNES) fixed -swc when ROM file has a name that already has the
+  extension .swc fixed the same problem for -smc and -fig (by dbjh)<br>
+- added -lsv like -ls but more verbose; --rom=DIRECTORY (by NoisyB)<br>
+- updated (SNES) fixed checksum output (by NoisyB)<br>
+- updated (SNES) fixed -j (join multi files) (by dbjh)<br>
+- updated (SNES) fixed checksum output for Broadcast Satellaview ROMs (by dbjh;
+  thanks to Cowering)<br>
+- added (SNES) -figs convert emulator *.srm (SRAM) to *Pro Fighter*/(all)FIG (by
+  dbjh; thanks to Caz)<br>
+- added (SNES) -ufos convert emulator *.srm (SRAM) to Super UFO (by dbjh; thanks
+  to Caz)<br>
+- added (SNES) -int, -int2 &amp; -nint force ROM is (not) in interleaved format
+  (2) (by dbjh)<br>
+- added (SNES) -dint convert ROM to non-interleaved format (by dbjh)<br>
+- added 2830 new ROMs to internal ROM database (by NoisyB)<br>
+- added (Genesis) -xsmd send/receive ROM to/from Super Magic Drive/SMD;
+  --file=PORT (by NoisyB)<br>
+- added (Genesis) -xsmds send/receive SRAM to/from Super Magic Drive/SMD;
+  --file=PORT (by NoisyB)<br>
+- added support for CD based consoles again; uCON64 now uses cdrdao as burn
+  engine (by NoisyB)<br>
+- added Dreamcast, PSX (one), PS2, Real3DO, CD-i, CD32 and Saturn support (by
+  NoisyB)<br>
+- added (Genesis) -smds convert emulator (*.srm) SRAM to Super Magic Drive/SMD
+  (by NoisyB)<br>
+- added -r2i convert RAW to ISO9660; --rom=RAW_IMAGE (by NoisyB)<br>
+<p>
+<a name="198-1">1.9.8-1</a><br>
+- added more verbose WonderSwan ROM info (by NoisyB; thanks to dox)<br>
+- updated (GBA) used Jeff Frohwein's Flash Advance Linker code V1.72 (by dbjh)<br>
+- added (GBA) -xfals send/receive SRAM to/from Flash Advance Linker; --file=PORT
+  (by dbjh)<br>
+- added (GBA) -xfalb&#60;n&#62; send/receive SRAM to/from Flash Advance Linker
+  bank n; --file=PORT (by dbjh)<br>
+- removed (GBA) -xfalm (use SPP mode), because it is not needed anymore (by
+  dbjh)<br>
+- updated (SNES) fixed checksum function for Far East of Eden Zero (J) (by dbjh)<br>
+- added (GBA) -multi{1,2,3} make multirom for Flash Advance Linker (by dbjh)<br>
+- updated/added (SNES) Game Doctor ROM file support (-gd3 &amp; -s) (by John
+  Weidman)<br>
+- updated (all) fixed DOS specific bug in IPS code (by dbjh)<br>
+- updated (SNES) fixed DOS specific problem for -swc, -fig and -smc (by dbjh)<br>
+- updated (all) fixed DOS specific bug in -ins code (by dbjh)<br>
+- introducing config file updates without overwrites of old values for more
+  comfort (by NoisyB)<br>
+- added (WS/WSC) -chk fix ROM checksum (for WonderSwan(Color)) (by NoisyB;
+  thanks to dox)<br>
+- updated (SNES) changed -swcs, -figs and -ufos to always create a file of 32.5
+  kB. This solves some problems where SRAM files created with an emulator would
+  not work on a copier (by dbjh; thanks to Caz for investigating the problem and
+  providing a solution)<br>
+- added -mkcue generate CUE file; --rom=CD_IMAGE --file=TRACK_MODE (by NoisyB)<br>
+- ported the whole project to FreeBSD (by NoisyB)<br>
+<!-- beta2 -->
+- updated (GBA) changed -xfalb&#60;n&#62; to -xfalb &#60;n&#62; (space between
+  option and argument) (by dbjh). Did the same thing for -xfalc&#60;n&#62;<br>
+- updated (GB) changed -xgbxb&#60;n&#62; to -xgbxb &#60;n&#62; (space between
+  option and argument) (by dbjh)<br>
+- switched internal workflow to getopt() and made numerous cosmetical
+  changes/clean ups (by NoisyB)<br>
+- added -hdn=BYTES force ROM has backup unit/emulator header with BYTES size (by
+  NoisyB)<br>
+  detects the correct TRACK_MODE of IMAGES w/o *.cue file<br>
+- added --rrom rename all ROMs in DIR to their internal names; --rom=DIR (by
+  NoisyB)<br>
+- added --rr83 like --rrom but with 8.3 filenames; --rom=DIR (by NoisyB)<br>
+- added --stpn=N strip N Bytes from ROM beginning (by NoisyB)<br>
+- added --insn=N insert N Bytes (0x00) before ROM (by NoisyB)<br>
+- added --xmccl send/receive BYTES to/from Mad Catz Camera Link (experimental)
+  (by NoisyB)<br>
+- speed --rrom, --rr83 and --ls have been sped up significantly<br>
+- updated (N64) added 512 Mb ROM support for transfers to Doctor V64 Junior
+  (by NoisyB; thanks to TenOfTen (tenoften@jahej.com))<br>
+- updated (SNES) fixed -fig to give the same output as a Super Pro Fighter (by
+  dbjh; thanks to JohnDie for the information)<br>
+- updated (all) parallel port is only accessed for copier I/O (by dbjh)<br>
+- added (SNES) -bs &amp; -nbs force ROM is a Broadcast Satellaview dump/regular
+  cartridge dump (by dbjh)<br>
+- added (NES) -unif convert to UNIF format/UNF {iNES, UNIF}->UNIF (by dbjh)<br>
+- updated (NES) -ines convert to iNES format {iNES, UNIF, Pasofami}->iNES (by
+  dbjh)<br>
+- added (NES) -dint convert ROM to non-interleaved format (by dbjh)<br>
+- added (NES) -pasofami convert to Pasofami format iNES->Pasofami (by dbjh)<br>
+- updated (NES) ROM information for iNES, UNIF, FFE and Pasofami (by dbjh)<br>
+- updated (NES) fixed -j so that it converts properly from Pasofami to iNES (by
+  dbjh)<br>
+- updated (NES) fixed -s so that it converts properly from iNES to Pasofami (by
+  dbjh)<br>
+- updated (NES) fixed -ineshd (extract iNES header to .hdr file) (by dbjh)<br>
+- added (NES) -ctrl set controller type for ROM (UNIF only) (by dbjh)<br>
+- added (NES) -ntsc set TV compatibility to NTSC (UNIF only) (by dbjh)<br>
+- added (NES) -pal set TV compatibility to PAL (UNIF only) (by dbjh)<br>
+- added (NES) -bat set battery backup (by dbjh)<br>
+- added (NES) -nbat set no battery backup (by dbjh)<br>
+- added (NES) -vram set VRAM override (UNIF only) (by dbjh)<br>
+- added (NES) -nvram set no VRAM override (UNIF only) (by dbjh)<br>
+- added (NES) -mirr set mirroring type (by dbjh)<br>
+- added (NES) -n change internal ROM name (UNIF only) (by dbjh)<br>
+- added (NES) -mapr=NAME specify board name or mapper number for conversion
+  options (by dbjh)<br>
+- added (NES) -dumpinfo use dumper info when converting to UNIF (by dbjh)<br>
+<!-- beta3 -->
+- updated (NES) UNIF code works also on big endian machines (by dbjh)<br>
+- updated (GBA) changed meaning of -xfalc. In order to dump N megabits of a
+  cartridge specifying -xfalc=N &#60;filename&#62; is enough (by dbjh)<br>
+- updated (NES) fixed some minor format conversion problems (by dbjh)<br>
+- updated (LYNX) fixed some problems with endianess (by dbjh)<br>
+- added (LYNX) --lynxit send/receive ROM to/from Lynxit interface (by NoisyB)<br>
+- updated (SNES) fixed checksum function for Momotaro Dentetsu Happy (J) (by
+  dbjh)<br>
+- updated (SNES) fixed SNES info for Dai Kaiju Monogatari 2 (J) (by dbjh)<br>
+- updated (SNES) improved SNES chip type info (by dbjh)<br>
+- added gzip support (by dbjh)<br>
+- updated (Genesis) fixed several bugs (header is correct after -j/-s, correct
+  behaviour if switch -nbak is active, -smd/-mgd if already in SMD/MGD format,
+  -lsv) (by dbjh)<br>
+- added --padn=N pad ROM to N Bytes (put Bytes with value 0x00 after end) (by
+  dbjh)<br>
+<!-- beta4 -->
+- updated (NES) FDS images are recognized without -fdsl (by dbjh)<br>
+- added (GBA) -xfalmulti send multiple ROMs to Flash Advance Linker (by dbjh)<br>
+- updated (GBA) changed -multi so that it takes a size argument (by dbjh)<br>
+- removed (GBA) -multi{1,2,3}, -multi can be used instead (by dbjh)<br>
+- some code clean ups (by NoisyB)<br>
+- added read-only zip support (by dbjh) Note that only the first file inside the
+  zip archive will be looked at. Use -ls{v} to see info about all files in the
+  zip archive<br>
+- added (SNES) NSRT header support (by dbjh)<br>
+- updated (SNES) fixed an SWC problem for HiROM games without SRAM (by dbjh)<br>
+- updated (SNES) -k also cracks Killer Instinct (by dbjh)<br>
+- updated (SNES) -smc writes a correct SMC header (by dbjh)<br>
+- added (SNES) -ctrl{2} specify type of controller in port 1/2 for emu when
+  converting (by dbjh)<br>
+- updated (Genesis) replaced Charles MacDonald's SMD code with our own (by dbjh)<br>
+- added experimental (PSX/N64) --xdex send/receive BLOCK N to/from DexDrive (by
+  NoisyB)<br>
+- added 664 new ROMs to the internal database (by NoisyB)<br>
+- updated (SNES) replaced Cowering's BS detection code with John Weidman's (by
+  dbjh)<br>
+<!-- beta5 -->
+- updated (all) fixed two bugs in IPS creation code (by dbjh)<br>
+- updated (all) -mki generates RLE compressed IPS files (by dbjh)<br>
+- updated (SNES) fixed split file detection for SWC and FIG dumps (by dbjh)<br>
+- updated (Genesis) fixed -s for RAW images (by dbjh)<br>
+- updated (SNES) added crack for Donkey Kong Country, Diddy's Kong Quest &amp;
+  Mega Man X (by dbjh; many thanks to CL of NSRT)<br>
+- updated (SNES) fixed bug in Game Genie code (by dbjh)<br>
+- updated (all) fixed subtle bug in function that is used for -k, -f, -l &amp;
+  -crp (by dbjh)<br>
+- updated (SNES) added crack for BS The Legend of Zelda Remix &amp; Demon's
+  Crest (by dbjh, based on info of John Weidman)<br>
+<!-- beta6 -->
+- updated (SNES) added crack for at least the following games: Breath of Fire II,
+  Kirby's Dream Course (many thanks to John Weidman), Lufia II - Rise of the
+  Sinistrals and Earthbound (thanks to CL) (by dbjh)<br>
+- updated (SNES) crack for Mega Man X should work (better) (by dbjh)<br>
+- updated (SNES) added NTSC/PAL fix for at least the following games:
+  Final Fight Guy, Gokujyou Parodius, Kirby No Kira Kizzu, Robotrek and
+  Seiken Densetsu 3 (by dbjh)<br>
+- updated (SNES) added crack for Uniracers/Unirally and NTSC/PAL fix for
+  Seiken Densetsu 2 and Secret of Mana (by dbjh; thanks to John Weidman)<br>
+- updated (all) fixed problem with reading environment variables under DOS and
+  Windows (by dbjh)<br>
+- updated (all) environment variables take precedence over configuration file
+  variables (by dbjh)<br>
+- updated (SNES) fixed some problems with joining GD3 files (by dbjh)<br>
+- added (SNES) -xgd3 send ROM to Game Doctor SF3(SF6/SF7); --file=PORT
+  (by John Weidman and dbjh)<br>
+- added (SNES) -dbuh display backup unit header and see if it matches with what
+  uCON64 found while analyzing the ROM data (by dbjh, based on an idea by
+  JohnDie)<br>
+- removed (SNES) -gdf (fix Game Doctor savegame problems), because -gd3 already
+  provides this functionality (by dbjh)<br>
+- updated (SNES) fixed some -xgd3 problems, uppercase filenames sent to unit,
+  buffer data correct for all files, transfer file size fixed (by John)<br>
+- updated (SNES) checksums and deinterleaves for HiROM 24 Mbit Game Doctor
+  format should work (by John)<br>
+- added (SNES) -xswc2 send ROM to Super Wild Card and enable Real Time Save
+  mode (by dbjh)<br>
+- updated (SNES) added NTSC/PAL fix for Live-a-Live (by dbjh)<br>
+- updated (all) added full wildcard support ("ucon64 -fig *.swc"). Don't forget
+  to read the FAQ (by dbjh)<br>
+- added (all) -q be quiet (don't show ROM info) (by dbjh)<br>
+- updated (all) uCON64 handles multiple options on the same command line (by
+  dbjh)<br>
+- added (SNES) --ssize=SIZE specify split part size in Mbit (not for Game
+  Doctor SF3) (by dbjh)<br>
+<!-- beta 7 -->
+- updated (SNES) added NTSC/PAL fix for Terranigma (by dbjh; thanks to John)<br>
+- added (all) full support for all existing DAT files (GoodXXXX, RomCenter)
+  they'll be used to identify (test) or rename your ROMs or any other purpose
+  you might need a ROM manager for (by NoisyB)<br>
+- updated (SNES) fixed BS ROM detection affecting BS Zootte Mahjong! IVT (by
+  John)<br>
+- added (all) --lsd to list all ROMs using RomCenter or GoodXXXX DAT files (by
+  NoisyB)<br>
+- updated (all) improved support for zip files that contain more than one file
+  (by dbjh)<br>
+- updated (SNES) added NTSC/PAL fix and crack for Mario no Super Picross (by
+  dbjh; thanks to John)<br>
+- renamed (N64) --sram to --lsram (by NoisyB)<br>
+- replaced --file with option arguments for the following options: --strip,
+  --find, -c, --cs, --dbs, -b, -i, --mki, -a, --mka, --na, --ppf, --mkppf,
+  --nppf, --idppf, --crp, -n, --bot, --lsram, --usms, --n2, --n2gb, --b0, --b1,
+  --sam, --bios and --dumpinfo (by NoisyB)<br>
+- updated (PSX) PPF code works correctly and generates correct patches on
+  big-endian machines (by dbjh)<br>
+- added (patch) --patch option to specify the patch file for APS, IPS, BSL and
+  PPF (by NoisyB)<br>
+- updated (SNES) added NTSC/PAL fix for Dual Orb 2 (thanks to John), Dr. Mario,
+  Dragon - The Bruce Lee Story (U) and Wolfenstein 3D (U) (by dbjh)<br>
+- updated (N64) APS code works correctly and generates correct patches on
+  big-endian machines (by dbjh)<br>
+- added (all) -o specify output directory. Note that now uCON64 by default
+  writes its output files to the current directory (by NoisyB and dbjh)<br>
+- added (all) --poke=OFF:V change byte at file offset OFF to value V (by dbjh)<br>
+<!--
+- tested (Genesis) -xsmd and -xsmds with my "new" Super Magic Drive and they
+  worked as we expected (by NoisyB; thanks to dbjh)<br>
+Of course we test things... Should be put in a file like testsdone.html ;-) (dbjh)
+-->
+- updated (SNES) fixed problem where it was necessary to run uCON64 twice on a
+  ROM with the option -chk, before the checksum was really fixed (by dbjh)<br>
+- added (all) --rename (by NoisyB and dbjh)<br>
+- added (all) --scan like: GoodXXXX scan ... (by NoisyB)<br>
+- added (SNES) uCON64 is able to use an "addendum file" for the options -k
+  (snescopy.txt), -f (snesntsc.txt or snespal.txt) and -l (snesslow.txt). You
+  can add new search patterns to those files if the latest binary doesn't
+  support them yet. See the FAQ for a more elaborate explanation (by dbjh)<br>
+- added Visual C++ build support (including libdiscmage) (by dbjh)<br>
+- updated (GBA) fixed a bug that would crash FAL code on compressed files (by
+  dbjh)<br>
+- (re)added (GBA) -xfalm (try to enable EPP mode). Note that the meaning is
+  reversed. Enabling EPP mode only when this switch is specified makes it
+  possible to use the Windows versions of uCON64 under Windows XP (NT/2000)
+  (by dbjh)<br>
+- added support for the I/O port driver inpout32.dll to the Windows ports. See
+  the FAQ for more information (by dbjh)<br>
+- uCON64 can also be compiled with g++; configure with "CC=g++ ./configure"
+  (by dbjh)<br>
+- updated (SNES) uCON64 uses one maker/publisher list for all SNES games (by
+  dbjh; thanks to FluBBa for the help)<br>
+- updated (GB &amp; GBA) fixed maker info (by dbjh; thanks to FluBBa for the
+  info)<br>
+- updated (SNES, GB &amp; GBA) fixed huge mistake in the way the Nintendo
+  publisher list was used (resulting in incorrect maker info) (by dbjh)<br>
+- updated (SNES) fixed problem with splitting HiROM Game Doctor files smaller
+  than or equal to 8 Mbit (by dbjh)<br>
+- replaced internal handling/conversion of DiscJuggler and Nero images with
+  included libdiscmage. The recognition of ISO, BIN, CDI and NRG images works
+  in 80% of the cases. Every other function like ripping/converting is still
+  flakey and therefore disabled in this beta release (by NoisyB)<br>
+<!-- beta 8 -->
+- updated (all) fixed problems with -rename &amp; -rrom for files without a
+  suffix (by dbjh)<br>
+- updated (all) links (including symbolic links) are handled correctly for
+  -rename &amp; -rrom (by dbjh)<br>
+- added support for I/O port driver io.dll to the Windows ports. See the FAQ
+  for more information (by dbjh)<br>
+- added (SNES) -xfig send/receive ROM to/from Pro Fighter; --file=PORT (by
+  JohnDie and dbjh)<br>
+- added (SNES) -xfigs send/receive SRAM to/from Pro Fighter; --file=PORT (by
+  JohnDie and dbjh)<br>
+- added (all) --mkdat=DATFILE create DAT file based on a directory/list of ROMs
+  (by dbjh)<br>
+- updated (N64) fixed -usms (by dbjh)<br>
+- updated (all) fixed problem with -rename when output directory is on another
+  file system (M$ speak: drive) (by dbjh)<br>
+- added MinGW build support (including libdiscmage) (by dbjh)<br>
+- changed name of two property variables: now configdir is named
+  ucon64_configdir and datdir is named ucon64_datdir (by dbjh)<br>
+- updated (SNES) changed checksum calculation function so that it is stricter
+  (by dbjh; thanks to Nach)<br>
+- updated (SNES) added more verbose BS info (by dbjh, based on info of Derrick
+  Sobodash)<br>
+- updated (GB) fixed -n2gb, -gbx &amp; -sgb (by dbjh)<br>
+- updated (SNES) replaced -ehi with -erom (force ROM is "Extended") in order to
+  support the two Extended LoROM dumps in the known universe (by dbjh)<br>
+- updated (SNES) added initial support for Sufami Turbo ROMs (by dbjh; thanks
+  to Nach for some info)<br>
+- added support for GameCube images to libdiscmage (by NoisyB; thanks to
+  gc-nfo.com)<br>
+- updated (SNES) improved detection of interleaved ROMs (by dbjh)<br>
+- updated (SNES) -smc, -swc, -fig, -mgd &amp; -gd3 (if it's a LoROM dump)
+  automatically deinterleave the ROM data if the ROM is detected as interleaved
+  (by dbjh)<br>
+- updated (SNES) -gd3 can convert Tales of Phantasia and Dai Kaiju Monogatari 2
+  (by dbjh)<br>
+- updated (SNES) interleaved extended HiROM dumps are handled correctly (by
+  dbjh)<br>
+- updated (SNES) uCON64 follows the "uCONRST standard" for calculating the
+  "search CRC32" of BS dumps (by dbjh)<br>
+- updated (all) both the search CRC32 and the "data CRC32" are displayed if
+  they differ (by dbjh)<br>
+- updated (SNES) applied anomie's GD patch which solved a problem with one-part
+  split files (by dbjh)<br>
+- updated (SNES) replaced John Weidman's BS detection code with Nach's (by
+  dbjh)<br>
+- updated (SNES) uCON64 now recognises a complete GoodSNES 0.999.5 set (by
+  JohnDie and dbjh)<br>
+- added (SNES) -dmirr strip mirrored block from end of ROM (by dbjh)<br>
+- added (SNES) support for native Super UFO file format (by John and dbjh) Use
+  -ufo to convert a file to Super UFO format, use -s to split the resulting
+  file (required for HiROM games)<br>
+- updated (SMS) -mgd is recognised again, -smd won't crash uCON64 anymore and
+  -smds calls the SMS function when -sms is specified (by dbjh)<br>
+- updated (SMS) -sms in no longer required for SMD files, they are
+  automatically detected (by dbjh)<br>
+- updated (SNES) fixed -b (apply Baseline patch) (by dbjh)<br>
+- updated (all) added support for non-standard parallel port addresses (by
+  dbjh)<br>
+- updated (SNES) added crack for Tetris Attack (by dbjh; thanks to CL)<br>
+<p>
+<a name="198-2">1.9.8-2</a><br>
+- updated (SNES) -gd3 produces a more logical format for Daikaijuu Monogatari 2
+  (by dbjh; thanks to Nach for the idea)<br>
+- updated (SMS) -smd interleaves SMS files (by dbjh; thanks to nori-p for
+  testing and feedback)<br>
+- updated (GBA) fixed stupid bug introduced in 1.9.8beta8 that caused
+  -xfalmulti to hang (-multi and -xfal still worked) (by dbjh)<br>
+- updated (SNES) hopefully fixed last problem with splitting GD3 files (by
+  dbjh)<br>
+- updated (SNES) added crack for Dixie Kong's Double Trouble (by dbjh, based on
+  IPS patch by Black Hole of Infernal Affairs)<br>
+- files of 0 bytes won't be detected as WonderSwan files anymore (by dbjh)<br>
+- removed (NES) support for bad FDS DAT files (by dbjh) If you really want to
+  use FDS DAT files created by tools that erroneously include the header in the
+  CRC32 calculation, use the switch -nhd. Someone with a complete FDS
+  collection should create a new DAT file<br>
+- updated (SNES) fixed crashing on first split file of Tales of Phantasia and
+  Daikaijuu Monogatari 2 (by dbjh)<br>
+- added (SNES) -xgd6 send ROM to Game Doctor SF6/SF7. This probably solves the
+  problems people are having with -xgd3 (by John)<br>
+- added (SNES) -xgd6s send/receive SRAM to/from Game Doctor SF6/SF7 (by John)<br>
+- added (SNES) -xgd3s send SRAM to Game Doctor SF3/SF6/SF7 (by John)<br>
+- added (Genesis) -multi can create a multi-game file for use on the MD-PRO
+  flash card. The downside: creating a multirom for the FAL doesn't work
+  without -gba anymore (by dbjh; thanks to Enemy and acem77 for testing)<br>
+- added (Genesis) -f can fix region protections, addendum files are genpal.txt
+  and mdntsc.txt (by dbjh)<br>
+- added (SNES) -id force -gd3 to produce a unique file name. This switch
+  doesn't show in the help, because it "fails" for 130 dumps of the GoodSNES
+  "0.999.6--" set. 128 IDs are each shared by 2 games, 2 IDs are shared by 3
+  games (by dbjh)<br>
+- updated (all) the patch generation options (-mka, -mki, -mkppf) use the
+  modified ROM name for the patch to create. They used to use the name of the
+  original ROM (by dbjh)<br>
+- updated (N64) fixed major bug in APS creation code (by dbjh)<br>
+- updated (SNES) added NTSC/PAL fix for Magical Pop'n (J) and Metal Warriors
+  (U) (by dbjh)<br>
+- added (Genesis) recognition of <i>real</i> MGD files (by dbjh; thanks to
+  acem77 for the feedback)<br>
+- updated (Genesis) -mgd now produces proper MGD files (by dbjh)<br>
+- added (Genesis) -bin convert to binary format. This option produces files in
+  the format that uCON64 1.9.8-1 produces with the option -mgd (by dbjh)<br>
+- added (Genesis) -xmd &amp; -xmds send/receive ROM/SRAM to/from MD-PRO flash
+  card programmer (by dbjh and NoisyB with many thanks to timofonic and of
+  course ToToTEK Multi Media for providing us with the necessary information.
+  Special thanks go to Leo of ToToTEK for being very helpful and willing to
+  answer our questions)<br>
+- added (Genesis) -ssize=SIZE specify split part size in Mbit (by dbjh)<br>
+- updated (SNES, SMS, PC-Engine &amp; Genesis) -mgd produces correct file names
+  (by dbjh; thanks to acem77 for testing and feedback)<br>
+- updated (Genesis) -mgd automatically pads files to the right size (by dbjh)<br>
+- added (PC-Engine) -swap invert/swap bits of all bytes of a file. This
+  effectively converts PC-Engine games between Japan and U.S.A. "mode" (by
+  dbjh; thanks to acem77 for the information)<br>
+- added (SMS) backup unit header length detection (by dbjh; thanks to acem77
+  for pointing this out) This made a problem with the current SMS DAT file
+  surface: some CRC32 values are the result of including a backup unit header
+  in the calculation. Someone with a complete GoodSMS collection should create
+  a new DAT file<br>
+- updated (PC-Engine) auto-detection of bit-swapped files (by dbjh; thanks to
+  Cowering for the info)<br>
+- updated (PC-Engine) -mgd automatically bit-swaps the file if it is detected
+  as being in Japan "mode" (by dbjh)<br>
+- updated (PC-Engine) -smg automatically bit-swaps the file if it is detected
+  as being in U.S.A. "mode" (by dbjh) I don't know if this correct. Please give
+  feedback<br>
+- added (GB) -logo restore ROM logo character data (offset: 0x104-0x134)
+  (by NoisyB)<br>
+<p>
+<a name="198-3">1.9.8-3</a><br>
+- added (SNES) -xswc-super option to force 32 Mbit dump (by John Weidman)<br>
+- updated (SNES) enabled -hi &amp; -nhi for -xswc-super, -xswc (dumping) and
+  -xfig (dumping) (by dbjh)<br>
+  You should explicitly specify the parallel port address when you use -hi or
+  -nhi in combination with one of the mentioned dump options<br>
+- updated (Genesis) fixed problem with -multi that caused problems with some
+  games when run on the MD-PRO (by dbjh)<br>
+- updated (SNES, Genesis, PC-Engine, SMS, Game Gear &amp; GB) -mgd now produces
+  correct file names. This time for real! :-) (by dbjh; thanks to acem77 for
+  testing and feedback)<br>
+- added (SNES) -xswcr send/receive RTS data to/from Super Wild Card*/(all)SWC
+  (by dbjh)<br>
+- updated (PC-Engine) reversed how -mgd &amp; -smg work. -mgd bit-swaps a file
+  if it is detected as not being bit-swapped ("Japan mode"/"unencrypted"). -smg
+  bit-swaps a file if it is detected as being bit-swapped
+  ("U.S.A. mode"/"encypted") (by dbjh; thanks to kyuusaku for the feedback)<br>
+  Note that if you want to play a game with an MGD2 on a PC-Engine that you
+  have to manually bit-swap the file with -swap (or specify -int while
+  converting).<br>
+- updated (SMS) improved detection of SMS and Game Gear files. In most cases
+  specifying -sms is no longer necessary (by dbjh)<br>
+- added (SMS) -chk fix checksum (by dbjh)<br>
+- updated (PC-Engine) it's Magic Super Griffin, not Super Magic Griffin. Thus
+  the option -smg has been renamed to -msg (by dbjh; thanks to kyuusaku for the
+  info)<br>
+- added (PC-Engine) -xmsg send/receive to/from Magic Super Griffin (by dbjh;
+  thanks to kyuusaku for testing)<br>
+- added (PC-Engine) -f fix region protection (by dbjh; thanks to kyuusaku for
+  testing)<br>
+- updated (NES) -ffe writes correct headers for the NES games that actually run
+  on the Super Magic Card (by dbjh; thanks to kyuusaku for the info and
+  testing)<br>
+- added (NES) -xsmc send to Super Magic Card (by dbjh; thanks to kyuusaku for
+  testing)<br>
+- added (NES) -xsmcr send/receive RTS data to/from Super Magic Card (by dbjh)<br>
+- added (all) -pattern=FILE change ROM based on patterns specified in FILE (by
+  dbjh)<br>
+- added (N64) -swap2 word-swap ROM (1234 &#60;-&#62; 3412) (by dbjh)<br>
+- added (SNES) -xgd3r &amp; -xgd6r send/receive RTS data to/from Game Doctor
+  SF3/6/7 (by John Weidman) -xgd3r can currently only be used for sending<br>
+- added (SNES) -gd3s convert emulator *.srm (SRAM) to GD BRAM format (by dbjh)<br>
+- updated (SNES) added crack for Front Mission - Gun Hazard (by dbjh; many
+  thanks to John) This crack is only necessay when the game is modified, for
+  example by -f.<br>
+- updated (SNES) added NTSC/PAL fix for Pop'n Twinbee (by dbjh)<br>
+- updated (SNES, Genesis, PC-Engine &amp; NES) (dumping) functions for FFE
+  copiers and Pro Fighter should work correctly with very fast PCs (by JohnDie)<br>
+- updated (N64) added work-around for old bug in DJGPP and Solaris. Now -swap,
+  -swap2, -v64 and -z64 work correctly for large files (larger than 8 or 12 MB
+  respectively) when using the DOS or Solaris port of uCON64 (by dbjh)<br>
+- updated (Genesis) replaced -pal with -region=CODE. Now it should be possible
+  to create multi-game files for the MD-PRO that work on all three console
+  types (by dbjh; many thanks to SamIAm for the info that brought me up the
+  idea)<br>
+<p>
+<a name="198-4">1.9.8-4</a><br>
+- updated (all) fixed 2 bugs in code of -pattern (by dbjh)<br>
+- added (SNES) -xfigc and -xswcc option to transfer SRAM to/from cartridge in
+  *Pro Fighter* and Super Wild Card copiers (by JohnDie)<br>
+- added support for Linux/PPC (by dbjh; thanks to Tobias Pflug and Misty De Meo)<br>
+- updated (SNES, Genesis, PC-Engine &amp; NES) fixed subtle bug in code of FFE
+  dumping routines (by dbjh; thanks to Neill Corlett for pointing this out)<br>
+- updated (SNES) implemented SRAM size display for Super FX ROMs (by JohnDie)<br>
+- updated (SMS) fixed bug that caused -chk not to work for uninterleaved files
+  with a header (by dbjh)<br>
+- added support for Mac OS X (including libdiscmage) (by dbjh; many thanks to
+  Steve Paige for his help)<br>
+- added (SNES) -xswc-dm=MODE specify SWC dump mode (by dbjh)<br>
+- removed (SNES) -xswc-super, use -xswc -xswc-dm=1 instead (by dbjh)<br>
+- updated (all) uCON64 won't accept a parallel port address without using --port
+  anymore (by dbjh)<br>
+  This used to be possible:<br>
+  ucon64 &#60;transfer option&#62; &#60;rom&#62; &#60;parallel port address&#62;<br>
+  Now you should use a command like this:<br>
+  ucon64 &#60;transfer option&#62; &#60;rom&#62; --port=&#60;parallel port address&#62;<br>
+  Or of course, if uCON64 automatically detects the right port or if you have
+  specified the correct port in the configuration file, a command like this:<br>
+  ucon64 &#60;transfer option&#62; &#60;rom&#62;<br>
+  This change removes the requirement of specifying the parallel port address
+  when using additional command line options (switches) like -xfalm or -xswc-dm.
+  It also prevents uCON64 from accessing I/O ports not associated to the
+  parallel port if you specify additional transfer switches while &#60;rom&#62;
+  has a name that starts with a number<br>
+- updated (SNES, Genesis, PC-Engine, SMS, Game Gear &amp; GB) -mgd produces
+  correct index files (MULTI-GD) (by dbjh)<br>
+- updated (SNES &amp; Genesis) -s produces an index file if the ROM dump is in
+  MGD format (by dbjh)<br>
+- added support for ppdev (GNU/Linux-only) (by dbjh)<br>
+  This solves two problems:<br>
+  1.) It's no longer necessary for uCON64 to be setuid root in order to
+  communicate with a backup unit. Just make sure /dev/parport&#60;n&#62; has the
+  right permissions or get yourself added to the correct group<br>
+  2.) Non-standard parallel port addresses do not have to be specified. uCON64
+  still uses the first parallel port by default. It's possible to override that
+  by setting parport_dev in the configuration file or by setting an environment
+  variable<br>
+  Use the configure option --enable-ppdev to enable the code<br>
+- added (all) -md5 calculate MD5 checksum of ROM (by NoisyB)<br>
+- added (all) -sha1 calculate SHA-1 checksum of ROM (by NoisyB)<br>
+- added (GBA) support for the Flash 2 Advance (Ultra); options are -xf2a
+  (transfer ROM data), -xf2ac=N (dump N Mbits), -xf2as (transfer 256 kB of SRAM
+  data) and -xf2ab=BANK (transfer 64 kB of SRAM data to "bank" BANK) (by NoisyB
+  and dbjh, based on source code of Ulrich Hecht and David Voswinkel; many
+  thanks to David Voswinkel for testing the parallel port code)<br>
+- added (GBA) -xfa2multi=SIZE send multiple ROMs to the F2A. You should not
+  specify a loader file on the command line as a file argument. Specify one in
+  the configuration file or set an environment variable (by dbjh)<br>
+- added (SNES) -dnsrt restore name, region and checksum from NSRT header and
+  remove it (by dbjh)<br>
+- updated (SNES) fixed shameful bug that caused -chk and -n not to work
+  correctly for interleaved ROM dumps (by dbjh)<br>
+- updated (SNES) added/updated code to dump special-chip cartridges. Now it's
+  possible to dump Super FX (2), S-DD1, SA-1 and SPC7110 cartridges, but see the
+  comment in swc.c! (by JohnDie)<br>
+- updated (SNES) made -xswc-dm active for -xswcc so that SRAM data can be
+  transferred to and from Super FX 2 cartridges (by dbjh)<br>
+- updated (SNES) renamed -xswc-dm to -xswc-io, because it can also be used for
+  sending an SRAM file (by dbjh)<br>
+- updated (GBA) made -xfalmulti use gbaloader to be consistent with -xf2amulti.
+  So, don't specify a loader as file argument anymore (by dbjh)<br>
+<p>
+<a name="200">2.0.0</a><br> <!-- 1.9.8-5 -->
+- updated (GBA) fixed F2A USB send code (by dbjh; many thanks to David Gauchard
+  for feedback, testing and sending a patch to fix the problem)<br>
+- updated (N64) cleaned up Doctor V64 Junior transfer source code (by dbjh;
+  thanks to TenOfTen and GameCopierUser0666 for testing)<br>
+- updated (SNES) added new SWC "I/O mode" 0x100, dump BIOS (by dbjh)<br>
+- updated (GB) improved ROM info (by dbjh)<br>
+- updated (GB) fixed problem with dumping "Rocket Games" cartridges with the
+  Game Boy Xchanger (by dbjh; thanks to Anna Kubisty for reporting the problem
+  and testing, and thanks to Cowering for his help and providing us with the
+  necessary information)<br>
+- updated (GB) cleaned up Game Boy Xchanger transfer source code (by dbjh; many
+  thanks to Anna Kubisty for testing)<br>
+- added (DC) --scr scramble 1ST_READ.BIN for selfboot CDs (by NoisyB)<br>
+- added (DC) --unscr unscramble 1ST_READ.BIN for non-selfboot CDs (by NoisyB)<br>
+- added (DC) --mkip generate IP.BIN file with default values (by NoisyB)<br>
+- added (DC) --parse=TEMPLATE parse TEMPLATE file into a IP.BIN (by NoisyB)<br>
+- updated (SNES) corrected output of -dbuh (by dbjh)<br>
+- added (GB) --xgbxm try to enable EPP mode (by dbjh)<br>
+- added (SMS/Game Gear) --xgg &amp; --xggs send/receive ROM/SRAM to/from
+  SMS-PRO/GG-PRO flash card programmer (by dbjh; thanks to timofonic and Leo of
+  ToToTEK Multi Media for providing us with the necessary information, many
+  thanks to Walter van Niftrik for testing)<br>
+- added (PCE) --xpce send/receive ROM to/from PCE-PRO flash card programmer (by
+  dbjh; thanks to timofonic and Leo of ToToTEK Multi Media for providing us with
+  the necessary information)<br>
+- added (PCE) --multi create a multi-game file for use on a PCE-PRO flash card
+  (by dbjh)<br>
+- added (SMS/Game Gear) --multi create a multi-game file for use on an SMS-PRO
+  or GG-PRO flash card (by dbjh; thanks to Walter van Niftrik for his patch and
+  for testing)<br>
+- added (SMS/Game Gear) --xggb=BANK send/receive SRAM to/from SMS-PRO/GG-PRO
+  BANK (by dbjh; thanks to Walter van Niftrik for the suggestion and testing)<br>
+- added (Genesis) --xmdb=BANK send/receive SRAM to/from MD-PRO BANK (by dbjh)<br>
+- added support for I/O port driver DlPortIO to the Windows ports. See the FAQ
+  for more information (by dbjh)<br>
+- the Windows versions of uCON64 won't crash anymore without a (working) I/O
+  port driver under Windows NT/2000/XP. They display a helpful error message
+  instead (by dbjh)<br>
+- updated (GBA) improved recognition of GBA files and fixed start address
+  information (by dbjh)<br>
+- updated (GBA) added support for Linux 2.5 (and later) to F2A USB code (by
+  dbjh; thanks to colle for sending a patch and testing)<br>
+- added support for OpenBSD (by dbjh; thanks to timofonic for testing)<br>
+- added (N64) --xcd64, --xcd64b, --xcd64s, --xcd64f, --xcd64e, --xcd64m &amp;
+  --xcd64p transfer ROM/boot emu/SRAM/flash RAM/EEPROM/memory pack data to/from
+  CD64 (by dbjh; thanks to Ryan Underwood for libcd64 and testing)<br>
+- added (Genesis) support for Mike Pavone's Genesis/Sega CD transfer cable (by
+  dbjh; thanks to Mike Pavone for the information and thanks to timofonic for
+  his PR work ;-)<br>
+- updated (SNES) -gd3 does not produce 28 Mbit HiROM files anymore, it
+  automatically pads them to 32 Mbit (by dbjh)<br>
+- added (Genesis) support for Cyan's Megadrive ROM copier (by Cyan Helkaraxe and
+  dbjh; thanks to timofonic for his PR work)<br>
+- moved and split some files in the codebase and changed the workflow. Adding a
+  new option/function now requires only two changes in the code (by NoisyB)<br>
+- added --dual show ROM as dualdump (by NoisyB)<br>
+- added --code show ROM as code (by NoisyB)<br>
+- added --print show ROM in printable characters (by NoisyB)<br>
+- added --findi find STRING in ROM and ignore case of alpha bytes (by NoisyB)<br>
+- added --findr find STRING in ROM but look also for shifted/relative
+  similarities (by NoisyB)<br>
+- added (NeoGeo Pocket) --xpl send/receive ROM to/from Pocket Linker, --xpli
+  show information about inserted cartridge &amp; --xplm try to enable EPP mode
+  (by Walter van Niftrik)<br>
+- added (SNES) --multi create a multi-game file for use on a Super Flash flash
+  card (by JohnDie)<br>
+- added (SNES) --xsf send/receive ROM to/from Super Flash card, --xsfs to
+  send/receive SRAM to/from Super Flash card (by JohnDie)<br>
+- updated (Genesis) added support for 32 Mbit Intel MD-PRO flash card (by dbjh;
+  thanks to Marc Haisenko for sending a patch and testing)<br>
+- updated (Genesis) fixed -n and -n2 (-n did what -n2 should do and vice versa)
+  (by dbjh)<br>
+- added (Genesis) support for splitting and joining binary (Magicom) files (by
+  dbjh; thanks to T. Reid for the information)<br>
+- updated (NES) fixed -dumpinfo so that the year field is read correctly from
+  the dumper info file if it has more than 2 digits (by dbjh)<br>
+- updated (SNES) --swcs, --figs, --ufos &amp; --gd3s now also work for backup
+  unit SRAM files, i.e., files with a header (by dbjh)<br>
+- updated (SNES) fixed a bug that caused several headerless dumps to be detected
+  as SWC RTS or SWC SRAM files (by dbjh; many thanks to Dweezledap for reporting
+  this bug and for testing)<br>
+- updated (N64) added support for 6105 boot codes to check sum routine (by dbjh)<br>
+- updated (SNES) fixed some other issues with auto-detection (by dbjh; many
+  thanks to Dweezledap for reporting these problems and for testing)<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</tt></body></html>

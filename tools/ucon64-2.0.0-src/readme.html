@@ -1,0 +1,594 @@
+<html><head>
+<link rel="icon" href="images/icon.png" type="image/png">
+<title>uCON64 - ReadMe</title></head><body bgcolor="#ffffff"><tt><pre>
+uCON64 - THE tool for all your video game console concerns.
+
+Its main features are:
+- It is Open Source Software
+- (Therefore) support for MANY platforms like: Unix, Win32, MSDOS, etc...
+- Support for 14+ different cartridge and disc-based video game console systems
+- Support for ALL common patch file formats like: IPS *), APS, BSL, PPF and
+  Game Genie
+  *) with RLE compression<!--
+- Support of DAT file formats like: RomCenter Data, GoodXXXX
+RomCenter Data
+MAME Listinfo
+RomCenter 2 Data
+Title List
+RAINE Gameinfo
+Callus Gamelist
+Retrocade Romlist
+Sparcade RAT File
+Mimic GCS
+Nebula Driver
+-->
+- Support for 10+ different backup units to backup/restore ROM(s), disc(s) and
+  SRAM(s) like: Flash Advance Linker, Flash 2 Advance, Doctor V64 (Junior),
+  Super Wild Card, Game Doctor, Dexdrive, Super Magic Drive, Game Boy Xchanger,
+  Mad Catz Camera Link, Lynxit, MD-PRO, SMS-PRO, PCE-PRO, GG-PRO, Super Flash
+  and your CD-writer.
+- Finally 150+(!) different options/features for every kind of ROM
+  handling/management known to man :-)
+<!-- 120 options, 62 switches last time I counted them -->
+  Including:
+  *VERY* verbose ROM information for ALL systems, detection of bad dumps using
+  internal checksums or DAT files, CRC32 calculation, ROM comparison,
+  modification (strip, pad, etc...), SRAM conversion (emulator &#60;-&#62; backup
+  unit), DiscJuggler and Nero image conversions, complete gzip and zip support
+  for all file-related funtions, etc...
+- Always up-to-date with support for new shit, trends, formats, and headers
+  like UNIF (NES), NSRT (SNES), new DAT file formats, etc...
+
+For console specific options check the following usage:
+
+uCON64 2.0.0 Unix (Linux) 1999-2005
+Uses code from various people. See 'developers.html' for more!
+This may be freely redistributed under the terms of the GNU Public License
+
+Usage: ucon64 [OPTION]... [ROM|IMAGE|SRAM|FILE|DIR|ARCHIVE]...
+
+Options
+   -o=DIRECTORY specify output directory
+  --nbak        prevents backup files (*.BAK)
+  --ncol        disable ANSI colors in output
+  --port=PORT   specify USB or parallel PORT={USB0, USB1, 3bc, 378, 278, ...}
+  --hdn=N       force ROM has backup unit/emulator header with size of N Bytes
+  --hd          same as --hdn=512
+                  most backup units use a header with a size of 512 Bytes
+  --nhd         force ROM has no backup unit/emulator header
+  --ns          force ROM is not split
+   -e           emulate/run ROM (check .ucon64rc for all Emulator settings)
+  --crc         show CRC32 value of ROM
+  --sha1        show SHA1 value of ROM
+  --md5         show MD5 value of ROM
+  --ls          generate ROM list for all recognized ROMs
+  --lsv         like --ls but more verbose
+  --hex[=ST]    show ROM as hexdump; use "ucon64 --hex ...|less"
+                  ST is the optional start value in bytes
+  --dual[=ST]   show ROM as dualdump; use "ucon64 --dual ...|less"
+  --code[=ST]   show ROM as code; use "ucon64 --code ...|less"
+  --print[=ST]  show ROM in printable characters; use "ucon64 --print ...|less"
+  --find=STRING find STRING in ROM (wildcard: '?')
+  --findi=STR   like --find but ignores the case of alpha bytes
+  --findr=STR   like --find but looks also for shifted/relative similarities
+                  (wildcard: disabled)
+   -c=FILE      compare FILE with ROM for differences
+  --cs=FILE     compare FILE with ROM for similarities
+  --help        display this help and exit
+  --version     output version information and exit
+   -q           be quiet (don't show ROM info)
+   -v           be more verbose (show backup unit headers also)
+
+Padding
+  --ispad       check if ROM is padded
+  --pad         pad ROM to next Mb
+   -p           same as --pad
+  --padn=N      pad ROM to N Bytes (put Bytes with value 0x00 after end)
+  --strip=N     strip N Bytes from end of ROM
+  --stpn=N      strip N Bytes from start of ROM
+  --stp         same as --stpn=512
+                  most backup units use a header with a size of 512 Bytes
+  --insn=N      insert N Bytes (0x00) before ROM
+  --ins         same as --insn=512
+                  most backup units use a header with a size of 512 Bytes
+
+DATabase (support for DAT files)
+  --db          DATabase statistics
+  --dbv         like --db but more verbose
+  --dbs=CRC32   search ROM with CRC32 in DATabase
+  --scan        generate ROM list for all ROMs using DATabase
+                  like: GoodXXXX scan ...
+  --lsd         same as --scan
+  --mkdat=DATFILE create DAT file; use -o to specify an output directory
+  --rrom        rename ROMs to their internal names
+  --rename      rename ROMs to their DATabase names
+                  use -o to specify an output directory
+  --rr83        force to rename to 8.3 filenames
+  --force63     force to rename all filenames into Joliet CD format
+                  like: GoodXXXX rename inplace force63 ...
+                  TIP: using --nes would process only NES ROMs
+  --rl          rename ROMs to lowercase
+  --ru          rename ROMs to uppercase
+
+Patching
+  --poke=OFF:V  change byte at file offset OFF to value V (both in hexadecimal)
+  --pattern=FILE change ROM based on patterns specified in FILE
+  --patch=PATCH specify the PATCH for the following options
+                  use this option or uCON64 expects the last commandline
+                  argument to be the name of the PATCH file
+   -b           apply Baseline/BSL PATCH to ROM
+   -i           apply IPS PATCH to ROM (IPS&#60;=v1.2)
+  --mki=ORG_ROM create IPS patch; ROM should be the modified ROM
+   -a           apply APS PATCH to ROM (APS&#60;=v1.2)
+  --mka=ORG_ROM create APS patch; ROM should be the modified ROM
+  --na=DESC     change APS single line DESCRIPTION
+  --ppf         apply PPF PATCH to IMAGE (PPF&#60;=v2.0); ROM should be an IMAGE
+  --mkppf=ORG_IMG create PPF patch; ROM should be the modified IMAGE
+  --nppf=DESC   change PPF single line DESCRIPTION
+  --idppf=FILE_ID.DIZ change FILE_ID.DIZ of PPF PATCH (PPF v2.0)
+  --gge=CODE    encode and display Game Genie code
+                  example: --gge=CODE --sms or --gge=CODE --gb
+                  CODE='AAAA:VV' or CODE='AAAA:VV:CC'
+                  --gge=CODE --gen
+                  CODE='AAAAAA:VVVV'
+                  --gge=CODE --nes
+                  CODE='AAAA:VV' or CODE='AAAA:VV:CC'
+                  --gge=CODE --snes
+                  CODE='AAAAAA:VV'
+  --ggd=GG_CODE decode Game Genie code
+                  example: --ggd=GG_CODE --sms or --ggd=GG_CODE --gb
+                  GG_CODE='XXX-XXX' or GG_CODE='XXX-XXX-XXX'
+                  --ggd=GG_CODE --gen
+                  GG_CODE='XXXX-XXXX'
+                  --ggd=GG_CODE --nes
+                  GG_CODE='XXXXXX' or GG_CODE='XXXXXXXX'
+                  --ggd=GG_CODE --snes
+                  GG_CODE='XXXX-XXXX'
+  --gg=GG_CODE  apply Game Genie code (permanently)
+                  example: like above but a ROM is required
+                  supported are:
+                  Game Boy/(Super GB)/GB Pocket/Color GB/(GB Advance),
+                  Sega Master System(II/III)/Game Gear (Handheld),
+                  Genesis/Sega Mega Drive/Sega CD/32X/Nomad,
+                  Nintendo Entertainment System/NES/Famicom/Game Axe (Redant),
+                  Super Nintendo Entertainment System/SNES/Super Famicom
+
+All disc-based consoles
+  --disc        force recognition; NEEDED
+  --rip=N       rip/dump track N from IMAGE
+  --bin2iso=N   convert track N to ISO (if possible) by resizing
+                  sectors to 2048 Bytes
+  --isofix=N    fix corrupted track N (if possible)
+                  if PVD points to a bad DR offset it will add padding data
+                  so actual DR gets located in right absolute address
+  --mkcue       generate CUE sheet for IMAGE or existing TOC sheet
+  --mktoc       generate TOC sheet for IMAGE or existing CUE sheet
+
+Dreamcast
+  --dc          force recognition
+  --scr         scramble 1ST_READ.BIN for selfboot CDs
+  --unscr       unscramble 1ST_READ.BIN for non-selfboot CDs
+  --mkip        generate IP.BIN file with default values
+  --parse=TEMPLATE parse TEMPLATE file into a IP.BIN;
+                  creates an empty template when TEMPLATE does not exist
+
+Playstation (One)/Playstation 2 (CD only)
+  --psx         force recognition
+DexDrive
+  --xdex=N      send/receive Block N to/from DexDrive; --port=PORT
+                  receives automatically when SRAM does not exist
+
+Game Boy Advance
+  --gba         force recognition
+   -n=NEW_NAME  change internal ROM name to NEW_NAME
+  --logo        restore ROM logo character data (offset: 0x04-0x9F)
+  --chk         fix ROM header checksum
+  --sram        patch ROM for SRAM saving
+  --crp=WAIT_TIME slow down ROM access ("crash patch");
+                  WAIT_TIME=0  default in most crash patches
+                  WAIT_TIME=4  faster than 0, slower than 8
+                  WAIT_TIME=8  faster than 4, slower than 28
+                  WAIT_TIME=12 slowest cartridge access speed
+                  WAIT_TIME=16 faster than 28, but slower than 20
+                  WAIT_TIME=20 default in most original cartridges
+                  WAIT_TIME=24 fastest cartridge access speed
+                  WAIT_TIME=28 faster than 8 but slower than 16
+  --multi=SIZE  make multi-game file for use with FAL/F2A flash card, truncated
+                  to SIZE Mbit; file with loader must be specified first, then
+                  all the ROMs, multi-game file to create last
+Flash 2 Advance (Ultra)
+  --xf2a        send/receive ROM to/from Flash 2 Advance (Ultra); --port=PORT
+                  receives automatically (32 Mbits) when ROM does not exist
+  --xf2amulti=SIZE send multiple ROMs to Flash 2 Advance (Ultra); specify a
+                  loader in the configuration file; --port=PORT
+  --xf2ac=N     receive N Mbits of ROM from Flash 2 Advance (Ultra);
+                  --port=PORT
+  --xf2as       send/receive SRAM to/from Flash 2 Advance (Ultra); --port=PORT
+                  receives automatically when SRAM does not exist
+  --xf2ab=BANK  send/receive SRAM to/from Flash 2 Advance (Ultra) BANK
+                  BANK should be a number &#62;= 1; --port=PORT
+                  receives automatically when SRAM does not exist
+Flash Advance Linker
+  --xfal        send/receive ROM to/from Flash Advance Linker; --port=PORT
+                  receives automatically (32 Mbits) when ROM does not exist
+  --xfalmulti=SIZE send multiple ROMs to Flash Advance Linker (makes temporary
+                  multi-game file truncated to SIZE Mbit); specify a loader in
+                  the configuration file; --port=PORT
+  --xfalc=N     receive N Mbits of ROM from Flash Advance Linker; --port=PORT
+                  N can be 8, 16, 32, 64, 128 or 256
+  --xfals       send/receive SRAM to/from Flash Advance Linker; --port=PORT
+                  receives automatically when SRAM does not exist
+  --xfalb=BANK  send/receive SRAM to/from Flash Advance Linker BANK
+                  BANK can be 1, 2, 3 or 4; --port=PORT
+                  receives automatically when SRAM does not exist
+  --xfalm       try to enable EPP mode, default is SPP mode
+
+Nintendo 64
+  --n64         force recognition
+  --int         force ROM is in interleaved format (2143, V64)
+  --nint        force ROM is not in interleaved format (1234, Z64)
+   -n=NEW_NAME  change internal ROM name to NEW_NAME
+  --v64         convert to Doctor V64 (and compatibles/interleaved)
+  --z64         convert to Mr. Backup Z64 (not interleaved)
+  --dint        convert ROM to (non-)interleaved format (1234 &#60;-&#62; 2143)
+  --swap        same as --dint, byte-swap ROM
+  --swap2       word-swap ROM (1234 &#60;-&#62; 3412)
+  --bot=BOOTCODE replace/extract BOOTCODE (4032 Bytes) in/from ROM;
+                  extracts automatically if BOOTCODE does not exist
+  --lsram=SRAM  LaC's SRAM upload tool; ROM should be LaC's ROM image
+                  the SRAM must have a size of 512 Bytes
+                  this option generates a ROM which can be used to transfer
+                  SRAMs to your cartridge's SRAM (EEPROM)
+  --usms=SMSROM Jos Kwanten's UltraSMS (Sega Master System/Game Gear emulator);
+                  ROM should be Jos Kwanten's UltraSMS ROM image
+                  works only for SMS ROMs which are &#60;= 4 Mb in size
+  --chk         fix ROM checksum
+                  supports only 6102 and 6105 boot codes
+Doctor V64
+  --xv64        send/receive ROM to/from Doctor V64; --port=PORT
+                  receives automatically when ROM does not exist
+Doctor V64 Junior
+  --xdjr        send ROM to Doctor V64 Junior; --port=PORT
+CD64
+  --xcd64       send/receive ROM to/from CD64; --port=PORT
+                  receives automatically (64 Mbits) when ROM does not exist
+  --xcd64c=N    receive N Mbits of ROM from CD64; --port=PORT
+  --xcd64b      send boot emu to CD64; --port=PORT
+  --xcd64s      send/receive SRAM to/from CD64; --port=PORT
+                  receives automatically when SRAM file does not exist
+  --xcd64f      send/receive flash RAM to/from CD64; --port=PORT
+                  receives automatically when flash RAM file does not exist
+  --xcd64e      send/receive EEPROM data to/from CD64; --port=PORT
+                  receives automatically when EEPROM file does not exist
+  --xcd64m=INDEX send/receive memory pack data to/from CD64; --port=PORT
+                  INDEX is ignored for CD64 BIOS protocol
+                  receives automatically when memory pack file does not exist
+  --xcd64p=PROT use protocol PROT when communicating with CD64; --port=PORT
+                  PROT=0 CD64 BIOS
+                  PROT=1 Ghemor
+                  PROT=2 UltraLink
+DexDrive
+  --xdex=N      send/receive Block N to/from DexDrive; --port=PORT
+                  receives automatically when SRAM does not exist
+
+Super Nintendo Entertainment System/SNES/Super Famicom
+  --snes        force recognition
+  --hi          force ROM is HiROM
+  --nhi         force ROM is not HiROM
+  --erom        force ROM is "Extended" (combine with -hi for Extended HiROM)
+  --int         force ROM is in interleaved format (GD3/UFO)
+  --int2        force ROM is in interleaved format 2 (SFX)
+  --nint        force ROM is not in interleaved format
+  --bs          force ROM is a Broadcast Satellaview dump
+  --nbs         force ROM is a regular cartridge dump
+   -n=NEW_NAME  change internal ROM name to NEW_NAME
+  --fig         convert to *Pro Fighter*/FIG
+  --figs        convert emulator *.srm (SRAM) to *Pro Fighter*/FIG
+  --gd3         convert to Game Doctor SF3(SF6/SF7)/Professor SF(SF II)
+  --gd3s        convert emulator *.srm (SRAM) to GD SF3(SF6/SF7)/Professor SF*
+  --mgd         convert to Multi Game*/MGD2/MGH/RAW
+  --smc         convert to Super Magicom/SMC
+  --swc         convert to Super Wild Card*/SWC
+  --swcs        convert emulator *.srm (SRAM) to Super Wild Card*/SWC
+  --ufo         convert to Super UFO
+  --ufos        convert emulator *.srm (SRAM) to Super UFO
+  --stp         convert SRAM from backup unit for use with an emulator
+                  --stp just strips the first 512 bytes
+  --dbuh        display (relevant part of) backup unit header
+  --dint        deinterleave ROM (regardless whether the ROM is interleaved)
+  --ctrl=TYPE   specify type of controller in port 1 for emu when converting
+                  TYPE=0 gamepad
+                  TYPE=1 mouse
+                  TYPE=2 mouse / gamepad
+                  TYPE=6 multitap
+  --ctrl2=TYPE  specify type of controller in port 2 for emu when converting
+                  TYPE=0 gamepad
+                  TYPE=1 mouse
+                  TYPE=2 mouse / gamepad
+                  TYPE=3 super scope
+                  TYPE=4 super scope / gamepad
+                  TYPE=5 Konami's justifier
+                  TYPE=6 multitap
+                  TYPE=7 mouse / super scope / gamepad
+  --col=0xCOLOR convert 0xRRGGBB (HTML) &#60;-&#62; 0xXXXX (SNES)
+   -j           join split ROM
+   -s           split ROM; default part size is 8 Mb
+  --ssize=SIZE  specify split part size in Mbit (not for Game Doctor SF3)
+   -k           remove protection (crack)
+   -f           remove NTSC/PAL protection
+   -l           remove SlowROM checks
+  --chk         fix ROM checksum
+  --multi=SIZE  make multi-game file for use with Super Flash flash card,
+                  truncated to SIZE Mbit; file with loader must be specified
+                  first, then all the ROMs, multi-game file to create last
+  --dmirr       "de-mirror" ROM (strip mirrored block from end of ROM)
+  --dnsrt       "de-NSRT" ROM (restore name and checksum from NSRT header)
+Super Com Pro/Super Magicom/SMC/Super Wild Card (1.6XC/2.7CC/2.8CC/DX/DX2)/SWC
+  --xswc        send/receive ROM to/from Super Wild Card*/SWC; --port=PORT
+                  receives automatically when ROM does not exist
+  --xswc2       same as --xswc, but enables Real Time Save mode (SWC only)
+  --xswc-io=MODE specify SWC I/O mode; use with -xswc or -xswcc
+                  MODE=0x001 force 32 Mbit dump
+                  MODE=0x002 use alternative method for determining ROM size
+                  MODE=0x004 Super FX
+                  MODE=0x008 S-DD1
+                  MODE=0x010 SA-1
+                  MODE=0x020 SPC7110
+                  MODE=0x040 DX2 trick (might work with other SWC models)
+                  MODE=0x080 Mega Man X 2
+                  MODE=0x100 dump BIOS
+                  It is possible to combine flags. MODE=0x44 makes it possible
+                  to dump for example Yoshi's Island
+  --xswcs       send/receive SRAM to/from Super Wild Card*/SWC; --port=PORT
+                  receives automatically when SRAM does not exist
+  --xswcc       send/receive SRAM to/from cartridge in Super Wild Card*/SWC;
+                  --port=PORT
+                  receives automatically when SRAM does not exist
+  --xswcr       send/receive RTS data to/from Super Wild Card*/SWC; --port=PORT
+                  receives automatically when RTS file does not exist
+Game Doctor SF3(SF6/SF7)/Professor SF(SF II)
+  --xgd3        send ROM to Game Doctor SF3/SF6/SF7; --port=PORT
+                  this option uses the Game Doctor SF3 protocol
+  --xgd6        send ROM to Game Doctor SF6/SF7; --port=PORT
+                  this option uses the Game Doctor SF6 protocol
+  --xgd3s       send SRAM to Game Doctor SF3/SF6/SF7; --port=PORT
+  --xgd6s       send/receive SRAM to/from Game Doctor SF6/SF7; --port=PORT
+                  receives automatically when SRAM does not exist
+  --xgd6r       send/receive saver (RTS) data to/from Game Doctor SF6/SF7;
+                  --port=PORT
+                  receives automatically when saver file does not exist
+Super Pro Fighter (Q/Q+)/Pro Fighter X (Turbo 2)/Double Pro Fighter (X Turbo)
+  --xfig        send/receive ROM to/from *Pro Fighter*/FIG; --port=PORT
+                  receives automatically when ROM does not exist
+  --xfigs       send/receive SRAM to/from *Pro Fighter*/FIG; --port=PORT
+                  receives automatically when SRAM does not exist
+  --xfigc       send/receive SRAM to/from cartridge in *Pro Fighter*/FIG;
+                  --port=PORT
+                  receives automatically when SRAM does not exist
+Super Flash flash card programmer
+  --xsf         send/receive ROM to/from Super Flash flash card programmer
+                  --port=PORT
+                  receives automatically (64 Mbits) when ROM does not exist
+  --xsfs        send/receive SRAM to/from Super Flash flash card programmer
+                  --port=PORT
+                  receives automatically when SRAM does not exist
+
+Neo Geo/Neo Geo CD(Z)/MVS
+  --ng          force recognition
+  --bios=BIOS   convert NeoCD BIOS to work with NeoCD emulator
+  --sam=SAMFILE convert SAM/M.A.M.E. sound to WAV
+
+Genesis/Sega Mega Drive/Sega CD/32X/Nomad
+  --gen         force recognition
+  --int         force ROM is in interleaved format (SMD)
+  --int2        force ROM is in interleaved format 2 (MGD)
+  --nint        force ROM is not in interleaved format (BIN/RAW)
+   -n=NEW_NAME  change foreign ROM name to NEW_NAME
+  --n2=NEW_NAME change Japanese ROM name to NEW_NAME
+  --smd         convert to Super Magic Drive/SMD
+  --smds        convert emulator (*.srm) SRAM to Super Magic Drive/SMD
+  --bin         convert to Magicom/BIN/RAW
+  --mgd         convert to Multi Game*/MGD2/MGH
+  --stp         convert SRAM from backup unit for use with an emulator
+                  --stp just strips the first 512 bytes
+   -j           join split ROM
+   -s           split ROM; default part size is 8 Mb (4 Mb for SMD)
+  --ssize=SIZE  specify split part size in Mbit
+   -f           remove NTSC/PAL protection
+  --chk         fix ROM checksum
+  --1991        fix old third party ROMs to work with consoles build after
+                  October 1991 by inserting "(C) SEGA" and "(C)SEGA"
+  --multi=SIZE  make multi-game file for use with MD-PRO flash card, truncated
+                  to SIZE Mbit; file with loader must be specified first, then
+                  all the ROMs, multi-game file to create last
+  --region=CODE enable region function; use with -multi
+                  CODE=0 force NTSC/Japan for all games
+                  CODE=1 force NTSC/U.S.A. for all games
+                  CODE=2 force PAL for all games
+                  CODE=x use whatever setting games expect
+Super Com Pro/Super Magic Drive/SMD
+  --xsmd        send/receive ROM to/from Super Magic Drive/SMD; --port=PORT
+                  receives automatically when ROM does not exist
+  --xsmds       send/receive SRAM to/from Super Magic Drive/SMD; --port=PORT
+                  receives automatically when SRAM does not exist
+MD-PRO flash card programmer
+  --xmd         send/receive ROM to/from MD-PRO flash card programmer
+                  --port=PORT
+                  receives automatically (32/64 Mbits) when ROM does not exist
+  --xmds        send/receive SRAM to/from MD-PRO flash card programmer
+                  --port=PORT
+                  receives automatically when SRAM does not exist
+  --xmdb=BANK   send/receive SRAM to/from MD-PRO BANK
+                  BANK can be a number from 1 to 4; --port=PORT
+                  receives automatically when SRAM does not exist
+Mike Pavone's Genesis/Sega CD transfer cable
+  --xmcd        receive ROM from Genesis/Sega CD; --port=PORT
+Cyan's Megadrive ROM copier
+  --xcmc        receive ROM from Cyan's Megadrive ROM copier; --port=PORT
+  --xcmct=TEST  run test TEST
+                  TEST=1 burn-in reliability test (specify speed)
+                  TEST=2 testbench mode (experts only)
+  --xcmcm=SPEED specify transfer speed
+                  SPEED=1 slow (debug)
+                  SPEED=2 medium
+                  SPEED=3 fast (default)
+                  SPEED=4 full speed (risky)
+
+Game Boy/(Super GB)/GB Pocket/Color GB/(GB Advance)
+  --gb          force recognition
+   -n=NEW_NAME  change internal ROM name to NEW_NAME
+  --logo        restore ROM logo character data (offset: 0x104-0x134)
+  --mgd         convert to Multi Game*/MGD2/RAW
+  --ssc         convert to Super Smart Card/SSC
+  --sgb         convert from GB Xchanger/GB/GBC to Super Backup Card/GX/GBX
+  --gbx         convert from Super Backup Card/GX/GBX to GB Xchanger/GB/GBC
+  --n2gb=NESROM KAMI's FC EMUlator (NES emulator);
+                  ROM should be KAMI's FC Emulator ROM image
+                  NESROM should contain 16 kB of PRG data and 8 kB of CHR data
+  --chk         fix ROM checksum
+Game Boy Xchanger/GBDoctor
+  --xgbx        send/receive ROM to/from GB Xchanger; --port=PORT
+                  receives automatically when ROM does not exist
+  --xgbxs       send/receive SRAM to/from GB Xchanger; --port=PORT
+                  receives automatically when SRAM does not exist
+  --xgbxb=BANK  send/receive 64 kbits SRAM to/from GB Xchanger BANK
+                  BANK can be a number from 0 to 15; --port=PORT
+                  receives automatically when ROM does not exist
+  --xgbxm       try to enable EPP mode, default is SPP mode
+Mad Catz Camera Link (Game Boy Camera)
+  --xmccl       receives from Mad Catz Camera Link; --port=PORT
+
+Handy (prototype)/Lynx/Lynx II
+  --lynx        force recognition
+  --lyx         convert to LYX/RAW (strip 64 Bytes LNX header)
+  --lnx         convert to LNX (uses default values for the header);
+                  adjust the LNX header with the following options
+   -n=NEW_NAME  change internal ROM name to NEW_NAME (LNX only)
+  --nrot        set no rotation (LNX only)
+  --rotl        set rotation left (LNX only)
+  --rotr        set rotation right (LNX only)
+  --b0=N        change Bank0 kBytes size to N={0,64,128,256,512} (LNX only)
+  --b1=N        change Bank1 kBytes size to N={0,64,128,256,512} (LNX only)
+Lynxit (Lynx cartridge backup board)
+  --xlit        receive ROM from Lynxit interface; --port=PORT
+
+PC-Engine (CD Unit/Core Grafx(II)/Shuttle/GT/LT/Super CDROM/DUO(-R(X)))
+Super Grafx/Turbo (Grafx(16)/CD/DUO/Express)
+  --pce         force recognition
+  --int         force ROM is in interleaved (bit-swapped) format
+  --nint        force ROM is not in interleaved (bit-swapped) format
+  --msg         convert to Magic Super Griffin/MSG
+  --mgd         convert to Multi Game Doctor*/MGD2/RAW
+  --swap        swap bits of all bytes in file (TurboGrafx-16 &#60;-&#62; PC-Engine)
+   -f           fix region protection
+  --multi=SIZE  make multi-game file for use with PCE-PRO flash card, truncated
+                  to SIZE Mbit; file with loader must be specified first, then
+                  all the ROMs, multi-game file to create last
+Magic Super Griffin/MSG
+  --xmsg        send/receive ROM to/from Magic Super Griffin/MSG; --port=PORT
+                  receives automatically when ROM does not exist
+PCE-PRO flash card programmer
+  --xpce        send/receive ROM to/from PCE-PRO flash card programmer
+                  --port=PORT
+                  receives automatically (32 Mbits) when ROM does not exist
+
+Nintendo Entertainment System/NES/Famicom/Game Axe (Redant)
+  --nes         force recognition
+   -n=NEW_NAME  change internal ROM name to NEW_NAME (UNIF only)
+  --unif        convert to UNIF format/UNF (uses default values)
+  --ines        convert to iNES format/NES (uses default values)
+  --ineshd      extract iNES header from ROM (16 Bytes)
+   -j           join Pasofami/PRM/700/PRG/CHR/split ROM (Pasofami -&#62; iNES)
+  --pasofami    convert to Pasofami/PRM/700/PRG/CHR
+   -s           convert/split to Pasofami/PRM/700/PRG/CHR (iNES -&#62; Pasofami)
+  --ffe         convert to FFE format (Super Magic Card)
+  --mapr=MAPR   specify board name or mapper number for conversion options
+                  MAPR must be a board name for UNIF or a number for Pasofami
+                  and iNES
+  --dint        deinterleave ROM (regardless whether the ROM is interleaved)
+  --ctrl=TYPE   specify controller type (UNIF only)
+                  TYPE=0 regular joypad
+                  TYPE=1 zapper
+                  TYPE=2 R.O.B.
+                  TYPE=3 Arkanoid controller
+                  TYPE=4 powerpad
+                  TYPE=5 four-score adapter
+  --ntsc        specify TV standard is NTSC (UNIF only)
+  --pal         specify TV standard is PAL (UNIF only)
+  --bat         specify battery is present
+  --nbat        specify battery is not present
+  --vram        specify VRAM override (UNIF only)
+  --nvram       specify no VRAM override (UNIF only)
+  --mirr=MTYPE  specify mirroring type
+                  MTYPE=0 horizontal mirroring
+                  MTYPE=1 vertical mirroring
+                  MTYPE=2 mirror all pages from $2000 (UNIF only)
+                  MTYPE=3 mirror all pages from $2400 (UNIF only)
+                  MTYPE=4 four screens of VRAM
+                  MTYPE=5 mirroring controlled by mapper hardware (UNIF only)
+  --cmnt=TEXT   specify that TEXT should be used as comment (UNIF only)
+  --dumpinfo=FILE use dumper info from FILE when converting to UNIF
+  --fds         convert Famicom Disk System file (diskimage) from FAM to FDS
+  --fdsl        list Famicom Disk System/FDS (diskimage) contents
+Super Magic Card
+  --xsmc        send ROM (in FFE format) to Super Magic Card; --port=PORT
+  --xsmcr       send/receive RTS data to/from Super Magic Card; --port=PORT
+                  receives automatically when RTS file does not exist
+
+Sega Master System(II/III)/Game Gear (Handheld)
+  --sms         force recognition
+  --int         force ROM is in interleaved format (SMD)
+  --nint        force ROM is not in interleaved format (RAW)
+  --mgd         convert to Multi Game*/MGD2/MGH/RAW (gives SMS name)
+  --mgdgg       same as --mgd, but gives GG name
+  --smd         convert to Super Magic Drive/SMD
+  --smds        convert emulator (*.srm) SRAM to Super Magic Drive/SMD
+  --chk         fix ROM checksum (SMS only)
+  --multi=SIZE  make multi-game file for use with SMS-PRO/GG-PRO flash card,
+                  truncated to SIZE Mbit; file with loader must be specified
+                  first, then all the ROMs, multi-game file to create last
+SMS-PRO/GG-PRO flash card programmer
+  --xgg         send/receive ROM to/from SMS-PRO/GG-PRO flash card programmer
+                  --port=PORT
+                  receives automatically (32 Mbits) when ROM does not exist
+  --xggs        send/receive SRAM to/from SMS-PRO/GG-PRO flash card programmer
+                  --port=PORT
+                  receives automatically when SRAM does not exist
+  --xggb=BANK   send/receive SRAM to/from SMS-PRO/GG-PRO BANK
+                  BANK can be a number from 1 to 4; --port=PORT
+                  receives automatically when SRAM does not exist
+
+WonderSwan/WonderSwan Color/SwanCrystal
+  --swan        force recognition
+  --chk         fix ROM checksum
+
+Panther(32bit prototype)/Jaguar64/Jaguar64 CD
+  --jag         force recognition
+
+Neo Geo Pocket/Neo Geo Pocket Color
+  --ngp         force recognition
+Pocket Linker
+  --xpl         send/receive ROM to/from Pocket Linker; --port=PORT
+                  receives automatically when ROM does not exist
+  --xpli        show information about inserted cartridge; --port=PORT
+  --xplm        try to enable EPP mode, default is SPP mode
+
+Atari VCS 2600(aka Stella)/Atari 5200 SuperSystem/Atari CX7800/Atari 2600 Jr
+  --ata         force recognition
+
+DATabase: 32626 known ROMs (DAT files: /mnt/hd2-1/home/daniel/.ucon64/dat)
+
+NOTE: You only need to specify PORT if uCON64 doesn't detect the (right)
+      parallel port. If that is the case give a hardware address. For example:
+        ucon64 --xswc "rom.swc" --port=0x378
+      In order to connect a copier to a PC's parallel port you need a standard
+      bidirectional parallel cable
+
+TIP: ucon64 --help --snes (would show only SNES related help)
+     ucon64 --help|less (to see everything in less)
+     Give the force recognition switch a try if something went wrong
+
+Please report any problems/ideas/fixes to noisyb@gmx.net or
+ucon64-announce@lists.sf.net or visit http://ucon64.sf.net
+
+</pre></tt></body></html>

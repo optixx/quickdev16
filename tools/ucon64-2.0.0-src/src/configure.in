@@ -1,0 +1,183 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(uCON64, 2.0.0, noisyb@gmx.net)
+AC_CONFIG_HEADER(config.h libdiscmage/config.h)
+
+
+dnl Checks for programs.
+AC_PROG_CC(gcc egcs cc)
+AC_PROG_GCC_TRADITIONAL
+
+
+AC_MSG_CHECKING(whether debug output is enabled)
+AC_ARG_ENABLE(debug,
+              AC_HELP_STRING([--enable-debug],
+                             [enable debug output (default: no)]),
+              enable_debug=$enableval,
+              enable_debug=no)
+if test $enable_debug = yes; then
+  AC_DEFINE(DEBUG, 1, [enable debug output (default: no)])
+fi
+AC_MSG_RESULT($enable_debug)
+
+
+AC_MSG_CHECKING(whether support for parallel port backup units is enabled)
+AC_ARG_ENABLE(parallel,
+              AC_HELP_STRING([--enable-parallel],
+                             [enable support for parallel port backup units (default: yes)]),
+              enable_parallel=$enableval,
+              enable_parallel=yes)
+if test $enable_parallel = yes; then
+  AC_DEFINE(USE_PARALLEL, 1, [enable support for parallel port backup units (default: yes)])
+fi
+AC_MSG_RESULT($enable_parallel)
+
+
+dnl AC_MSG_CHECKING(whether support for serial port backup units is enabled)
+dnl AC_ARG_ENABLE(serial,
+dnl              AC_HELP_STRING([--enable-serial],
+dnl                              [enable support for serial port backup units (default: yes)]),
+dnl               enable_serial=$enableval,
+dnl               enable_serial=yes)
+dnl if test $enable_serial = yes; then
+dnl   AC_DEFINE(USE_SERIAL, 1, [enable support for serial port backup units (default: yes)])
+dnl fi
+dnl AC_MSG_RESULT($enable_serial)
+
+
+AC_MSG_CHECKING(whether to use ppdev)
+AC_ARG_ENABLE(ppdev,
+              AC_HELP_STRING([--enable-ppdev],
+                             [use ppdev for parallel port I/O (default: no)]),
+              enable_ppdev=$enableval,
+              enable_ppdev=no)
+if test $enable_ppdev = yes; then
+  AC_TRY_COMPILE([#include <linux/ppdev.h>], , enable_ppdev=yes, enable_ppdev=no)
+fi
+if test $enable_ppdev = yes; then
+  AC_DEFINE(USE_PPDEV, 1, [use ppdev for parallel port I/O (default: no)])
+fi
+AC_MSG_RESULT($enable_ppdev)
+
+
+AC_MSG_CHECKING(whether the use of color is enabled)
+AC_ARG_ENABLE(ansi_color,
+              AC_HELP_STRING([--enable-ansi-color],
+                             [enable usage of color (default: yes)]),
+              enable_ansi_color=$enableval,
+              enable_ansi_color=yes)
+if test $enable_ansi_color = yes; then
+  AC_DEFINE(USE_ANSI_COLOR, 1, [enable usage of color (default: yes)])
+fi
+AC_MSG_RESULT($enable_ansi_color)
+
+
+AC_MSG_CHECKING(whether add-on libraries are dynamically loaded)
+AC_ARG_ENABLE(dload,
+              AC_HELP_STRING([--enable-dload],
+                             [enable dynamic loading of add-on libraries (default: yes)]),
+              enable_dload=$enableval,
+              enable_dload=yes)
+if test $enable_dload = yes; then
+  AC_DEFINE(DLOPEN, 1, [enable dynamic loading of add-on libraries (default: yes)])
+  DEFINE_DLOPEN_MAKE="DLOPEN=1"
+fi
+AC_MSG_RESULT($enable_dload)
+AC_SUBST(DEFINE_DLOPEN_MAKE)
+
+
+AC_MSG_CHECKING(whether libdiscmage is enabled)
+AC_ARG_ENABLE(discmage,
+              AC_HELP_STRING([--enable-discmage],
+                             [enable libdiscmage (default: yes)]),
+              enable_discmage=$enableval,
+              enable_discmage=yes)
+if test $enable_discmage = yes; then
+  AC_DEFINE(USE_DISCMAGE, 1, [enable libdiscmage (default: yes)])
+  DEFINE_DISCMAGE_MAKE="USE_DISCMAGE=1"
+fi
+AC_MSG_RESULT($enable_discmage)
+AC_SUBST(DEFINE_DISCMAGE_MAKE)
+
+
+dnl This belongs here, not at the checks for libraries. We don't have to check
+dnl  if libcd64 is present as it is part of our source tree.
+AC_MSG_CHECKING(whether libcd64 is enabled)
+AC_ARG_ENABLE(libcd64,
+              AC_HELP_STRING([--enable-libcd64],
+                             [enable libcd64 (default: no)]),
+              enable_libcd64=$enableval,
+              enable_libcd64=no)
+if test $enable_libcd64 = yes; then
+  AC_DEFINE(USE_LIBCD64, 1, [enable libcd64 (default: no)])
+  DEFINE_LIBCD64_MAKE="USE_LIBCD64=1"
+else
+  dnl libi386 is necessary under OpenBSD, but only if libcd64 isn't enabled. The
+  dnl  reason is that libcd64 already includes libi386.
+  LIBI386_MAKE="-li386"
+fi
+AC_MSG_RESULT($enable_libcd64)
+AC_SUBST(DEFINE_LIBCD64_MAKE)
+AC_SUBST(LIBI386_MAKE)
+
+
+dnl Checks for libraries.
+AC_MSG_CHECKING(for zlib)
+AC_ARG_WITH(zlib,
+            AC_HELP_STRING([--with-zlib],
+                           [build with gzip and zip support (default: yes)]),
+            with_zlib=$withval,
+            with_zlib=yes)
+if test $with_zlib = yes; then
+  AC_TRY_COMPILE([#include <zlib.h>], , with_zlib=yes, with_zlib=no)
+fi
+if test $with_zlib = yes; then
+  AC_DEFINE(USE_ZLIB, 1, [build with gzip and zip support (default: yes)])
+  DEFINE_ZLIB_MAKE="USE_ZLIB=1"
+fi
+AC_MSG_RESULT($with_zlib)
+AC_SUBST(DEFINE_ZLIB_MAKE)
+
+
+AC_MSG_CHECKING(for libusb)
+AC_ARG_WITH(libusb,
+            AC_HELP_STRING([--with-libusb],
+                           [build with (lib)usb support (default: no)]),
+            with_libusb=$withval,
+            with_libusb=no)
+if test $with_libusb = yes; then
+  AC_TRY_COMPILE([#include <usb.h>], , with_libusb=yes, with_libusb=no)
+fi
+if test $with_libusb = yes; then
+  AC_DEFINE(USE_USB, 1, [build with (lib)usb support (default: no)])
+  DEFINE_USB_MAKE="USE_USB=1"
+fi
+AC_MSG_RESULT($with_libusb)
+AC_SUBST(DEFINE_USB_MAKE)
+
+
+dnl Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_CHECK_HEADERS(fcntl.h unistd.h byteswap.h inttypes.h sys/io.h)
+dnl NOT zlib.h! Or else --with[out]-zlib gets overrriden in config.h.
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_UID_T
+AC_C_INLINE
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
+
+dnl Checks for library functions.
+AC_FUNC_MEMCMP
+AC_FUNC_STRFTIME
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS(realpath)
+
+AC_PROG_RANLIB
+AC_PROG_INSTALL
+
+AC_OUTPUT(Makefile libdiscmage/Makefile)
+
+echo
+echo NOTE: On non-Linux systems you might need to use gmake instead of make

@@ -1,89 +1,84 @@
 #import "AppController.h"
+#import "CommandWrapper.h"
+
+#define UCON64 "/usr/local/bin/ucon64"
+#define ROMFILE "/Users/david/Devel/arch/avr/code/quickdev16/roms/mrdo.smc"
+
 
 @implementation AppController
 - (id) init {
 	[super init];
 	NSLog(@"init");
-	speechSynth = [[NSSpeechSynthesizer alloc] initWithVoice:nil];
-	[speechSynth setDelegate:self]; 
 	return self;
 }
 
-- (void)awakeFromNib{
-	NSColor *initialColor = [ textField textColor];
-	NSLog(@"setting init color %@",initialColor);
-	[colorWell setColor:initialColor];
-	NSString *defaultVoice = [NSSpeechSynthesizer defaultVoice];
-	NSArray *voices = [NSSpeechSynthesizer availableVoices];
-	int defaultRow = [voices indexOfObject:defaultVoice];
-	[tableView selectRow:defaultRow byExtendingSelection:NO];
-	[tableView scrollRowToVisible:defaultRow];
-	 
-}
-- (IBAction)sayIt:(id)sender {
-	NSString *string = [textField stringValue];
-	if ( [string length] == 0) {
-		NSLog(@"No message");
-		return;
-	}
-	[speechSynth startSpeakingString:string];
-	NSLog(@"Have started speaking: %@", string);
-    [stopButton setEnabled:YES];
+- (void)awakeFromNib {
+    [textFieldLog setStringValue:@"Log field"];
+	[textFieldInfo setStringValue:@"Info field"];
+
+	NSLog(@"awakeFromNib");
 }
 
-- (IBAction)stopIt:(id)sender {
-	NSLog(@"stopping");
-	[speechSynth stopSpeaking];
+- (IBAction)romUpload:(id)sender {
+	NSLog(@"romUpload:");
+    NSTask *ls=[[NSTask alloc] init];
+    NSPipe *pipe=[[NSPipe alloc] init];
+    NSFileHandle *handle;
     
+    [ls setLaunchPath:@UCON64];
+    [ls setArguments:[NSArray arrayWithObjects:@"-smc",@"--port=usb",@"--xquickdev16",@ROMFILE,nil]];
+    [ls setStandardOutput:pipe];
+    handle=[pipe fileHandleForReading];
+    
+    [ls launch];
+    
+    [NSThread detachNewThreadSelector:@selector(copyData:)
+							 toTarget:self withObject:handle];
+    
+    [pipe release];
+    [ls release];
 }
 
-- (void)speechSynthesizer:(NSSpeechSynthesizer *)send
-		didFinishSpeaking:(BOOL)finishedSpeaking
-{
-	NSLog(@"didFinished=%d",finishedSpeaking);
-    [stopButton setEnabled:NO];
 
-}
-
-
-- (IBAction)changeTextColor:(id)sender{
-	NSColor *newColor = [sender color];
-	NSLog(@"Change Color %@",newColor);
-	[textField setTextColor:newColor];
+- (void)copyData:(NSFileHandle*)handle {
+    NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
+    NSData *data;
 	
-}
-
-- (int)numberOfRowsInTableView:(NSTableView *) aTableView{
-	NSLog(@"numberOfRowsInTableView %d", [[NSSpeechSynthesizer availableVoices] count]);
-
-	return [[NSSpeechSynthesizer availableVoices] count];
-}
--(id)tableView:(NSTableView*) aTableView
-			objectValueForTableColumn:(NSTableColumn *) aTableColumn row:(int)row{
-	NSString *voice = [[NSSpeechSynthesizer availableVoices] objectAtIndex:row ];
-	return [[NSSpeechSynthesizer attributesForVoice:voice] valueForKey:NSVoiceName];
-}
-
-- (void)tableViewSelectionDidChange:(NSNotification *)nofication{
-	NSArray *availableVoices = [NSSpeechSynthesizer availableVoices];
-	int row = [tableView selectedRow];
-	if ( row == -1) {
-		return;
-	}
+    while([data=[handle availableData] length]) { // until EOF (check reference)
+        NSString *string=[[NSString alloc] initWithData:data
+											   encoding:NSASCIIStringEncoding];
+        
+		[textFieldLog setStringValue:string];
+		[string release];
+    }
 	
-	NSString *selectedVoice = [availableVoices objectAtIndex:row];
-	[speechSynth setVoice:selectedVoice];
-	NSLog(@"new voice=%@",selectedVoice);
+    [pool release];
 }
 
--(BOOL)selectionShouldChangeInTableView:(NSTableView *) aTableView
-{
-	if ([speechSynth isSpeaking]){
-		NSBeep();
-		return NO;
-	} else {
-		return YES;
-	}
+
+
+- (IBAction)romInfo:(id)sender {
+    NSTask *ls=[[NSTask alloc] init];
+    NSPipe *pipe=[[NSPipe alloc] init];
+    NSFileHandle *handle;
+    NSString *string;
+	NSLog(@"romInfo");
+    
+    [ls setLaunchPath:@"/usr/local/bin/ucon64"];
+    [ls setArguments:[NSArray arrayWithObjects:@ROMFILE,nil]];
+    [ls setStandardOutput:pipe];
+    handle=[pipe fileHandleForReading];
+    
+    [ls launch];
+    
+    string=[[NSString alloc] initWithData:[handle readDataToEndOfFile]
+								 encoding:NSASCIIStringEncoding]; // convert NSData -> NSString
+	
+ 	NSLog(@"romInfo: %@", string);
+    [textFieldInfo setStringValue:string];
+    [string retain];
+    [pipe release];
+    [ls release];
 }
 
 -(NSSize)windowWillResize:(NSWindow *)send toSize:(NSSize) framesize;
@@ -98,8 +93,7 @@
 }
 
 - (void) dealloc {
-	NSLog(@"dealloc");
-	[speechSynth release];
+	NSLog(@"dealloc");	
 	[super dealloc];
 	
 }
