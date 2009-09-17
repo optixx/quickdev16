@@ -357,7 +357,7 @@ int main(void)
 #endif
 
 #if DO_CRC_CHECK     
-        info_P(PSTR("-->CRC Checkn"));
+        info_P(PSTR("-->CRC Check\n"));
         crc_check_bulk_memory(0x000000, req_bank_size * req_bank_cnt, req_bank_size);
 #endif        
         

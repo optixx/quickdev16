@@ -41,9 +41,16 @@ def test_algo():
 def main():
     #import cProfile
     #cProfile.run('test_performance()')
+    if sys.argv[1].endswith(".smc"):
+        copy_header= True
 
     size = os.stat(sys.argv[1])[6]
     fd = open(sys.argv[1])
+
+    if copy_header:
+        fd.seek(512)
+        size = size - 512
+
     addr = 0x0000
     step = 2**15
     result = []
