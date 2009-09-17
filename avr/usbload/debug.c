@@ -59,10 +59,11 @@ void debug_P(int level, PGM_P format, ...) {
     va_list args;
     if (!(debug_level & level))
         return;
-    strlcpy_P(buffer_debug,format,FORMAT_BUFFER_LEN);
+    strlcpy_P((char*)buffer_debug,format,FORMAT_BUFFER_LEN);
     va_start(args, format);
-    vprintf(buffer_debug, args);
+    vprintf((char*)buffer_debug, args);
     va_end(args);
 #endif
 }
 #endif 
+
