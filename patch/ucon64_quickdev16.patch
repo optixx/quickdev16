@@ -1,0 +1,813 @@
+diff -Naur ucon64-2.0.0-src/src/backup/backup.h ucon64/src/backup/backup.h
+--- ucon64-2.0.0-src/src/backup/backup.h	2009-09-16 09:43:42.000000000 +0000
++++ ucon64/src/backup/backup.h	2009-08-28 10:00:36.000000000 +0000
+@@ -59,4 +59,9 @@
+ #include "f2a.h"
+ #endif
+ 
++#ifdef USE_USB
++#include "quickdev16.h"
++#endif // USE_PARALLEL
++
++
+ #endif // BACKUP_H
+diff -Naur ucon64-2.0.0-src/src/backup/quickdev16.c ucon64/src/backup/quickdev16.c
+--- ucon64-2.0.0-src/src/backup/quickdev16.c	1970-01-01 00:00:00.000000000 +0000
++++ ucon64/src/backup/quickdev16.c	2009-09-01 13:01:12.000000000 +0000
+@@ -0,0 +1,228 @@
++/*
++quickdev16.c - Quickdev16 support for uCON64
++
++Copyright (c) 2009 david@optixx.org
++
++
++This program is free software; you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation; either version 2 of the License, or
++(at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with this program; if not, write to the Free Software
++Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++*/
++#ifdef  HAVE_CONFIG_H
++#include "config.h"
++#endif
++#include <stdio.h>
++#include <stdlib.h>
++#include <time.h>
++#include <string.h>
++#include <usb.h>                
++#include "misc/misc.h"
++#include "misc/itypes.h"
++#ifdef  USE_ZLIB
++#include "misc/archive.h"
++#endif
++#include "misc/getopt2.h"                       // st_getopt2_t
++#include "misc/file.h"
++#include "misc/opendevice.h"
++
++
++#include "ucon64.h"
++#include "ucon64_misc.h"
++#include "ffe.h"
++#include "smc.h"
++#include "quickdev16.h"
++
++#include "console/snes.h"
++
++#define SNES_HEADER_LEN (sizeof (st_snes_header_t))
++
++const st_getopt2_t quickdev16_usage[] =
++  {
++    {
++      NULL, 0, 0, 0,
++      NULL, "Quickdev16"/* http://www.optixx.org */,
++      NULL
++    },
++#ifdef  USE_USB
++    {
++      "xquickdev16", 0, 0, UCON64_XSNESRAM, // send only
++      NULL, "send ROM (in FFE format) to Quickdev16",
++      &ucon64_wf[WF_OBJ_NES_DEFAULT_STOP_NO_SPLIT]
++    },
++#endif
++    {NULL, 0, 0, 0, NULL, NULL, NULL}
++  };
++
++
++#ifdef USE_USB
++
++#define READ_BUFFER_SIZE    8192
++#define SEND_BUFFER_SIZE    128
++#define SNES_HIROM_SHIFT    16
++#define SNES_LOROM_SHIFT    15
++
++int
++quickdev16_write_rom (const char *filename)
++{
++  FILE *file;
++  int bytesread, bytessend, size;
++  time_t starttime;
++  usb_dev_handle *handle = NULL;
++  const unsigned char rawVid[2] = { USB_CFG_VENDOR_ID }, rawPid[2] = { USB_CFG_DEVICE_ID};
++  char vendor[] = { USB_CFG_VENDOR_NAME, 0 }, product[] = { USB_CFG_DEVICE_NAME, 0};
++  int cnt, vid, pid;
++  uint8_t *read_buffer;
++  uint32_t addr = 0;
++  uint16_t addr_lo = 0;
++  uint16_t addr_hi = 0;
++  uint16_t step = 0;
++  uint8_t bank = 0;
++  uint8_t bank_cnt = 0;
++  uint16_t bank_shift;
++  uint32_t bank_size;
++  uint32_t hirom = 0;
++  uint8_t byte = 0;
++  st_rominfo_t rominfo;
++
++  
++  usb_init();
++  vid = rawVid[1] * 256 + rawVid[0];
++  pid = rawPid[1] * 256 + rawPid[0];
++  if (usbOpenDevice(&handle, vid, vendor, pid, product, NULL, NULL, NULL) != 0) {
++        fprintf(stderr,
++                "Could not find USB device \"%s\" with vid=0x%x pid=0x%x\n",
++                product, vid, pid);
++        exit(1);
++    }
++    printf("Open USB device \"%s\" with vid=0x%x pid=0x%x\n", product, vid,pid);
++
++  if ((file = fopen (filename, "rb")) == NULL)
++    {
++      fprintf (stderr, ucon64_msg[OPEN_READ_ERROR], filename);
++      exit (1);
++    }
++
++  if ((read_buffer = (unsigned char *) malloc (READ_BUFFER_SIZE)) == NULL)
++    {
++      fprintf (stderr, ucon64_msg[FILE_BUFFER_ERROR], READ_BUFFER_SIZE);
++      exit (1);
++    }
++    
++    snes_init (&rominfo);
++    printf(rominfo.misc);
++    printf("\n");
++
++    if (UCON64_ISSET (ucon64.snes_hirom))
++        hirom = ucon64.snes_hirom ? 1 : 0;
++    else {
++        hirom = snes_get_snes_hirom ();
++    }
++
++
++
++    if (hirom) {
++        bank_shift = SNES_HIROM_SHIFT;
++        bank_size = 1 << SNES_HIROM_SHIFT;
++    } else {
++        bank_shift = SNES_LOROM_SHIFT;
++        bank_size = 1 << SNES_LOROM_SHIFT;
++    }
++
++
++
++  fseek (file, 0, SEEK_END);
++  size = ftell (file);
++  fseek (file, SMC_HEADER_LEN, SEEK_SET);
++  size -= SMC_HEADER_LEN;
++  bank_cnt = size / bank_size;
++
++  printf ("Send: %d Bytes (%.4f Mb) Hirom: %s, Banks: %i\n", size, (float) size / MBIT, hirom ? "Yes" : "No", bank_cnt);
++  bytessend = 0;
++  printf ("Press q to abort\n\n");
++  starttime = time (NULL);
++  
++  cnt = usb_control_msg(handle,
++                      USB_TYPE_VENDOR | USB_RECIP_DEVICE |
++                      USB_ENDPOINT_OUT, USB_MODE_AVR, 0, 0, NULL,
++                      0, 5000);
++  
++  /* wait for the loader to depack */
++  usleep(500000);
++  
++ 
++  cnt = usb_control_msg(handle,
++        USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
++        USB_BULK_UPLOAD_INIT, bank_shift , bank_cnt, NULL, 0, 5000);
++
++
++   while ((bytesread = fread(read_buffer, READ_BUFFER_SIZE, 1, file)) > 0) {
++      for (step = 0; step < READ_BUFFER_SIZE; step += SEND_BUFFER_SIZE) {
++
++        addr_lo = addr & 0xffff;
++        addr_hi = (addr >> 16) & 0x00ff;
++
++        if (addr == 0){
++            cnt = usb_control_msg(handle,
++                                USB_TYPE_VENDOR | USB_RECIP_DEVICE |
++                                USB_ENDPOINT_OUT, USB_BULK_UPLOAD_ADDR, addr_hi,
++                                addr_lo, (char *) read_buffer + step,
++                                SEND_BUFFER_SIZE, 5000);
++        } else {
++            cnt = usb_control_msg(handle,
++                                USB_TYPE_VENDOR | USB_RECIP_DEVICE |
++                                USB_ENDPOINT_OUT, USB_BULK_UPLOAD_NEXT, addr_hi,
++                                addr_lo, (char *) read_buffer + step,
++                                SEND_BUFFER_SIZE, 5000);
++        }
++        if (cnt < 0) {
++            fprintf(stderr, "USB error: %s\n", usb_strerror());
++            usb_close(handle);
++            exit(-1);
++        }
++
++        bytessend += SEND_BUFFER_SIZE;
++        ucon64_gauge (starttime, bytessend, size);
++
++        addr += SEND_BUFFER_SIZE;
++        if ( addr % bank_size == 0) {
++            bank++;
++        }
++      }
++  }
++  cnt = usb_control_msg(handle,
++                        USB_TYPE_VENDOR | USB_RECIP_DEVICE |
++                        USB_ENDPOINT_OUT, USB_BULK_UPLOAD_END, 0, 0, NULL,
++                        0, 5000);
++
++#if 0
++  bank = 0;
++  fseek(fp, 0, SEEK_SET);
++  while ((cnt = fread(read_buffer, READ_BUFFER_SIZE, 1, fp)) > 0) {
++      printf ("bank=0x%02x crc=0x%04x\n", bank++,
++          do_crc(read_buffer, READ_BUFFER_SIZE));
++  }
++  fclose(fp);
++#endif
++  cnt = usb_control_msg(handle,
++                      USB_TYPE_VENDOR | USB_RECIP_DEVICE |
++                      USB_ENDPOINT_OUT, USB_MODE_SNES, 0, 0, NULL,
++                      0, 5000);
++
++
++  free (read_buffer);
++  fclose (file);
++  return 0;
++}
++
++
++#endif // USE_USB
+diff -Naur ucon64-2.0.0-src/src/backup/quickdev16.h ucon64/src/backup/quickdev16.h
+--- ucon64-2.0.0-src/src/backup/quickdev16.h	1970-01-01 00:00:00.000000000 +0000
++++ ucon64/src/backup/quickdev16.h	2009-08-28 10:00:36.000000000 +0000
+@@ -0,0 +1,81 @@
++/*
++quickdev16.h - Quickdev16 support for uCON64
++
++Copyright (c) 2009 david@optixx.org
++
++
++This program is free software; you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation; either version 2 of the License, or
++(at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with this program; if not, write to the Free Software
++Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++*/
++#ifndef SNESRAM_H
++#define SNESRAM_H
++
++#define USB_UPLOAD_INIT         0
++#define USB_UPLOAD_ADDR         1
++
++#define USB_DOWNLOAD_INIT       2
++#define USB_DOWNLOAD_ADDR       3
++
++#define USB_CRC                 4
++#define USB_CRC_ADDR            5
++
++#define USB_BULK_UPLOAD_INIT    6
++#define USB_BULK_UPLOAD_ADDR    7
++#define USB_BULK_UPLOAD_NEXT    8
++#define USB_BULK_UPLOAD_END     9
++#define USB_MODE_SNES           10
++#define USB_MODE_AVR            11
++#define USB_AVR_RESET           12
++
++/* -------------------------- Device Description --------------------------- */
++
++#define  USB_CFG_VENDOR_ID       0xc0, 0x16
++/* USB vendor ID for the device, low byte first. If you have registered your
++ * own Vendor ID, define it here. Otherwise you use one of obdev's free shared
++ * VID/PID pairs. Be sure to read USBID-License.txt for rules!
++ */
++#define  USB_CFG_DEVICE_ID       0xdd, 0x05
++/* This is the ID of the product, low byte first. It is interpreted in the
++ * scope of the vendor ID. If you have registered your own VID with usb.org
++ * or if you have licensed a PID from somebody else, define it here. Otherwise
++ * you use obdev's free shared VID/PID pair. Be sure to read the rules in
++ * USBID-License.txt!
++ */
++#define USB_CFG_DEVICE_VERSION  0x00, 0x01
++/* Version number of the device: Minor number first, then major number.
++ */
++#define USB_CFG_VENDOR_NAME     'o', 'p', 't', 'i', 'x', 'x', '.', 'o', 'r', 'g'
++#define USB_CFG_VENDOR_NAME_LEN 10
++/* These two values define the vendor name returned by the USB device. The name
++ * must be given as a list of characters under single quotes. The characters
++ * are interpreted as Unicode (UTF-16) entities.
++ * If you don't want a vendor name string, undefine these macros.
++ * ALWAYS define a vendor name containing your Internet domain name if you use
++ * obdev's free shared VID/PID pair. See the file USBID-License.txt for
++ * details.
++ */
++#define USB_CFG_DEVICE_NAME     'Q', 'U', 'I', 'C', 'K', 'D', 'E', 'V', '1', '6'
++#define USB_CFG_DEVICE_NAME_LEN 10
++/* Same as above for the device name. If you don't want a device name, undefine
++ * the macros. See the file USBID-License.txt before you assign a name if you
++ * use a shared VID/PID.
++ */
++
++extern const st_getopt2_t quickdev16_usage[];
++
++#ifdef USE_USB
++extern int quickdev16_write_rom (const char *filename);
++#endif
++
++#endif // SNESRAM_H
+diff -Naur ucon64-2.0.0-src/src/console/snes.c ucon64/src/console/snes.c
+--- ucon64-2.0.0-src/src/console/snes.c	2009-09-16 09:43:42.000000000 +0000
++++ ucon64/src/console/snes.c	2009-08-28 10:00:36.000000000 +0000
+@@ -3261,6 +3261,7 @@
+       snes_hirom = 0;
+       if (UCON64_ISSET (ucon64.snes_hirom))     // see snes_set_hirom()
+         snes_hirom = ucon64.snes_hirom;
++      //ucon64.snes_hirom = snes_hirom;
+       snes_hirom_ok = 1;
+ 
+       rominfo->interleaved = 0;
+diff -Naur ucon64-2.0.0-src/src/Makefile.in ucon64/src/Makefile.in
+--- ucon64-2.0.0-src/src/Makefile.in	2009-09-16 09:43:42.000000000 +0000
++++ ucon64/src/Makefile.in	2009-08-28 10:00:36.000000000 +0000
+@@ -7,8 +7,8 @@
+ @DEFINE_LIBCD64_MAKE@
+ 
+ CC=@CC@
+-CFLAGS=-I. -Wall -W -O3 @DEFS@
+-LDFLAGS=-s
++CFLAGS=-I. -Wall -W -O3 @DEFS@ -I/opt/local/include
++LDFLAGS=-s -L/opt/local/lib
+ TARGETS=
+ 
+ ifdef USE_DISCMAGE
+@@ -96,7 +96,8 @@
+ OBJECTS=ucon64.o ucon64_dat.o ucon64_misc.o ucon64_opts.o \
+         misc/chksum.o misc/file.o misc/getopt.o misc/getopt2.o \
+         misc/misc.o misc/parallel.o misc/property.o misc/string.o \
+-        patch/aps.o patch/bsl.o patch/gg.o patch/ips.o patch/pal4u.o \
++        misc/opendevice.o \
++	patch/aps.o patch/bsl.o patch/gg.o patch/ips.o patch/pal4u.o \
+         patch/ppf.o patch/xps.o \
+         console/dc.o console/gb.o console/gba.o console/genesis.o \
+         console/jaguar.o console/lynx.o console/n64.o console/neogeo.o \
+@@ -107,7 +108,7 @@
+         backup/fig.o backup/gbx.o backup/gd.o backup/interceptor.o \
+         backup/lynxit.o backup/mccl.o backup/mcd.o backup/md-pro.o \
+         backup/mgd.o backup/msg.o backup/pce-pro.o backup/pl.o \
+-        backup/psxpblib.o backup/sflash.o backup/smc.o backup/smd.o \
++        backup/psxpblib.o backup/sflash.o backup/quickdev16.o backup/smc.o backup/smd.o \
+         backup/smsgg-pro.o backup/ssc.o backup/swc.o backup/tototek.o \
+         backup/ufo.o backup/yoko.o backup/z64.o
+ ifdef USE_ZLIB
+diff -Naur ucon64-2.0.0-src/src/misc/opendevice.c ucon64/src/misc/opendevice.c
+--- ucon64-2.0.0-src/src/misc/opendevice.c	1970-01-01 00:00:00.000000000 +0000
++++ ucon64/src/misc/opendevice.c	2009-08-28 10:00:36.000000000 +0000
+@@ -0,0 +1,286 @@
++/*
++ * Name: opendevice.c Project: V-USB host-side library Author: Christian
++ * Starkjohann Creation Date: 2008-04-10 Tabsize: 4 Copyright: (c) 2008 by
++ * OBJECTIVE DEVELOPMENT Software GmbH License: GNU GPL v2 (see License.txt),
++ * GNU GPL v3 or proprietary (CommercialLicense.txt) This Revision: $Id:
++ * opendevice.c 740 2009-04-13 18:23:31Z cs $ 
++ */
++
++/*
++ * General Description: The functions in this module can be used to find and
++ * open a device based on libusb or libusb-win32. 
++ */
++
++
++#include <stdio.h>
++#include "opendevice.h"
++
++/*
++ * ------------------------------------------------------------------------- 
++ */
++
++#define MATCH_SUCCESS			1
++#define MATCH_FAILED			0
++#define MATCH_ABORT				-1
++
++/*
++ * private interface: match text and p, return MATCH_SUCCESS, MATCH_FAILED, or
++ * MATCH_ABORT. 
++ */
++static int _shellStyleMatch(char *text, char *p)
++{
++    int last,
++     matched,
++     reverse;
++
++    for (; *p; text++, p++) {
++        if (*text == 0 && *p != '*')
++            return MATCH_ABORT;
++        switch (*p) {
++        case '\\':
++            /*
++             * Literal match with following character. 
++             */
++            p++;
++            /*
++             * FALLTHROUGH 
++             */
++        default:
++            if (*text != *p)
++                return MATCH_FAILED;
++            continue;
++        case '?':
++            /*
++             * Match anything. 
++             */
++            continue;
++        case '*':
++            while (*++p == '*')
++                /*
++                 * Consecutive stars act just like one. 
++                 */
++                continue;
++            if (*p == 0)
++                /*
++                 * Trailing star matches everything. 
++                 */
++                return MATCH_SUCCESS;
++            while (*text)
++                if ((matched = _shellStyleMatch(text++, p)) != MATCH_FAILED)
++                    return matched;
++            return MATCH_ABORT;
++        case '[':
++            reverse = p[1] == '^';
++            if (reverse)        /* Inverted character class. */
++                p++;
++            matched = MATCH_FAILED;
++            if (p[1] == ']' || p[1] == '-')
++                if (*++p == *text)
++                    matched = MATCH_SUCCESS;
++            for (last = *p; *++p && *p != ']'; last = *p)
++                if (*p == '-' && p[1] != ']' ? *text <= *++p
++                    && *text >= last : *text == *p)
++                    matched = MATCH_SUCCESS;
++            if (matched == reverse)
++                return MATCH_FAILED;
++            continue;
++        }
++    }
++    return *text == 0;
++}
++
++/*
++ * public interface for shell style matching: returns 0 if fails, 1 if matches 
++ */
++static int shellStyleMatch(char *text, char *pattern)
++{
++    if (pattern == NULL)        /* NULL pattern is synonymous to "*" */
++        return 1;
++    return _shellStyleMatch(text, pattern) == MATCH_SUCCESS;
++}
++
++/*
++ * ------------------------------------------------------------------------- 
++ */
++
++int usbGetStringAscii(usb_dev_handle * dev, int index, char *buf, int buflen)
++{
++    char buffer[256];
++    int rval,
++     i;
++
++    if ((rval = usb_get_string_simple(dev, index, buf, buflen)) >= 0)   /* use
++                                                                         * libusb 
++                                                                         * version 
++                                                                         * if
++                                                                         * it
++                                                                         * works 
++                                                                         */
++        return rval;
++    if ((rval =
++         usb_control_msg(dev, USB_ENDPOINT_IN, USB_REQ_GET_DESCRIPTOR,
++                         (USB_DT_STRING << 8) + index, 0x0409, buffer,
++                         sizeof(buffer), 5000)) < 0)
++        return rval;
++    if (buffer[1] != USB_DT_STRING) {
++        *buf = 0;
++        return 0;
++    }
++    if ((unsigned char) buffer[0] < rval)
++        rval = (unsigned char) buffer[0];
++    rval /= 2;
++    /*
++     * lossy conversion to ISO Latin1: 
++     */
++    for (i = 1; i < rval; i++) {
++        if (i > buflen)         /* destination buffer overflow */
++            break;
++        buf[i - 1] = buffer[2 * i];
++        if (buffer[2 * i + 1] != 0)     /* outside of ISO Latin1 range */
++            buf[i - 1] = '?';
++    }
++    buf[i - 1] = 0;
++    return i - 1;
++}
++
++/*
++ * ------------------------------------------------------------------------- 
++ */
++
++int usbOpenDevice(usb_dev_handle ** device, int vendorID,
++                  char *vendorNamePattern, int productID,
++                  char *productNamePattern, char *serialNamePattern,
++                  FILE * printMatchingDevicesFp, FILE * warningsFp)
++{
++    struct usb_bus *bus;
++    struct usb_device *dev;
++    usb_dev_handle *handle = NULL;
++    int errorCode = USBOPEN_ERR_NOTFOUND;
++
++    usb_find_busses();
++    usb_find_devices();
++    for (bus = usb_get_busses(); bus; bus = bus->next) {
++        for (dev = bus->devices; dev; dev = dev->next) {        /* iterate over 
++                                                                 * all devices
++                                                                 * on all
++                                                                 * busses */
++            if ((vendorID == 0 || dev->descriptor.idVendor == vendorID)
++                && (productID == 0 || dev->descriptor.idProduct == productID)) {
++                char vendor[256],
++                 product[256],
++                 serial[256];
++                int len;
++                handle = usb_open(dev); /* we need to open the device in order
++                                         * to query strings */
++                if (!handle) {
++                    errorCode = USBOPEN_ERR_ACCESS;
++                    if (warningsFp != NULL)
++                        fprintf(warningsFp,
++                                "Warning: cannot open VID=0x%04x PID=0x%04x: %s\n",
++                                dev->descriptor.idVendor,
++                                dev->descriptor.idProduct, usb_strerror());
++                    continue;
++                }
++                /*
++                 * now check whether the names match: 
++                 */
++                len = vendor[0] = 0;
++                if (dev->descriptor.iManufacturer > 0) {
++                    len =
++                        usbGetStringAscii(handle, dev->descriptor.iManufacturer,
++                                          vendor, sizeof(vendor));
++                }
++                if (len < 0) {
++                    errorCode = USBOPEN_ERR_ACCESS;
++                    if (warningsFp != NULL)
++                        fprintf(warningsFp,
++                                "Warning: cannot query manufacturer for VID=0x%04x PID=0x%04x: %s\n",
++                                dev->descriptor.idVendor,
++                                dev->descriptor.idProduct, usb_strerror());
++                } else {
++                    errorCode = USBOPEN_ERR_NOTFOUND;
++                    /*
++                     * printf("seen device from vendor ->%s<-\n", vendor); 
++                     */
++                    if (shellStyleMatch(vendor, vendorNamePattern)) {
++                        len = product[0] = 0;
++                        if (dev->descriptor.iProduct > 0) {
++                            len =
++                                usbGetStringAscii(handle,
++                                                  dev->descriptor.iProduct,
++                                                  product, sizeof(product));
++                        }
++                        if (len < 0) {
++                            errorCode = USBOPEN_ERR_ACCESS;
++                            if (warningsFp != NULL)
++                                fprintf(warningsFp,
++                                        "Warning: cannot query product for VID=0x%04x PID=0x%04x: %s\n",
++                                        dev->descriptor.idVendor,
++                                        dev->descriptor.idProduct,
++                                        usb_strerror());
++                        } else {
++                            errorCode = USBOPEN_ERR_NOTFOUND;
++                            /*
++                             * printf("seen product ->%s<-\n", product); 
++                             */
++                            if (shellStyleMatch(product, productNamePattern)) {
++                                len = serial[0] = 0;
++                                if (dev->descriptor.iSerialNumber > 0) {
++                                    len =
++                                        usbGetStringAscii(handle,
++                                                          dev->descriptor.
++                                                          iSerialNumber, serial,
++                                                          sizeof(serial));
++                                }
++                                if (len < 0) {
++                                    errorCode = USBOPEN_ERR_ACCESS;
++                                    if (warningsFp != NULL)
++                                        fprintf(warningsFp,
++                                                "Warning: cannot query serial for VID=0x%04x PID=0x%04x: %s\n",
++                                                dev->descriptor.idVendor,
++                                                dev->descriptor.idProduct,
++                                                usb_strerror());
++                                }
++                                if (shellStyleMatch(serial, serialNamePattern)) {
++                                    if (printMatchingDevicesFp != NULL) {
++                                        if (serial[0] == 0) {
++                                            fprintf(printMatchingDevicesFp,
++                                                    "VID=0x%04x PID=0x%04x vendor=\"%s\" product=\"%s\"\n",
++                                                    dev->descriptor.idVendor,
++                                                    dev->descriptor.idProduct,
++                                                    vendor, product);
++                                        } else {
++                                            fprintf(printMatchingDevicesFp,
++                                                    "VID=0x%04x PID=0x%04x vendor=\"%s\" product=\"%s\" serial=\"%s\"\n",
++                                                    dev->descriptor.idVendor,
++                                                    dev->descriptor.idProduct,
++                                                    vendor, product, serial);
++                                        }
++                                    } else {
++                                        break;
++                                    }
++                                }
++                            }
++                        }
++                    }
++                }
++                usb_close(handle);
++                handle = NULL;
++            }
++        }
++        if (handle)             /* we have found a deice */
++            break;
++    }
++    if (handle != NULL) {
++        errorCode = 0;
++        *device = handle;
++    }
++    if (printMatchingDevicesFp != NULL) /* never return an error for listing
++                                         * only */
++        errorCode = 0;
++    return errorCode;
++}
++
++/*
++ * ------------------------------------------------------------------------- 
++ */
+diff -Naur ucon64-2.0.0-src/src/misc/opendevice.h ucon64/src/misc/opendevice.h
+--- ucon64-2.0.0-src/src/misc/opendevice.h	1970-01-01 00:00:00.000000000 +0000
++++ ucon64/src/misc/opendevice.h	2009-08-28 10:00:36.000000000 +0000
+@@ -0,0 +1,77 @@
++/* Name: opendevice.h
++ * Project: V-USB host-side library
++ * Author: Christian Starkjohann
++ * Creation Date: 2008-04-10
++ * Tabsize: 4
++ * Copyright: (c) 2008 by OBJECTIVE DEVELOPMENT Software GmbH
++ * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
++ * This Revision: $Id: opendevice.h 740 2009-04-13 18:23:31Z cs $
++ */
++
++/*
++General Description:
++This module offers additional functionality for host side drivers based on
++libusb or libusb-win32. It includes a function to find and open a device
++based on numeric IDs and textual description. It also includes a function to
++obtain textual descriptions from a device.
++
++To use this functionality, simply copy opendevice.c and opendevice.h into your
++project and add them to your Makefile. You may modify and redistribute these
++files according to the GNU General Public License (GPL) version 2 or 3.
++*/
++
++#ifndef __OPENDEVICE_H_INCLUDED__
++#define __OPENDEVICE_H_INCLUDED__
++
++#include <usb.h>    /* this is libusb, see http://libusb.sourceforge.net/ */
++#include <stdio.h>
++
++int usbGetStringAscii(usb_dev_handle *dev, int index, char *buf, int buflen);
++/* This function gets a string descriptor from the device. 'index' is the
++ * string descriptor index. The string is returned in ISO Latin 1 encoding in
++ * 'buf' and it is terminated with a 0-character. The buffer size must be
++ * passed in 'buflen' to prevent buffer overflows. A libusb device handle
++ * must be given in 'dev'.
++ * Returns: The length of the string (excluding the terminating 0) or
++ * a negative number in case of an error. If there was an error, use
++ * usb_strerror() to obtain the error message.
++ */
++
++int usbOpenDevice(usb_dev_handle **device, int vendorID, char *vendorNamePattern, int productID, char *productNamePattern, char *serialNamePattern, FILE *printMatchingDevicesFp, FILE *warningsFp);
++/* This function iterates over all devices on all USB busses and searches for
++ * a device. Matching is done first by means of Vendor- and Product-ID (passed
++ * in 'vendorID' and 'productID'. An ID of 0 matches any numeric ID (wildcard).
++ * When a device matches by its IDs, matching by names is performed. Name
++ * matching can be done on textual vendor name ('vendorNamePattern'), product
++ * name ('productNamePattern') and serial number ('serialNamePattern'). A
++ * device matches only if all non-null pattern match. If you don't care about
++ * a string, pass NULL for the pattern. Patterns are Unix shell style pattern:
++ * '*' stands for 0 or more characters, '?' for one single character, a list
++ * of characters in square brackets for a single character from the list
++ * (dashes are allowed to specify a range) and if the lis of characters begins
++ * with a caret ('^'), it matches one character which is NOT in the list.
++ * Other parameters to the function: If 'warningsFp' is not NULL, warning
++ * messages are printed to this file descriptor with fprintf(). If
++ * 'printMatchingDevicesFp' is not NULL, no device is opened but matching
++ * devices are printed to the given file descriptor with fprintf().
++ * If a device is opened, the resulting USB handle is stored in '*device'. A
++ * pointer to a "usb_dev_handle *" type variable must be passed here.
++ * Returns: 0 on success, an error code (see defines below) on failure.
++ */
++
++/* usbOpenDevice() error codes: */
++#define USBOPEN_SUCCESS         0   /* no error */
++#define USBOPEN_ERR_ACCESS      1   /* not enough permissions to open device */
++#define USBOPEN_ERR_IO          2   /* I/O error */
++#define USBOPEN_ERR_NOTFOUND    3   /* device not found */
++
++
++/* Obdev's free USB IDs, see USBID-License.txt for details */
++
++#define USB_VID_OBDEV_SHARED        5824    /* obdev's shared vendor ID */
++#define USB_PID_OBDEV_SHARED_CUSTOM 1500    /* shared PID for custom class devices */
++#define USB_PID_OBDEV_SHARED_HID    1503    /* shared PID for HIDs except mice & keyboards */
++#define USB_PID_OBDEV_SHARED_CDCACM 1505    /* shared PID for CDC Modem devices */
++#define USB_PID_OBDEV_SHARED_MIDI   1508    /* shared PID for MIDI class devices */
++
++#endif /* __OPENDEVICE_H_INCLUDED__ */
+diff -Naur ucon64-2.0.0-src/src/ucon64.c ucon64/src/ucon64.c
+--- ucon64-2.0.0-src/src/ucon64.c	2009-09-16 09:43:42.000000000 +0000
++++ ucon64/src/ucon64.c	2009-08-28 10:00:36.000000000 +0000
+@@ -171,6 +171,9 @@
+     sflash_usage,
+   //  mgd_usage,
+ #endif
++#ifdef  USE_USB
++    quickdev16_usage,
++#endif
+     lf,
+     neogeo_usage,
+     lf,
+diff -Naur ucon64-2.0.0-src/src/ucon64_defines.h ucon64/src/ucon64_defines.h
+--- ucon64-2.0.0-src/src/ucon64_defines.h	2009-09-16 09:43:42.000000000 +0000
++++ ucon64/src/ucon64_defines.h	2009-08-28 10:00:36.000000000 +0000
+@@ -326,6 +326,7 @@
+   UCON64_XSMCR,
+   UCON64_XSMD,
+   UCON64_XSMDS,
++  UCON64_XSNESRAM,
+   UCON64_XSWC,
+   UCON64_XSWC2,
+   UCON64_XSWC_IO,
+diff -Naur ucon64-2.0.0-src/src/ucon64_opts.c ucon64/src/ucon64_opts.c
+--- ucon64-2.0.0-src/src/ucon64_opts.c	2009-09-16 09:43:42.000000000 +0000
++++ ucon64/src/ucon64_opts.c	2009-08-28 10:00:36.000000000 +0000
+@@ -310,6 +310,7 @@
+     case UCON64_XSMCR:
+     case UCON64_XSMD:
+     case UCON64_XSMDS:
++    case UCON64_XSNESRAM:
+     case UCON64_XSWC:
+     case UCON64_XSWC2:
+     case UCON64_XSWCR:
+@@ -558,7 +559,7 @@
+       break;
+ 
+     case UCON64_Q:
+-    case UCON64_QQ:                             // for now -qq is equivalent to -q
++    case UCON64_QQ:                             //UCON64_XSMC for now -qq is equivalent to -q
+       ucon64.quiet = 1;
+       break;
+ 
+@@ -2050,6 +2051,7 @@
+         smc_write_rts (ucon64.rom, ucon64.parport);
+       fputc ('\n', stdout);
+       break;
++    
+ 
+     case UCON64_XSMD:
+       if (access (ucon64.rom, F_OK) != 0)       // file does not exist -> dump cartridge
+@@ -2077,6 +2079,15 @@
+       fputc ('\n', stdout);
+       break;
+ 
++    case UCON64_XSNESRAM:
++        if (!ucon64.rominfo->buheader_len)
++          fputs ("ERROR: This ROM has no header. Convert to an SMC compatible format with -ffe\n",
++                 stderr);
++        else
++          quickdev16_write_rom (ucon64.rom);
++        fputc ('\n', stdout);
++        break;
++
+     case UCON64_XSWC:
+       enableRTS = 0;                            // falling through
+     case UCON64_XSWC2:
