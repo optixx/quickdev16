@@ -86,22 +86,22 @@
 #define AVR_ADDR_LATCH_DIR	    DDRC
 #define AVR_ADDR_LATCH_PIN	    PC6
 
-#define avr_addr_latch_hi()       (AVR_ADDR_LATCH_PORT |= (1 << AVR_ADDR_LATCH_PIN)))
-#define avr_addr_latch_lo()       (AVR_ADDR_LATCH_PORT &= ~(1 << AVR_ADDR_LATCH_PIN)))
+#define avr_addr_latch_hi()       (AVR_ADDR_LATCH_PORT |= (1 << AVR_ADDR_LATCH_PIN))
+#define avr_addr_latch_lo()       (AVR_ADDR_LATCH_PORT &= ~(1 << AVR_ADDR_LATCH_PIN))
 
 #define AVR_ADDR_SCK_PORT	    PORTC
 #define AVR_ADDR_SCK_DIR	    DDRC
 #define AVR_ADDR_SCK_PIN	    PC5
 
-#define avr_addr_sck_hi()       (AVR_ADDR_SCK_PORT |= (1 << AVR_ADDR_SCK_PIN)))
-#define avr_addr_sck_lo()       (AVR_ADDR_SCK_PORT &= ~(1 << AVR_ADDR_SCK_PIN)))
+#define avr_addr_sck_hi()       (AVR_ADDR_SCK_PORT |= (1 << AVR_ADDR_SCK_PIN))
+#define avr_addr_sck_lo()       (AVR_ADDR_SCK_PORT &= ~(1 << AVR_ADDR_SCK_PIN))
 
 #define AVR_ADDR_SER_PORT	    PORTC
 #define AVR_ADDR_SER_DIR	    DDRC
 #define AVR_ADDR_SER_PIN	    PC4
 
-#define avr_addr_ser_hi()       (AVR_ADDR_SER_PORT |= (1 << AVR_ADDR_SER_PIN)))
-#define avr_addr_ser_lo()       (AVR_ADDR_SER_PORT &= ~(1 << AVR_ADDR_SER_PIN)))
+#define avr_addr_ser_hi()       (AVR_ADDR_SER_PORT |= (1 << AVR_ADDR_SER_PIN))
+#define avr_addr_ser_lo()       (AVR_ADDR_SER_PORT &= ~(1 << AVR_ADDR_SER_PIN))
 
 #define AVR_ADDR_LOAD_PORT	    PORTC
 #define AVR_ADDR_LOAD_DIR	    DDRC
