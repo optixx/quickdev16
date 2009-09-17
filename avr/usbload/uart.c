@@ -25,6 +25,8 @@
 #include "uart.h"
 #include "fifo.h"
 
+
+
 volatile struct {
     uint8_t tmr_int:1;
     uint8_t adc_int:1;
@@ -34,6 +36,9 @@ volatile struct {
 
 volatile char rxbuff;
 
+
+
+static int uart_stream(char c, FILE *stream);
 
 FILE uart_stdout = FDEV_SETUP_STREAM(uart_stream, NULL, _FDEV_SETUP_WRITE);
 
