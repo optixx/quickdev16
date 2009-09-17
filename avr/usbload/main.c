@@ -358,7 +358,7 @@ int main(void)
 
 #if DO_CRC_CHECK     
         info_P(PSTR("-->CRC Checkn"));
-        crc_check_bulk_memory(0x000000, req_addr, req_bank_size);
+        crc_check_bulk_memory(0x000000, req_bank_size * req_bank_cnt, req_bank_size);
 #endif        
         
         info_P(PSTR("-->Switch TO SNES\n"));
