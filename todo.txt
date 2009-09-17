@@ -1,2 +1,10 @@
-
-Checkout nootloader lock fuses
+Send PCB to seeed
+RS232 cable add programm header and sio lines
+SDcard header
+Rework No. 002
+Assemble No. 006 & No. 007
+Mail snega2usb about OEM
+Package for Quickdev16
+Bootloader lockbits
+Flash all cartridge with latest firmware and bootloader
+Email to seeed about the retour package

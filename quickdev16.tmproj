@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>avr/usbload/irq.c</string>
+	<string>avr/usbload/sram.h</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -393,7 +393,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>11</integer>
+			<integer>21</integer>
 		</dict>
 		<key>avr/usbload/irq.h</key>
 		<dict>
@@ -521,21 +521,21 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>141</integer>
 		</dict>
 		<key>avr/usbload/sram.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>66</integer>
 				<key>line</key>
-				<integer>183</integer>
+				<integer>154</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>118</integer>
+			<integer>132</integer>
 		</dict>
 		<key>avr/usbload/testing.c</key>
 		<dict>
@@ -825,62 +825,6 @@
 			<key>firstVisibleLine</key>
 			<integer>211</integer>
 		</dict>
-		<key>tools/ucon64/2.0/src/backup/f2a.c</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>558</integer>
-		</dict>
-		<key>tools/ucon64/2.0/src/backup/fal.c</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>tools/ucon64/2.0/src/backup/snesram.h</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>38</integer>
-				<key>line</key>
-				<integer>70</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>30</integer>
-		</dict>
-		<key>tools/ucon64/2.0/src/console/snes.c</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>28</integer>
-				<key>line</key>
-				<integer>1135</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>1952</integer>
-		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
@@ -915,11 +859,9 @@
 		<string>avr/usbload/debug.h</string>
 		<string>avr/usbload/rle.h</string>
 		<string>avr/usbload/config.h</string>
-		<string>tools/ucon64/2.0/src/console/snes.c</string>
 		<string>poc/avr_sdcard/main.c</string>
 		<string>poc/avr_usbload/sram.c</string>
 		<string>avr/usbload/sram.h</string>
-		<string>tools/ucon64/2.0/src/backup/snesram.h</string>
 		<string>avr/usbload/shared_memory.h</string>
 		<string>avr/usbload/checksize</string>
 		<string>avr/usbload/shared_memory.c</string>
@@ -928,8 +870,6 @@
 		<string>avr/usbload/fifo.h</string>
 		<string>avr/usbload/main.c</string>
 		<string>avr/usbload/sram.c</string>
-		<string>tools/ucon64/2.0/src/backup/fal.c</string>
-		<string>tools/ucon64/2.0/src/backup/f2a.c</string>
 		<string>avr/usbload/usbconfig.h</string>
 		<string>avr/usbload/crc.h</string>
 	</array>
@@ -971,6 +911,6 @@
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{0, 60}, {936, 818}}</string>
+	<string>{{0, 72}, {936, 806}}</string>
 </dict>
 </plist>

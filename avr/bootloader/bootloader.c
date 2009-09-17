@@ -83,7 +83,7 @@
 #define AVR_BTLDR_EN_PIN	    PC1
 #define AVR_BTLDR_EN_IN	        PINC
 
-
+#undef AVR_BTLDR_SWITCH
 /*
  * some predefined signatures, taken from the original USBasp sourcecode 
  */
@@ -471,7 +471,7 @@ int __attribute__ ((noreturn, OS_main)) main(void)
         jump_to_app();
     }
 
-
+#ifdef AVR_BTLDR_SWITCH ENABLE
     if ((AVR_BTLDR_EN_IN & ( 1 << AVR_BTLDR_EN_PIN)) == 0){
         banner();
         uart_puts("Bootloader flashing is disabled\n\r");
@@ -479,6 +479,7 @@ int __attribute__ ((noreturn, OS_main)) main(void)
         leave_bootloader();
         
     }
+#endif
 
     /*
      * if power-on reset, quit bootloader via watchdog reset 
