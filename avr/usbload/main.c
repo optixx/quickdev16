@@ -278,7 +278,7 @@ void boot_startup_rom(uint16_t init_delay)
     rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
     info_P(PSTR("\n"));
 
-#if 0
+#if DO_CRC_CHECK     
     dump_memory(0x010000 - 0x100, 0x010000);
     uint16_t crc;
     crc = crc_check_bulk_memory((uint32_t)0x000000,0x010000, 0x010000);
@@ -355,6 +355,11 @@ int main(void)
         shared_memory_scratchpad_region_tx_restore();
         shared_memory_scratchpad_region_rx_restore();
 #endif
+
+#if DO_CRC_CHECK     
+        info_P(PSTR("-->CRC Checkn"));
+        crc_check_bulk_memory(0x000000, req_addr, req_bank_size);
+#endif        
         
         info_P(PSTR("-->Switch TO SNES\n"));
         set_rom_mode();
