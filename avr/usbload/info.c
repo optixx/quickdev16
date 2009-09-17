@@ -63,10 +63,10 @@ void info_P(PGM_P format, ...) {
 #ifdef NO_INFO
 
 #else
-    strlcpy_P(buffer_info,format,FORMAT_BUFFER_LEN);
+    strlcpy_P((char*)buffer_info,format,FORMAT_BUFFER_LEN);
     va_list args;
     va_start(args, format);
-    vprintf(buffer_info, args);
+    vprintf((char*)buffer_info, args);
     va_end(args);
 #endif
 }
