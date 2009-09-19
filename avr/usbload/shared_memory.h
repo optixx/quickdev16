@@ -22,7 +22,7 @@
 #define __SHARED_MEMORY_H__
 
 
-#define SHARED_MEM_SWITCH_IRQ               0
+#define SHARED_MEM_SWITCH_IRQ               1
 #define SHARED_MEM_SWITCH_DELAY             20
 
 #define SHARED_MEM_TX_SNES_ACK              0xa5
@@ -37,7 +37,7 @@
 #define SHARED_MEM_TX_CMD_TERMINATE         0x06
 
 #define SHARED_MEM_TX_LOC_STATE             0x000000
-#define SHARED_MEM_TX_LOC_SIZE              0x000100
+#define SHARED_MEM_TX_LOC_SIZE              0x000020
 #define SHARED_MEM_TX_LOC_CMD               0x000001
 #define SHARED_MEM_TX_LOC_PAYLOAD           0x000002
 
@@ -48,7 +48,7 @@
 #define SHARED_MEM_RX_CMD_FILESEL           0x01
 
 #define SHARED_MEM_RX_LOC_STATE             0x001000
-#define SHARED_MEM_RX_LOC_SIZE              0x000100
+#define SHARED_MEM_RX_LOC_SIZE              0x000020
 #define SHARED_MEM_RX_LOC_CMD               0x001001
 #define SHARED_MEM_RX_LOC_LEN               0x001002
 #define SHARED_MEM_RX_LOC_PAYLOAD           0x001003
@@ -61,7 +61,8 @@
 #define SHARED_IRQ_HANDLER_HI               0x0ffe5
 
 #define SHARED_SCRATCHPAD_DUMP              0
-
+#define SHARED_SCRATCHPAD_CRC               0
+        
 
 void shared_memory_init(void);
 uint8_t shared_memory_scratchpad_region_save_helper(uint32_t addr);
