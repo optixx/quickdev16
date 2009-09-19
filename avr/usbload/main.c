@@ -113,6 +113,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = req_addr | rq->wIndex.word;
         rx_remaining = rq->wLength.word;
 
+        
 
         if (req_addr && req_addr % req_bank_size == 0) {
 #ifdef FLT_DEBUG
@@ -149,7 +150,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_percent_last = req_percent;
 
         shared_memory_scratchpad_region_save_helper(req_addr);
-
+        
         if (req_addr && (req_addr % req_bank_size) == 0) {
 #ifdef FLT_DEBUG
             debug_P(DEBUG_USB,
@@ -278,7 +279,7 @@ void boot_startup_rom(uint16_t init_delay)
     rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
     info_P(PSTR("\n"));
 
-#if DO_CRC_CHECK     
+#if DO_CRC_CHECK_LOADER     
     dump_memory(0x010000 - 0x100, 0x010000);
     uint16_t crc;
     crc = crc_check_bulk_memory((uint32_t)0x000000,0x010000, 0x010000);
@@ -351,7 +352,8 @@ int main(void)
         
         
         shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
-#if 0
+
+#if DO_SHM_SCRATCHPAD
         shared_memory_scratchpad_region_tx_restore();
         shared_memory_scratchpad_region_rx_restore();
 #endif

@@ -75,7 +75,7 @@ uint16_t crc_check_bulk_memory(uint32_t bottom_addr, uint32_t top_addr, uint32_t
         bottom_addr,top_addr);
     
     for (addr = bottom_addr; addr < top_addr; addr++) {
-        if (addr && addr % bank_size == 0) {
+        if (addr && ((addr % bank_size) == 0)) {
             debug_P(DEBUG_CRC, PSTR("crc_check_bulk_memory: bank=0x%02x addr=0x%08lx crc=0x%04x\n"),
                 req_bank,addr,crc);
             req_bank++;
