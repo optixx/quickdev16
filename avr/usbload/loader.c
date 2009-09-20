@@ -1,6 +1,6 @@
 /*
-File: main.smc 
-Time: Thu, 06 Aug 2009 20:01:38
+File: ../snes/quickdevloader/main.smc 
+Time: Sat, 19 Sep 2009 18:19:26
 */
 #include <avr/pgmspace.h>       
 #include <loader.h>       

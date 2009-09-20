@@ -47,8 +47,8 @@
 #define HW_VERSION                  "2.6"
 #define SW_VERSION                  "1.0"
 
-#define DO_CRC_CHECK_LOADER         0
-#define DO_CRC_CHECK                1
+#define DO_CRC_CHECK_LOADER         1
+#define DO_CRC_CHECK                0
 #define DO_SHM_SCRATCHPAD           1
 #define DO_SHM                      1
 
