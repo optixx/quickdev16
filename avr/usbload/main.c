@@ -250,26 +250,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  */
 
 
-void usb_connect()
-{
-    uint8_t i = 0;
-    info_P(PSTR("USB init\n"));
-    usbDeviceDisconnect();      /* enforce re-enumeration, do this while */
-    cli();
-    info_P(PSTR("USB disconnect\n"));
-    i = 10;
-    while (--i) {               /* fake USB disconnect for > 250 ms */
-        led_on();
-        _delay_ms(15);
-        led_off();
-        _delay_ms(35);
-    }
-    led_on();
-    usbDeviceConnect();
-    info_P(PSTR("USB connect\n"));
-}
-
-
 void boot_startup_rom(uint16_t init_delay)
 {
     info_P(PSTR("Fetch loader rom\n"));
@@ -293,7 +273,6 @@ void boot_startup_rom(uint16_t init_delay)
     snes_irq_off();
     snes_hirom();
     snes_wr_disable();
-    irq_stop();
     
     snes_bus_active();
     info_P(PSTR("Activate SNES bus\n"));
@@ -335,14 +314,15 @@ int main(void)
     banner();
     
     system_init();
-    //pwm_init();
+    pwm_init();
     shared_memory_init();
     snes_reset_hi();
     snes_reset_off();
     irq_init();
-    boot_startup_rom(500);
+    boot_startup_rom(50);
     
     globals_init();
+    pwm_stop();
     
     usbInit();
     usb_connect();

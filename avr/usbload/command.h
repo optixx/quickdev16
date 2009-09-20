@@ -25,5 +25,6 @@
 void send_reset();
 void send_irq();
 void set_rom_mode();
+void usb_connect();
 
 #endif
