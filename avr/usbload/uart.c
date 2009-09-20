@@ -52,7 +52,7 @@ void uart_init(void)
 
 }
 
-
+/*
 ISR(USART0_RX_vect)
 {
     uint8_t c;
@@ -62,7 +62,7 @@ ISR(USART0_RX_vect)
         intflags.rx_int = 1;
     }
 }
-
+*/
 
 void uart_putc(uint8_t c)
 {
