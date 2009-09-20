@@ -28,8 +28,26 @@
 #include "sram.h"
 #include "info.h"
 #include "irq.h"
+#include "usbdrv.h"
 
 extern uint32_t req_bank_size;
+
+void usb_connect()
+{
+    uint8_t i = 0;
+    info_P(PSTR("USB init\n"));
+    usbDeviceDisconnect();      /* enforce re-enumeration, do this while */
+    cli();
+    info_P(PSTR("USB disconnect\n"));
+    i = 10;
+    while (--i) {               /* fake USB disconnect for > 250 ms */
+        _delay_ms(50);
+    }
+    led_on();
+    usbDeviceConnect();
+    info_P(PSTR("USB connect\n"));
+}
+
 
 
 void send_reset()
