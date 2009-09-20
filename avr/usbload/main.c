@@ -286,8 +286,12 @@ void boot_startup_rom(uint16_t init_delay)
     info(PSTR("crc=%x\n"),crc);
 #endif
 
+    snes_irq_lo();
+    snes_irq_off();
     snes_hirom();
     snes_wr_disable();
+    irq_stop();
+    
     snes_bus_active();
     info_P(PSTR("Activate SNES bus\n"));
     send_reset();
@@ -332,7 +336,7 @@ int main(void)
     snes_reset_hi();
     snes_reset_off();
     irq_init();
-    boot_startup_rom(50);
+    boot_startup_rom(500);
     
     globals_init();
     usbInit();

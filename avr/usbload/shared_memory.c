@@ -239,8 +239,13 @@ void shared_memory_write(uint8_t cmd, uint8_t value)
          SHARED_MEM_TX_LOC_CMD, cmd, SHARED_MEM_TX_LOC_PAYLOAD, value);
 
     sram_bulk_addr_save();
+
+#if (DO_SHM_SCRATCHPAD==0)    
     shared_memory_scratchpad_tx_save();
+#endif
+#if SHARED_MEM_SWITCH_IRQ    
     shared_memory_irq_hook();
+#endif
 
     sram_write(SHARED_MEM_TX_LOC_STATE, SHARED_MEM_TX_SNES_ACK);
     sram_write(SHARED_MEM_TX_LOC_CMD, cmd);
@@ -266,8 +271,12 @@ void shared_memory_write(uint8_t cmd, uint8_t value)
     snes_lorom();
     snes_wr_disable();
 
+#if (DO_SHM_SCRATCHPAD==0)    
     shared_memory_scratchpad_tx_restore();
+#endif
+#if SHARED_MEM_SWITCH_IRQ    
     shared_memory_irq_restore();
+#endif
     sram_bulk_addr_restore();
 #endif
 }
