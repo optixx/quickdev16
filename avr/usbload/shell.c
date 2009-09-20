@@ -17,28 +17,34 @@
  *
  * =====================================================================================
  */
- #include <stdint.h>
- #include <string.h>
- #include <avr/io.h>
- #include <avr/interrupt.h>
+#include <stdint.h>
+#include <string.h>
+#include <avr/io.h>
+#include <stdlib.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>         
+#include <avr/pgmspace.h>       
+#include <avr/eeprom.h>
 
- #include "pwm.h"
- #include "debug.h"
- #include "info.h"
- #include "sram.h"
- 
- #define RECEIVE_BUF_LEN 40
- 
- uint8_t			recv_buf[RECEIVE_BUF_LEN];
- volatile uint8_t	recv_counter = 0;
- volatile uint8_t	cr = 0;
- 
- 
- static char *token_ptr;
 
- static char *get_token(void)
- {
- 	char *p = token_ptr;
+#include "pwm.h"
+#include "debug.h"
+#include "info.h"
+#include "sram.h"
+#include "util.h"
+#include "uart.h"
+ 
+#define RECEIVE_BUF_LEN 40
+ 
+uint8_t			recv_buf[RECEIVE_BUF_LEN];
+volatile uint8_t	recv_counter = 0;
+volatile uint8_t	cr = 0;
+
+uint8_t *token_ptr;
+
+uint8_t *get_token(void)
+{
+ 	uint8_t *p = token_ptr;
  	while (*p == ' ')
  		p++;
  	if (*p == '\0')
@@ -52,83 +58,78 @@
  		}
  	} while (*token_ptr != '\0');
  	return p;
- }
+}
 
- static int get_dec(int *decval)
- {
- 	const char *t;
+uint8_t get_dec(uint32_t *decval)
+{
+ 	const uint8_t *t;
  	t = get_token();
  	if (t != NULL) {
- 		int x = Util_sscandec(t);
+ 		int x = util_sscandec(t);
  		if (x < 0)
- 			return FALSE;
+ 			return 0;
  		*decval = x;
- 		return TRUE;
+ 		return 1;
  	}
- 	return FALSE;
+ 	return 0;
  }
 
- static int parse_hex(const char *s, UWORD *hexval)
- {
- 	int x = Util_sscanhex(s);
- #ifdef MONITOR_HINTS
- 	int y = find_label_value(s);
- 	if (y >= 0) {
- 		if (x < 0 || x > 0xffff || x == y) {
- 			*hexval = (UWORD) y;
- 			return TRUE;
- 		}
- 		/* s can be a hex number or a label name */
- 		printf("%s is ambiguous. Use 0%X or %X instead.\n", s, x, y);
- 		return FALSE;
- 	}
- #endif
- 	if (x < 0 || x > 0xffff)
- 		return FALSE;
- 	*hexval = (UWORD) x;
- 	return TRUE;
+uint8_t parse_hex(const uint8_t *s, uint32_t *hexval)
+{
+ 	uint32_t x = util_sscanhex(s);
+ 	if (x > 0xffffff)
+ 		return 0;
+ 	*hexval = (uint32_t) x;
+ 	return 1;
  }
 
- static int get_hex(UWORD *hexval)
- {
- 	const char *t;
+uint8_t get_hex(uint32_t *hexval)
+{
+ 	const uint8_t *t;
  	t = get_token();
  	if (t != NULL)
  		return parse_hex(t, hexval);
- 	return FALSE;
+ 	return 0;
  }
 
- static int get_hex2(UWORD *hexval1, UWORD *hexval2)
- {
+uint8_t get_hex_arg2(uint32_t *hexval1, uint32_t *hexval2)
+{
  	return get_hex(hexval1) && get_hex(hexval2);
- }
+}
 
- static int get_hex3(UWORD *hexval1, UWORD *hexval2, UWORD *hexval3)
- {
+uint8_t get_hex_arg3(uint32_t *hexval1, uint32_t *hexval2, uint32_t *hexval3)
+{
  	return get_hex(hexval1) && get_hex(hexval2) && get_hex(hexval3);
+}
+
+static uint8_t get_int32(uint32_t *val)
+ {
+ 	if (!get_hex(val)){
+ 		printf("Invalid argument!\n");
+        return 0;
+    } else {
+        return 1;
+    }
  }
 
- static void get_uword(UWORD *val)
+ static uint8_t get_int8(uint8_t *val)
  {
- 	if (!get_hex(val))
+ 	uint32_t ret;
+ 	if (!get_hex(&ret) ||ret > 0xff){
  		printf("Invalid argument!\n");
- }
-
- static void get_ubyte(UBYTE *val)
- {
- 	UWORD uword;
- 	if (!get_hex(&uword) || uword > 0xff)
- 		printf("Invalid argument!\n");
- 	else
- 		*val = (UBYTE) uword;
+        return 0;
+ 	}else{
+ 		*val = (uint8_t)ret;
+        return 1;
+    }
  }
 
  static int get_bool(void)
  {
- 	const char *t;
+ 	const uint8_t *t;
  	t = get_token();
  	if (t != NULL) {
- 		int result = Util_sscanbool(t);
+ 		int result = util_sscanbool(t);
  		if (result >= 0)
  			return result;
  	}
@@ -169,4 +170,33 @@ ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
     }
   }
   UCSR0B |= (1<<RXCIE0);//	Interrupts enable for RxD
+}
+
+
+void shellrun(void)
+{
+    uint8_t command_buf[RECEIVE_BUF_LEN];
+	uint8_t *t;
+    uint32_t arg1;
+    uint32_t arg2;
+    uint32_t arg3;
+    
+	if (!cr)
+        return;
+    cr=0;
+	strcpy((char*)command_buf, (char*)recv_buf);
+	
+	token_ptr = command_buf;
+	t = get_token();
+	if (t == NULL)
+		return;
+
+	util_strupper(t);
+
+	if (strcmp((char*)t, "DUMP") == 0) {
+        if (get_hex_arg2(&arg1,&arg2))
+            dump_memory(arg1,arg2);
+        else 
+            printf("ERROR: arg parsing\n");
+    }
 }

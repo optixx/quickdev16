@@ -26,6 +26,7 @@
 #include "info.h"
 #include "uart.h"
 #include "sram.h"
+#include "dump.h"
 
 
 extern FILE uart_stdout;
