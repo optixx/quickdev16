@@ -45,6 +45,7 @@
 #include "command.h"
 #include "shared_memory.h"
 #include "irq.h"
+#include "pwm.h"
 #include "testing.h"
 
 
@@ -199,6 +200,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_state = REQ_STATUS_SNES;
         debug_P(DEBUG_USB, PSTR("USB_MODE_SNES:\n"));
         ret_len = 0;
+        pwm_stop();
+        
         /*
          * -------------------------------------------------------------------------
          */
@@ -332,6 +335,7 @@ int main(void)
     banner();
     
     system_init();
+    //pwm_init();
     shared_memory_init();
     snes_reset_hi();
     snes_reset_off();
@@ -339,6 +343,7 @@ int main(void)
     boot_startup_rom(500);
     
     globals_init();
+    
     usbInit();
     usb_connect();
     

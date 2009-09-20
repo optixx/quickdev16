@@ -137,6 +137,8 @@
 #define led_off()	            ((LED_PORT &=~ (1 << LED_PIN)),\
                                 (LED_DIR |= (1 << LED_PIN)))
 
+#define led_pwm_on()	        (LED_DIR &=~ (1 << LED_PIN))
+#define led_pwm_off()	        (LED_DIR |= (1 << LED_PIN))
 
 /* ---------------------------- PORT D ---------------------------- */
 
