@@ -33,6 +33,8 @@
 #include "sram.h"
 #include "util.h"
 #include "uart.h"
+#include "dump.h"
+#include "irq.h"
  
 #define RECEIVE_BUF_LEN 40
  
@@ -136,6 +138,14 @@ static uint8_t get_int32(uint32_t *val)
  	printf("Invalid argument (should be 0 or 1)!\n");
  	return -1;
  } 
+ void prompt(void){
+     
+     uart_putc('\r');
+     uart_putc('\n');
+     uart_putc(':');
+     uart_putc('>');
+     
+ }
  
 ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
 {
@@ -145,10 +155,7 @@ ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
     cr=1;
     recv_buf[recv_counter]='\0';
     recv_counter=0;
-    uart_putc('\r');
-    uart_putc('\n');
-    uart_putc(':');
-    uart_putc('>');
+    prompt();
   }
   recv_buf[recv_counter] = UDR0;
   uart_putc(recv_buf[recv_counter]); /* do a echo, maybe should reside not in interrupt */
@@ -157,10 +164,7 @@ ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
     cr = 1;				//	found a CR, so the application should do something
     recv_buf[++recv_counter]='\0';  // terminate string
     recv_counter = 0;
-    uart_putc('\r');
-    uart_putc('\n');
-    uart_putc(':');
-    uart_putc('>');
+    prompt();
   } else {
     // we accept backspace or delete
     if ((recv_buf[recv_counter] == 0x08 || recv_buf[recv_counter] == 0x7f) && recv_counter > 0) {
@@ -173,9 +177,10 @@ ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
 }
 
 
-void shellrun(void)
+uint8_t command_buf[RECEIVE_BUF_LEN];
+
+void shell_run(void)
 {
-    uint8_t command_buf[RECEIVE_BUF_LEN];
 	uint8_t *t;
     uint32_t arg1;
     uint32_t arg2;
@@ -188,6 +193,7 @@ void shellrun(void)
 	
 	token_ptr = command_buf;
 	t = get_token();
+	
 	if (t == NULL)
 		return;
 
@@ -197,6 +203,28 @@ void shellrun(void)
         if (get_hex_arg2(&arg1,&arg2))
             dump_memory(arg1,arg2);
         else 
-            printf("ERROR: arg parsing\n");
+            printf("DUMP <start addr> <end addr> %i %i\n",arg1,arg2);
     }
+	else if (strcmp((char*)t, "RESET") == 0) {
+        leave_application();
+    }
+    prompt();
+    
+    /*
+    reset
+    reset snes
+    dias
+    switch to avr mode
+    swicth to snes mode
+    send irq
+    crc
+    set irq vector
+    set reset vector
+    set rom mode
+
+    
+    
+    
 }
+
+
