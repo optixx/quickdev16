@@ -47,6 +47,7 @@
 #include "irq.h"
 #include "pwm.h"
 #include "testing.h"
+#include "shell.h"
 
 
 
@@ -337,6 +338,7 @@ int main(void)
         info_P(PSTR("USB poll\n"));
         while (req_state != REQ_STATUS_SNES) {
             usbPoll();
+            shell_run();
         }
         
         
@@ -363,6 +365,7 @@ int main(void)
         info_P(PSTR("Poll USB\n"));
         while ((req_state != REQ_STATUS_AVR)) {
             usbPoll();
+            shell_run();
         }
         info_P(PSTR("-->Switch TO AVR\n"));
         
