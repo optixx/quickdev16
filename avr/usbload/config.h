@@ -43,7 +43,8 @@
 #define USB_CRC_CHECK               0x01
 
 #define TRANSFER_BUFFER_SIZE        0x000
-#define FORMAT_BUFFER_LEN           0x100
+#define FORMAT_BUFFER_LEN           0x080
+#define RECEIVE_BUF_LEN             0x030
 #define HW_VERSION                  "2.6"
 #define SW_VERSION                  "1.0"
 

@@ -107,7 +107,7 @@ uint8_t get_hex_arg3(uint32_t *hexval1, uint32_t *hexval2, uint32_t *hexval3)
 static uint8_t get_int32(uint32_t *val)
  {
  	if (!get_hex(val)){
- 		printf("Invalid argument!\n");
+ 		info_P(PSTR("Invalid argument!\n"));
         return 0;
     } else {
         return 1;
@@ -118,7 +118,7 @@ static uint8_t get_int32(uint32_t *val)
  {
  	uint32_t ret;
  	if (!get_hex(&ret) ||ret > 0xff){
- 		printf("Invalid argument!\n");
+ 		info_P(PSTR("Invalid argument!\n"));
         return 0;
  	}else{
  		*val = (uint8_t)ret;
@@ -135,7 +135,7 @@ static uint8_t get_int32(uint32_t *val)
  		if (result >= 0)
  			return result;
  	}
- 	printf("Invalid argument (should be 0 or 1)!\n");
+ 	info_P(PSTR("Invalid argument (should be 0 or 1)!\n"));
  	return -1;
  } 
  void prompt(void){
@@ -203,49 +203,49 @@ void shell_run(void)
         if (get_hex_arg2(&arg1,&arg2))
             dump_memory(arg1,arg2);
         else 
-            printf("DUMP <start addr> <end addr>\n");
+            info_P(PSTR("DUMP <start addr> <end addr>\n"));
     
     }else if (strcmp((char*)t, "CRC") == 0) {
         if (get_hex_arg2(&arg1,&arg2)){
             crc = crc_check_bulk_memory(arg1,arg2,0x8000);
-            printf("0x%06lx - 0x%06lx crc=0x%04x\n",arg1,arg2,crc);
+            info_P(PSTR("0x%06lx - 0x%06lx crc=0x%04x\n"),arg1,arg2,crc);
         } else 
-            printf("CRC <start addr> <end addr>\n");
+            info_P(PSTR("CRC <start addr> <end addr>\n"));
     }else if (strcmp((char*)t, "EXIT") == 0) {
         leave_application();
     }else if (strcmp((char*)t, "RESET") == 0) {
         send_reset();
     }else if (strcmp((char*)t, "IRQ") == 0) {
-        printf("Send IRQ\n");
+        info_P(PSTR("Send IRQ\n"));
         snes_irq_on();
         snes_irq_lo();
         _delay_us(20);
         snes_irq_hi();
         snes_irq_off();
     }else if (strcmp((char*)t, "AVR") == 0) {
-         printf("Activate AVR bus\n");
+         info_P(PSTR("Activate AVR bus\n"));
          avr_bus_active();
          snes_irq_lo();
          snes_irq_off();
     }else if (strcmp((char*)t, "SNES") == 0) {
-        printf("Activate SNES bus\n");
+        info_P(PSTR("Activate SNES bus\n"));
         snes_irq_lo();
         snes_irq_off();
         snes_wr_disable();
         snes_bus_active();
     }else if (strcmp((char*)t, "LOROM") == 0) {
-        printf("Set LOROM\n");
+        info_P(PSTR("Set LOROM\n"));
         snes_lorom();
         snes_wr_disable();
     }else if (strcmp((char*)t, "HIROM") == 0) {
-        printf("Set HIROM\n");
+        info_P(PSTR("Set HIROM\n"));
         snes_hirom();
         snes_wr_disable();
     }else if (strcmp((char*)t, "WRDISABLE") == 0) {
-        printf("Set WR disable");
+        info_P(PSTR("Set WR disable"));
         snes_wr_disable();
     }else if (strcmp((char*)t, "WRENABLE") == 0) {
-        printf("Set WR disable");
+        info_P(PSTR("Set WR disable"));
         snes_wr_enable();
     }else if (strcmp((char*)t, "LOADER") == 0) {
         boot_startup_rom(500);    
