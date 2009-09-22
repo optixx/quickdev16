@@ -67,6 +67,19 @@ void pwm_speed(uint16_t val) {
     pwm_overflow_max = val; 
 }
 
+void pwm_speed_slow(uint16_t val) {
+    pwm_overflow_max = PWM_OVERFLOW_MAX * 2 ; 
+}
+
+void pwm_speed_fast(uint16_t val) {
+    pwm_overflow_max = PWM_OVERFLOW_MAX / 2; 
+}
+
+void pwm_speed_normal(uint16_t val) {
+    pwm_overflow_max = PWM_OVERFLOW_MAX; 
+}
+
+
 void pwm_set(uint8_t val) {
     pwm_setting = val;
 }
