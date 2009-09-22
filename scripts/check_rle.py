@@ -7,7 +7,7 @@ import glob
 import zlib
 
 
-TARGET="/home/david/Dropbox/Tech/Quickdev16/roms/08"
+TARGET="/Users/david/Dropbox/Tech/Quickdev16/roms/08"
 
 count = 0
 total_zip_len = 0
