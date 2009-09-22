@@ -193,10 +193,11 @@ enum cmds { CMD_DUMP,
             CMD_SHMSAVE,
             CMD_SHMRESTORE,
             CMD_LOADER,
-            CMD_RECONNECT
+            CMD_RECONNECT,
+            CMD_HELP
 };
 
-uint8_t cmdlist[][CMD_RECONNECT] PROGMEM = {
+uint8_t cmdlist[][CMD_HELP] PROGMEM = {
             {"DUMP"},
             {"CRC"},
             {"EXIT"},
@@ -212,8 +213,19 @@ uint8_t cmdlist[][CMD_RECONNECT] PROGMEM = {
             {"SHMRESTORE"},
             {"LOADER"},
             {"RECONNECT"},
+            {"HELP"},
         };
 
+
+void shell_help(void){
+	uint8_t i;
+    info_P(PSTR("\n"));
+    for (i=CMD_DUMP; i<CMD_HELP; i++){
+        info_P((PGM_P)cmdlist[i]);
+        info_P(PSTR("\n"));
+        
+    }
+}
 
 void shell_run(void)
 {
@@ -232,7 +244,7 @@ void shell_run(void)
 	t = get_token();
 	
 	if (t == NULL)
-		return;
+        shell_help();
 
 	util_strupper(t);
 
@@ -304,6 +316,8 @@ void shell_run(void)
         boot_startup_rom(500);    
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_RECONNECT]) == 0) {
         usb_connect();
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_HELP]) == 0) {
+        shell_help();
     }    
     prompt();
     
