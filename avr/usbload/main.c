@@ -57,26 +57,15 @@ extern FILE uart_stdout;
 uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
 
 /*
-uint32_t req_addr = 0;
-uint32_t req_addr_end = 0;
-uint8_t req_bank;
-uint32_t req_bank_size;
-uint16_t req_bank_cnt;
-uint8_t req_percent;
-uint8_t req_percent_last;
-uint8_t req_state = REQ_STATUS_IDLE;
-uint8_t rx_remaining = 0;
-uint8_t tx_remaining = 0;
-uint16_t sync_errors = 0;
-uint8_t tx_buffer[32];
-uint8_t rx_buffer[8];
 */
-
-
+typedef struct system_t {
+    uint8_t bus_mode;
+    uint8_t rom_mode;
+    uint8_t req_bank;
+} system_t;
 
 
 usb_transaction_t usb_trans;
-
 
 usbMsgLen_t usbFunctionSetup(uchar data[8])
 {

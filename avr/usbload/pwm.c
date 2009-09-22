@@ -37,10 +37,10 @@ uint8_t pwm_sine_table[]  = {
 0x01,0x01,0x03,0x07,0x0b,0x11,0x17,0x1f,0x28,0x31,0x3b,0x46,0x52,0x5e,0x6a,0x76
 };
 
- volatile uint8_t pwm_setting;                    // Einstellungen für die einzelnen PWM-Kanäle
- volatile uint16_t pwm_overflow;                    // Einstellungen für die einzelnen PWM-Kanäle
- volatile uint8_t pwm_idx;                    // Einstellungen für die einzelnen PWM-Kanäle
- volatile uint16_t pwm_overflow_max;                    // Einstellungen für die einzelnen PWM-Kanäle
+volatile uint8_t pwm_setting;                   
+volatile uint16_t pwm_overflow;                    
+volatile uint8_t pwm_idx;                    
+volatile uint16_t pwm_overflow_max;                    
  
  ISR(TIMER2_COMPA_vect) {
     static uint8_t pwm_cnt=0;
