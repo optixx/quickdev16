@@ -39,7 +39,7 @@ else
     CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG -DNO_INFO
     OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o \
               uart.o fifo.o sram.o crc.o debug.o dump.o timer.o watchdog.o rle.c loader.o \
-              pwm.o uril.o shell.o info.o shared_memory.o command.o irq.o
+              pwm.o util.o shell.o info.o shared_memory.o command.o irq.o
 endif
 
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)

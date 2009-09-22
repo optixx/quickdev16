@@ -51,7 +51,6 @@
 
 
 
-extern const char _rom[] PROGMEM;
 extern FILE uart_stdout;
 
 uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
@@ -101,9 +100,11 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_START, 0);
         shared_memory_write(SHARED_MEM_TX_CMD_BANK_COUNT, req_bank_cnt);
+#if DO_TIMER
         if (req_addr == 0x000000) {
             timer_start();
         }
+#endif       
         /*
          * -------------------------------------------------------------------------
          */
@@ -118,6 +119,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         
 
         if (req_addr && req_addr % req_bank_size == 0) {
+#if DO_TIMER
+
 #ifdef FLT_DEBUG
             debug_P(DEBUG_USB,
                   PSTR("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n"),
@@ -127,8 +130,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                   PSTR("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%i\n"),
                   req_bank, req_addr, timer_stop_int());
 #endif
+              timer_start();
+#endif
             req_bank++;
-            timer_start();
 
         } else {
             sram_bulk_write_start(req_addr);
@@ -154,6 +158,8 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         shared_memory_scratchpad_region_save_helper(req_addr);
         
         if (req_addr && (req_addr % req_bank_size) == 0) {
+#if DO_TIMER
+
 #ifdef FLT_DEBUG
             debug_P(DEBUG_USB,
                   PSTR("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%.4f\n"),
@@ -163,8 +169,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                   PSTR("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%i\n"),
                   req_bank, req_addr, timer_stop_int());
 #endif
+              timer_start();
+#endif
             req_bank++;
-            timer_start();
             shared_memory_write(SHARED_MEM_TX_CMD_BANK_CURRENT, req_bank);
 
         }
@@ -250,53 +257,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
  * ------------------------------------------------------------------------- 
  */
 
-
-void boot_startup_rom(uint16_t init_delay)
-{
-    info_P(PSTR("Fetch loader rom\n"));
-    info_P(PSTR("Activate AVR bus\n"));
-    avr_bus_active();
-    info_P(PSTR("IRQ off\n"));
-    snes_irq_lo();
-    snes_irq_off();
-    snes_lorom();
-    rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
-    info_P(PSTR("\n"));
-
-#if DO_CRC_CHECK_LOADER     
-    dump_memory(0x010000 - 0x100, 0x010000);
-    uint16_t crc;
-    crc = crc_check_bulk_memory((uint32_t)0x000000,0x010000, 0x010000);
-    info(PSTR("crc=%x\n"),crc);
-#endif
-
-    snes_irq_lo();
-    snes_irq_off();
-    snes_hirom();
-    snes_wr_disable();
-    
-    snes_bus_active();
-    info_P(PSTR("Activate SNES bus\n"));
-    send_reset();
-    _delay_ms(init_delay);
-}
-
-void banner(){
-    uint8_t i;
-    for (i=0;i<40;i++)
-        info_P(PSTR("\n"));
-    info_P(PSTR(" ________        .__        __    ________               ____  ________\n"));
-    info_P(PSTR(" \\_____  \\  __ __|__| ____ |  | __\\______ \\   _______  _/_   |/  _____/\n"));
-    info_P(PSTR("  /  / \\  \\|  |  \\  |/ ___\\|  |/ / |    |  \\_/ __ \\  \\/ /|   /   __  \\ \n"));
-    info_P(PSTR(" /   \\_/.  \\  |  /  \\  \\___|    <  |    `   \\  ___/\\   / |   \\  |__\\  \\ \n"));
-    info_P(PSTR(" \\_____\\ \\_/____/|__|\\___  >__|_ \\/_______  /\\___  >\\_/  |___|\\_____  / \n"));
-    info_P(PSTR("        \\__>             \\/     \\/        \\/     \\/                 \\/ \n"));
-    info_P(PSTR("\n"));
-    info_P(PSTR("                               www.optixx.org\n"));
-    info_P(PSTR("\n"));
-    info_P(PSTR("System Hw: %s Sw: %s\n"),HW_VERSION,SW_VERSION);
-    
-}
 
 void globals_init(){
     req_addr = 0;
