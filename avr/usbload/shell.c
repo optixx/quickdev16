@@ -221,7 +221,7 @@ void shell_run(void)
     set irq vector
     set reset vector
     set rom mode
-
+    */
     
     
     
