@@ -149,14 +149,14 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         req_addr = req_addr | rq->wIndex.word;
         rx_remaining = rq->wLength.word;
 
+#if DO_SHM
         req_percent = (uint32_t)( 100 * req_addr )  / req_addr_end;
         if (req_percent!=req_percent_last){
             shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, req_percent);
         }
         req_percent_last = req_percent;
-
         shared_memory_scratchpad_region_save_helper(req_addr);
-        
+#endif        
         if (req_addr && (req_addr % req_bank_size) == 0) {
 #if DO_TIMER
 
@@ -172,8 +172,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
               timer_start();
 #endif
             req_bank++;
+#if DO_SHM
             shared_memory_write(SHARED_MEM_TX_CMD_BANK_CURRENT, req_bank);
-
+#endif
         }
         ret_len = USB_MAX_TRANS;
         /*
@@ -188,7 +189,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         debug_P(DEBUG_USB, PSTR("USB_BULK_UPLOAD_END:\n"));
         req_state = REQ_STATUS_IDLE;
         sram_bulk_write_end();
+#if DO_SHM
         shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_END, 0);
+#endif
         ret_len = 0;
 
         /*
@@ -301,8 +304,10 @@ int main(void)
             shell_run();
         }
         
+#if DO_SHM
         
         shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
+#endif
 
 #if DO_SHM_SCRATCHPAD
         shared_memory_scratchpad_region_tx_restore();

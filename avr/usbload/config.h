@@ -51,6 +51,6 @@
 #define DO_CRC_CHECK                0
 #define DO_SHM_SCRATCHPAD           0
 #define DO_SHM                      0
-#define DO_TIMER                    0
+#define DO_TIMER                    1
 
 #endif 
