@@ -117,9 +117,6 @@ void boot_startup_rom(uint16_t init_delay)
     _delay_ms(init_delay);
 }
 
-
-
-
 void banner(){
     uint8_t i;
     for (i=0;i<40;i++)
@@ -135,4 +132,16 @@ void banner(){
     info_P(PSTR("\n"));
     info_P(PSTR("System Hw: %s Sw: %s\n"),HW_VERSION,SW_VERSION);
     
+}
+
+void transaction_status(){
+    info_P(PSTR("\nAddr           0x%06lx\n"),usb_trans.req_addr);
+    info_P(PSTR("Bank           0x%02x\n"),usb_trans.req_bank);
+    info_P(PSTR("Banksize       0x%06lx\n"),usb_trans.req_bank_size);
+    info_P(PSTR("Bankcount      0x%02x\n"),usb_trans.req_bank_cnt);
+    info_P(PSTR("Status         0x%02x\n"),usb_trans.req_state);
+    info_P(PSTR("Percent        %02i\n"),usb_trans.req_percent);
+    info_P(PSTR("TX buffer      %02i\n"),usb_trans.tx_remaining);
+    info_P(PSTR("RX buffer      %02i\n"),usb_trans.rx_remaining);
+    info_P(PSTR("Syncerr        %02i\n"),usb_trans.sync_errors);
 }

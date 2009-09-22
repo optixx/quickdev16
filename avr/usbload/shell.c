@@ -41,6 +41,7 @@
 #include "shared_memory.h"
 
  
+
  
 uint8_t command_buf[RECEIVE_BUF_LEN];
 uint8_t	recv_buf[RECEIVE_BUF_LEN];
@@ -194,6 +195,7 @@ enum cmds { CMD_DUMP,
             CMD_SHMRESTORE,
             CMD_LOADER,
             CMD_RECONNECT,
+            CMD_STATUS,
             CMD_HELP
 };
 
@@ -213,6 +215,7 @@ uint8_t cmdlist[][CMD_HELP] PROGMEM = {
             {"SHMRESTORE"},
             {"LOADER"},
             {"RECONNECT"},
+            {"STATUS"},
             {"HELP"},
         };
 
@@ -316,6 +319,8 @@ void shell_run(void)
         boot_startup_rom(500);    
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_RECONNECT]) == 0) {
         usb_connect();
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_STATUS]) == 0) {
+            transaction_status();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_HELP]) == 0) {
         shell_help();
     }    
