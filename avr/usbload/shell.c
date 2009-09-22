@@ -38,6 +38,8 @@
 #include "config.h"
 #include "crc.h"
 #include "command.h"
+#include "shared_memory.h"
+
  
  
 uint8_t command_buf[RECEIVE_BUF_LEN];
@@ -251,6 +253,19 @@ void shell_run(void)
             info_P(PSTR("Set WR disable"));
             snes_wr_disable();
         }
+    }else if (strcmp((char*)t, "SHMWR") == 0) {
+        if (get_hex_arg2(&arg1,&arg2))
+            shared_memory_write((uint8_t)arg1, (uint8_t)arg1);
+        else 
+            info_P(PSTR("SHMWR <command> <value>\n"));
+    }else if (strcmp((char*)t, "SHMSAVE") == 0) {
+        shared_memory_scratchpad_region_tx_save();
+        shared_memory_scratchpad_region_rx_save();
+        info_P(PSTR("Save scratchpad\n"));
+    }else if (strcmp((char*)t, "SHMRESTORE") == 0) {
+        shared_memory_scratchpad_region_tx_restore();
+        shared_memory_scratchpad_region_rx_restore();
+        info_P(PSTR("Restore scratchpad\n"));
     }else if (strcmp((char*)t, "LOADER") == 0) {
         boot_startup_rom(500);    
     }else if (strcmp((char*)t, "RECONNECT") == 0) {
