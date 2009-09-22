@@ -32,7 +32,8 @@
 #include "rle.h"
 #include "loader.h"
 
-extern uint32_t req_bank_size;
+extern usb_transaction_t usb_trans;
+
 extern const char _rom[] PROGMEM;
 
 void usb_connect()
@@ -76,7 +77,7 @@ void send_irq()
 
 void set_rom_mode()
 {
-    if (req_bank_size == 0x8000) {
+    if (usb_trans.req_bank_size == 0x8000) {
         snes_lorom();
         info_P(PSTR("Set SNES lowrom \n"));
     } else {

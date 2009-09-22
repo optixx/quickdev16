@@ -39,32 +39,24 @@
 #include "crc.h"
 #include "usb_bulk.h"
 
-extern uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
-extern uint32_t req_addr;
-extern uint32_t req_size;
-extern uint8_t req_bank;
-extern uint32_t req_bank_size;
-extern uint8_t req_state;
-extern uint8_t rx_remaining; 
-extern uint8_t tx_remaining;
-extern  uint8_t tx_buffer[32];
-extern uint16_t crc;
+
+extern usb_transaction_t usb_trans;
 
 uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
 {
     uint8_t *ptr;
     uint8_t  i;
     
-    if (len > rx_remaining) {
+    if (len > usb_trans.rx_remaining) {
         info_P(PSTR("ERROR:usbFunctionWrite more data than expected remain: %i len: %i\n"),
-               rx_remaining, len);
-        len = rx_remaining;
+                usb_trans.rx_remaining, len);
+        len =  usb_trans.rx_remaining;
     }
-    if (req_state == REQ_STATUS_BULK_UPLOAD) {
+    if (usb_trans.req_state == REQ_STATUS_BULK_UPLOAD) {
 
-        rx_remaining -= len;
+        usb_trans.rx_remaining -= len;
         debug_P(DEBUG_USB_TRANS, PSTR("usbFunctionWrite REQ_STATUS_BULK_UPLOAD addr: 0x%08lx len: %i rx_remaining=%i\n"),
-               req_addr, len, rx_remaining);
+                usb_trans.req_addr, len,  usb_trans.rx_remaining);
         ptr = data;
         i = len;
         while(i--){
@@ -78,13 +70,13 @@ uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)
 uint8_t usbFunctionRead(uint8_t * data, uint8_t len)
 {
     uint8_t i;
-    if (len > tx_remaining)
-        len = tx_remaining;
-    tx_remaining -= len;
-    debug_P(DEBUG_USB_TRANS, PSTR("usbFunctionRead len=%i tx_remaining=%i \n"), len, tx_remaining);
+    if (len >  usb_trans.tx_remaining)
+        len =  usb_trans.tx_remaining;
+     usb_trans.tx_remaining -= len;
+    debug_P(DEBUG_USB_TRANS, PSTR("usbFunctionRead len=%i tx_remaining=%i \n"), len, usb_trans.tx_remaining);
 
     for (i = 0; i < len; i++) {
-        *data = tx_buffer[len];
+        *data =  usb_trans.tx_buffer[len];
         data++;
     }
     return len;

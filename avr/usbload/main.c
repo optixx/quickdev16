@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <avr/pgmspace.h>       
 #include <avr/eeprom.h>
+#include <string.h>
 
 #include "usbdrv.h"
 #include "oddebug.h"            
@@ -55,11 +56,9 @@ extern FILE uart_stdout;
 
 uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
 
-uint8_t tx_buffer[32];
-uint8_t data_buffer[4];
+/*
 uint32_t req_addr = 0;
 uint32_t req_addr_end = 0;
-uint32_t req_size;
 uint8_t req_bank;
 uint32_t req_bank_size;
 uint16_t req_bank_cnt;
@@ -69,11 +68,14 @@ uint8_t req_state = REQ_STATUS_IDLE;
 uint8_t rx_remaining = 0;
 uint8_t tx_remaining = 0;
 uint16_t sync_errors = 0;
-uint32_t addr;
-uint16_t crc = 0;
+uint8_t tx_buffer[32];
+uint8_t rx_buffer[8];
+*/
 
 
 
+
+usb_transaction_t usb_trans;
 
 
 usbMsgLen_t usbFunctionSetup(uchar data[8])
@@ -84,24 +86,24 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
     if (rq->bRequest == USB_BULK_UPLOAD_INIT) {
 
-        req_bank = 0;
-        rx_remaining = 0;
+        usb_trans.req_bank = 0;
+        usb_trans.rx_remaining = 0;
         debug_P(DEBUG_USB, PSTR("USB_BULK_UPLOAD_INIT: %i %i\n"), rq->wValue.word,
               rq->wIndex.word);
-        req_bank_size = (uint32_t) (1L << rq->wValue.word);
-        req_bank_cnt = rq->wIndex.word;
-        req_addr_end = (uint32_t) req_bank_size *req_bank_cnt;
-        req_percent = 0;
-        req_percent_last = 0;
-        sync_errors = 0;
+        usb_trans.req_bank_size = (uint32_t) (1L << rq->wValue.word);
+        usb_trans.req_bank_cnt = rq->wIndex.word;
+        usb_trans.req_addr_end = (uint32_t) usb_trans.req_bank_size * usb_trans.req_bank_cnt;
+        usb_trans.req_percent = 0;
+        usb_trans.req_percent_last = 0;
+        usb_trans.sync_errors = 0;
         debug_P(DEBUG_USB,
               PSTR("USB_BULK_UPLOAD_INIT: bank_size=0x%08lx bank_cnt=0x%x end_addr=0x%08lx\n"),
-              req_bank_size, req_bank_cnt, req_addr_end);
+              usb_trans.req_bank_size, usb_trans.req_bank_cnt, usb_trans.req_addr_end);
 
         shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_START, 0);
-        shared_memory_write(SHARED_MEM_TX_CMD_BANK_COUNT, req_bank_cnt);
+        shared_memory_write(SHARED_MEM_TX_CMD_BANK_COUNT, usb_trans.req_bank_cnt);
 #if DO_TIMER
-        if (req_addr == 0x000000) {
+        if (usb_trans.req_addr == 0x000000) {
             timer_start();
         }
 #endif       
@@ -110,32 +112,32 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          */
     } else if (rq->bRequest == USB_BULK_UPLOAD_ADDR) {
 
-        req_state = REQ_STATUS_BULK_UPLOAD;
-        req_addr = rq->wValue.word;
-        req_addr = req_addr << 16;
-        req_addr = req_addr | rq->wIndex.word;
-        rx_remaining = rq->wLength.word;
+        usb_trans.req_state = REQ_STATUS_BULK_UPLOAD;
+        usb_trans.req_addr = rq->wValue.word;
+        usb_trans.req_addr = usb_trans.req_addr << 16;
+        usb_trans.req_addr = usb_trans.req_addr | rq->wIndex.word;
+        usb_trans.rx_remaining = rq->wLength.word;
 
         
 
-        if (req_addr && req_addr % req_bank_size == 0) {
+        if (usb_trans.req_addr && usb_trans.req_addr % usb_trans.req_bank_size == 0) {
 #if DO_TIMER
 
 #ifdef FLT_DEBUG
             debug_P(DEBUG_USB,
                   PSTR("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n"),
-                  req_bank, req_addr, timer_stop());
+                  usb_trans.req_bank, usb_trans.req_addr, timer_stop());
 #else
             debug_P(DEBUG_USB,
                   PSTR("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%i\n"),
-                  req_bank, req_addr, timer_stop_int());
+                  usb_trans.req_bank, usb_trans.req_addr, timer_stop_int());
 #endif
               timer_start();
 #endif
-            req_bank++;
+            usb_trans.req_bank++;
 
         } else {
-            sram_bulk_write_start(req_addr);
+            sram_bulk_write_start(usb_trans.req_addr);
         }
         ret_len = USB_MAX_TRANS;
 
@@ -143,37 +145,37 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_BULK_UPLOAD_NEXT) {
-        req_state = REQ_STATUS_BULK_UPLOAD;
-        req_addr = rq->wValue.word;
-        req_addr = req_addr << 16;
-        req_addr = req_addr | rq->wIndex.word;
-        rx_remaining = rq->wLength.word;
+        usb_trans.req_state = REQ_STATUS_BULK_UPLOAD;
+        usb_trans.req_addr = rq->wValue.word;
+        usb_trans.req_addr = usb_trans.req_addr << 16;
+        usb_trans.req_addr = usb_trans.req_addr | rq->wIndex.word;
+        usb_trans.rx_remaining = rq->wLength.word;
 
 #if DO_SHM
-        req_percent = (uint32_t)( 100 * req_addr )  / req_addr_end;
-        if (req_percent!=req_percent_last){
-            shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, req_percent);
+        usb_trans.req_percent = (uint32_t)( 100 * usb_trans.req_addr )  / usb_trans.req_addr_end;
+        if (usb_trans.req_percent!=usb_trans.req_percent_last){
+            shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_PROGESS, usb_trans.req_percent);
         }
-        req_percent_last = req_percent;
-        shared_memory_scratchpad_region_save_helper(req_addr);
+        usb_trans.req_percent_last = usb_trans.req_percent;
+        shared_memory_scratchpad_region_save_helper(usb_trans.req_addr);
 #endif        
-        if (req_addr && (req_addr % req_bank_size) == 0) {
+        if (usb_trans.req_addr && (usb_trans.req_addr % usb_trans.req_bank_size) == 0) {
 #if DO_TIMER
 
 #ifdef FLT_DEBUG
             debug_P(DEBUG_USB,
                   PSTR("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%.4f\n"),
-                  req_bank, req_addr, timer_stop());
+                  usb_trans.req_bank, usb_trans.req_addr, timer_stop());
 #else
             debug_P(DEBUG_USB,
                   PSTR("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%i\n"),
-                  req_bank, req_addr, timer_stop_int());
+                  usb_trans.req_bank, usb_trans.req_addr, timer_stop_int());
 #endif
               timer_start();
 #endif
-            req_bank++;
+            usb_trans.req_bank++;
 #if DO_SHM
-            shared_memory_write(SHARED_MEM_TX_CMD_BANK_CURRENT, req_bank);
+            shared_memory_write(SHARED_MEM_TX_CMD_BANK_CURRENT, usb_trans.req_bank);
 #endif
         }
         ret_len = USB_MAX_TRANS;
@@ -181,13 +183,13 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_BULK_UPLOAD_END) {
-        if (req_state != REQ_STATUS_BULK_UPLOAD) {
+        if (usb_trans.req_state != REQ_STATUS_BULK_UPLOAD) {
             debug_P(DEBUG_USB,
                   PSTR("USB_BULK_UPLOAD_END: ERROR state is not REQ_STATUS_BULK_UPLOAD\n"));
             return 0;
         }
         debug_P(DEBUG_USB, PSTR("USB_BULK_UPLOAD_END:\n"));
-        req_state = REQ_STATUS_IDLE;
+        usb_trans.req_state = REQ_STATUS_IDLE;
         sram_bulk_write_end();
 #if DO_SHM
         shared_memory_write(SHARED_MEM_TX_CMD_UPLOAD_END, 0);
@@ -198,26 +200,25 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_CRC) {
-        req_addr = rq->wValue.word;
-        req_addr = req_addr << 16;
-        req_addr = req_addr | rq->wIndex.word;
-        debug_P(DEBUG_USB, PSTR("USB_CRC: addr=0x%08lx \n"), req_addr);
-        crc_check_bulk_memory(0x000000, req_addr, req_bank_size);
+        usb_trans.req_addr = rq->wValue.word;
+        usb_trans.req_addr = usb_trans.req_addr << 16;
+        usb_trans.req_addr = usb_trans.req_addr | rq->wIndex.word;
+        debug_P(DEBUG_USB, PSTR("USB_CRC: addr=0x%08lx \n"), usb_trans.req_addr);
+        crc_check_bulk_memory(0x000000, usb_trans.req_addr, usb_trans.req_bank_size);
         ret_len = 0;
         /*
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_MODE_SNES) {
-        req_state = REQ_STATUS_SNES;
+        usb_trans.req_state = REQ_STATUS_SNES;
         debug_P(DEBUG_USB, PSTR("USB_MODE_SNES:\n"));
         ret_len = 0;
-        pwm_stop();
         
         /*
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_MODE_AVR) {
-        req_state = REQ_STATUS_AVR;
+        usb_trans.req_state = REQ_STATUS_AVR;
         debug_P(DEBUG_USB, PSTR("USB_MODE_AVR:\n"));
         ret_len = 0;
         /*
@@ -232,7 +233,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          */
 
     }
-    usbMsgPtr = data_buffer;
+    usbMsgPtr = usb_trans.rx_buffer;
     return ret_len;             
 }
 
@@ -243,12 +244,14 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
 
 void globals_init(){
-    req_addr = 0;
-    req_addr_end = 0;
-    req_state = REQ_STATUS_IDLE;
-    rx_remaining = 0;
-    tx_remaining = 0;
-    sync_errors = 0;
+    memset(&usb_trans,0,sizeof(usb_transaction_t));
+    
+    usb_trans.req_addr = 0;
+    usb_trans.req_addr_end = 0;
+    usb_trans.req_state = REQ_STATUS_IDLE;
+    usb_trans.rx_remaining = 0;
+    usb_trans.tx_remaining = 0;
+    usb_trans.sync_errors = 0;
 }
 
 int main(void)
@@ -280,7 +283,7 @@ int main(void)
         snes_wr_disable();
         sei();
         info_P(PSTR("USB poll\n"));
-        while (req_state != REQ_STATUS_SNES) {
+        while (usb_trans.req_state != REQ_STATUS_SNES) {
             usbPoll();
             shell_run();
         }
@@ -297,7 +300,7 @@ int main(void)
 
 #if DO_CRC_CHECK     
         info_P(PSTR("-->CRC Check\n"));
-        crc_check_bulk_memory(0x000000, req_bank_size * req_bank_cnt, req_bank_size);
+        crc_check_bulk_memory(0x000000, usb_trans.req_bank_size * usb_trans.req_bank_cnt, usb_trans.req_bank_size);
 #endif        
         
         info_P(PSTR("-->Switch TO SNES\n"));
@@ -309,7 +312,7 @@ int main(void)
         irq_stop();
         send_reset();
         info_P(PSTR("Poll USB\n"));
-        while ((req_state != REQ_STATUS_AVR)) {
+        while ((usb_trans.req_state != REQ_STATUS_AVR)) {
             usbPoll();
             shell_run();
         }
