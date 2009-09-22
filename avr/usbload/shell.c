@@ -179,6 +179,40 @@ ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
   UCSR0B |= (1<<RXCIE0);//	Interrupts enable for RxD
 }
 
+enum cmds { CMD_DUMP,
+            CMD_CRC,
+            CMD_EXIT,
+            CMD_RESET,
+            CMD_IRQ,
+            CMD_AVR,
+            CMD_SNES,
+            CMD_LOROM,
+            CMD_HIROM,
+            CMD_WR,
+            CMD_SHMWR,
+            CMD_SHMSAVE,
+            CMD_SHMRESTORE,
+            CMD_LOADER,
+            CMD_RECONNECT
+};
+
+uint8_t cmdlist[][CMD_RECONNECT] PROGMEM = {
+            {"DUMP"},
+            {"CRC"},
+            {"EXIT"},
+            {"RESET"},
+            {"IRQ"},
+            {"AVR"},
+            {"SNES"},
+            {"LOROM"},
+            {"HIROM"},
+            {"WR"},
+            {"SHMWR"},
+            {"SHMSAVE"},
+            {"SHMRESTORE"},
+            {"LOADER"},
+            {"RECONNECT"},
+        };
 
 
 void shell_run(void)
@@ -202,49 +236,49 @@ void shell_run(void)
 
 	util_strupper(t);
 
-	if (strcmp((char*)t, "DUMP") == 0) {
+	if (strcmp_P((const char*)t,(PGM_P)cmdlist[CMD_DUMP]) == 0) {
         if (get_hex_arg2(&arg1,&arg2))
             dump_memory(arg1,arg2);
         else 
             info_P(PSTR("DUMP <start addr> <end addr>\n"));
     
-    }else if (strcmp((char*)t, "CRC") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_CRC]) == 0) {
         if (get_hex_arg2(&arg1,&arg2)){
             crc = crc_check_bulk_memory(arg1,arg2,0x8000);
             info_P(PSTR("0x%06lx - 0x%06lx crc=0x%04x\n"),arg1,arg2,crc);
         } else 
             info_P(PSTR("CRC <start addr> <end addr>\n"));
-    }else if (strcmp((char*)t, "EXIT") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_EXIT]) == 0) {
         leave_application();
-    }else if (strcmp((char*)t, "RESET") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_RESET]) == 0) {
         send_reset();
-    }else if (strcmp((char*)t, "IRQ") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_IRQ]) == 0) {
         info_P(PSTR("Send IRQ\n"));
         snes_irq_on();
         snes_irq_lo();
         _delay_us(20);
         snes_irq_hi();
         snes_irq_off();
-    }else if (strcmp((char*)t, "AVR") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_AVR]) == 0) {
          info_P(PSTR("Activate AVR bus\n"));
          avr_bus_active();
          snes_irq_lo();
          snes_irq_off();
-    }else if (strcmp((char*)t, "SNES") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_SNES]) == 0) {
         info_P(PSTR("Activate SNES bus\n"));
         snes_irq_lo();
         snes_irq_off();
         snes_wr_disable();
         snes_bus_active();
-    }else if (strcmp((char*)t, "LOROM") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_LOROM]) == 0) {
         info_P(PSTR("Set LOROM\n"));
         snes_lorom();
         snes_wr_disable();
-    }else if (strcmp((char*)t, "HIROM") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_HIROM]) == 0) {
         info_P(PSTR("Set HIROM\n"));
         snes_hirom();
         snes_wr_disable();
-    }else if (strcmp((char*)t, "WR") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_WR]) == 0) {
         arg1 = get_bool();
         if(arg1==1){
             info_P(PSTR("Set WR enable"));
@@ -253,25 +287,24 @@ void shell_run(void)
             info_P(PSTR("Set WR disable"));
             snes_wr_disable();
         }
-    }else if (strcmp((char*)t, "SHMWR") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_SHMWR]) == 0) {
         if (get_hex_arg2(&arg1,&arg2))
             shared_memory_write((uint8_t)arg1, (uint8_t)arg1);
         else 
             info_P(PSTR("SHMWR <command> <value>\n"));
-    }else if (strcmp((char*)t, "SHMSAVE") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_SHMSAVE]) == 0) {
         shared_memory_scratchpad_region_tx_save();
         shared_memory_scratchpad_region_rx_save();
         info_P(PSTR("Save scratchpad\n"));
-    }else if (strcmp((char*)t, "SHMRESTORE") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_SHMRESTORE]) == 0) {
         shared_memory_scratchpad_region_tx_restore();
         shared_memory_scratchpad_region_rx_restore();
         info_P(PSTR("Restore scratchpad\n"));
-    }else if (strcmp((char*)t, "LOADER") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_LOADER]) == 0) {
         boot_startup_rom(500);    
-    }else if (strcmp((char*)t, "RECONNECT") == 0) {
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_RECONNECT]) == 0) {
         usb_connect();
     }    
-    
     prompt();
     
     /*
