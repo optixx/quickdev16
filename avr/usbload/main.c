@@ -73,7 +73,7 @@ uint8_t tx_buffer[32];
 uint8_t data_buffer[4];
 uint32_t addr;
 uint16_t crc = 0;
-
+uint8_t loader_enabled = 1;
 
 
 
@@ -130,9 +130,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
             req_bank++;
             timer_start();
 
-        } else {
-            sram_bulk_write_start(req_addr);
         }
+        sram_bulk_write_start(req_addr);
+
         ret_len = USB_MAX_TRANS;
 
         /*
@@ -239,6 +239,11 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         tx_buffer[1] = (crc >> 8) & 0xff;
         ret_len = 2;
         req_state = REQ_STATUS_IDLE;
+        
+        
+    } else if (rq->bRequest == USB_SET_LAODER) {
+        loader_enabled = rq->wValue.word;
+        ret_len = 0;
     }
 
     usbMsgPtr = data_buffer;
@@ -371,7 +376,14 @@ int main(void)
         
         shared_memory_init();
         irq_init();
-        boot_startup_rom(500);
+        
+        if(loader_enabled)
+            boot_startup_rom(500);
+        else
+        {
+            avr_bus_active();
+            send_reset();
+        }
         
         
     }

@@ -38,5 +38,6 @@
 #define USB_MODE_SNES           10
 #define USB_MODE_AVR            11
 #define USB_AVR_RESET           12
+#define USB_SET_LAODER          13
 
 #endif /* __REQUESTS_H_INCLUDED__ */
