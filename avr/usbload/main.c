@@ -55,7 +55,8 @@ extern FILE uart_stdout;
 
 uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
 
-uint8_t read_buffer[TRANSFER_BUFFER_SIZE];
+uint8_t tx_buffer[32];
+uint8_t data_buffer[4];
 uint32_t req_addr = 0;
 uint32_t req_addr_end = 0;
 uint32_t req_size;
@@ -68,10 +69,9 @@ uint8_t req_state = REQ_STATUS_IDLE;
 uint8_t rx_remaining = 0;
 uint8_t tx_remaining = 0;
 uint16_t sync_errors = 0;
-uint8_t tx_buffer[32];
-uint8_t data_buffer[4];
 uint32_t addr;
 uint16_t crc = 0;
+
 
 
 
@@ -231,28 +231,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          * -------------------------------------------------------------------------
          */
 
-    } else if (rq->bRequest == USB_CRC_ADDR) {
-        req_state = REQ_STATUS_CRC;
-        req_addr = rq->wValue.word;
-        req_addr = req_addr << 16;
-        req_addr = req_addr | rq->wIndex.word;
-        debug_P(DEBUG_USB, PSTR("USB_CRC_ADDR: addr=0x%lx size=%i\n"), req_addr,
-              rq->wLength.word);
-        req_size = rq->wLength.word;
-        req_size = req_size << 2;
-        tx_remaining = 2;
-        debug_P(DEBUG_USB, PSTR("USB_CRC_ADDR: addr=0x%lx size=%li\n"), req_addr,
-              req_size);
-
-        crc = crc_check_memory_range(req_addr, req_size, read_buffer);
-        tx_buffer[0] = crc & 0xff;
-        tx_buffer[1] = (crc >> 8) & 0xff;
-        ret_len = 2;
-        req_state = REQ_STATUS_IDLE;
     }
-
     usbMsgPtr = data_buffer;
-    return ret_len;             /* default for not implemented requests: return no data back to host */
+    return ret_len;             
 }
 
 
