@@ -35,12 +35,14 @@
 #include "uart.h"
 #include "dump.h"
 #include "irq.h"
+#include "config.h"
 #include "crc.h"
 #include "command.h"
  
-#define RECEIVE_BUF_LEN 40
  
+uint8_t command_buf[RECEIVE_BUF_LEN];
 uint8_t	recv_buf[RECEIVE_BUF_LEN];
+
 volatile uint8_t	recv_counter = 0;
 volatile uint8_t	cr = 0;
 
@@ -176,7 +178,6 @@ ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
 }
 
 
-uint8_t command_buf[RECEIVE_BUF_LEN];
 
 void shell_run(void)
 {
@@ -241,12 +242,15 @@ void shell_run(void)
         info_P(PSTR("Set HIROM\n"));
         snes_hirom();
         snes_wr_disable();
-    }else if (strcmp((char*)t, "WRDISABLE") == 0) {
-        info_P(PSTR("Set WR disable"));
-        snes_wr_disable();
-    }else if (strcmp((char*)t, "WRENABLE") == 0) {
-        info_P(PSTR("Set WR disable"));
-        snes_wr_enable();
+    }else if (strcmp((char*)t, "WR") == 0) {
+        arg1 = get_bool();
+        if(arg1==1){
+            info_P(PSTR("Set WR enable"));
+            snes_wr_enable();
+        }else if (arg1==0){
+            info_P(PSTR("Set WR disable"));
+            snes_wr_disable();
+        }
     }else if (strcmp((char*)t, "LOADER") == 0) {
         boot_startup_rom(500);    
     }else if (strcmp((char*)t, "RECONNECT") == 0) {
