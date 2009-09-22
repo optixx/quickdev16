@@ -241,6 +241,12 @@ void shell_run(void)
         printf("Set HIROM\n");
         snes_hirom();
         snes_wr_disable();
+    }else if (strcmp((char*)t, "WRDISABLE") == 0) {
+        printf("Set WR disable");
+        snes_wr_disable();
+    }else if (strcmp((char*)t, "WRENABLE") == 0) {
+        printf("Set WR disable");
+        snes_wr_enable();
     }else if (strcmp((char*)t, "LOADER") == 0) {
         boot_startup_rom(500);    
     }else if (strcmp((char*)t, "RECONNECT") == 0) {
