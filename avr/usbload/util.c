@@ -101,7 +101,7 @@ uint32_t util_sscandec(const uint8_t *s)
 
 uint32_t util_sscanhex(const uint8_t *s)
 {
-	uint32_t result;
+	int32_t result;
 	if (*s == '\0')
 		return -1;
 	result = 0;

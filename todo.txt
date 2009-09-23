@@ -8,3 +8,5 @@ Package for Quickdev16
 Bootloader lockbits
 Flash all cartridge with latest firmware and bootloader
 Email to seeed about the retour package
+Add structs for machine state
+Add struct for usb and communcations flags

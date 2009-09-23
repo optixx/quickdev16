@@ -40,4 +40,21 @@
 #define USB_AVR_RESET           12
 #define USB_SET_LAODER          13
 
+typedef struct usb_transaction_t {
+    uint32_t req_addr;
+    uint32_t req_addr_end;
+    uint8_t req_bank;
+    uint32_t req_bank_size;
+    uint16_t req_bank_cnt;
+    uint8_t req_percent;
+    uint8_t req_percent_last;
+    uint8_t req_state;
+    uint8_t rx_remaining;
+    uint8_t tx_remaining ;
+    uint16_t sync_errors;
+    uint8_t tx_buffer[32];
+    uint8_t rx_buffer[8];
+    uint8_t loader_enabled;
+} usb_transaction_t;
+
 #endif /* __REQUESTS_H_INCLUDED__ */

@@ -26,5 +26,9 @@ void send_reset();
 void send_irq();
 void set_rom_mode();
 void usb_connect();
+void boot_startup_rom(uint16_t init_delay);
+void banner();
+void transaction_status();
+
 
 #endif
