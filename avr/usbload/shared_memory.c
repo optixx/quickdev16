@@ -233,7 +233,7 @@ void shared_memory_write(uint8_t cmd, uint8_t value)
 #if DO_SHM_SCRATCHPAD    
     if (scratchpad_locked_tx){ 
         debug_P(DEBUG_SHM, PSTR("shared_memory_write:  locked_tx\n"));
-        return 1;
+        return;
     }
 #endif
     debug_P(DEBUG_SHM, PSTR("shared_memory_write:  0x%04x=0x%02x 0x%04x=0x%02x \n"),
