@@ -248,13 +248,12 @@ int main(void)
     uart_init();
     stdout = &uart_stdout;
     banner();
-    
+    shared_memory_init();
+    system_init();
     sram_init();
     pwm_init();
-    shared_memory_init();
-    snes_reset_hi();
-    snes_reset_off();
     irq_init();
+    
     boot_startup_rom(50);
     
     globals_init();
@@ -262,14 +261,14 @@ int main(void)
     
     usbInit();
     usb_connect();
+    sei();
     
     while (1) {
         avr_bus_active();
         info_P(PSTR("Activate AVR bus\n"));
-        snes_lorom();
+        //snes_lorom();
         info_P(PSTR("Disable SNES WR\n"));
         snes_wr_disable();
-        sei();
         info_P(PSTR("USB poll\n"));
         while (usb_trans.req_state != REQ_STATUS_SNES) {
             usbPoll();
@@ -277,7 +276,6 @@ int main(void)
         }
         
 #if DO_SHM
-        
         shared_memory_write(SHARED_MEM_TX_CMD_TERMINATE, 0);
 #endif
 
