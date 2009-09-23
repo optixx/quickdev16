@@ -1,7 +1,7 @@
 #ifndef __QDINC_H__
 #define __QDINC_H__
 
-#define QDINC_RANGE 32
+#define QDINC_RANGE 96
 #define QDINC_SIZE 254
 
 // makes this compatible with a bug in older quickdev firmware revisions
