@@ -34,7 +34,7 @@
 uint32_t addr_current = 0;
 uint32_t addr_stash = 0;
 
-void system_init(void)
+void sram_init(void)
 {
     /*-------------------------------------------------*/
     

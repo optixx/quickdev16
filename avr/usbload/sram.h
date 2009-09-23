@@ -196,7 +196,7 @@
 
 
 
-void system_init(void);
+void sram_init(void);
 void sreg_set(uint32_t addr);
 
 uint8_t sram_read(uint32_t addr);

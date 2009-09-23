@@ -249,7 +249,7 @@ int main(void)
     stdout = &uart_stdout;
     banner();
     
-    system_init();
+    sram_init();
     pwm_init();
     shared_memory_init();
     snes_reset_hi();
