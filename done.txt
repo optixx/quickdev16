@@ -1,0 +1,10 @@
+x 2009-10-13 Send PCB to seeed
+x 2009-10-13 RS232 cable add programm header and sio lines
+x 2009-10-13 Assemble No. 006 & No. 007
+x 2009-10-13 Flash all cartridge with latest firmware and bootloader
+x 2009-10-13 Bootloader lockbits
+x 2009-10-13 Rework No. 002
+x 2009-10-13 Package for Quickdev16
+x 2009-10-13 Add struct for usb and communcations flags
+x 2009-10-13 Mail snega2usb about OEM
+x 2009-10-13 Email to seeed about the retour package
