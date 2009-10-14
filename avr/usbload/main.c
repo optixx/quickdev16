@@ -49,10 +49,12 @@
 #include "pwm.h"
 #include "testing.h"
 #include "shell.h"
+#include "system.h"
 
 
 
 extern FILE uart_stdout;
+extern system_t system;
 
 uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
 

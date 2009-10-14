@@ -35,18 +35,6 @@
 #include "requests.h"
 #include "irq.h"
 
-
-
-typedef struct system_t {
-    enum bus_mode_e   { MODE_AVR, MODE_SNES } bus_mode;
-    enum rom_mode_e   { LOROM, HOROM } rom_mode;
-    enum reset_line_e { RESET_OFF, RESET_ON } reset_line;
-    enum irq_line_e   { IRQ_ON, IRQ_OFF } irq_line;
-    enum wr_line_e    { WR_DISABLE, WR_ENABLE } wr_line;
-
-    uint8_t reset_count;
-} system_t;
-
 system_t system;
 
 void system_init(void)
@@ -59,7 +47,6 @@ void system_init(void)
     snes_irq_off();
     system.irq_line = IRQ_OFF;
 
-    system.reset_count = 0;
 
     snes_wr_disable();
     system.wr_line = WR_DISABLE;
@@ -67,10 +54,17 @@ void system_init(void)
     avr_bus_active();
     system.bus_mode = MODE_AVR;
 
+    snes_lorom();
+    system.rom_mode = LOROM;
+
+    system.snes_reset_count = 0;
+    system.avr_reset_count = 0;
+
+    system.reset_irq = RESET_IRQ_OFF;
 
 }   
 
-void system_reset()
+void system_send_snes_reset()
 {
     info_P(PSTR("Reset SNES\n"));
     cli();
@@ -80,10 +74,10 @@ void system_reset()
     snes_reset_hi();
     snes_reset_off();
     sei();
-    system.reset_count++;
+    system.snes_reset_count++;
 }
 
-void system_send_irq()
+void system_send_snes_irq()
 {
     snes_irq_on();
     snes_irq_lo();
@@ -92,7 +86,7 @@ void system_send_irq()
     snes_irq_off();
 }
 
-void system_bus_avr()
+void system_set_bus_avr()
 {
     avr_bus_active();
     info_P(PSTR("Activate AVR bus\n"));
@@ -102,7 +96,7 @@ void system_bus_avr()
     info_P(PSTR("Disable SNES WR\n"));
 }
 
-void system_bus_snes()
+void system_set_bus_snes()
 {
     snes_wr_disable();
     system.wr_line = WR_DISABLE;
@@ -114,13 +108,15 @@ void system_bus_snes()
 
 }
 
-void system_rom_mode(usb_transaction_t *usb_trans)
+void system_set_rom_mode(usb_transaction_t *usb_trans)
 {
     if (usb_trans->req_bank_size == 0x8000) {
         snes_lorom();
+        system.rom_mode = LOROM;
         info_P(PSTR("Set SNES lowrom \n"));
     } else {
         snes_hirom();
+        system.rom_mode = HIROM;
         info_P(PSTR("Set SNES hirom \n"));
     }
 }
