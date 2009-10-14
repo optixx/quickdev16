@@ -56,11 +56,6 @@ extern FILE uart_stdout;
 
 uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
 
-typedef struct system_t {
-    uint8_t bus_mode;
-    uint8_t rom_mode;
-    uint8_t req_bank;
-} system_t;
 
 usb_transaction_t usb_trans;
 
