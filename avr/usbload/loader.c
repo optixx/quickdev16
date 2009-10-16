@@ -1,6 +1,6 @@
 /*
-File: ../../snes/qd16/qd16boot.smc 
-Time: Fri, 16 Oct 2009 07:38:50
+File: qd16boot02.smc 
+Time: Fri, 16 Oct 2009 07:51:04
 */
 #include <avr/pgmspace.h>       
 #include <loader.h>       

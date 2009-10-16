@@ -37,7 +37,10 @@ if huffman == True:
 cfile = open("/tmp/loader.c","w")
 hfile = open("/tmp/loader.h","w")
 
-hfile.write('''
+hfile.write('''/*
+File: %s 
+Time: %s
+*/
 #ifndef __FIFO_H__
 #define __FIFO_H__
 
@@ -46,7 +49,9 @@ hfile.write('''
 #define ROM_RLE_SIZE     %i
 
 #endif
-''' % (len(data), huffman_size, rle_size))
+''' % (os.path.basename(SOURCE),time.strftime("%a, %d %b %Y %H:%M:%S", 
+        time.localtime()),len(data), huffman_size, rle_size))
+hfile.close()
 
 cfile.write('''/*
 File: %s 
@@ -56,7 +61,7 @@ Time: %s
 #include <loader.h>       
 
 const char _rom[ROM_BUFFER_SIZE] PROGMEM = {
-''' % (sys.argv[1],time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())))
+''' % (os.path.basename(SOURCE),time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())))
 
 for idx,c in enumerate(data):
     c = ord(c)

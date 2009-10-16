@@ -23,7 +23,8 @@ F_CPU   = 20000000	# in Hz
 TARGET  = main
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 SIZE    = avr-size
-
+LOADER  = ../../roms/qd16boot02.smc
+ROM_CONVERT = ../../scripts/conv_rle.py
 
 
 
@@ -77,7 +78,7 @@ flash: main.hex
 	$(AVRDUDE) -U flash:w:main.hex:i
 
 loader:
-	python ../../scripts/conv_rle.py ../../snes/qd16/qd16boot.smc
+	python $(ROM_CONVERT) $(LOADER)
 
 
 .c.o:
