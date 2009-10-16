@@ -76,6 +76,9 @@ fuse:
 flash: main.hex
 	$(AVRDUDE) -U flash:w:main.hex:i
 
+loader:
+	python ../../scripts/conv_rle.py ../../snes/qd16/qd16boot.smc
+
 
 .c.o:
 	$(COMPILE) -c $< -o $@

@@ -2,14 +2,17 @@ import binascii
 import os
 import sys
 import time
-
+import shutil
 
 LEN = 2**16
 huffman = False
-TARGET="/Users/david/Devel/arch/avr/code/quickdev16/avr/usbload"
+TARGET=os.getcwd()
+SOURCE=sys.argv[1]
+
 HUFFMAN_ENCODER="/Users/david/Devel/arch/avr/code/quickdev16/tools/huffman/huffman-encode"
-data = open(sys.argv[1],"r").read()
-print "Load %s, %i bytes" % (sys.argv[1],len(data))
+
+data = open(SOURCE,"r").read()
+print "Load %s, %i bytes" % (SOURCE,len(data))
 data = data[:LEN]
 print "Use %i bytes" % (len(data))
 data = binascii.rlecode_hqx(data)
@@ -68,6 +71,6 @@ cfile.write('''
 ''')
 cfile.close()
 
-os.rename("/tmp/loader.c", os.path.join(TARGET,"loader.c"))
-os.rename("/tmp/loader.h", os.path.join(TARGET,"loader.h"))
+shutil.copy("/tmp/loader.c", os.path.join(TARGET,"loader.c"))
+shutil.copy("/tmp/loader.h", os.path.join(TARGET,"loader.h"))
 
