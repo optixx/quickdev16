@@ -32,7 +32,7 @@
 
 #define RUNCHAR 0x90
 
-uint8_t rle_decode(PGM_VOID_P in_addr, int32_t in_len, uint32_t out_addr)
+uint32_t rle_decode(PGM_VOID_P in_addr, int32_t in_len, uint32_t out_addr)
 {
     uint8_t in_byte, in_repeat, last_byte;
     info_P(PSTR("RLE decode len=%li addr=0x%08lx\n"), in_len, out_addr);
@@ -98,5 +98,5 @@ uint8_t rle_decode(PGM_VOID_P in_addr, int32_t in_len, uint32_t out_addr)
     }
     sram_bulk_write_end();
     info_P(PSTR("\nDone addr=0x%08lx\n"), out_addr);
-    return 0;
+    return out_addr;
 }

@@ -52,8 +52,10 @@
 #include "system.h"
 
 
-
+#ifndef NO_DEBUG            
 extern FILE uart_stdout;
+#endif
+
 extern system_t system;
 
 uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
@@ -87,7 +89,9 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         shared_memory_write(SHARED_MEM_TX_CMD_BANK_COUNT, usb_trans.req_bank_cnt);
 #if DO_TIMER
         if (usb_trans.req_addr == 0x000000) {
+#ifndef NO_DEBUG            
             timer_start();
+#endif       
         }
 #endif       
         /*
@@ -105,7 +109,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
         if (usb_trans.req_addr && usb_trans.req_addr % usb_trans.req_bank_size == 0) {
 #if DO_TIMER
-
+#ifndef NO_DEBUG            
 #ifdef FLT_DEBUG
             debug_P(DEBUG_USB,
                   PSTR("USB_BULK_UPLOAD_ADDR: req_bank=0x%02x addr=0x%08lx time=%.4f\n"),
@@ -116,6 +120,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                   usb_trans.req_bank, usb_trans.req_addr, timer_stop_int());
 #endif
               timer_start();
+#endif
 #endif
             usb_trans.req_bank++;
 
@@ -144,7 +149,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 #endif        
         if (usb_trans.req_addr && (usb_trans.req_addr % usb_trans.req_bank_size) == 0) {
 #if DO_TIMER
-
+#ifndef NO_DEBUG            
 #ifdef FLT_DEBUG
             debug_P(DEBUG_USB,
                   PSTR("USB_BULK_UPLOAD_NEXT: req_bank=0x%02x addr=0x%08lx time=%.4f\n"),
@@ -155,6 +160,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
                   usb_trans.req_bank, usb_trans.req_addr, timer_stop_int());
 #endif
               timer_start();
+#endif
 #endif
             usb_trans.req_bank++;
 #if DO_SHM
@@ -242,19 +248,27 @@ void globals_init(){
 int main(void)
 {
 
+#ifndef NO_DEBUG            
     uart_init();
     stdout = &uart_stdout;
+#endif
     banner();
     shared_memory_init();
     system_init();
     sram_init();
+
+#ifndef NO_DEBUG            
     pwm_init();
+#endif
     irq_init();
     
     boot_startup_rom(50);
     
     globals_init();
+
+#ifndef NO_DEBUG            
     pwm_stop();
+#endif
     
     usbInit();
     usb_connect();
@@ -269,7 +283,9 @@ int main(void)
         info_P(PSTR("USB poll\n"));
         while (usb_trans.req_state != REQ_STATUS_SNES) {
             usbPoll();
+#ifndef NO_DEBUG            
             shell_run();
+#endif        
         }
         
 #if DO_SHM
@@ -297,15 +313,16 @@ int main(void)
         info_P(PSTR("Poll USB\n"));
         while ((usb_trans.req_state != REQ_STATUS_AVR)) {
             usbPoll();
+#ifndef NO_DEBUG            
             shell_run();
+#endif        
         }
         info_P(PSTR("-->Switch TO AVR\n"));
         shared_memory_init();
         irq_init();
-        if(usb_trans.loader_enabled)
+        if(usb_trans.loader_enabled) {
             boot_startup_rom(500);
-        else
-        {
+        } else {
             avr_bus_active();
             send_reset();
         }

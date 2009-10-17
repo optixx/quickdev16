@@ -34,7 +34,9 @@
 
 extern usb_transaction_t usb_trans;
 
-extern const char _rom[] PROGMEM;
+extern const char *_rom[];
+extern const char _rom01[];
+extern const int _rom_size[];
 
 void usb_connect()
 {
@@ -89,6 +91,8 @@ void set_rom_mode()
 
 void boot_startup_rom(uint16_t init_delay)
 {
+    uint8_t i;
+    uint32_t addr = 0x000000;
     info_P(PSTR("Fetch loader rom\n"));
     info_P(PSTR("Activate AVR bus\n"));
     avr_bus_active();
@@ -96,7 +100,9 @@ void boot_startup_rom(uint16_t init_delay)
     snes_irq_lo();
     snes_irq_off();
     snes_lorom();
-    rle_decode(&_rom, ROM_BUFFER_SIZE, 0x000000);
+    for (i=0; i<ROM_BUFFER_CNT; i++){
+        addr += rle_decode(_rom[i], _rom_size[i], addr);
+    }
     info_P(PSTR("\n"));
 
 #if DO_CRC_CHECK_LOADER     
