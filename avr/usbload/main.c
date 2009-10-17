@@ -51,11 +51,9 @@
 #include "shell.h"
 #include "system.h"
 
-
 #ifndef NO_DEBUG            
 extern FILE uart_stdout;
 #endif
-
 extern system_t system;
 
 uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
@@ -247,37 +245,25 @@ void globals_init(){
 
 int main(void)
 {
-
 #ifndef NO_DEBUG            
     uart_init();
     stdout = &uart_stdout;
-#endif
     banner();
+#endif
     shared_memory_init();
     system_init();
     sram_init();
-
-#ifndef NO_DEBUG            
     pwm_init();
-#endif
     irq_init();
-    
     boot_startup_rom(50);
-    
     globals_init();
-
-#ifndef NO_DEBUG            
     pwm_stop();
-#endif
-    
     usbInit();
     usb_connect();
-    sei();
     
     while (1) {
         avr_bus_active();
         info_P(PSTR("Activate AVR bus\n"));
-        //snes_lorom();
         info_P(PSTR("Disable SNES WR\n"));
         snes_wr_disable();
         info_P(PSTR("USB poll\n"));

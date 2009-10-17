@@ -23,12 +23,13 @@ F_CPU   = 20000000
 TARGET  = main
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 SIZE    = avr-size
-LOADER  = ../../roms/qd16boot01.smc
+BOOT_ROM_SMALL = ../../roms/qd16boot01.smc
+BOOT_ROM_FULL = ../../roms/qd16boot02.smc
 ROM_CONVERT = ../../scripts/conv_rle.py
 
 
 
-ifeq ($(DEBUG),0)
+ifeq ($(DEBUG),1)
     LDFLAGS =-Wl,-u,vfprintf -lprintf_flt 
     CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 
     OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o \
@@ -39,8 +40,9 @@ else
     LDFLAGS =-Wl,-u
     CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG -DNO_INFO
     OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o \
-              sram.o crc.o debug.o dump.o watchdog.o rle.c loader.o \
-              system.o util.o info.o shared_memory.o command.o irq.o
+              sram.o crc.o debug.o dump.o rle.c loader.o \
+              system.o util.o info.o shared_memory.o command.o irq.o \
+              pwm.o
 endif
 
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
@@ -78,8 +80,10 @@ flash: main.hex
 	$(AVRDUDE) -U flash:w:main.hex:i
 
 loader:
-	python $(ROM_CONVERT) $(LOADER)
+	python $(ROM_CONVERT) $(BOOT_ROM_SMALL)
 
+loader_full:
+	python $(ROM_CONVERT) $(BOOT_ROM_FULL)
 
 .c.o:
 	$(COMPILE) -c $< -o $@
