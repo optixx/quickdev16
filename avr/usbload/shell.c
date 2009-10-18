@@ -42,6 +42,7 @@
 #include "system.h"
 
  
+extern system_t system;
 
  
 uint8_t command_buf[RECEIVE_BUF_LEN];
@@ -181,10 +182,13 @@ ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
   UCSR0B |= (1<<RXCIE0);//	Interrupts enable for RxD
 }
 
-enum cmds { CMD_DUMP,
+enum cmds { 
+            CMD_DUMP,
+            CMD_DUMPVEC,
             CMD_CRC,
             CMD_EXIT,
             CMD_RESET,
+            CMD_RESETSNIFF,
             CMD_IRQ,
             CMD_AVR,
             CMD_SNES,
@@ -203,9 +207,11 @@ enum cmds { CMD_DUMP,
 
 uint8_t cmdlist[][CMD_HELP] PROGMEM = {
             {"DUMP"},
+            {"DUMPVEC"},
             {"CRC"},
             {"EXIT"},
             {"RESET"},
+            {"RESETSNIFF"},
             {"IRQ"},
             {"AVR"},
             {"SNES"},
@@ -231,6 +237,12 @@ void shell_help(void){
         info_P(PSTR("\n"));
         
     }
+}
+
+uint16_t sram_word_be(uint32_t addr){
+    uint8_t hi = sram_read(addr);
+    uint8_t lo = sram_read(addr+1);
+    return (hi << 8 | lo );
 }
 
 void shell_run(void)
@@ -279,24 +291,38 @@ void shell_run(void)
         snes_irq_hi();
         snes_irq_off();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_AVR]) == 0) {
-         info_P(PSTR("Activate AVR bus\n"));
-         avr_bus_active();
-         snes_irq_lo();
-         snes_irq_off();
-    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_SNES]) == 0) {
-        info_P(PSTR("Activate SNES bus\n"));
+         //info_P(PSTR("Activate AVR bus\n"));
+         //avr_bus_active();
+         //snes_irq_lo();
+         //snes_irq_off();
+        system_set_bus_avr();
         snes_irq_lo();
-        snes_irq_off();
-        snes_wr_disable();
-        snes_bus_active();
+        system_snes_irq_off();
+        
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_SNES]) == 0) {
+        //info_P(PSTR("Activate SNES bus\n"));
+        //snes_irq_lo();
+        //snes_irq_off();
+        //snes_wr_disable();
+        //snes_bus_active();
+        snes_irq_lo();
+        system_snes_irq_off();
+        system_set_wr_disable();
+        system_set_bus_snes();
+        
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_LOROM]) == 0) {
-        info_P(PSTR("Set LOROM\n"));
-        snes_lorom();
-        snes_wr_disable();
+        //info_P(PSTR("Set LOROM\n"));
+        //snes_lorom();
+        //snes_wr_disable();
+        system_set_rom_lorom();
+        system_set_wr_disable();
+        
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_HIROM]) == 0) {
-        info_P(PSTR("Set HIROM\n"));
-        snes_hirom();
-        snes_wr_disable();
+        //info_P(PSTR("Set HIROM\n"));
+        //snes_hirom();
+        //snes_wr_disable();
+        system_set_rom_hirom();
+        system_set_wr_disable();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_WR]) == 0) {
         arg1 = get_bool();
         if(arg1==1){
@@ -306,6 +332,29 @@ void shell_run(void)
             info_P(PSTR("Set WR disable"));
             snes_wr_disable();
         }
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_RESETSNIFF]) == 0) {
+        arg1 = get_bool();
+        if(arg1==1){
+            info_P(PSTR("Start Reset sniffer"));
+            irq_init();
+        }else if (arg1==0){
+            info_P(PSTR("Stop Reset sniffer"));
+            irq_stop();
+        }
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_DUMPVEC]) == 0) {
+        uint16_t offset;
+    	if (system.rom_mode==LOROM)
+            offset = 0x8000;
+    	else
+            offset = 0x0000;
+    	
+        info_P(PSTR("ABORT	0x%04x 0x%04x\n"), (0xFFE8 - offset),sram_word_be(0xFFE8 - offset));
+        info_P(PSTR("BRK	0x%04x 0x%04x\n"), (0xFFE6 - offset),sram_word_be(0xFFE6 - offset));
+        info_P(PSTR("COP	0x%04x 0x%04x\n"), (0xFFE4 - offset),sram_word_be(0xFFE4 - offset));
+        info_P(PSTR("IRQ	0x%04x 0x%04x\n"), (0xFFEE - offset),sram_word_be(0xFFEE - offset));
+        info_P(PSTR("NMI	0x%04x 0x%04x\n"), (0xFFEA - offset),sram_word_be(0xFFEA - offset));
+        info_P(PSTR("RES	0x%04x 0x%04x\n"), (0xFFFC - offset),sram_word_be(0xFFFC - offset));
+    	
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_SHMWR]) == 0) {
         if (get_hex_arg2(&arg1,&arg2))
             shared_memory_write((uint8_t)arg1, (uint8_t)arg1);

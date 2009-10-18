@@ -97,6 +97,7 @@ void boot_startup_rom(uint16_t init_delay)
     info_P(PSTR("Fetch loader rom\n"));
     
     system_set_bus_avr();
+    snes_irq_lo();
     system_snes_irq_off();
     system_set_rom_lorom();
     
@@ -124,10 +125,18 @@ void boot_startup_rom(uint16_t init_delay)
     //snes_hirom();
     //snes_wr_disable();
 
-    system_set_bus_snes();
+    //system_set_bus_snes();
+    //system_set_rom_hirom();
+    //system_set_wr_disable();
+    //system_snes_irq_off();
+
+    snes_irq_lo();
+    system_snes_irq_off();
     system_set_rom_hirom();
     system_set_wr_disable();
-    system_snes_irq_off();
+    system_set_bus_snes();
+    
+    
     system_send_snes_reset();
     _delay_ms(init_delay);
 }
