@@ -35,6 +35,7 @@
 
 
 extern usb_transaction_t usb_trans;
+extern system_t system;
 
 extern const char *_rom[];
 extern const char _rom01[];
@@ -55,7 +56,6 @@ void usb_connect()
     usbDeviceConnect();
     info_P(PSTR("USB connect\n"));
 }
-
 
 
 void send_reset()
@@ -90,14 +90,23 @@ void set_rom_mode()
     }
 }
 
-
 void boot_startup_rom(uint16_t init_delay)
 {
     uint8_t i;
     uint32_t addr = 0x000000;
+    info_P(PSTR("Fetch loader rom\n"));
+    
     system_set_bus_avr();
     system_snes_irq_off();
     system_set_rom_lorom();
+    
+    //info_P(PSTR("Activate AVR bus\n"));
+    //avr_bus_active();
+    //info_P(PSTR("IRQ off\n"));
+    //snes_irq_lo();
+    //snes_irq_off();
+    //snes_lorom();
+    
     for (i=0; i<ROM_BUFFER_CNT; i++){
         addr += rle_decode(_rom[i], _rom_size[i], addr);
     }
@@ -110,8 +119,15 @@ void boot_startup_rom(uint16_t init_delay)
     info(PSTR("crc=%x\n"),crc);
 #endif
 
-    system_set_rom_hirom();
+    //snes_irq_lo();
+    //snes_irq_off();
+    //snes_hirom();
+    //snes_wr_disable();
+
     system_set_bus_snes();
+    system_set_rom_hirom();
+    system_set_wr_disable();
+    system_snes_irq_off();
     system_send_snes_reset();
     _delay_ms(init_delay);
 }
@@ -144,3 +160,4 @@ void transaction_status(){
     info_P(PSTR("RX buffer      %02i\n"),usb_trans.rx_remaining);
     info_P(PSTR("Syncerr        %02i\n"),usb_trans.sync_errors);
 }
+

@@ -104,16 +104,22 @@ void system_set_bus_avr()
     avr_bus_active();
     info_P(PSTR("Activate AVR bus\n"));
     system.bus_mode = MODE_AVR;
+}
+
+void system_set_wr_disable(){
     snes_wr_disable();
     system.wr_line = WR_DISABLE;
     info_P(PSTR("Disable SNES WR\n"));
 }
 
+void system_set_wr_enable(){
+    snes_wr_enable();
+    system.wr_line = WR_ENABLE;
+    info_P(PSTR("Enable SNES WR\n"));
+}
+
 void system_set_bus_snes()
 {
-    snes_wr_disable();
-    system.wr_line = WR_DISABLE;
-    info_P(PSTR("Disable SNES WR\n"));
     snes_bus_active();
     system.bus_mode = MODE_SNES;
     info_P(PSTR("Activate SNES bus\n"));
@@ -146,3 +152,35 @@ void system_set_rom_hirom()
     system.rom_mode = HIROM;
     info_P(PSTR("Set SNES hirom \n"));
 }
+
+char* system_status_helper(uint8_t val){
+   if (val)
+       return "ON";
+    else
+        return "OFF";
+}
+
+char* system_status_bus(uint8_t val){
+   if (val)
+       return "SNES";
+    else
+        return "AVR";
+}
+
+char* system_status_rom(uint8_t val){
+   if (val)
+       return "HIROM";
+    else
+        return "LOROM";
+}
+
+void system_status(){
+    info_P(PSTR("\nBus Mode       %s\n"),system_status_bus(system.bus_mode));
+    info_P(PSTR("Rom Mode       %s\n"),system_status_rom(system.rom_mode));
+    info_P(PSTR("Reset Line     %s\n"),system_status_helper(system.reset_line));
+    info_P(PSTR("IRQ Line       %s\n"),system_status_helper(system.irq_line));
+    info_P(PSTR("WR Line        %s\n"),system_status_helper(system.wr_line));
+    info_P(PSTR("Reset IRQ      %s\n"),system_status_helper(system.reset_irq));
+    info_P(PSTR("SNES Reset     0x%02x\n"),system.snes_reset_count);
+    info_P(PSTR("AVR Reset      0x%02x\n"),system.avr_reset_count);
+}   

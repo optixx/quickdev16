@@ -56,7 +56,7 @@ extern FILE uart_stdout;
 #endif
 extern system_t system;
 
-uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC | DEBUG_SHM );
+uint8_t debug_level = (DEBUG | DEBUG_CRC);
 
 
 usb_transaction_t usb_trans;
@@ -263,10 +263,15 @@ int main(void)
     usb_connect();
     sei();
     while (1) {
+
+        system_set_bus_avr();
+        system_set_wr_disable();
+/*        
         avr_bus_active();
         info_P(PSTR("Activate AVR bus\n"));
         info_P(PSTR("Disable SNES WR\n"));
         snes_wr_disable();
+*/
         info_P(PSTR("USB poll\n"));
         while (usb_trans.req_state != REQ_STATUS_SNES) {
             usbPoll();
@@ -289,6 +294,12 @@ int main(void)
         crc_check_bulk_memory(0x000000, usb_trans.req_bank_size * usb_trans.req_bank_cnt, usb_trans.req_bank_size);
 #endif        
         
+        system_set_rom_mode(&usb_trans);
+        system_set_wr_disable();
+        system_set_bus_snes();
+        system_send_snes_reset();
+        irq_stop();
+/*        
         info_P(PSTR("-->Switch TO SNES\n"));
         set_rom_mode();
         snes_wr_disable();
@@ -297,6 +308,7 @@ int main(void)
         info_P(PSTR("Activate SNES bus\n"));
         irq_stop();
         send_reset();
+*/        
         info_P(PSTR("Poll USB\n"));
         while ((usb_trans.req_state != REQ_STATUS_AVR)) {
             usbPoll();
@@ -304,15 +316,18 @@ int main(void)
             shell_run();
 #endif        
         }
-        info_P(PSTR("-->Switch TO AVR\n"));
+        //info_P(PSTR("-->Switch TO AVR\n"));
         shared_memory_init();
-        irq_init();
         if(usb_trans.loader_enabled) {
             boot_startup_rom(500);
         } else {
-            avr_bus_active();
-            send_reset();
+            system_set_bus_avr();
+            system_send_snes_reset();
+            //avr_bus_active();
+            //send_reset();
+            
         }
+        irq_init();
     }
     return 0;
 }

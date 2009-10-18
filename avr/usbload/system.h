@@ -49,6 +49,9 @@ void system_set_rom_mode(usb_transaction_t *usb_trans);
 void system_set_rom_hirom(void);
 void system_set_rom_lorom(void);
 void system_snes_irq_off(void);
+void system_set_wr_disable(void);
+void system_set_wr_enable(void);
 
+void system_status();
 
 #endif

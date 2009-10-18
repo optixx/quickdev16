@@ -39,6 +39,7 @@
 #include "crc.h"
 #include "command.h"
 #include "shared_memory.h"
+#include "system.h"
 
  
 
@@ -196,6 +197,7 @@ enum cmds { CMD_DUMP,
             CMD_LOADER,
             CMD_RECONNECT,
             CMD_STATUS,
+            CMD_SYS,
             CMD_HELP
 };
 
@@ -216,6 +218,7 @@ uint8_t cmdlist[][CMD_HELP] PROGMEM = {
             {"LOADER"},
             {"RECONNECT"},
             {"STATUS"},
+            {"SYS"},
             {"HELP"},
         };
 
@@ -266,7 +269,8 @@ void shell_run(void)
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_EXIT]) == 0) {
         leave_application();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_RESET]) == 0) {
-        send_reset();
+        //send_reset();
+        system_send_snes_reset();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_IRQ]) == 0) {
         info_P(PSTR("Send IRQ\n"));
         snes_irq_on();
@@ -321,16 +325,12 @@ void shell_run(void)
         usb_connect();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_STATUS]) == 0) {
             transaction_status();
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_SYS]) == 0) {
+            system_status();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_HELP]) == 0) {
         shell_help();
     }    
     prompt();
-    /*
-    dias
-    set irq vector
-    set reset vector
-    dump cart header
-    */
 }
 
 
