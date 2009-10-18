@@ -380,8 +380,27 @@ void shell_run(void)
                 printf("%c",c);
         }
         printf("\n");
+        c = sram_read(0xffd5 - offset);
+        info_P(PSTR("LAYOUT	0x%04x "), (0xffd5 - offset));
         
-        info_P(PSTR("LAYOUT	0x%04x 0x%02x\n"), (0xffd5 - offset),sram_read(0xffd5 - offset));
+        switch(c){
+            case 0x20:
+                info_P(PSTR("LOROM\n"));
+                break;
+            case 0x21:
+                info_P(PSTR("HIROM\n"));
+                break;
+            case 0x30:
+                info_P(PSTR("LOROM FAST\n"));
+                break;
+            case 0x31:
+                info_P(PSTR("HIROM FAST\n"));
+                break;
+            default:
+                info_P(PSTR("UNKNOW 0x%02x\n"),c);
+                break;
+        }
+            
         info_P(PSTR("TYPE	0x%04x 0x%02x\n"), (0xffd6 - offset),sram_read(0xffd6 - offset));
         info_P(PSTR("ROM	0x%04x 0x%02x\n"), (0xffd7 - offset),sram_read(0xffd7 - offset));
         info_P(PSTR("RAM	0x%04x 0x%02x\n"), (0xffd8 - offset),sram_read(0xffd8 - offset));
