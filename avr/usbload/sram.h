@@ -206,6 +206,7 @@ void sram_bulk_read_start(uint32_t addr);
 inline void sram_bulk_read_next(void);
 inline void sram_bulk_read_end(void);
 uint8_t sram_bulk_read(void);
+uint16_t sram_read16_be(uint32_t addr);
 
 void sram_bulk_write_start(uint32_t addr);
 inline void sram_bulk_write_next(void);

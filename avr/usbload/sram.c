@@ -215,6 +215,12 @@ uint8_t sram_read(uint32_t addr)
 
 }
 
+uint16_t sram_read16_be(uint32_t addr){
+    uint8_t hi = sram_read(addr);
+    uint8_t lo = sram_read(addr+1);
+    return (hi << 8 | lo );
+}
+
 void sram_bulk_write_start(uint32_t addr)
 {
     debug_P(DEBUG_SRAM, PSTR("sram_bulk_write_start: addr=0x%08lx\n\r"), addr);
@@ -313,7 +319,6 @@ void sram_bulk_copy_into_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
     for (i = addr; i < (addr + len); i++) {
         dst[i] = sram_bulk_read();
         sram_bulk_read_next();
-        ptr++;
     }
     sram_bulk_read_end();
 }

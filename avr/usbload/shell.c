@@ -185,6 +185,7 @@ ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
 enum cmds { 
             CMD_DUMP,
             CMD_DUMPVEC,
+            CMD_DUMPHEADER,
             CMD_CRC,
             CMD_EXIT,
             CMD_RESET,
@@ -208,6 +209,7 @@ enum cmds {
 uint8_t cmdlist[][CMD_HELP] PROGMEM = {
             {"DUMP"},
             {"DUMPVEC"},
+            {"DUMPHEADER"},
             {"CRC"},
             {"EXIT"},
             {"RESET"},
@@ -239,11 +241,6 @@ void shell_help(void){
     }
 }
 
-uint16_t sram_word_be(uint32_t addr){
-    uint8_t hi = sram_read(addr);
-    uint8_t lo = sram_read(addr+1);
-    return (hi << 8 | lo );
-}
 
 void shell_run(void)
 {
@@ -252,6 +249,9 @@ void shell_run(void)
     uint32_t arg2;
     uint32_t arg3;
 	uint16_t crc;
+    uint16_t offset;
+    uint16_t i;
+    uint8_t c;
     
 	if (!cr)
         return;
@@ -281,7 +281,6 @@ void shell_run(void)
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_EXIT]) == 0) {
         leave_application();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_RESET]) == 0) {
-        //send_reset();
         system_send_snes_reset();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_IRQ]) == 0) {
         info_P(PSTR("Send IRQ\n"));
@@ -348,13 +347,51 @@ void shell_run(void)
     	else
             offset = 0x0000;
     	
-        info_P(PSTR("ABORT	0x%04x 0x%04x\n"), (0xFFE8 - offset),sram_word_be(0xFFE8 - offset));
-        info_P(PSTR("BRK	0x%04x 0x%04x\n"), (0xFFE6 - offset),sram_word_be(0xFFE6 - offset));
-        info_P(PSTR("COP	0x%04x 0x%04x\n"), (0xFFE4 - offset),sram_word_be(0xFFE4 - offset));
-        info_P(PSTR("IRQ	0x%04x 0x%04x\n"), (0xFFEE - offset),sram_word_be(0xFFEE - offset));
-        info_P(PSTR("NMI	0x%04x 0x%04x\n"), (0xFFEA - offset),sram_word_be(0xFFEA - offset));
-        info_P(PSTR("RES	0x%04x 0x%04x\n"), (0xFFFC - offset),sram_word_be(0xFFFC - offset));
+        info_P(PSTR("ABORT	0x%04x 0x%04x\n"), (0xFFE8 - offset),sram_read16_be(0xFFE8 - offset));
+        info_P(PSTR("BRK	0x%04x 0x%04x\n"), (0xFFE6 - offset),sram_read16_be(0xFFE6 - offset));
+        info_P(PSTR("COP	0x%04x 0x%04x\n"), (0xFFE4 - offset),sram_read16_be(0xFFE4 - offset));
+        info_P(PSTR("IRQ	0x%04x 0x%04x\n"), (0xFFEE - offset),sram_read16_be(0xFFEE - offset));
+        info_P(PSTR("NMI	0x%04x 0x%04x\n"), (0xFFEA - offset),sram_read16_be(0xFFEA - offset));
+        info_P(PSTR("RES	0x%04x 0x%04x\n"), (0xFFFC - offset),sram_read16_be(0xFFFC - offset));
     	
+    }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_DUMPHEADER]) == 0) {
+        
+    	if (system.rom_mode==LOROM)
+            offset = 0x8000;
+    	else
+            offset = 0x0000;
+    	/*
+    	#  $ffc0..$ffd4 => Name of the ROM, typically in ASCII, using spaces to pad the name to 21 bytes.
+        # $ffd5 => ROM layout, typically $20 for LoROM, or $21 for HiROM. Add $10 for FastROM.
+        # $ffd6 => Cartridge type, typically $00 for ROM only, or $02 for ROM with save-RAM.
+        # $ffd7 => ROM size byte.
+        # $ffd8 => RAM size byte.
+        # $ffd9 => Country code, which selects the video in the emulator. Values $00, $01, $0d use NTSC. Values in range $02..$0c use PAL. Other values are invalid.
+        # $ffda => Licensee code. If this value is $33, then the ROM has an extended header with ID at $ffb2..$ffb5.
+        # $ffdb => Version number, typically $00.
+        # $ffdc..$ffdd => Checksum complement, which is the bitwise-xor of the checksum and $ffff.
+        # $ffde..$ffdf => SNES checksum, an unsigned 16-bit checksum of bytes.
+        # $ffe0..$ffe3 => Unknown.
+        */
+        info_P(PSTR("NAME	0x%04x "), (0xffc0 - offset));
+        for(arg1=(0xffc0 - offset); arg1<(0xffc0 - offset + 21);arg1++){
+            c = sram_read(arg1);
+            if (c>0x1f && c<0x7f)
+                printf("%c",c);
+        }
+        printf("\n");
+        
+        info_P(PSTR("LAYOUT	0x%04x 0x%02x\n"), (0xffd5 - offset),sram_read(0xffd5 - offset));
+        info_P(PSTR("TYPE	0x%04x 0x%02x\n"), (0xffd6 - offset),sram_read(0xffd6 - offset));
+        info_P(PSTR("ROM	0x%04x 0x%02x\n"), (0xffd7 - offset),sram_read(0xffd7 - offset));
+        info_P(PSTR("RAM	0x%04x 0x%02x\n"), (0xffd8 - offset),sram_read(0xffd8 - offset));
+        info_P(PSTR("CCODE	0x%04x 0x%02x\n"), (0xffd9 - offset),sram_read(0xffd9 - offset));
+        info_P(PSTR("LIC	0x%04x 0x%02x\n"), (0xffda - offset),sram_read(0xffda - offset));
+        info_P(PSTR("VER	0x%04x 0x%02x\n"), (0xffdb - offset),sram_read(0xffdb - offset));
+        info_P(PSTR("SUM1	0x%04x 0x%04x\n"), (0xffdc - offset),sram_read16_be(0xffdc - offset));
+        info_P(PSTR("SUM2	0x%04x 0x%04x\n"), (0xffde - offset),sram_read16_be(0xffde - offset));
+    	
+    
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_SHMWR]) == 0) {
         if (get_hex_arg2(&arg1,&arg2))
             shared_memory_write((uint8_t)arg1, (uint8_t)arg1);
