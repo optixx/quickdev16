@@ -35,6 +35,7 @@ if huffman == True:
     os.unlink("/tmp/loader.rle")
     os.unlink("/tmp/loader.rle.hfm")
 
+
 cfile = open("/tmp/loader.c","w")
 hfile = open("/tmp/loader.h","w")
 
@@ -83,7 +84,6 @@ const char _rom%02i[ROM_BUFFER_SIZE%02i] PROGMEM = {
     l = addr     
     h = addr + parts[idx]
     addr+= parts[idx]
-    print l,h
     for idx,c in enumerate(data[l:h]):
         c = ord(c)
         if idx<len(data)-1:

@@ -245,6 +245,7 @@ void globals_init(){
 
 int main(void)
 {
+    
 #ifndef NO_DEBUG            
     uart_init();
     stdout = &uart_stdout;
@@ -260,7 +261,7 @@ int main(void)
     pwm_stop();
     usbInit();
     usb_connect();
-    
+    sei();
     while (1) {
         avr_bus_active();
         info_P(PSTR("Activate AVR bus\n"));

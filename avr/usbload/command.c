@@ -31,6 +31,8 @@
 #include "usbdrv.h"
 #include "rle.h"
 #include "loader.h"
+#include "system.h"
+
 
 extern usb_transaction_t usb_trans;
 
@@ -93,13 +95,9 @@ void boot_startup_rom(uint16_t init_delay)
 {
     uint8_t i;
     uint32_t addr = 0x000000;
-    info_P(PSTR("Fetch loader rom\n"));
-    info_P(PSTR("Activate AVR bus\n"));
-    avr_bus_active();
-    info_P(PSTR("IRQ off\n"));
-    snes_irq_lo();
-    snes_irq_off();
-    snes_lorom();
+    system_set_bus_avr();
+    system_snes_irq_off();
+    system_set_rom_lorom();
     for (i=0; i<ROM_BUFFER_CNT; i++){
         addr += rle_decode(_rom[i], _rom_size[i], addr);
     }
@@ -112,14 +110,9 @@ void boot_startup_rom(uint16_t init_delay)
     info(PSTR("crc=%x\n"),crc);
 #endif
 
-    snes_irq_lo();
-    snes_irq_off();
-    snes_hirom();
-    snes_wr_disable();
-    
-    snes_bus_active();
-    info_P(PSTR("Activate SNES bus\n"));
-    send_reset();
+    system_set_rom_hirom();
+    system_set_bus_snes();
+    system_send_snes_reset();
     _delay_ms(init_delay);
 }
 

@@ -23,6 +23,8 @@
 #ifndef __SYSTEM_H__
 #define __SYSTEM_H__
 
+#include "requests.h"
+
 
 
 typedef struct system_t {
@@ -38,6 +40,15 @@ typedef struct system_t {
 } system_t;
 
 void system_init(void);
+void system_init(void);
+void system_send_snes_reset(void);
+void system_send_snes_irq(void);
+void system_set_bus_avr(void);
+void system_set_bus_snes(void);
+void system_set_rom_mode(usb_transaction_t *usb_trans);
+void system_set_rom_hirom(void);
+void system_set_rom_lorom(void);
+void system_snes_irq_off(void);
 
 
 #endif

@@ -16,7 +16,7 @@
 #         Author:  Christian Starkjohann 
 # =====================================================================================
 
-DEBUG   = 0
+DEBUG   = 1
 TTY     = /dev/tty.PL2303-00002126
 DEVICE  = atmega644
 F_CPU   = 20000000

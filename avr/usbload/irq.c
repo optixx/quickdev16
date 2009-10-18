@@ -65,7 +65,7 @@ void leave_application(void)
 
 }
 
- ISR (SIG_PIN_CHANGE3)
+ISR (SIG_PIN_CHANGE3)
 {
     if (snes_reset_test()){
         info_P(PSTR("Catch SNES reset button\n"));

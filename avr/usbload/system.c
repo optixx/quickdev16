@@ -86,6 +86,19 @@ void system_send_snes_irq()
     snes_irq_off();
 }
 
+void system_snes_irq_off()
+{    
+    snes_irq_off();
+    system.irq_line = IRQ_OFF;
+}
+
+void system_snes_irq_on()
+{    
+    snes_irq_on();
+    system.irq_line = IRQ_ON;
+}
+
+
 void system_set_bus_avr()
 {
     avr_bus_active();
@@ -104,8 +117,6 @@ void system_set_bus_snes()
     snes_bus_active();
     system.bus_mode = MODE_SNES;
     info_P(PSTR("Activate SNES bus\n"));
-    irq_stop();
-
 }
 
 void system_set_rom_mode(usb_transaction_t *usb_trans)
@@ -113,7 +124,7 @@ void system_set_rom_mode(usb_transaction_t *usb_trans)
     if (usb_trans->req_bank_size == 0x8000) {
         snes_lorom();
         system.rom_mode = LOROM;
-        info_P(PSTR("Set SNES lowrom \n"));
+        info_P(PSTR("Set SNES lorom \n"));
     } else {
         snes_hirom();
         system.rom_mode = HIROM;
@@ -121,3 +132,17 @@ void system_set_rom_mode(usb_transaction_t *usb_trans)
     }
 }
 
+void system_set_rom_lorom()
+{
+    snes_lorom();
+    system.rom_mode = LOROM;
+    info_P(PSTR("Set SNES lorom \n"));
+}
+
+
+void system_set_rom_hirom()
+{
+    snes_hirom();
+    system.rom_mode = HIROM;
+    info_P(PSTR("Set SNES hirom \n"));
+}
