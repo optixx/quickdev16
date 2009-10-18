@@ -1,0 +1,30 @@
+
+Loader Version 1
+
+DEBUG:
+Bootloader:     4096
+CODE:           24984 
+RAM:            742
+LOADER:         31091
+
+NO_DEBUG:
+Bootloader:     4096
+CODE:           7532 
+RAM:            344
+LOADER:         31091
+ 
+
+Loader Version 2
+
+DEBUG:
+Bootloader:     4096
+CODE:           24984 
+RAM:            742
+LOADER:         58046
+
+NO_DEBUG:
+Bootloader:     4096
+CODE:           7532 
+RAM:            344
+LOADER:         58046
+
