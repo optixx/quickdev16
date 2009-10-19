@@ -35,14 +35,14 @@ ifeq ($(DEBUG),1)
     OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o \
                main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o \
                dump.o timer.o watchdog.o rle.c loader.o info.o shared_memory.o \
-               system.o pwm.o util.o shell.o irq.o command.o testing.o
+               system.o pwm.o util.o shell.o irq.o command.o testing.o inflate.o neginf/neginf.o
 else 
     LDFLAGS =-Wl,-u
     CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG -DNO_INFO
     OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o \
               sram.o crc.o debug.o dump.o rle.c loader.o \
               system.o util.o info.o shared_memory.o command.o irq.o \
-              pwm.o
+              pwm.o inflate.o neginf/neginf.o
 endif
 
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
@@ -113,4 +113,4 @@ cpp:
 	$(COMPILE) -E main.c
 
 clean:
-	rm -f main.hex main.lst main.obj main.cof main.list main.map main.eep.hex main.elf *.o usbdrv/*.o main.s usbdrv/oddebug.s usbdrv/usbdrv.s
+	rm -f main.hex main.lst main.obj main.cof main.list main.map main.eep.hex main.elf *.o usbdrv/*.o main.s usbdrv/oddebug.s usbdrv/usbdrv.s neginf/*.o
