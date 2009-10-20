@@ -9,14 +9,19 @@ huffman = False
 TARGET=os.getcwd()
 SOURCE=sys.argv[1]
 DEFLATE=os.path.basename(sys.argv[1]) + ".deflate"
+PATH="/Users/david/Devel/arch/avr/code/quickdev16/scripts"
 
+WINE="/Applications/Darwine/Wine.bundle/Contents/bin/wine"
+KZIP=os.path.join(PATH,"kzip.exe")
+DEFLOPT=os.path.join(PATH,"DeflOpt.exe")
+ZIP2RAW=os.path.join(PATH,"zip2raw.rb")
 
 if os.path.isfile("rom.zip"):
     os.unlink("rom.zip")
 
-os.system("wine kzip.exe rom /s1 %s" % SOURCE)
-os.system("wine DeflOpt.exe /a rom.zip")
-os.system("ruby zip2raw.rb rom.zip")
+os.system("%s %s rom /s1 %s" % (WINE,KZIP,SOURCE))
+os.system("%s %s /a rom.zip" % (WINE,DEFLOPT))
+os.system("ruby %s rom.zip" % ZIP2RAW)
 
 if os.path.isfile("rom.zip"):
     os.unlink("rom.zip")

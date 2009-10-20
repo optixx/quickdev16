@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>avr/usbload/main.c</string>
+	<string>scripts/zip2raw.rb</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -26,28 +26,56 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>18</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>42</integer>
+				<integer>100</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>95</integer>
+			<integer>122</integer>
 		</dict>
-		<key>avr/usbload/command.h</key>
+		<key>avr/usbload/config.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>26</integer>
+				<integer>37</integer>
 				<key>line</key>
-				<integer>30</integer>
+				<integer>54</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
+			<integer>7</integer>
+		</dict>
+		<key>avr/usbload/crc.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>59</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
 			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>34</integer>
+		</dict>
+		<key>avr/usbload/debug.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>5</integer>
+				<key>line</key>
+				<integer>26</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>1</integer>
 		</dict>
 		<key>avr/usbload/irq.c</key>
 		<dict>
@@ -56,86 +84,112 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>54</integer>
+				<integer>39</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>26</integer>
+			<integer>23</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>38</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>39</integer>
+			</dict>
 		</dict>
 		<key>avr/usbload/main.c</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>18</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>269</integer>
+				<integer>330</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>247</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>8</integer>
-				<key>line</key>
-				<integer>269</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>23</integer>
-				<key>line</key>
-				<integer>269</integer>
-			</dict>
+			<integer>281</integer>
 		</dict>
-		<key>avr/usbload/system.c</key>
+		<key>avr/usbload/shared_memory.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>26</integer>
+				<key>line</key>
+				<integer>247</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>222</integer>
+		</dict>
+		<key>avr/usbload/shell.c</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>119</integer>
+				<integer>402</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>78</integer>
+			<integer>0</integer>
 		</dict>
-		<key>avr/usbload/system.h</key>
+		<key>avr/usbload/shell.h</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>12</integer>
+				<integer>22</integer>
 				<key>line</key>
-				<integer>33</integer>
+				<integer>23</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1</integer>
-			<key>selectFrom</key>
+			<integer>0</integer>
+		</dict>
+		<key>avr/usbload/sram.c</key>
+		<dict>
+			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>9</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>33</integer>
+				<integer>321</integer>
 			</dict>
-			<key>selectTo</key>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>288</integer>
+		</dict>
+		<key>avr/usbload/sram.h</key>
+		<dict>
+			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>19</integer>
+				<integer>23</integer>
 				<key>line</key>
-				<integer>33</integer>
+				<integer>208</integer>
 			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>175</integer>
 		</dict>
 		<key>scripts/conv_rle.py</key>
 		<dict>
@@ -150,6 +204,34 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>49</integer>
+		</dict>
+		<key>scripts/conv_zip.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>33</integer>
+				<key>line</key>
+				<integer>31</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>scripts/zip2raw.rb</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>96</integer>
 		</dict>
 		<key>snes/banktest/LoadGraphics.asm</key>
 		<dict>
@@ -184,10 +266,17 @@
 	<array>
 		<string>scripts/conv_rle.py</string>
 		<string>avr/usbload/main.c</string>
-		<string>avr/usbload/command.h</string>
-		<string>avr/usbload/system.c</string>
-		<string>avr/usbload/system.h</string>
+		<string>avr/usbload/shell.h</string>
+		<string>avr/usbload/shell.c</string>
+		<string>scripts/conv_zip.py</string>
+		<string>scripts/zip2raw.rb</string>
+		<string>avr/usbload/shared_memory.c</string>
+		<string>avr/usbload/sram.h</string>
+		<string>avr/usbload/sram.c</string>
 		<string>avr/usbload/command.c</string>
+		<string>avr/usbload/crc.c</string>
+		<string>avr/usbload/config.h</string>
+		<string>avr/usbload/debug.c</string>
 		<string>avr/usbload/irq.c</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
@@ -237,7 +326,15 @@
 					<key>isExpanded</key>
 					<true/>
 					<key>subItems</key>
-					<dict/>
+					<dict>
+						<key>webpy</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict/>
+						</dict>
+					</dict>
 				</dict>
 				<key>snes</key>
 				<dict>
