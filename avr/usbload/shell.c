@@ -44,11 +44,11 @@
  
 extern system_t system;
 
-const PROGMEM char STR_ROM[]  = "Rom";
-const PROGMEM char STR_RAM[] = "Sram";
-const PROGMEM char STR_BAT[] = "Battery";
-const PROGMEM char STR_SUPERFX[] = "SuperFX";
-const PROGMEM char STR_SA[] = "SA-1";
+const char STR_ROM[] PROGMEM = "Rom";
+const char STR_RAM[] PROGMEM = "Sram";
+const char STR_BAT[] PROGMEM = "Battery";
+const char STR_SUPERFX[] PROGMEM = "SuperFX";
+const char STR_SA[] PROGMEM = "SA-1";
 
 
 uint8_t command_buf[RECEIVE_BUF_LEN];
@@ -408,45 +408,45 @@ void shell_run(void)
         }
 
         c = sram_read(0xffd6 - offset);
-        info_P(PSTR("TYPE  0x%04x \n"), (0xffd6 - offset));
+        info_P(PSTR("TYPE	0x%04xc"), (0xffd6 - offset),c);
         switch(c){
             case 0x00:
-                info_P(PSTR("%s\n"),STR_ROM);
+                info_P(PSTR("Rom\n"));
                 break;
             case 0x01:
-                info_P(PSTR("%s + %s\n"),STR_ROM,STR_RAM);
+                info_P(PSTR("Rom + Sram\n"));
                 break;
             case 0x02:
-                info_P(PSTR("%s + %s + %s\n"),STR_ROM,STR_RAM,STR_BAT);
+                info_P(PSTR("Rom + Sram + Battery\n"));
                 break;
             case 0x13:
-                info_P(STR_SUPERFX);
+                info_P(PSTR("SuperFX\n"));
                 break;
             case 0x14:
-                info_P(STR_SUPERFX);
+                info_P(PSTR("SuperFX\n"));
                 break;
             case 0x15:
-                info_P(PSTR("%s + %s\n"),STR_SUPERFX,STR_RAM);
+                info_P(PSTR("SuperFX + Sram\n"));
                 break;
             case 0x1a:
-                info_P(PSTR("%s + %s\n"),STR_SUPERFX,STR_RAM);
+                info_P(PSTR("SuperFX + Sram\n"));
                 break;
             case 0x34:
-                info_P(STR_SA);
+                info_P(PSTR("SA-1"));
                 break;
             case 0x35:
-                info_P(STR_SA);
+                info_P(PSTR("SA-1"));
                 break;
             default:
                 info_P(PSTR("Unkown 0x%02x\n"),c);
                 break;
         }
         arg1 = ( 2 << ( sram_read(0xffd7 - offset) - 1 ));    
-        info_P(PSTR("ROM	0x%04x %i MBit ( %i KiB)\n"), (0xffd7 - offset),arg1, ((arg1 / 1024) * 8)  );
+        info_P(PSTR("ROM	0x%04x %li MBit ( %li KiB)\n"), (0xffd7 - offset), (arg1 / 128), arg1);
         arg1 = ( 2 << ( sram_read(0xffd8 - offset) - 1 ));
-        info_P(PSTR("RAM    0x%04x %i MBit ( %i KiB)\n"), (0xffd8 - offset),arg1, ((arg1 / 1024) * 8)  );
+        info_P(PSTR("RAM	0x%04x %li KiB\n"), (0xffd8 - offset), arg1);
 
-        info_P(PSTR("CCODE	0x%04x \n"), (0xffd9 - offset));
+        info_P(PSTR("CCODE	0x%04x "), (0xffd9 - offset));
         c = sram_read(0xffd9 - offset);
         if (c==0x00 || c==0x01 || 0x0d )
             info_P(PSTR("NTSC\n"));
