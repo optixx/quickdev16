@@ -23,9 +23,10 @@ F_CPU   = 20000000
 TARGET  = main
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 SIZE    = avr-size
-BOOT_ROM_SMALL = ../../roms/qd16boot01.smc
-BOOT_ROM_FULL = ../../roms/qd16boot02.smc
-ROM_CONVERT = ../../scripts/conv_rle.py
+BOOT_ROM01  = ../../roms/qd16boot01.smc
+BOOT_ROM02  = ../../roms/qd16boot02.smc
+CONVERT_RLE = ../../scripts/conv_rle.py
+CONVERT_ZIP = ../../scripts/conv_zip.py
 
 
 
@@ -79,11 +80,11 @@ fuse:
 flash: main.hex
 	$(AVRDUDE) -U flash:w:main.hex:i
 
-loader:
-	python $(ROM_CONVERT) $(BOOT_ROM_SMALL)
+loader01:
+	python $(CONVERT_RLE) $(BOOT_ROM01)
 
-loader_full:
-	python $(ROM_CONVERT) $(BOOT_ROM_FULL)
+loader02:
+	python $(CONVERT_ZIP) $(BOOT_ROM02)
 
 .c.o:
 	$(COMPILE) -c $< -o $@
