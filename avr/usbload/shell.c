@@ -44,7 +44,13 @@
  
 extern system_t system;
 
- 
+const PROGMEM char STR_ROM[]  = "Rom";
+const PROGMEM char STR_RAM[] = "Sram";
+const PROGMEM char STR_BAT[] = "Battery";
+const PROGMEM char STR_SUPERFX[] = "SuperFX";
+const PROGMEM char STR_SA[] = "SA-1";
+
+
 uint8_t command_buf[RECEIVE_BUF_LEN];
 uint8_t	recv_buf[RECEIVE_BUF_LEN];
 
@@ -153,7 +159,7 @@ static uint8_t get_int32(uint32_t *val)
      
  }
  
-ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
+ISR(USART0_RX_vect)		
 {
   UCSR0B &= (255 - (1<<RXCIE0));//	Interrupts disable for RxD
   sei();
@@ -164,11 +170,11 @@ ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
     prompt();
   }
   recv_buf[recv_counter] = UDR0;
-  uart_putc(recv_buf[recv_counter]); /* do a echo, maybe should reside not in interrupt */
+  uart_putc(recv_buf[recv_counter]); 
   if (recv_buf[recv_counter] == 0x0d) {
     /* recv_buf[recv_counter] = 0; */
-    cr = 1;				//	found a CR, so the application should do something
-    recv_buf[++recv_counter]='\0';  // terminate string
+    cr = 1;				
+    recv_buf[++recv_counter]='\0';  
     recv_counter = 0;
     prompt();
   } else {
@@ -179,7 +185,7 @@ ISR(USART0_RX_vect)		//	Interrupt for UART Byte received
       recv_counter++;
     }
   }
-  UCSR0B |= (1<<RXCIE0);//	Interrupts enable for RxD
+  UCSR0B |= (1<<RXCIE0);
 }
 
 enum cmds { 
@@ -385,26 +391,70 @@ void shell_run(void)
         
         switch(c){
             case 0x20:
-                info_P(PSTR("LOROM\n"));
+                info_P(PSTR("LoROM, not fast\n"));
                 break;
             case 0x21:
-                info_P(PSTR("HIROM\n"));
+                info_P(PSTR("HiRom, not fast\n"));
                 break;
             case 0x30:
-                info_P(PSTR("LOROM FAST\n"));
+                info_P(PSTR("LoROM, fast\n"));
                 break;
             case 0x31:
-                info_P(PSTR("HIROM FAST\n"));
+                info_P(PSTR("HiRom, fast\n"));
                 break;
             default:
-                info_P(PSTR("UNKNOW 0x%02x\n"),c);
+                info_P(PSTR("Unkown 0x%02x\n"),c);
                 break;
         }
-            
-        info_P(PSTR("TYPE	0x%04x 0x%02x\n"), (0xffd6 - offset),sram_read(0xffd6 - offset));
-        info_P(PSTR("ROM	0x%04x 0x%02x\n"), (0xffd7 - offset),sram_read(0xffd7 - offset));
-        info_P(PSTR("RAM	0x%04x 0x%02x\n"), (0xffd8 - offset),sram_read(0xffd8 - offset));
-        info_P(PSTR("CCODE	0x%04x 0x%02x\n"), (0xffd9 - offset),sram_read(0xffd9 - offset));
+
+        c = sram_read(0xffd6 - offset);
+        info_P(PSTR("TYPE  0x%04x \n"), (0xffd6 - offset));
+        switch(c){
+            case 0x00:
+                info_P(PSTR("%s\n"),STR_ROM);
+                break;
+            case 0x01:
+                info_P(PSTR("%s + %s\n"),STR_ROM,STR_RAM);
+                break;
+            case 0x02:
+                info_P(PSTR("%s + %s + %s\n"),STR_ROM,STR_RAM,STR_BAT);
+                break;
+            case 0x13:
+                info_P(STR_SUPERFX);
+                break;
+            case 0x14:
+                info_P(STR_SUPERFX);
+                break;
+            case 0x15:
+                info_P(PSTR("%s + %s\n"),STR_SUPERFX,STR_RAM);
+                break;
+            case 0x1a:
+                info_P(PSTR("%s + %s\n"),STR_SUPERFX,STR_RAM);
+                break;
+            case 0x34:
+                info_P(STR_SA);
+                break;
+            case 0x35:
+                info_P(STR_SA);
+                break;
+            default:
+                info_P(PSTR("Unkown 0x%02x\n"),c);
+                break;
+        }
+        arg1 = ( 2 << ( sram_read(0xffd7 - offset) - 1 ));    
+        info_P(PSTR("ROM	0x%04x %i MBit ( %i KiB)\n"), (0xffd7 - offset),arg1, ((arg1 / 1024) * 8)  );
+        arg1 = ( 2 << ( sram_read(0xffd8 - offset) - 1 ));
+        info_P(PSTR("RAM    0x%04x %i MBit ( %i KiB)\n"), (0xffd8 - offset),arg1, ((arg1 / 1024) * 8)  );
+
+        info_P(PSTR("CCODE	0x%04x \n"), (0xffd9 - offset));
+        c = sram_read(0xffd9 - offset);
+        if (c==0x00 || c==0x01 || 0x0d )
+            info_P(PSTR("NTSC\n"));
+        else if (c>=0x02 || c<=0x0c )
+            info_P(PSTR("PAL\n"));
+        else
+            info_P(PSTR("Unkown 0x%02x\n"),c);
+        
         info_P(PSTR("LIC	0x%04x 0x%02x\n"), (0xffda - offset),sram_read(0xffda - offset));
         info_P(PSTR("VER	0x%04x 0x%02x\n"), (0xffdb - offset),sram_read(0xffdb - offset));
         info_P(PSTR("SUM1	0x%04x 0x%04x\n"), (0xffdc - offset),sram_read16_be(0xffdc - offset));
