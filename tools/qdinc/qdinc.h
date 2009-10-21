@@ -4,9 +4,6 @@
 #define QDINC_RANGE 96
 #define QDINC_SIZE 254
 
-// makes this compatible with a bug in older quickdev firmware revisions
-//#define QDINC_OLD_FIRMWARE 
-
 /* quickdev protocol defines */
 
 #define USB_UPLOAD_INIT         0
@@ -25,7 +22,7 @@
 #define USB_MODE_SNES           10
 #define USB_MODE_AVR            11
 #define USB_AVR_RESET           12
-#define USB_SET_LAODER          13
+#define USB_SET_LOADER          13
 
 /* -------------------------- Device Description --------------------------- */
 

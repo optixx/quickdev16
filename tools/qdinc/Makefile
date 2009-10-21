@@ -27,7 +27,7 @@ NAME = qdinc
 OBJECTS = opendevice.o $(NAME).o
 
 CC		= gcc
-CFLAGS	= $(CPPFLAGS) $(USBFLAGS) -O -g -Wall
+CFLAGS	= $(CPPFLAGS) $(USBFLAGS) -O -g -Wall -D_GNU_SOURCE
 LIBS	= $(USBLIBS)
 
 PROGRAM = $(NAME)$(EXE_SUFFIX)

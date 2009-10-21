@@ -1,19 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <usb.h>
+#include <unistd.h>
+#include <getopt.h>
 
 #include "opendevice.h"
-
 #include "qdinc.h"
+
+#define _16MBIT 0x200000
+#define HIROM_BANK_SIZE_SHIFT  16
+#define LOROM_BANK_SIZE_SHIFT  15
+#define HIROM_BANK_COUNT_SHIFT 32
+#define LOROM_BANK_COUNT_SHIFT 64
 
 static const char * default_tempfile = "/tmp/quickdev";
 
 
 void usage(void)
 {
-    fprintf(stderr, "usage: qdinc [-hsi] <romfile>\n");
+    fprintf(stderr, "Usage: qdinc [option] <romfile>\n\n\
+            Options:\n\
+            -i\tInitial ROM upload\n\
+            -s\tSkip ROM header\n\
+            -q\tBe quiet\n\
+            -h\tForce HiROM mode\n\n");
+
     exit(1);
 }
 
@@ -24,81 +36,67 @@ int main(int argc, char * argv[])
     int hirom = 0;
     int header = 0;
     int init = 0;
-    int i,j,j2;
-    for(i = 1; i < argc; i++)
-    {
-        if(argv[i][0] == '-')
-        {
-            if(strcmp(argv[i], "--") == 0)
-            {
-                if(i != argc - 2 || filename)
-                    usage();
-                else
-                {
-                    filename = argv[i+1];
-                    break;
-                }
-            }
-            unsigned int len = strlen(argv[i]);
-            if(len == 1)
+    int quiet = 0;
+    int opt = 0;
+
+    if (argc==1)
+        usage();
+
+    while ((opt = getopt(argc,argv,"qish")) != -1){
+        switch (opt) {
+            case 'i':
+                init = 1;
+                break;
+            case 's':
+                header = 1;
+                break;
+            case 'h':
+                hirom = 1;
+                break;
+            case 'q':
+                quiet = 1;
+                break;
+            default:
                 usage();
-            for(j = 1; j < len; j++)
-            {
-                switch(argv[i][j])
-                {
-                case 'h':
-                    hirom = 1;
-                    break;
-                case 's':
-                    header = 1;
-                    break;
-                case 'i':
-                    init = 1;
-                    break;
-                default:
-                    usage();
-                }
-            }
-        }
-        else
-        {
-            if(filename != 0)
-                usage();
-            filename = argv[i];
         }
     }
+
+
+    if (optind >= argc) {
+        usage();
+    }
+
+    filename = argv[optind];
+
+    int j,j2;
+    int ref_complete, upload_complete = 0;
+    const char * tempfile_name = getenv("QDINC_FILE");
     
-    unsigned int pos = 0;
-    int ref_complete, upd_complete = 0;
-    
-    const char * tempfile = getenv("QDINC_FILE");
-    
-    if(tempfile == 0)
-        tempfile = default_tempfile;
+    if(tempfile_name == 0)
+        tempfile_name = default_tempfile;
         
-    char * outfile = malloc(strlen(tempfile) + sizeof(".out"));
-    char * ext = stpcpy(outfile, tempfile);
+    char * outfile = malloc(strlen(tempfile_name) + sizeof(".out"));
+    char * ext = stpcpy(outfile, tempfile_name);
     strcpy(ext, ".out");
+    FILE * temp_file = fopen(outfile, "wb");
     
-    FILE * out = fopen(outfile, "wb");
-    
-    if(out == 0)
+    if(temp_file == 0)
     {
         fprintf(stderr, "Could not open file %s for writing\n", outfile);
         exit(1);
     }
     
     
-    FILE * upd = fopen(filename, "rb");
+    FILE * new_rom = fopen(filename, "rb");
     
-    if(upd == 0)
+    if(new_rom == 0)
     {
         fprintf(stderr, "Could not open file %s\n", argv[3]);
         exit(1);
     }
     
-    fseek(upd, 0, SEEK_END);
-    unsigned int size = ftell(upd);
+    fseek(new_rom, 0, SEEK_END);
+    unsigned int size = ftell(new_rom);
     
     if(header)
     {
@@ -106,12 +104,12 @@ int main(int argc, char * argv[])
             size = 0;
         else
             size -= 512;
-        fseek(upd, 512, SEEK_SET);
+        fseek(new_rom, 512, SEEK_SET);
     }
     else
-        rewind(upd);
+        rewind(new_rom);
     
-    if(size > 0x200000)
+    if(size > _16MBIT)
     {
         fprintf(stderr, "Input file is larger than supported by Quickdev16\n");
         exit(1);
@@ -119,7 +117,7 @@ int main(int argc, char * argv[])
     
     FILE * ref = 0;
     if(!init)
-        ref = fopen(tempfile, "rb");
+        ref = fopen(tempfile_name, "rb");
     
     ref_complete = (ref == 0);
 
@@ -138,27 +136,23 @@ int main(int argc, char * argv[])
         exit(1);
     }
 
-#ifndef QDINC_OLD_FIRMWARE
     cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE |
-        USB_ENDPOINT_OUT, USB_SET_LAODER, 0, 0, NULL,
+        USB_ENDPOINT_OUT, USB_SET_LOADER, 0, 0, NULL,
         0, 5000); 
-#endif
     cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE |
         USB_ENDPOINT_OUT, USB_MODE_AVR, 0, 0, NULL,
         0, 5000);  
         
-#ifdef QDINC_OLD_FIRMWARE
-    /* wait for the loader to depack */
-    usleep(500000);
-#else
     usleep(50000);
-#endif
     
     cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
-        USB_BULK_UPLOAD_INIT, (hirom ? 16 : 15) , (hirom ? 32 : 64) /* << this is wrong, but only used for progress display */, NULL, 0, 5000);
+        USB_BULK_UPLOAD_INIT, 
+        (hirom ? HIROM_BANK_SIZE_SHIFT : LOROM_BANK_SIZE_SHIFT) , 
+        (hirom ? HIROM_BANK_COUNT_SHIFT : LOROM_BANK_COUNT_SHIFT) /* << this is wrong, but only used for progress display */, 
+        NULL, 0, 5000);
 
     unsigned char diffblock[256];
     unsigned int blocklen = 0;
@@ -166,31 +160,31 @@ int main(int argc, char * argv[])
     unsigned int position = 0;
     unsigned int last_position = (unsigned int)(-1);
     
-    unsigned char lastchar;
+    unsigned char lastchar = 0;
     unsigned int transmitted = 0;
     
     
     char progress[21];
-    
-    for(i = 0; i < 20; i++)
-        progress[i] = ' ';
+    memset(progress,' ',19); 
     progress[20] = 0;
     j = 0;
     j2 = 0;
 
-    while(!upd_complete)
+    while(!upload_complete)
     {
         int msg = 0;
-        unsigned char updchar = fgetc(upd);
-        unsigned char refchar;
-        if(feof(upd))
+        unsigned char updchar = fgetc(new_rom);
+        unsigned char refchar=0;
+
+        if(feof(new_rom))
         {
             msg = 1;
-            upd_complete = 1;
+            upload_complete = 1;
         }
         else
-            fputc(updchar, out);
-        if(!ref_complete && !upd_complete)
+            fputc(updchar, temp_file);
+
+        if(!ref_complete && !upload_complete)
         {
             refchar = fgetc(ref);
             if(feof(ref))
@@ -198,21 +192,11 @@ int main(int argc, char * argv[])
         }
         
         int match = (ref_complete || updchar != refchar);
-#ifdef QDINC_OLD_FIRMWARE
-        if(position < 64 * 1024)
-            match = 1;
-#endif
-        if(upd_complete)
+        if(upload_complete)
             match = 0;
+
         if(match)
         {
-#ifdef QDINC_OLD_FIRMWARE
-            if(blocklen == 0 && (position & (hirom ? 0xFFFF : 0x7FFF)) == 0 && position != 0 && position != last_position)
-            {
-                diffblock[0] = lastchar;
-                blocklen++;
-            }
-#endif
             diffblock[blocklen] = updchar;
             blocklen++;
             reallen = blocklen;
@@ -224,7 +208,7 @@ int main(int argc, char * argv[])
         }
         
         position++;
-        if((reallen > 0 && upd_complete) || ((!upd_complete) && (( (blocklen - reallen) >= QDINC_RANGE && !match) || blocklen == QDINC_SIZE)) )
+        if((reallen > 0 && upload_complete) || ((!upload_complete) && (( (blocklen - reallen) >= QDINC_RANGE && !match) || blocklen == QDINC_SIZE)) )
         {
             int consecutive = (last_position == position - blocklen);
             unsigned int begin = position - blocklen;
@@ -243,7 +227,7 @@ int main(int argc, char * argv[])
             msg = 1;
             
         }
-        if(msg)
+        if(!quiet && msg)
         {
             for(; j < (position - 1) * 20 / size; j++)
                 progress[j] = '=';
@@ -267,16 +251,17 @@ int main(int argc, char * argv[])
         if(feof(ref))
             ref_complete = 1;
         else
-            fputc(refchar, out);
+            fputc(refchar, temp_file);
     }
     
-    fclose(out);
-    fclose(upd);
-    fclose(ref);
+    fclose(temp_file);
+    fclose(new_rom);
+    if (!init)
+        fclose(ref);
     
-    if(rename(outfile, tempfile))
+    if(rename(outfile, tempfile_name))
     {
-        fprintf(stderr, "Could not replace tempfile %s\n", tempfile);
+        fprintf(stderr, "Could not replace tempfile %s\n", tempfile_name);
         exit(1);
     }
     
@@ -285,18 +270,15 @@ int main(int argc, char * argv[])
         USB_ENDPOINT_OUT, USB_BULK_UPLOAD_END, 0, 0, NULL,
         0, 5000);
         
-#ifndef QDINC_OLD_FIRMWARE
     cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE |
-        USB_ENDPOINT_OUT, USB_SET_LAODER, 1, 1, NULL,
+        USB_ENDPOINT_OUT, USB_SET_LOADER, 1, 1, NULL,
         0, 5000); 
-#endif
         
     cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE |
         USB_ENDPOINT_OUT, USB_MODE_SNES, 0, 0, NULL,
         0, 5000);
+
     return 0;
-    
-    printf("Done");
 }
