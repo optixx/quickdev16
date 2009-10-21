@@ -254,11 +254,11 @@ int main(void)
     shared_memory_init();
     system_init();
     sram_init();
-    pwm_init();
+    //pwm_init();
     irq_init();
     boot_startup_rom(50);
     globals_init();
-    pwm_stop();
+    //pwm_stop();
     usbInit();
     usb_connect();
     sei();
@@ -275,8 +275,10 @@ int main(void)
         info_P(PSTR("USB poll\n"));
         while (usb_trans.req_state != REQ_STATUS_SNES) {
             usbPoll();
+#ifdef DO_SHELL
 #ifndef NO_DEBUG            
             shell_run();
+#endif        
 #endif        
         }
         
@@ -312,9 +314,12 @@ int main(void)
         info_P(PSTR("Poll USB\n"));
         while ((usb_trans.req_state != REQ_STATUS_AVR)) {
             usbPoll();
+#ifdef DO_SHELL
 #ifndef NO_DEBUG            
             shell_run();
 #endif        
+#endif        
+
         }
         //info_P(PSTR("-->Switch TO AVR\n"));
         shared_memory_init();

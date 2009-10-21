@@ -32,24 +32,6 @@
 extern FILE uart_stdout;
 
 
-#if defined(NO_INFO) && defined(__GNUC__)
-
-#define info(format, args...) ((void)0)
-
-#else
-void info(char* format, ...) {
-#ifdef NO_INFO
-
-#else
-    va_list args;
-    va_start(args, format);
-    vprintf(format, args);
-    va_end(args);
-#endif 
-}
-#endif 
-
-
 #ifndef NO_INFO
     uint8_t buffer_info[FORMAT_BUFFER_LEN];
 #endif

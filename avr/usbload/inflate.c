@@ -29,6 +29,7 @@ char inflate_done = 0;
 
 void inflate_init() 
 {
+    printf("inflate_init\n");
     neginf_init(0);
     sram_bulk_write_start(0x000000);
 }
@@ -40,29 +41,30 @@ void neginf_cb_completed()
 
 void neginf_cb_seq_byte(nbyte byte)
 {
+    //printf("neginf_cb_seq_byte %x", byte);
     sram_bulk_write(byte);
 }
 
-uint8_t buffer[512];
+//uint8_t buffer[512];
 
 void neginf_cb_copy(nsize from, nsize to, nint length)
 {
     uint32_t addr;
     uint8_t c;
 
-    printf("neginf_cb_copy %lx %lx %li", from, to, length);
-/*
+    printf("neginf_cb_copy %lx %lx %li\n", from, to, length);
+
     sram_bulk_addr_save();
     for (addr=from; addr<from+length; addr++){
         c = sram_read(addr);
         sram_write(addr,c);
     }
     sram_bulk_addr_restore();
-*/
+/*
 
     sram_bulk_addr_save();
     sram_bulk_copy_into_buffer(from, buffer, length);
     sram_bulk_copy_from_buffer(to, buffer, length);
     sram_bulk_addr_restore();
-
+*/
 }

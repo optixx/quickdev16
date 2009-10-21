@@ -33,6 +33,9 @@
 #include "loader.h"
 #include "system.h"
 
+#include "neginf/neginf.h"
+#include "inflate.h"
+
 
 extern usb_transaction_t usb_trans;
 extern system_t system;
@@ -93,7 +96,11 @@ void set_rom_mode()
 void boot_startup_rom(uint16_t init_delay)
 {
     uint8_t i;
+    uint8_t c;
+    uint16_t j;
     uint32_t addr = 0x000000;
+    PGM_VOID_P p_addr;
+    
     info_P(PSTR("Fetch loader rom\n"));
     
     system_set_bus_avr();
@@ -108,8 +115,17 @@ void boot_startup_rom(uint16_t init_delay)
     //snes_irq_off();
     //snes_lorom();
     
+    inflate_init();
     for (i=0; i<ROM_BUFFER_CNT; i++){
-        addr += rle_decode(_rom[i], _rom_size[i], addr);
+        p_addr = _rom[i];
+        printf("idx: %i %lx\n",i,p_addr);
+        for (j=0; j<_rom_size[i]; j++){
+            //rle_decode(_rom[i], _rom_size[i], addr);
+            c = pgm_read_byte((PGM_VOID_P)p_addr++); 
+            printf("%02x ",c);
+            neginf_process_byte(c);
+            
+        }
     }
     info_P(PSTR("\n"));
 

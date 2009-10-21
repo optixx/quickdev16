@@ -30,21 +30,6 @@ extern FILE uart_stdout;
 
 extern int debug_level; /* the higher, the more messages... */
 
-#if defined(NO_DEBUG) && defined(__GNUC__)
-#else
-void debug(int level, char* format, ...) {
-#ifdef NO_DEBUG
-
-#else
-    va_list args;
-    if (!(debug_level & level))
-        return;
-    va_start(args, format);
-    vprintf(format, args);
-    va_end(args);
-#endif 
-}
-#endif 
 
 #ifndef NO_INFO
     uint8_t buffer_debug[FORMAT_BUFFER_LEN];

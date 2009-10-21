@@ -44,13 +44,6 @@
  
 extern system_t system;
 
-const char STR_ROM[] PROGMEM = "Rom";
-const char STR_RAM[] PROGMEM = "Sram";
-const char STR_BAT[] PROGMEM = "Battery";
-const char STR_SUPERFX[] PROGMEM = "SuperFX";
-const char STR_SA[] PROGMEM = "SA-1";
-
-
 uint8_t command_buf[RECEIVE_BUF_LEN];
 uint8_t	recv_buf[RECEIVE_BUF_LEN];
 
@@ -58,6 +51,8 @@ volatile uint8_t	recv_counter = 0;
 volatile uint8_t	cr = 0;
 
 uint8_t *token_ptr;
+
+#ifdef DO_SHELL
 
 uint8_t *get_token(void)
 {
@@ -489,3 +484,4 @@ void shell_run(void)
 }
 
 
+#endif
