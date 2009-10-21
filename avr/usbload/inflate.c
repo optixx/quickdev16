@@ -27,7 +27,8 @@
 
 char inflate_done = 0;
 
-void inflate_init(){
+void inflate_init() 
+{
     neginf_init(0);
     sram_bulk_write_start(0x000000);
 }
@@ -49,6 +50,7 @@ void neginf_cb_copy(nsize from, nsize to, nint length)
     uint32_t addr;
     uint8_t c;
 
+    printf("neginf_cb_copy %lx %lx %li", from, to, length);
 /*
     sram_bulk_addr_save();
     for (addr=from; addr<from+length; addr++){

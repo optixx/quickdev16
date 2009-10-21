@@ -408,7 +408,7 @@ void shell_run(void)
         }
 
         c = sram_read(0xffd6 - offset);
-        info_P(PSTR("TYPE	0x%04xc"), (0xffd6 - offset),c);
+        info_P(PSTR("TYPE	0x%04x "), (0xffd6 - offset),c);
         switch(c){
             case 0x00:
                 info_P(PSTR("Rom\n"));
