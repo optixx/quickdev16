@@ -56,7 +56,7 @@ extern FILE uart_stdout;
 #endif
 extern system_t system;
 
-uint8_t debug_level = (DEBUG | DEBUG_CRC);
+uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC);
 
 
 usb_transaction_t usb_trans;
@@ -170,11 +170,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_BULK_UPLOAD_END) {
-        if (usb_trans.req_state != REQ_STATUS_BULK_UPLOAD) {
-            debug_P(DEBUG_USB,
-                  PSTR("USB_BULK_UPLOAD_END: ERROR state is not REQ_STATUS_BULK_UPLOAD\n"));
-            return 0;
-        }
         debug_P(DEBUG_USB, PSTR("USB_BULK_UPLOAD_END:\n"));
         usb_trans.req_state = REQ_STATUS_IDLE;
         sram_bulk_write_end();
@@ -219,6 +214,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
          * -------------------------------------------------------------------------
          */
     } else if (rq->bRequest == USB_SET_LAODER) {
+        debug_P(DEBUG_USB, PSTR("USB_SET_LAODER:\n"));
         usb_trans.loader_enabled = rq->wValue.word;
         ret_len = 0;
     }
@@ -275,8 +271,10 @@ int main(void)
         info_P(PSTR("USB poll\n"));
         while (usb_trans.req_state != REQ_STATUS_SNES) {
             usbPoll();
+#if DO_SHELL
 #ifndef NO_DEBUG            
             shell_run();
+#endif        
 #endif        
         }
         
@@ -312,8 +310,10 @@ int main(void)
         info_P(PSTR("Poll USB\n"));
         while ((usb_trans.req_state != REQ_STATUS_AVR)) {
             usbPoll();
+#if DO_SHELL
 #ifndef NO_DEBUG            
             shell_run();
+#endif        
 #endif        
         }
         //info_P(PSTR("-->Switch TO AVR\n"));

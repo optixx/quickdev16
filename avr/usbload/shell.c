@@ -59,6 +59,8 @@ volatile uint8_t	cr = 0;
 
 uint8_t *token_ptr;
 
+#if DO_SHELL
+
 uint8_t *get_token(void)
 {
  	uint8_t *p = token_ptr;
@@ -488,4 +490,4 @@ void shell_run(void)
     prompt();
 }
 
-
+#endif

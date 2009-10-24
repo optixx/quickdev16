@@ -58,37 +58,6 @@ void usb_connect()
 }
 
 
-void send_reset()
-{
-    info_P(PSTR("Reset SNES\n"));
-    cli();
-    snes_reset_on();
-    snes_reset_lo();
-    _delay_ms(2);
-    snes_reset_hi();
-    snes_reset_off();
-    sei();
-}
-
-void send_irq()
-{
-    snes_irq_on();
-    snes_irq_lo();
-    _delay_us(20);
-    snes_irq_hi();
-    snes_irq_off();
-}
-
-void set_rom_mode()
-{
-    if (usb_trans.req_bank_size == 0x8000) {
-        snes_lorom();
-        info_P(PSTR("Set SNES lowrom \n"));
-    } else {
-        snes_hirom();
-        info_P(PSTR("Set SNES hirom \n"));
-    }
-}
 
 void boot_startup_rom(uint16_t init_delay)
 {
