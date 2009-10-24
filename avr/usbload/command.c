@@ -66,8 +66,8 @@ void boot_startup_rom(uint16_t init_delay)
     info_P(PSTR("Fetch loader rom\n"));
     
     system_set_bus_avr();
-    snes_irq_lo();
-    system_snes_irq_off();
+    //snes_irq_lo();
+    //system_snes_irq_off();
     system_set_rom_lorom();
     
     //info_P(PSTR("Activate AVR bus\n"));
@@ -107,7 +107,12 @@ void boot_startup_rom(uint16_t init_delay)
     
     
     system_send_snes_reset();
-    _delay_ms(init_delay);
+    info_P(PSTR("Move Loader to wram"));
+    for (i=0;i<30;i++){
+        _delay_ms(20);
+        info_P(PSTR("."));
+    }
+    info_P(PSTR("\n"));
 }
 
 void banner(){

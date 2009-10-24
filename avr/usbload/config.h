@@ -51,8 +51,8 @@
 #define DO_CRC_CHECK_LOADER         0
 #define DO_CRC_CHECK                0
 #define DO_SHM_SCRATCHPAD           1
-#define DO_SHM                      1
-#define DO_TIMER                    1
-#define DO_SHELL                    0
+#define DO_SHM                      0
+#define DO_TIMER                    0
+#define DO_SHELL                    1
 
 #endif 
