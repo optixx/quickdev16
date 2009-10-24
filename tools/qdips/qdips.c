@@ -44,9 +44,9 @@
 
 
 typedef struct _ips_tag {
-    uint32_t ofs;     /* offset in file to patch */
+    uint32_t ofs;    /* offset in file to patch */
     uint16_t len;    /* number of bytes in this chunk */
-    uint8_t* data;         /* chunk data */
+    uint8_t* data;   /* chunk data */
 } ips_tag_t;
 
 int qd16_apply_ips_chunk(ips_tag_t* ips_tag);
@@ -120,8 +120,6 @@ int main(int argc, char * argv[])
         fprintf(stderr,"Error during init. Exiting!\n");
         exit(1);
     }
-    qd16_finish();
-    exit(0);
 
     fname = argv[optind];
     patch_file = fopen(fname,"rb");
@@ -177,20 +175,11 @@ int main(int argc, char * argv[])
 
 int qd16_apply_ips_chunk(ips_tag_t* ips_tag)
 {
-    return 0;
     int addr_hi = (ips_tag->ofs)>>16;
     int addr_lo = (ips_tag->ofs)&0xffff;
 
-    printf("hi:%x lo:%x\n",addr_hi,addr_lo);
-
+    printf("hi:%x lo:%x len:%d\n",addr_hi,addr_lo,ips_tag->len);
     int ret = QD16_SEND_ADDR(addr_hi,addr_lo,ips_tag->data,ips_tag->len);
-    /*int ret = QD16_SEND_ADDR(addr_hi,addr_lo,dummy,128);*/
-    if (ret<0){
-        printf("error executing command!:%s\n",usb_strerror());
-    }
-
-    ret = QD16_SEND_DATA(addr_hi,addr_lo,ips_tag->data,ips_tag->len);
-    /*int ret = QD16_SEND_ADDR(addr_hi,addr_lo,dummy,128);*/
     if (ret<0){
         printf("error executing command!:%s\n",usb_strerror());
     }
@@ -200,7 +189,6 @@ int qd16_apply_ips_chunk(ips_tag_t* ips_tag)
 
 void qd16_finish(void)
 {
-#if 0
     cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE |
         USB_ENDPOINT_OUT, USB_BULK_UPLOAD_END, 0, 0, NULL,
@@ -209,12 +197,12 @@ void qd16_finish(void)
     if (cnt<0) {
         printf("USB_BULK_UPLOAD_END failed: %s\n",usb_strerror());
     }
-#endif
-          cnt = usb_control_msg(handle,
+
+      cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE |
-        USB_ENDPOINT_OUT, USB_SET_LOADER, 0, 0, NULL,
+        USB_ENDPOINT_OUT, USB_SET_LOADER, 1, 1, NULL,
         0, 5000); 
-  
+
     cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE |
         USB_ENDPOINT_OUT, USB_MODE_SNES, 0, 0, NULL,
@@ -237,6 +225,14 @@ int qd16_init(void)
         return 1;
     }
 
+    cnt = usb_control_msg(handle,
+        USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+        USB_ENDPOINT_OUT, USB_SET_LOADER, 0, 0, NULL,
+        0, 5000); 
+
+    if (cnt<0) {
+        printf("USB_SET_LOADER failed: %s\n",usb_strerror());
+    }
 
     cnt = usb_control_msg(handle,
             USB_TYPE_VENDOR | USB_RECIP_DEVICE |
@@ -249,7 +245,6 @@ int qd16_init(void)
 
     usleep(500000);
 
-#if 0
     cnt = usb_control_msg(handle,
         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
         USB_BULK_UPLOAD_INIT, 
@@ -260,7 +255,6 @@ int qd16_init(void)
     if (cnt<0) {
         printf("USB_BULK_UPLOAD_INIT failed: %s\n",usb_strerror());
     }
-#endif
 
     return 0;
 }

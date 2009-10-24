@@ -305,7 +305,7 @@ int main(void)
             system_set_bus_avr();
             system_send_snes_reset();
         }
-        globals_init();
+        /*globals_init();*/
     }
     return 0;
 }
