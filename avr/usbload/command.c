@@ -61,37 +61,6 @@ void usb_connect()
 }
 
 
-void send_reset()
-{
-    info_P(PSTR("Reset SNES\n"));
-    cli();
-    snes_reset_on();
-    snes_reset_lo();
-    _delay_ms(2);
-    snes_reset_hi();
-    snes_reset_off();
-    sei();
-}
-
-void send_irq()
-{
-    snes_irq_on();
-    snes_irq_lo();
-    _delay_us(20);
-    snes_irq_hi();
-    snes_irq_off();
-}
-
-void set_rom_mode()
-{
-    if (usb_trans.req_bank_size == 0x8000) {
-        snes_lorom();
-        info_P(PSTR("Set SNES lowrom \n"));
-    } else {
-        snes_hirom();
-        info_P(PSTR("Set SNES hirom \n"));
-    }
-}
 
 void boot_startup_rom(uint16_t init_delay)
 {
@@ -108,12 +77,6 @@ void boot_startup_rom(uint16_t init_delay)
     system_snes_irq_off();
     system_set_rom_lorom();
     
-    //info_P(PSTR("Activate AVR bus\n"));
-    //avr_bus_active();
-    //info_P(PSTR("IRQ off\n"));
-    //snes_irq_lo();
-    //snes_irq_off();
-    //snes_lorom();
     
     inflate_init();
     for (i=0; i<ROM_BUFFER_CNT; i++){
@@ -136,16 +99,7 @@ void boot_startup_rom(uint16_t init_delay)
     info(PSTR("crc=%x\n"),crc);
 #endif
 
-    //snes_irq_lo();
-    //snes_irq_off();
-    //snes_hirom();
-    //snes_wr_disable();
-
-    //system_set_bus_snes();
-    //system_set_rom_hirom();
-    //system_set_wr_disable();
-    //system_snes_irq_off();
-
+ 
     snes_irq_lo();
     system_snes_irq_off();
     system_set_rom_hirom();
@@ -158,31 +112,9 @@ void boot_startup_rom(uint16_t init_delay)
 }
 
 void banner(){
-    uint8_t i;
-    for (i=0;i<40;i++)
-        info_P(PSTR("\n"));
-    info_P(PSTR(" ________        .__        __    ________               ____  ________\n"));
-    info_P(PSTR(" \\_____  \\  __ __|__| ____ |  | __\\______ \\   _______  _/_   |/  _____/\n"));
-    info_P(PSTR("  /  / \\  \\|  |  \\  |/ ___\\|  |/ / |    |  \\_/ __ \\  \\/ /|   /   __  \\ \n"));
-    info_P(PSTR(" /   \\_/.  \\  |  /  \\  \\___|    <  |    `   \\  ___/\\   / |   \\  |__\\  \\ \n"));
-    info_P(PSTR(" \\_____\\ \\_/____/|__|\\___  >__|_ \\/_______  /\\___  >\\_/  |___|\\_____  / \n"));
-    info_P(PSTR("        \\__>             \\/     \\/        \\/     \\/                 \\/ \n"));
-    info_P(PSTR("\n"));
-    info_P(PSTR("                               www.optixx.org\n"));
-    info_P(PSTR("\n"));
-    info_P(PSTR("System Hw: %s Sw: %s\n"),HW_VERSION,SW_VERSION);
     
 }
 
 void transaction_status(){
-    info_P(PSTR("\nAddr           0x%06lx\n"),usb_trans.req_addr);
-    info_P(PSTR("Bank           0x%02x\n"),usb_trans.req_bank);
-    info_P(PSTR("Banksize       0x%06lx\n"),usb_trans.req_bank_size);
-    info_P(PSTR("Bankcount      0x%02x\n"),usb_trans.req_bank_cnt);
-    info_P(PSTR("Status         0x%02x\n"),usb_trans.req_state);
-    info_P(PSTR("Percent        %02i\n"),usb_trans.req_percent);
-    info_P(PSTR("TX buffer      %02i\n"),usb_trans.tx_remaining);
-    info_P(PSTR("RX buffer      %02i\n"),usb_trans.rx_remaining);
-    info_P(PSTR("Syncerr        %02i\n"),usb_trans.sync_errors);
 }
 

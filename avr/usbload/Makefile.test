@@ -1,0 +1,6 @@
+all:
+	gcc -c loader_test.c
+	gcc -c  inflate.c
+	gcc -c  neginf/neginf.c
+	gcc -c  inflate_test.c
+	gcc -o inflate_test   inflate.o neginf.o inflate_test.o loader_test.o

@@ -196,14 +196,6 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         /*
          * -------------------------------------------------------------------------
          */
-    } else if (rq->bRequest == USB_MODE_SNES) {
-        usb_trans.req_state = REQ_STATUS_SNES;
-        debug_P(DEBUG_USB, PSTR("USB_MODE_SNES:\n"));
-        ret_len = 0;
-        
-        /*
-         * -------------------------------------------------------------------------
-         */
     } else if (rq->bRequest == USB_MODE_AVR) {
         usb_trans.req_state = REQ_STATUS_AVR;
         debug_P(DEBUG_USB, PSTR("USB_MODE_AVR:\n"));
@@ -266,12 +258,6 @@ int main(void)
 
         system_set_bus_avr();
         system_set_wr_disable();
-/*        
-        avr_bus_active();
-        info_P(PSTR("Activate AVR bus\n"));
-        info_P(PSTR("Disable SNES WR\n"));
-        snes_wr_disable();
-*/
         info_P(PSTR("USB poll\n"));
         while (usb_trans.req_state != REQ_STATUS_SNES) {
             usbPoll();

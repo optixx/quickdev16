@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "neginf.h"
 #include "neginf_priv.h"
@@ -46,8 +47,10 @@ void neginf_process_byte(nbyte byte)
     assert(state.queue_size <= 16);
     state.input_queue |= (byte << state.queue_size);
     state.queue_size += 8;
+    
     while(state.queue_size >= 16)
     {
+        //printf("qsize=%i mode=%i\n",state.queue_size,state.mode);
         mode_tab[state.mode]();
     }
 }
@@ -61,11 +64,13 @@ nsize neginf_output_position()
 
 nint lookahead()
 {
+    //printf("lookahead\n");
     return state.input_queue;
 }
 
 void consume(ntiny amount)
 {
+    //printf("consume %i %i\n",state.queue_size,amount);
     assert(state.queue_size > amount);
     state.input_queue >>= amount;
     state.queue_size -= amount;
@@ -73,6 +78,7 @@ void consume(ntiny amount)
 
 void await_block()
 {
+    //printf("wait block\n");
     if(state.last_block)
     {
         neginf_cb_completed();
@@ -103,6 +109,7 @@ void await_block()
 
 void raw_block_begin()
 {
+    //printf("raw block begin\n");
     state.raw_size = lookahead() & 0xFFFF; // size of raw block
     consume(16);
     state.mode = mode_raw_block_begin2;
@@ -110,12 +117,14 @@ void raw_block_begin()
 
 void raw_block_begin2()
 {
+    //printf("raw block begin2\n");
     consume(16); // we ignore the inverted size
     state.mode = mode_raw_block;
 }
 
 void raw_block()
 {
+    //printf("raw block\n");
     if(state.raw_size == 0)
     {
         state.mode = mode_await_block;
@@ -133,6 +142,8 @@ void raw_block()
 
 void fixed_block_begin()
 {
+    //printf("fixed block begin\n");
+    
     nint i = 0;
     for(; i < 144; i++)
         state.lit_len_lengths[i] = 8;
@@ -153,6 +164,7 @@ void fixed_block_begin()
 
 void huff_block()
 {
+    //printf("huff block\n");
     nint code = lit_len_read();
     if(code == 256)
     {
@@ -174,6 +186,7 @@ void huff_block()
 
 void huff_len_addbits()
 {
+    //printf("huff len addbits\n");
     nint len;
     nint code = state.code;
     nint la = lookahead();
@@ -214,12 +227,14 @@ void huff_len_addbits()
 
 void huff_dist()
 {
+    //printf("huff dist\n");
     state.tcode = dist_read();
     state.mode = mode_huff_dist_addbits;
 }
 
 void huff_dist_addbits()
 {
+    //printf("huff addbits\n");
     nint dist;
     ntiny code = state.tcode;
     
@@ -250,6 +265,7 @@ void dynamic_block_begin()
 {
     nint j;
     ntiny i;
+    //printf("dynamic block begin\n");
     for(j = 0; j < 288; j++)
         state.lit_len_lengths[j] = 0;
     for(i = 0; i < 32; i++)
@@ -268,6 +284,7 @@ void dynamic_block_begin()
 
 void dynamic_read_lc()
 {
+    //printf("dynamic read lc\n");
     if(state.hclen == 0)
     {
         compute_begin(state.hc_lengths, state.hc_begins, 19);
@@ -290,6 +307,7 @@ void dynamic_read_lc()
 
 void dynamic_read_lit_len()
 {
+    //printf("dynamic read lit len\n");
     if(state.hlit == 0)
     {
         state.mode = mode_dynamic_read_dist;
@@ -303,6 +321,7 @@ void dynamic_read_lit_len()
 
 void dynamic_read_dist()
 {
+    //printf("dynamic read dist\n");
     if(state.hdist == 0)
     {
         compute_begins();
@@ -316,6 +335,7 @@ void dynamic_read_dist()
 
 ntiny lc_read(ntiny * lenghts)
 {
+    //printf("read lc\n");
     ntiny code = huff_read(state.hc_lengths, state.hc_begins, 19);
     // this reads 7 bits max so we still have 9 bits left in the buffer
     if(code < 16)
@@ -361,6 +381,7 @@ ntiny lc_read(ntiny * lenghts)
 
 void compute_begins()
 {
+    //printf("compute begins\n");
     compute_begin(state.lit_len_lengths, state.lit_len_begins, 288);
     compute_begin(state.dist_lengths, state.dist_begins, 32);
 }
@@ -370,6 +391,7 @@ void compute_begin(ntiny * lengths, nint * begins, nint size)
 {
     ntiny j;
     nint i;
+    //printf("compute begin\n");
     for(j = 0; j < 14; j++)
         begins[j] = 0;
     for(i = 0; i < size; i++)
@@ -389,16 +411,20 @@ void compute_begin(ntiny * lengths, nint * begins, nint size)
 
 nint lit_len_read()
 {
+    //printf("lit len read\n");
+    
     return huff_read(state.lit_len_lengths, state.lit_len_begins, 288);
 }
 
 nint dist_read()
 {
+    //printf("dist read\n");
     return huff_read(state.dist_lengths, state.dist_begins, 32);
 }
 
 nint huff_read(ntiny * lenghts, nint * begins, nint size)
 {
+    //printf("huff read\n");
     nint code = 0;
     ntiny i;
     for(i = 1; i < 16; i++)
@@ -421,7 +447,7 @@ nint huff_read(ntiny * lenghts, nint * begins, nint size)
             code--;
         }
     }
-    assert(0);
+    //assert(0);
     return 0; // silent warning
 }
 

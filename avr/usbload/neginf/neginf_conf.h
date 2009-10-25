@@ -16,7 +16,7 @@
 //#define NEGINF_USE_REL_COPY
 //#define NEGINF_POS_TRACKING
 
-#define NEGINF_8BIT
+//#define NEGINF_8BIT
 #define NEGINF_PACKED_STATE
 
 

@@ -12,56 +12,31 @@
  *
  *
  *        Version:  1.0
- *        Created:  09/22/2009
- *         Author:  jannis@harderweb.de
+ *        Created:  07/21/2009 03:32:16 PM
+ *         Author:  david@optixx.org
  *
  * =====================================================================================
  */
-#include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "neginf/neginf.h"
 #include "inflate.h"
+#include "loader_test.h"
 
-char inflate_done = 0;
-char *mem;
-int addr = 0;
+extern const char _rom[];
+extern char inflate_done;
 
-void inflate_init() 
+void main(int argc, char **argv)
 {
-    neginf_init(0);
-    mem = (char*)malloc(2<<16);
-    addr = 0;
-}
-
-void inflate_flush() 
-{
-    FILE *file;
-    file = fopen("out.smc","w");
-    fwrite(mem,2<<16,1,file); 
-    fclose(file); 
-
-}
-
-void neginf_cb_completed()
-{
-    inflate_done = 1;
-}
-
-void neginf_cb_seq_byte(nbyte byte)
-{
-    mem[addr] = byte;
-    addr++;
-}
-
-void neginf_cb_copy(nsize from, nsize to, nint length)
-{
-    int i;
-    printf("neginf_cb_copy from=0x%06x to=0x%06x len=%i\n",from, to, length);
-    for (i=0; i<length;i++)
-        mem[to+i] = mem[from+i];
     
-    addr = to + length;
+    int j;
+    char c;
+    inflate_init();
+    for (j=0; j< ROM_ZIP_SIZE; j++){
+        neginf_process_byte(_rom[j]);
+    }
+    while(!inflate_done)
+        neginf_process_byte(0x00);
+    inflate_flush();
 }
-
-

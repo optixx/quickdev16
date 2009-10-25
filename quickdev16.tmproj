@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>avr/usbload/shell.c</string>
+	<string>avr/usbload/neginf/neginf.c</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -40,14 +40,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>12</integer>
 				<key>line</key>
-				<integer>100</integer>
+				<integer>87</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>122</integer>
+			<integer>63</integer>
+		</dict>
+		<key>avr/usbload/command.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>24</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>avr/usbload/config.h</key>
 		<dict>
@@ -56,12 +70,12 @@
 				<key>column</key>
 				<integer>37</integer>
 				<key>line</key>
-				<integer>54</integer>
+				<integer>50</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>7</integer>
+			<integer>8</integer>
 		</dict>
 		<key>avr/usbload/crc.c</key>
 		<dict>
@@ -89,7 +103,91 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1</integer>
+			<integer>19</integer>
+		</dict>
+		<key>avr/usbload/debug.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>avr/usbload/dump.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>15</integer>
+				<key>line</key>
+				<integer>28</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>33</integer>
+		</dict>
+		<key>avr/usbload/fifo.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>17</integer>
+				<key>line</key>
+				<integer>22</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>avr/usbload/fifo.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>19</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>avr/usbload/inflate.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>48</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>20</integer>
+		</dict>
+		<key>avr/usbload/inflate.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>avr/usbload/irq.c</key>
 		<dict>
@@ -121,6 +219,34 @@
 				<integer>39</integer>
 			</dict>
 		</dict>
+		<key>avr/usbload/loader.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>2068</integer>
+		</dict>
+		<key>avr/usbload/loader.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>avr/usbload/main.c</key>
 		<dict>
 			<key>caret</key>
@@ -128,12 +254,112 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>330</integer>
+				<integer>260</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>281</integer>
+			<integer>253</integer>
+		</dict>
+		<key>avr/usbload/neginf/neginf.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>10</integer>
+				<key>line</key>
+				<integer>4</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>4</integer>
+		</dict>
+		<key>avr/usbload/neginf/neginf.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>avr/usbload/neginf/neginf_conf.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>avr/usbload/neginf/neginf_priv.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>63</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>21</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>51</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>63</integer>
+			</dict>
+		</dict>
+		<key>avr/usbload/pwm.c</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>88</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>51</integer>
+		</dict>
+		<key>avr/usbload/pwm.h</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>20</integer>
+				<key>line</key>
+				<integer>33</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>avr/usbload/shared_memory.c</key>
 		<dict>
@@ -154,7 +380,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>83</integer>
+				<integer>9</integer>
 				<key>line</key>
 				<integer>444</integer>
 			</dict>
@@ -280,6 +506,9 @@
 	<array>
 		<string>scripts/conv_rle.py</string>
 		<string>avr/usbload/main.c</string>
+		<string>avr/usbload/dump.c</string>
+		<string>avr/usbload/pwm.h</string>
+		<string>avr/usbload/pwm.c</string>
 		<string>avr/usbload/shell.h</string>
 		<string>avr/usbload/shell.c</string>
 		<string>scripts/conv_zip.py</string>
@@ -289,8 +518,20 @@
 		<string>avr/usbload/sram.h</string>
 		<string>avr/usbload/sram.c</string>
 		<string>avr/usbload/command.c</string>
+		<string>avr/usbload/inflate.c</string>
+		<string>avr/usbload/neginf/neginf.h</string>
+		<string>avr/usbload/neginf/neginf_conf.h</string>
+		<string>avr/usbload/neginf/neginf_priv.h</string>
+		<string>avr/usbload/neginf/neginf.c</string>
+		<string>avr/usbload/inflate.h</string>
+		<string>avr/usbload/loader.h</string>
+		<string>avr/usbload/loader.c</string>
+		<string>avr/usbload/command.h</string>
 		<string>avr/usbload/crc.c</string>
 		<string>avr/usbload/config.h</string>
+		<string>avr/usbload/fifo.h</string>
+		<string>avr/usbload/fifo.c</string>
+		<string>avr/usbload/debug.h</string>
 		<string>avr/usbload/debug.c</string>
 		<string>avr/usbload/irq.c</string>
 	</array>
@@ -317,7 +558,15 @@
 							<key>isExpanded</key>
 							<true/>
 							<key>subItems</key>
-							<dict/>
+							<dict>
+								<key>neginf</key>
+								<dict>
+									<key>isExpanded</key>
+									<true/>
+									<key>subItems</key>
+									<dict/>
+								</dict>
+							</dict>
 						</dict>
 					</dict>
 				</dict>
