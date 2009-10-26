@@ -1,6 +1,16 @@
 all:
 	gcc -c loader_test.c
-	gcc -c  inflate.c
-	gcc -c  neginf/neginf.c
-	gcc -c  inflate_test.c
-	gcc -o inflate_test   inflate.o neginf.o inflate_test.o loader_test.o
+	gcc -c inflate.c
+	gcc -c neginf/neginf.c
+	gcc -c inflate_test.c
+	gcc -c ringbuffer.c
+	gcc -o inflate_test inflate.o neginf.o inflate_test.o loader_test.o ringbuffer.o
+loader:
+	python ../../scripts/conv_zip_test.py ../../roms/qd16boot02_half.smc
+	
+test:
+	./inflate_test
+	@md5sum out.smc
+	@md5sum out_ref.smc
+	@md5sum ../../roms/qd16boot02_half.smc
+

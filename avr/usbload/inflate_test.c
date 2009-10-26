@@ -27,7 +27,7 @@
 extern const char _rom[];
 extern char inflate_done;
 
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     
     int j;
@@ -39,4 +39,5 @@ void main(int argc, char **argv)
     while(!inflate_done)
         neginf_process_byte(0x00);
     inflate_flush();
+    return 0;
 }
