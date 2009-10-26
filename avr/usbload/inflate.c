@@ -27,6 +27,7 @@ char inflate_done = 0;
 char *mem;
 int addr = 0;
 
+
 void inflate_init() 
 {
     neginf_init(0);
