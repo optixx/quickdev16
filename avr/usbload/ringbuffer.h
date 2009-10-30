@@ -14,5 +14,6 @@ extern int rb_count;
 void rb_init(void);
 void rb_put(char el);
 char rb_get(void);
+void rb_flush(void);
 
 #endif
