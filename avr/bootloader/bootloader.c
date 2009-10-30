@@ -471,13 +471,12 @@ int __attribute__ ((noreturn, OS_main)) main(void)
         jump_to_app();
     }
 
-#ifdef AVR_BTLDR_SWITCH ENABLE
+#if AVR_BTLDR_SWITCH_ENABLE
     if ((AVR_BTLDR_EN_IN & ( 1 << AVR_BTLDR_EN_PIN)) == 0){
         banner();
         uart_puts("Bootloader flashing is disabled\n\r");
         MCUSR = 0;
         leave_bootloader();
-        
     }
 #endif
 

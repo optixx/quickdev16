@@ -20,3 +20,4 @@
 
 #define DEBUG                       1
 #define DEBUG_USB                   2
+#define AVR_BTLDR_SWITCH_ENABLE     1
