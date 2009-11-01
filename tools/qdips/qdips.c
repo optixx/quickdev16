@@ -249,7 +249,8 @@ int qd16_init(void)
         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
         USB_BULK_UPLOAD_INIT, 
         (hirom ? HIROM_BANK_SIZE_SHIFT : LOROM_BANK_SIZE_SHIFT) , 
-        (hirom ? HIROM_BANK_COUNT_SHIFT : LOROM_BANK_COUNT_SHIFT), 
+        /*(hirom ? HIROM_BANK_COUNT_SHIFT : LOROM_BANK_COUNT_SHIFT), */
+        5,
         NULL, 0, 5000);
 
     if (cnt<0) {
