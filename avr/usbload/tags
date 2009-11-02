@@ -3,426 +3,1182 @@
 !_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	5.7	//
-AVR_ADDR_DIR	sram.h	103;"	d
-AVR_ADDR_DOWN_DIR	sram.h	133;"	d
-AVR_ADDR_DOWN_PIN	sram.h	134;"	d
-AVR_ADDR_DOWN_PORT	sram.h	132;"	d
-AVR_ADDR_LATCH_DIR	sram.h	105;"	d
-AVR_ADDR_LATCH_PIN	sram.h	106;"	d
-AVR_ADDR_LATCH_PORT	sram.h	104;"	d
-AVR_ADDR_LOAD_DIR	sram.h	126;"	d
-AVR_ADDR_LOAD_PIN	sram.h	127;"	d
-AVR_ADDR_LOAD_PORT	sram.h	125;"	d
-AVR_ADDR_PORT	sram.h	102;"	d
-AVR_ADDR_SCK_DIR	sram.h	112;"	d
-AVR_ADDR_SCK_PIN	sram.h	113;"	d
-AVR_ADDR_SCK_PORT	sram.h	111;"	d
-AVR_ADDR_SER_DIR	sram.h	119;"	d
-AVR_ADDR_SER_PIN	sram.h	120;"	d
-AVR_ADDR_SER_PORT	sram.h	118;"	d
-AVR_ADDR_UP_DIR	sram.h	140;"	d
-AVR_ADDR_UP_PIN	sram.h	141;"	d
-AVR_ADDR_UP_PORT	sram.h	139;"	d
-AVR_CS_DIR	sram.h	71;"	d
-AVR_CS_PIN	sram.h	72;"	d
-AVR_CS_PORT	sram.h	70;"	d
-AVR_DATA_DIR	sram.h	35;"	d
-AVR_DATA_PIN	sram.h	36;"	d
-AVR_DATA_PORT	sram.h	34;"	d
-AVR_DIR	sram.h	55;"	d
-AVR_PORT	sram.h	54;"	d
-AVR_RD_DIR	sram.h	57;"	d
-AVR_RD_PIN	sram.h	58;"	d
-AVR_RD_PORT	sram.h	56;"	d
-AVR_SNES_DIR	sram.h	153;"	d
-AVR_SNES_PORT	sram.h	152;"	d
-AVR_SNES_SW_DIR	sram.h	155;"	d
-AVR_SNES_SW_PIN	sram.h	156;"	d
-AVR_SNES_SW_PORT	sram.h	154;"	d
-AVR_WR_DIR	sram.h	64;"	d
-AVR_WR_PIN	sram.h	65;"	d
-AVR_WR_PORT	sram.h	63;"	d
-CR	uart.h	25;"	d
-DEBOUNCE	timer.c	44;"	d	file:
-DEBUG	config.h	25;"	d
-DEBUG_CRC	config.h	31;"	d
-DEBUG_SHM	config.h	32;"	d
-DEBUG_SRAM	config.h	28;"	d
-DEBUG_SRAM_RAW	config.h	29;"	d
-DEBUG_SREG	config.h	30;"	d
-DEBUG_USB	config.h	26;"	d
-DEBUG_USB_TRANS	config.h	27;"	d
-FILE_MKDIR	config.h	48;"	d
-FILE_RM	config.h	49;"	d
-FILE_WRITE	config.h	47;"	d
-Fat	fat.h	/^  extern struct Fat{						\/\/ fat daten (1.cluster, root-dir, dir usw.)$/;"	s
-File	fat.h	/^  extern struct File{					\/\/ datei infos$/;"	s
-HI_LOROM_SW_DIR	sram.h	166;"	d
-HI_LOROM_SW_PIN	sram.h	167;"	d
-HI_LOROM_SW_PORT	sram.h	165;"	d
-INBYTE	rle.c	44;"	d	file:
+!_TAG_PROGRAM_VERSION	5.8	//
+AVRDUDE	Makefile	/^AVRDUDE = avrdude -c usbasp -p $(DEVICE)$/;"	m
+AVR_ADDR_DIR	sram.h	/^#define AVR_ADDR_DIR	/;"	d
+AVR_ADDR_LATCH_DIR	sram.h	/^#define AVR_ADDR_LATCH_DIR	/;"	d
+AVR_ADDR_LATCH_PIN	sram.h	/^#define AVR_ADDR_LATCH_PIN	/;"	d
+AVR_ADDR_LATCH_PORT	sram.h	/^#define AVR_ADDR_LATCH_PORT	/;"	d
+AVR_ADDR_LOAD_DIR	sram.h	/^#define AVR_ADDR_LOAD_DIR	/;"	d
+AVR_ADDR_LOAD_PIN	sram.h	/^#define AVR_ADDR_LOAD_PIN	/;"	d
+AVR_ADDR_LOAD_PORT	sram.h	/^#define AVR_ADDR_LOAD_PORT	/;"	d
+AVR_ADDR_PORT	sram.h	/^#define AVR_ADDR_PORT	/;"	d
+AVR_ADDR_SCK_DIR	sram.h	/^#define AVR_ADDR_SCK_DIR	/;"	d
+AVR_ADDR_SCK_PIN	sram.h	/^#define AVR_ADDR_SCK_PIN	/;"	d
+AVR_ADDR_SCK_PORT	sram.h	/^#define AVR_ADDR_SCK_PORT	/;"	d
+AVR_ADDR_SER_DIR	sram.h	/^#define AVR_ADDR_SER_DIR	/;"	d
+AVR_ADDR_SER_PIN	sram.h	/^#define AVR_ADDR_SER_PIN	/;"	d
+AVR_ADDR_SER_PORT	sram.h	/^#define AVR_ADDR_SER_PORT	/;"	d
+AVR_ADDR_UP_DIR	sram.h	/^#define AVR_ADDR_UP_DIR	/;"	d
+AVR_ADDR_UP_PIN	sram.h	/^#define AVR_ADDR_UP_PIN	/;"	d
+AVR_ADDR_UP_PORT	sram.h	/^#define AVR_ADDR_UP_PORT	/;"	d
+AVR_BTLDR_EN_DIR	sram.h	/^#define AVR_BTLDR_EN_DIR	/;"	d
+AVR_BTLDR_EN_PIN	sram.h	/^#define AVR_BTLDR_EN_PIN	/;"	d
+AVR_BTLDR_EN_PORT	sram.h	/^#define AVR_BTLDR_EN_PORT	/;"	d
+AVR_CS_DIR	sram.h	/^#define AVR_CS_DIR /;"	d
+AVR_CS_PIN	sram.h	/^#define AVR_CS_PIN /;"	d
+AVR_CS_PORT	sram.h	/^#define AVR_CS_PORT /;"	d
+AVR_DATA_DIR	sram.h	/^#define AVR_DATA_DIR /;"	d
+AVR_DATA_PIN	sram.h	/^#define AVR_DATA_PIN /;"	d
+AVR_DATA_PORT	sram.h	/^#define AVR_DATA_PORT /;"	d
+AVR_DIR	sram.h	/^#define AVR_DIR /;"	d
+AVR_PORT	sram.h	/^#define AVR_PORT /;"	d
+AVR_RD_DIR	sram.h	/^#define AVR_RD_DIR /;"	d
+AVR_RD_PIN	sram.h	/^#define AVR_RD_PIN /;"	d
+AVR_RD_PORT	sram.h	/^#define AVR_RD_PORT /;"	d
+AVR_SNES_DIR	sram.h	/^#define AVR_SNES_DIR	/;"	d
+AVR_SNES_PORT	sram.h	/^#define AVR_SNES_PORT	/;"	d
+AVR_SNES_SW_DIR	sram.h	/^#define AVR_SNES_SW_DIR	/;"	d
+AVR_SNES_SW_PIN	sram.h	/^#define AVR_SNES_SW_PIN	/;"	d
+AVR_SNES_SW_PORT	sram.h	/^#define AVR_SNES_SW_PORT	/;"	d
+AVR_WR_DIR	sram.h	/^#define AVR_WR_DIR /;"	d
+AVR_WR_PIN	sram.h	/^#define AVR_WR_PIN /;"	d
+AVR_WR_PORT	sram.h	/^#define AVR_WR_PORT /;"	d
+BANK_SIZE	commandline/snesuploader.c	/^#define BANK_SIZE /;"	d	file:
+BANK_SIZE_SHIFT	commandline/snesuploader.c	/^#define BANK_SIZE_SHIFT /;"	d	file:
+BOOT_ROM01	Makefile	/^BOOT_ROM01  = ..\/..\/roms\/qd16boot01.smc$/;"	m
+BOOT_ROM02	Makefile	/^BOOT_ROM02  = ..\/..\/roms\/qd16boot02.smc$/;"	m
+CC	commandline/Makefile	/^CC		= gcc$/;"	m
+CFLAGS	Makefile	/^    CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 $/;"	m
+CFLAGS	Makefile	/^    CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG -DNO_INFO$/;"	m
+CFLAGS	commandline/Makefile	/^CFLAGS	= $(CPPFLAGS) $(USBFLAGS) -O -g -Wall$/;"	m
+CMD_AVR	shell.c	/^            CMD_AVR,$/;"	e	enum:cmds	file:
+CMD_CRC	shell.c	/^            CMD_CRC,$/;"	e	enum:cmds	file:
+CMD_DUMP	shell.c	/^            CMD_DUMP,$/;"	e	enum:cmds	file:
+CMD_DUMPHEADER	shell.c	/^            CMD_DUMPHEADER,$/;"	e	enum:cmds	file:
+CMD_DUMPVEC	shell.c	/^            CMD_DUMPVEC,$/;"	e	enum:cmds	file:
+CMD_EXIT	shell.c	/^            CMD_EXIT,$/;"	e	enum:cmds	file:
+CMD_HELP	shell.c	/^            CMD_HELP$/;"	e	enum:cmds	file:
+CMD_HIROM	shell.c	/^            CMD_HIROM,$/;"	e	enum:cmds	file:
+CMD_IRQ	shell.c	/^            CMD_IRQ,$/;"	e	enum:cmds	file:
+CMD_LOADER	shell.c	/^            CMD_LOADER,$/;"	e	enum:cmds	file:
+CMD_LOROM	shell.c	/^            CMD_LOROM,$/;"	e	enum:cmds	file:
+CMD_RECONNECT	shell.c	/^            CMD_RECONNECT,$/;"	e	enum:cmds	file:
+CMD_RESET	shell.c	/^            CMD_RESET,$/;"	e	enum:cmds	file:
+CMD_RESETSNIFF	shell.c	/^            CMD_RESETSNIFF,$/;"	e	enum:cmds	file:
+CMD_SHMRESTORE	shell.c	/^            CMD_SHMRESTORE,$/;"	e	enum:cmds	file:
+CMD_SHMSAVE	shell.c	/^            CMD_SHMSAVE,$/;"	e	enum:cmds	file:
+CMD_SHMWR	shell.c	/^            CMD_SHMWR,$/;"	e	enum:cmds	file:
+CMD_SNES	shell.c	/^            CMD_SNES,$/;"	e	enum:cmds	file:
+CMD_STATUS	shell.c	/^            CMD_STATUS,$/;"	e	enum:cmds	file:
+CMD_SYS	shell.c	/^            CMD_SYS,$/;"	e	enum:cmds	file:
+CMD_WR	shell.c	/^            CMD_WR,$/;"	e	enum:cmds	file:
+COMPILE	Makefile	/^COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)$/;"	m
+CONVERT_RLE	Makefile	/^CONVERT_RLE = ..\/..\/scripts\/conv_rle.py$/;"	m
+CONVERT_ZIP	Makefile	/^CONVERT_ZIP = ..\/..\/scripts\/conv_zip.py$/;"	m
+CR	uart.h	/^#define CR /;"	d
+DBG1	usbdrv/oddebug.h	/^#   define  DBG1(/;"	d
+DBG2	usbdrv/oddebug.h	/^#   define  DBG2(/;"	d
+DEBOUNCE	timer.c	/^#define DEBOUNCE /;"	d	file:
+DEBUG	Makefile	/^DEBUG   = 1$/;"	m
+DEBUG	config.h	/^#define DEBUG /;"	d
+DEBUG_CRC	config.h	/^#define DEBUG_CRC /;"	d
+DEBUG_LEVEL	usbdrv/oddebug.h	/^#   define  DEBUG_LEVEL /;"	d
+DEBUG_LEVEL	usbdrv/oddebug.h	/^#   undef   DEBUG_LEVEL$/;"	d
+DEBUG_SHM	config.h	/^#define DEBUG_SHM /;"	d
+DEBUG_SRAM	config.h	/^#define DEBUG_SRAM /;"	d
+DEBUG_SRAM_RAW	config.h	/^#define DEBUG_SRAM_RAW /;"	d
+DEBUG_SREG	config.h	/^#define DEBUG_SREG /;"	d
+DEBUG_USB	config.h	/^#define DEBUG_USB /;"	d
+DEBUG_USB_TRANS	config.h	/^#define DEBUG_USB_TRANS /;"	d
+DEVICE	Makefile	/^DEVICE  = atmega644$/;"	m
+DO_CRC_CHECK	config.h	/^#define DO_CRC_CHECK /;"	d
+DO_CRC_CHECK_LOADER	config.h	/^#define DO_CRC_CHECK_LOADER /;"	d
+DO_SHM	config.h	/^#define DO_SHM /;"	d
+DO_SHM_SCRATCHPAD	config.h	/^#define DO_SHM_SCRATCHPAD /;"	d
+DO_TIMER	config.h	/^#define DO_TIMER /;"	d
+ENABLE_BIT_DEFINITIONS	usbdrv/usbportability.h	/^#   define ENABLE_BIT_DEFINITIONS	/;"	d
+EXE_SUFFIX	commandline/Makefile	/^EXE_SUFFIX =$/;"	m
+FORMAT_BUFFER_LEN	config.h	/^#define FORMAT_BUFFER_LEN /;"	d
+FUSE_H	Makefile	/^FUSE_H  = 0xda$/;"	m
+FUSE_L	Makefile	/^FUSE_L  = 0xf7$/;"	m
+F_CPU	Makefile	/^F_CPU   = 20000000$/;"	m
+F_CPU	usbdrv/oddebug.h	/^#   define  F_CPU /;"	d
+F_PWM	pwm.h	/^#define F_PWM /;"	d
+GET_DESCRIPTOR	usbdrv/usbdrv.c	/^#define GET_DESCRIPTOR(/;"	d	file:
+HIROM	system.h	/^    enum rom_mode_e   { LOROM, HIROM } rom_mode;$/;"	e	enum:system_t::rom_mode_e
+HI_LOROM_SW_DIR	sram.h	/^#define HI_LOROM_SW_DIR	/;"	d
+HI_LOROM_SW_PIN	sram.h	/^#define HI_LOROM_SW_PIN	/;"	d
+HI_LOROM_SW_PORT	sram.h	/^#define HI_LOROM_SW_PORT	/;"	d
+HW_VERSION	config.h	/^#define HW_VERSION /;"	d
+IRQ_OFF	system.h	/^    enum irq_line_e   { IRQ_ON, IRQ_OFF } irq_line;$/;"	e	enum:system_t::irq_line_e
+IRQ_ON	system.h	/^    enum irq_line_e   { IRQ_ON, IRQ_OFF } irq_line;$/;"	e	enum:system_t::irq_line_e
+ISR	irq.c	/^ISR (SIG_PIN_CHANGE3)$/;"	f
+ISR	shell.c	/^ISR(USART0_RX_vect)		$/;"	f
 ISR	timer.c	/^ISR (SIG_OUTPUT_COMPARE1A)$/;"	f
-ISR	uart.c	/^ISR(USART0_RX_vect)$/;"	f
-LED_DIR	sram.h	44;"	d
-LED_PIN	sram.h	45;"	d
-LED_PORT	sram.h	43;"	d
-MAX_CLUSTERS_IN_ROW	fat.h	11;"	d
-MMC_CLK	mmc.h	21;"	d
-MMC_CS	mmc.h	18;"	d
-MMC_DI	mmc.h	20;"	d
-MMC_DO	mmc.h	19;"	d
-MMC_READ	mmc.h	15;"	d
-MMC_READ	mmc.h	24;"	d
-MMC_REG	mmc.h	16;"	d
-MMC_REG	mmc.h	25;"	d
-MMC_WRITE	mmc.h	14;"	d
-MMC_WRITE	mmc.h	23;"	d
-OCR1A	timer.c	34;"	d	file:
-OUTBYTE	rle.c	54;"	d	file:
-OVER_WRITE	fat.h	10;"	d
-PROGMEM	loader.c	/^const char _rom[ROM_BUFFER_SIZE] PROGMEM = {$/;"	v
-REQ_STATUS_AVR	config.h	40;"	d
-REQ_STATUS_BULK_NEXT	config.h	37;"	d
-REQ_STATUS_BULK_UPLOAD	config.h	36;"	d
-REQ_STATUS_CRC	config.h	38;"	d
-REQ_STATUS_IDLE	config.h	34;"	d
-REQ_STATUS_SNES	config.h	39;"	d
-REQ_STATUS_UPLOAD	config.h	35;"	d
-ROM_BUFFER_SIZE	loader.h	5;"	d
-ROM_HUFFMAN_SIZE	loader.h	6;"	d
-ROM_RLE_SIZE	loader.h	7;"	d
-RUNCHAR	rle.c	33;"	d	file:
-SHARED_IRQ_HANDLER_HI	shared_memory.h	59;"	d
-SHARED_IRQ_HANDLER_LO	shared_memory.h	58;"	d
-SHARED_IRQ_LOC_HI	shared_memory.h	55;"	d
-SHARED_IRQ_LOC_LO	shared_memory.h	54;"	d
-SHARED_MEM_RX_AVR_ACK	shared_memory.h	43;"	d
-SHARED_MEM_RX_AVR_RTS	shared_memory.h	44;"	d
-SHARED_MEM_RX_CMD_FILESEL	shared_memory.h	47;"	d
-SHARED_MEM_RX_CMD_PRINFT	shared_memory.h	46;"	d
-SHARED_MEM_RX_LOC_CMD	shared_memory.h	50;"	d
-SHARED_MEM_RX_LOC_LEN	shared_memory.h	51;"	d
-SHARED_MEM_RX_LOC_PAYLOAD	shared_memory.h	52;"	d
-SHARED_MEM_RX_LOC_STATE	shared_memory.h	49;"	d
-SHARED_MEM_SWITCH_DELAY	shared_memory.h	26;"	d
-SHARED_MEM_SWITCH_IRQ	shared_memory.h	25;"	d
-SHARED_MEM_TX_CMD_BANK_COUNT	shared_memory.h	31;"	d
-SHARED_MEM_TX_CMD_BANK_CURRENT	shared_memory.h	32;"	d
-SHARED_MEM_TX_CMD_TERMINATE	shared_memory.h	37;"	d
-SHARED_MEM_TX_CMD_UPLOAD_END	shared_memory.h	35;"	d
-SHARED_MEM_TX_CMD_UPLOAD_PROGESS	shared_memory.h	36;"	d
-SHARED_MEM_TX_CMD_UPLOAD_START	shared_memory.h	34;"	d
-SHARED_MEM_TX_LOC_CMD	shared_memory.h	40;"	d
-SHARED_MEM_TX_LOC_PAYLOAD	shared_memory.h	41;"	d
-SHARED_MEM_TX_LOC_STATE	shared_memory.h	39;"	d
-SHARED_MEM_TX_SNES_ACK	shared_memory.h	28;"	d
-SHARED_MEM_TX_SNES_RTS	shared_memory.h	29;"	d
-SMALL_FILE_SYSTEM	config.h	50;"	d
-SMALL_FILE_SYSTEM	fat.h	8;"	d
-SNES_IRQ_DIR	sram.h	78;"	d
-SNES_IRQ_PIN	sram.h	79;"	d
-SNES_IRQ_PORT	sram.h	77;"	d
-SNES_RESET_DIR	sram.h	89;"	d
-SNES_RESET_PIN	sram.h	90;"	d
-SNES_RESET_PORT	sram.h	88;"	d
-SNES_WR_DIR	sram.h	147;"	d
-SNES_WR_EN_DIR	sram.h	173;"	d
-SNES_WR_EN_PIN	sram.h	174;"	d
-SNES_WR_EN_PORT	sram.h	172;"	d
-SNES_WR_PIN	sram.h	148;"	d
-SNES_WR_PORT	sram.h	146;"	d
-SPI_Mode	mmc.h	12;"	d
-TRANSFER_BUFFER_SIZE	config.h	45;"	d
-USB_AVR_RESET	requests.h	40;"	d
-USB_BULK_UPLOAD_ADDR	requests.h	35;"	d
-USB_BULK_UPLOAD_END	requests.h	37;"	d
-USB_BULK_UPLOAD_INIT	requests.h	34;"	d
-USB_BULK_UPLOAD_NEXT	requests.h	36;"	d
-USB_CFG_CHECK_CRC	usbconfig.h	72;"	d
-USB_CFG_CHECK_DATA_TOGGLING	usbconfig.h	211;"	d
-USB_CFG_CLOCK_KHZ	usbconfig.h	65;"	d
-USB_CFG_DESCR_PROPS_CONFIGURATION	usbconfig.h	346;"	d
-USB_CFG_DESCR_PROPS_DEVICE	usbconfig.h	345;"	d
-USB_CFG_DESCR_PROPS_HID	usbconfig.h	352;"	d
-USB_CFG_DESCR_PROPS_HID_REPORT	usbconfig.h	353;"	d
-USB_CFG_DESCR_PROPS_STRINGS	usbconfig.h	347;"	d
-USB_CFG_DESCR_PROPS_STRING_0	usbconfig.h	348;"	d
-USB_CFG_DESCR_PROPS_STRING_PRODUCT	usbconfig.h	350;"	d
-USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER	usbconfig.h	351;"	d
-USB_CFG_DESCR_PROPS_STRING_VENDOR	usbconfig.h	349;"	d
-USB_CFG_DESCR_PROPS_UNKNOWN	usbconfig.h	354;"	d
-USB_CFG_DEVICE_CLASS	usbconfig.h	266;"	d
-USB_CFG_DEVICE_ID	usbconfig.h	231;"	d
-USB_CFG_DEVICE_NAME	usbconfig.h	251;"	d
-USB_CFG_DEVICE_NAME_LEN	usbconfig.h	252;"	d
-USB_CFG_DEVICE_SUBCLASS	usbconfig.h	267;"	d
-USB_CFG_DEVICE_VERSION	usbconfig.h	238;"	d
-USB_CFG_DMINUS_BIT	usbconfig.h	52;"	d
-USB_CFG_DPLUS_BIT	usbconfig.h	56;"	d
-USB_CFG_EP3_NUMBER	usbconfig.h	106;"	d
-USB_CFG_HAVE_FLOWCONTROL	usbconfig.h	161;"	d
-USB_CFG_HAVE_INTRIN_ENDPOINT	usbconfig.h	95;"	d
-USB_CFG_HAVE_INTRIN_ENDPOINT3	usbconfig.h	100;"	d
-USB_CFG_HAVE_MEASURE_FRAME_LENGTH	usbconfig.h	219;"	d
-USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH	usbconfig.h	279;"	d
-USB_CFG_IMPLEMENT_FN_READ	usbconfig.h	149;"	d
-USB_CFG_IMPLEMENT_FN_WRITE	usbconfig.h	144;"	d
-USB_CFG_IMPLEMENT_FN_WRITEOUT	usbconfig.h	155;"	d
-USB_CFG_IMPLEMENT_HALT	usbconfig.h	116;"	d
-USB_CFG_INTERFACE_CLASS	usbconfig.h	271;"	d
-USB_CFG_INTERFACE_PROTOCOL	usbconfig.h	273;"	d
-USB_CFG_INTERFACE_SUBCLASS	usbconfig.h	272;"	d
-USB_CFG_INTR_POLL_INTERVAL	usbconfig.h	130;"	d
-USB_CFG_IOPORTNAME	usbconfig.h	48;"	d
-USB_CFG_IS_SELF_POWERED	usbconfig.h	135;"	d
-USB_CFG_LONG_TRANSFERS	usbconfig.h	166;"	d
-USB_CFG_MAX_BUS_POWER	usbconfig.h	139;"	d
-USB_CFG_SUPPRESS_INTR_CODE	usbconfig.h	122;"	d
-USB_CFG_VENDOR_ID	usbconfig.h	226;"	d
-USB_CFG_VENDOR_NAME	usbconfig.h	241;"	d
-USB_CFG_VENDOR_NAME_LEN	usbconfig.h	242;"	d
-USB_COUNT_SOF	usbconfig.h	187;"	d
-USB_CRC	requests.h	31;"	d
-USB_CRC_ADDR	requests.h	32;"	d
-USB_CRC_CHECK	config.h	43;"	d
-USB_DOWNLOAD_ADDR	requests.h	29;"	d
-USB_DOWNLOAD_INIT	requests.h	28;"	d
-USB_MAX_TRANS	config.h	42;"	d
-USB_MODE_AVR	requests.h	39;"	d
-USB_MODE_SNES	requests.h	38;"	d
-USB_UPLOAD_ADDR	requests.h	26;"	d
-USB_UPLOAD_INIT	requests.h	25;"	d
-WGM12	timer.c	38;"	d	file:
-WRITE	fat.h	9;"	d
-XTAL	timer.c	42;"	d	file:
-_FAT_H	fat.h	4;"	d
-_FILE_H	file.h	6;"	d
-_HARDWARE_H	hardware.h	7;"	d
-_MMC_H	mmc.h	9;"	d
-__COMMAND_H__	command.h	23;"	d
-__CONFIH_H__	config.h	22;"	d
-__CRC_H__	crc.h	23;"	d
-__DEBUG_H__	debug.h	24;"	d
-__DUMP_H__	dump.h	23;"	d
-__FIFO_H__	fifo.h	21;"	d
-__FIFO_H__	loader.h	3;"	d
-__INFO_H__	info.h	24;"	d
-__REQUESTS_H__	requests.h	23;"	d
-__RLE_H__	rle.h	22;"	d
-__SHARED_MEMORY_H__	shared_memory.h	22;"	d
-__SRAM_H__	sram.h	24;"	d
-__TESTING_H__	testing.h	23;"	d
-__TIMER_H__	timer.h	22;"	d
-__UART_H__	uart.h	23;"	d
-__USB_BULK_H__	usb_bulk.h	23;"	d
-__WATCHDOG_H__	watchdog.h	27;"	d
-__usbconfig_h_included__	usbconfig.h	34;"	d
-_inline_fifo_get	fifo.h	/^static inline uint8_t _inline_fifo_get(fifo_t * f)$/;"	f
-_inline_fifo_put	fifo.h	/^static inline uint8_t _inline_fifo_put(fifo_t * f, const uint8_t data)$/;"	f
-adc_int	uart.c	/^    uint8_t adc_int:1;$/;"	m	struct:__anon2	file:
-addr	main.c	/^uint32_t addr;$/;"	v
+LDFLAGS	Makefile	/^    LDFLAGS =-Wl,-u$/;"	m
+LDFLAGS	Makefile	/^    LDFLAGS =-Wl,-u,vfprintf $/;"	m
+LED_DIR	sram.h	/^#define LED_DIR	/;"	d
+LED_PIN	sram.h	/^#define LED_PIN	/;"	d
+LED_PORT	sram.h	/^#define LED_PORT	/;"	d
+LIBS	commandline/Makefile	/^LIBS	= $(USBLIBS)$/;"	m
+LOROM	system.h	/^    enum rom_mode_e   { LOROM, HIROM } rom_mode;$/;"	e	enum:system_t::rom_mode_e
+MATCH_ABORT	commandline/opendevice.c	/^#define MATCH_ABORT	/;"	d	file:
+MATCH_FAILED	commandline/opendevice.c	/^#define MATCH_FAILED	/;"	d	file:
+MATCH_SUCCESS	commandline/opendevice.c	/^#define MATCH_SUCCESS	/;"	d	file:
+MMC_CS_PIN	sram.h	/^#define MMC_CS_PIN /;"	d
+MMC_DIR	sram.h	/^#define MMC_DIR /;"	d
+MMC_MISO_PIN	sram.h	/^#define MMC_MISO_PIN /;"	d
+MMC_MOSI_PIN	sram.h	/^#define MMC_MOSI_PIN /;"	d
+MMC_PORT	sram.h	/^#define MMC_PORT /;"	d
+MMC_SCK_PIN	sram.h	/^#define MMC_SCK_PIN /;"	d
+MODE_AVR	system.h	/^    enum bus_mode_e   { MODE_AVR, MODE_SNES } bus_mode;$/;"	e	enum:system_t::bus_mode_e
+MODE_SNES	system.h	/^    enum bus_mode_e   { MODE_AVR, MODE_SNES } bus_mode;$/;"	e	enum:system_t::bus_mode_e
+NAME	commandline/Makefile	/^NAME = snesuploader$/;"	m
+NEGINF_CONF_H	neginf/neginf_conf.h	/^#define NEGINF_CONF_H$/;"	d
+NEGINF_H	neginf/neginf.h	/^#define NEGINF_H$/;"	d
+NEGINF_PACKED_STATE	neginf/neginf_conf.h	/^#define NEGINF_PACKED_STATE$/;"	d
+NEGINF_POS_TRACKING	neginf/neginf.h	/^#define NEGINF_POS_TRACKING$/;"	d
+NEGINF_PRIV_H	neginf/neginf_priv.h	/^#define NEGINF_PRIV_H$/;"	d
+NEGINF_USE_SEQ_WRITES	neginf/neginf_conf.h	/^#define NEGINF_USE_SEQ_WRITES$/;"	d
+OBJECTS	Makefile	/^    OBJECTS = usbdrv\/usbdrv.o usbdrv\/usbdrvasm.o usbdrv\/oddebug.o  main.o usb_bulk.o \\$/;"	m
+OBJECTS	Makefile	/^    OBJECTS = usbdrv\/usbdrv.o usbdrv\/usbdrvasm.o usbdrv\/oddebug.o \\$/;"	m
+OBJECTS	commandline/Makefile	/^OBJECTS = opendevice.o $(NAME).o$/;"	m
+OCR1A	timer.c	/^    #define OCR1A /;"	d	file:
+ODDBG_TXEN	usbdrv/oddebug.h	/^#   define  ODDBG_TXEN /;"	d
+ODDBG_UBRR	usbdrv/oddebug.h	/^#   define  ODDBG_UBRR /;"	d
+ODDBG_UCR	usbdrv/oddebug.h	/^#   define  ODDBG_UCR /;"	d
+ODDBG_UDR	usbdrv/oddebug.h	/^#   define  ODDBG_UDR /;"	d
+ODDBG_UDRE	usbdrv/oddebug.h	/^#   define  ODDBG_UDRE /;"	d
+ODDBG_USR	usbdrv/oddebug.h	/^#   define  ODDBG_USR /;"	d
+PRG_RDB	usbdrv/usbportability.h	/^#   define PRG_RDB(/;"	d
+PROGMEM	loader.c	/^const char _rom01[ROM_BUFFER_SIZE01] PROGMEM = {$/;"	v
+PROGMEM	loader.c	/^const char _rom02[ROM_BUFFER_SIZE02] PROGMEM = {$/;"	v
+PROGMEM	shell.c	/^uint8_t cmdlist[][CMD_HELP] PROGMEM = {$/;"	v
+PROGMEM	usbdrv/usbportability.h	/^#   define PROGMEM /;"	d
+PROGMEM	usbdrv/usbportability.h	/^#define PROGMEM /;"	d
+PROGRAM	commandline/Makefile	/^PROGRAM = $(NAME)$(EXE_SUFFIX)$/;"	m
+PWM_OVERFLOW_MAX	pwm.c	/^#define PWM_OVERFLOW_MAX /;"	d	file:
+PWM_SINE_MAX	pwm.c	/^#define PWM_SINE_MAX /;"	d	file:
+PWM_STEPS	pwm.h	/^#define PWM_STEPS /;"	d
+READ_BUFFER_SIZE	commandline/snesuploader.c	/^#define READ_BUFFER_SIZE /;"	d	file:
+RECEIVE_BUF_LEN	config.h	/^#define RECEIVE_BUF_LEN /;"	d
+REQ_STATUS_AVR	config.h	/^#define REQ_STATUS_AVR /;"	d
+REQ_STATUS_BULK_NEXT	config.h	/^#define REQ_STATUS_BULK_NEXT /;"	d
+REQ_STATUS_BULK_UPLOAD	config.h	/^#define REQ_STATUS_BULK_UPLOAD /;"	d
+REQ_STATUS_CRC	config.h	/^#define REQ_STATUS_CRC /;"	d
+REQ_STATUS_IDLE	config.h	/^#define REQ_STATUS_IDLE /;"	d
+REQ_STATUS_SNES	config.h	/^#define REQ_STATUS_SNES /;"	d
+REQ_STATUS_UPLOAD	config.h	/^#define REQ_STATUS_UPLOAD /;"	d
+RESET_IRQ_OFF	system.h	/^    enum reset_irq_e   { RESET_IRQ_OFF, RESET_IRQ_ON } reset_irq;$/;"	e	enum:system_t::reset_irq_e
+RESET_IRQ_ON	system.h	/^    enum reset_irq_e   { RESET_IRQ_OFF, RESET_IRQ_ON } reset_irq;$/;"	e	enum:system_t::reset_irq_e
+RESET_OFF	system.h	/^    enum reset_line_e { RESET_OFF, RESET_ON } reset_line;$/;"	e	enum:system_t::reset_line_e
+RESET_ON	system.h	/^    enum reset_line_e { RESET_OFF, RESET_ON } reset_line;$/;"	e	enum:system_t::reset_line_e
+ROM_BUFFER_CNT	loader.h	/^#define ROM_BUFFER_CNT /;"	d
+ROM_BUFFER_SIZE01	loader.h	/^#define ROM_BUFFER_SIZE01 /;"	d
+ROM_BUFFER_SIZE02	loader.h	/^#define ROM_BUFFER_SIZE02 /;"	d
+ROM_ZIP_SIZE	loader.h	/^#define ROM_ZIP_SIZE /;"	d
+ROM_ZIP_SIZE	loader_test.h	/^#define ROM_ZIP_SIZE /;"	d
+RTMODEL	usbdrv/usbdrvasm.S	/^RTMODEL "__rt_version", "3"$/;"	l
+RUNCHAR	rle.c	/^#define RUNCHAR /;"	d	file:
+SEND_BUFFER_SIZE	commandline/snesuploader.c	/^#define SEND_BUFFER_SIZE /;"	d	file:
+SHARED_IRQ_HANDLER_HI	shared_memory.h	/^#define SHARED_IRQ_HANDLER_HI /;"	d
+SHARED_IRQ_HANDLER_LO	shared_memory.h	/^#define SHARED_IRQ_HANDLER_LO /;"	d
+SHARED_IRQ_LOC_HI	shared_memory.h	/^#define SHARED_IRQ_LOC_HI /;"	d
+SHARED_IRQ_LOC_LO	shared_memory.h	/^#define SHARED_IRQ_LOC_LO /;"	d
+SHARED_MEM_RX_AVR_ACK	shared_memory.h	/^#define SHARED_MEM_RX_AVR_ACK /;"	d
+SHARED_MEM_RX_AVR_RTS	shared_memory.h	/^#define SHARED_MEM_RX_AVR_RTS /;"	d
+SHARED_MEM_RX_CMD_FILESEL	shared_memory.h	/^#define SHARED_MEM_RX_CMD_FILESEL /;"	d
+SHARED_MEM_RX_CMD_PRINFT	shared_memory.h	/^#define SHARED_MEM_RX_CMD_PRINFT /;"	d
+SHARED_MEM_RX_LOC_CMD	shared_memory.h	/^#define SHARED_MEM_RX_LOC_CMD /;"	d
+SHARED_MEM_RX_LOC_LEN	shared_memory.h	/^#define SHARED_MEM_RX_LOC_LEN /;"	d
+SHARED_MEM_RX_LOC_PAYLOAD	shared_memory.h	/^#define SHARED_MEM_RX_LOC_PAYLOAD /;"	d
+SHARED_MEM_RX_LOC_SIZE	shared_memory.h	/^#define SHARED_MEM_RX_LOC_SIZE /;"	d
+SHARED_MEM_RX_LOC_STATE	shared_memory.h	/^#define SHARED_MEM_RX_LOC_STATE /;"	d
+SHARED_MEM_SWITCH_DELAY	shared_memory.h	/^#define SHARED_MEM_SWITCH_DELAY /;"	d
+SHARED_MEM_SWITCH_IRQ	shared_memory.h	/^#define SHARED_MEM_SWITCH_IRQ /;"	d
+SHARED_MEM_TX_CMD_BANK_COUNT	shared_memory.h	/^#define SHARED_MEM_TX_CMD_BANK_COUNT /;"	d
+SHARED_MEM_TX_CMD_BANK_CURRENT	shared_memory.h	/^#define SHARED_MEM_TX_CMD_BANK_CURRENT /;"	d
+SHARED_MEM_TX_CMD_TERMINATE	shared_memory.h	/^#define SHARED_MEM_TX_CMD_TERMINATE /;"	d
+SHARED_MEM_TX_CMD_UPLOAD_END	shared_memory.h	/^#define SHARED_MEM_TX_CMD_UPLOAD_END /;"	d
+SHARED_MEM_TX_CMD_UPLOAD_PROGESS	shared_memory.h	/^#define SHARED_MEM_TX_CMD_UPLOAD_PROGESS /;"	d
+SHARED_MEM_TX_CMD_UPLOAD_START	shared_memory.h	/^#define SHARED_MEM_TX_CMD_UPLOAD_START /;"	d
+SHARED_MEM_TX_LOC_CMD	shared_memory.h	/^#define SHARED_MEM_TX_LOC_CMD /;"	d
+SHARED_MEM_TX_LOC_PAYLOAD	shared_memory.h	/^#define SHARED_MEM_TX_LOC_PAYLOAD /;"	d
+SHARED_MEM_TX_LOC_SIZE	shared_memory.h	/^#define SHARED_MEM_TX_LOC_SIZE /;"	d
+SHARED_MEM_TX_LOC_STATE	shared_memory.h	/^#define SHARED_MEM_TX_LOC_STATE /;"	d
+SHARED_MEM_TX_SNES_ACK	shared_memory.h	/^#define SHARED_MEM_TX_SNES_ACK /;"	d
+SHARED_MEM_TX_SNES_RTS	shared_memory.h	/^#define SHARED_MEM_TX_SNES_RTS /;"	d
+SHARED_SCRATCHPAD_CRC	shared_memory.h	/^#define SHARED_SCRATCHPAD_CRC /;"	d
+SHARED_SCRATCHPAD_DUMP	shared_memory.h	/^#define SHARED_SCRATCHPAD_DUMP /;"	d
+SIZE	Makefile	/^SIZE    = avr-size$/;"	m
+SNES_IRQ_DIR	sram.h	/^#define SNES_IRQ_DIR /;"	d
+SNES_IRQ_PIN	sram.h	/^#define SNES_IRQ_PIN /;"	d
+SNES_IRQ_PORT	sram.h	/^#define SNES_IRQ_PORT /;"	d
+SNES_RESET_DIR	sram.h	/^#define SNES_RESET_DIR /;"	d
+SNES_RESET_INP	sram.h	/^#define SNES_RESET_INP /;"	d
+SNES_RESET_PIN	sram.h	/^#define SNES_RESET_PIN /;"	d
+SNES_RESET_PORT	sram.h	/^#define SNES_RESET_PORT /;"	d
+SNES_WR_DIR	sram.h	/^#define SNES_WR_DIR	/;"	d
+SNES_WR_EN_DIR	sram.h	/^#define SNES_WR_EN_DIR	/;"	d
+SNES_WR_EN_PIN	sram.h	/^#define SNES_WR_EN_PIN	/;"	d
+SNES_WR_EN_PORT	sram.h	/^#define SNES_WR_EN_PORT	/;"	d
+SNES_WR_PIN	sram.h	/^#define SNES_WR_PIN	/;"	d
+SNES_WR_PORT	sram.h	/^#define SNES_WR_PORT	/;"	d
+SWITCH_CASE	usbdrv/usbdrv.c	/^#   define SWITCH_CASE(/;"	d	file:
+SWITCH_CASE2	usbdrv/usbdrv.c	/^#   define SWITCH_CASE2(/;"	d	file:
+SWITCH_CASE3	usbdrv/usbdrv.c	/^#   define SWITCH_CASE3(/;"	d	file:
+SWITCH_DEFAULT	usbdrv/usbdrv.c	/^#   define SWITCH_DEFAULT /;"	d	file:
+SWITCH_END	usbdrv/usbdrv.c	/^#   define SWITCH_END /;"	d	file:
+SWITCH_START	usbdrv/usbdrv.c	/^#   define SWITCH_START(/;"	d	file:
+SW_VERSION	config.h	/^#define SW_VERSION /;"	d
+TARGET	Makefile	/^TARGET  = main$/;"	m
+TRANSFER_BUFFER_SIZE	config.h	/^#define TRANSFER_BUFFER_SIZE /;"	d
+TTY	Makefile	/^TTY     = \/dev\/tty.PL2303-00002126$/;"	m
+T_PWM	pwm.h	/^#define T_PWM /;"	d
+USBATTR_BUSPOWER	usbdrv/usbdrv.h	/^#define USBATTR_BUSPOWER /;"	d
+USBATTR_REMOTEWAKE	usbdrv/usbdrv.h	/^#define USBATTR_REMOTEWAKE /;"	d
+USBATTR_SELFPOWER	usbdrv/usbdrv.h	/^#define USBATTR_SELFPOWER /;"	d
+USBDDR	usbdrv/usbdrv.h	/^#define USBDDR /;"	d
+USBDESCR_CONFIG	usbdrv/usbdrv.h	/^#define USBDESCR_CONFIG /;"	d
+USBDESCR_DEVICE	usbdrv/usbdrv.h	/^#define USBDESCR_DEVICE /;"	d
+USBDESCR_ENDPOINT	usbdrv/usbdrv.h	/^#define USBDESCR_ENDPOINT /;"	d
+USBDESCR_HID	usbdrv/usbdrv.h	/^#define USBDESCR_HID /;"	d
+USBDESCR_HID_PHYS	usbdrv/usbdrv.h	/^#define USBDESCR_HID_PHYS /;"	d
+USBDESCR_HID_REPORT	usbdrv/usbdrv.h	/^#define USBDESCR_HID_REPORT /;"	d
+USBDESCR_INTERFACE	usbdrv/usbdrv.h	/^#define USBDESCR_INTERFACE /;"	d
+USBDESCR_STRING	usbdrv/usbdrv.h	/^#define USBDESCR_STRING /;"	d
+USBDRV_VERSION	usbdrv/usbdrv.h	/^#define USBDRV_VERSION /;"	d
+USBFLAGS	commandline/Makefile	/^USBFLAGS = `libusb-config --cflags`$/;"	m
+USBIDLE	usbdrv/usbdrv.h	/^#define USBIDLE /;"	d
+USBIN	usbdrv/usbdrv.h	/^#define USBIN /;"	d
+USBLIBS	commandline/Makefile	/^USBLIBS = `libusb-config --libs`$/;"	m
+USBMASK	usbdrv/usbdrv.h	/^#define USBMASK /;"	d
+USBMINUS	usbdrv/usbdrv.h	/^#define USBMINUS /;"	d
+USBOPEN_ERR_ACCESS	commandline/opendevice.h	/^#define USBOPEN_ERR_ACCESS /;"	d
+USBOPEN_ERR_IO	commandline/opendevice.h	/^#define USBOPEN_ERR_IO /;"	d
+USBOPEN_ERR_NOTFOUND	commandline/opendevice.h	/^#define USBOPEN_ERR_NOTFOUND /;"	d
+USBOPEN_SUCCESS	commandline/opendevice.h	/^#define USBOPEN_SUCCESS /;"	d
+USBOUT	usbdrv/usbdrv.h	/^#define USBOUT /;"	d
+USBPID_ACK	usbdrv/usbdrv.h	/^#define USBPID_ACK /;"	d
+USBPID_DATA0	usbdrv/usbdrv.h	/^#define USBPID_DATA0 /;"	d
+USBPID_DATA1	usbdrv/usbdrv.h	/^#define USBPID_DATA1 /;"	d
+USBPID_IN	usbdrv/usbdrv.h	/^#define USBPID_IN /;"	d
+USBPID_NAK	usbdrv/usbdrv.h	/^#define USBPID_NAK /;"	d
+USBPID_OUT	usbdrv/usbdrv.h	/^#define USBPID_OUT /;"	d
+USBPID_SETUP	usbdrv/usbdrv.h	/^#define USBPID_SETUP /;"	d
+USBPID_STALL	usbdrv/usbdrv.h	/^#define USBPID_STALL /;"	d
+USBPLUS	usbdrv/usbdrv.h	/^#define USBPLUS /;"	d
+USBRQ_CLEAR_FEATURE	usbdrv/usbdrv.h	/^#define USBRQ_CLEAR_FEATURE /;"	d
+USBRQ_DIR_DEVICE_TO_HOST	usbdrv/usbdrv.h	/^#define USBRQ_DIR_DEVICE_TO_HOST /;"	d
+USBRQ_DIR_HOST_TO_DEVICE	usbdrv/usbdrv.h	/^#define USBRQ_DIR_HOST_TO_DEVICE /;"	d
+USBRQ_DIR_MASK	usbdrv/usbdrv.h	/^#define USBRQ_DIR_MASK /;"	d
+USBRQ_GET_CONFIGURATION	usbdrv/usbdrv.h	/^#define USBRQ_GET_CONFIGURATION /;"	d
+USBRQ_GET_DESCRIPTOR	usbdrv/usbdrv.h	/^#define USBRQ_GET_DESCRIPTOR /;"	d
+USBRQ_GET_INTERFACE	usbdrv/usbdrv.h	/^#define USBRQ_GET_INTERFACE /;"	d
+USBRQ_GET_STATUS	usbdrv/usbdrv.h	/^#define USBRQ_GET_STATUS /;"	d
+USBRQ_HID_GET_IDLE	usbdrv/usbdrv.h	/^#define USBRQ_HID_GET_IDLE /;"	d
+USBRQ_HID_GET_PROTOCOL	usbdrv/usbdrv.h	/^#define USBRQ_HID_GET_PROTOCOL /;"	d
+USBRQ_HID_GET_REPORT	usbdrv/usbdrv.h	/^#define USBRQ_HID_GET_REPORT /;"	d
+USBRQ_HID_SET_IDLE	usbdrv/usbdrv.h	/^#define USBRQ_HID_SET_IDLE /;"	d
+USBRQ_HID_SET_PROTOCOL	usbdrv/usbdrv.h	/^#define USBRQ_HID_SET_PROTOCOL /;"	d
+USBRQ_HID_SET_REPORT	usbdrv/usbdrv.h	/^#define USBRQ_HID_SET_REPORT /;"	d
+USBRQ_RCPT_DEVICE	usbdrv/usbdrv.h	/^#define USBRQ_RCPT_DEVICE /;"	d
+USBRQ_RCPT_ENDPOINT	usbdrv/usbdrv.h	/^#define USBRQ_RCPT_ENDPOINT /;"	d
+USBRQ_RCPT_INTERFACE	usbdrv/usbdrv.h	/^#define USBRQ_RCPT_INTERFACE /;"	d
+USBRQ_RCPT_MASK	usbdrv/usbdrv.h	/^#define USBRQ_RCPT_MASK /;"	d
+USBRQ_SET_ADDRESS	usbdrv/usbdrv.h	/^#define USBRQ_SET_ADDRESS /;"	d
+USBRQ_SET_CONFIGURATION	usbdrv/usbdrv.h	/^#define USBRQ_SET_CONFIGURATION /;"	d
+USBRQ_SET_DESCRIPTOR	usbdrv/usbdrv.h	/^#define USBRQ_SET_DESCRIPTOR /;"	d
+USBRQ_SET_FEATURE	usbdrv/usbdrv.h	/^#define USBRQ_SET_FEATURE /;"	d
+USBRQ_SET_INTERFACE	usbdrv/usbdrv.h	/^#define USBRQ_SET_INTERFACE /;"	d
+USBRQ_SYNCH_FRAME	usbdrv/usbdrv.h	/^#define USBRQ_SYNCH_FRAME /;"	d
+USBRQ_TYPE_CLASS	usbdrv/usbdrv.h	/^#define USBRQ_TYPE_CLASS /;"	d
+USBRQ_TYPE_MASK	usbdrv/usbdrv.h	/^#define USBRQ_TYPE_MASK /;"	d
+USBRQ_TYPE_STANDARD	usbdrv/usbdrv.h	/^#define USBRQ_TYPE_STANDARD /;"	d
+USBRQ_TYPE_VENDOR	usbdrv/usbdrv.h	/^#define USBRQ_TYPE_VENDOR /;"	d
+USB_AVR_RESET	requests.h	/^#define USB_AVR_RESET /;"	d
+USB_BUFSIZE	usbdrv/usbdrv.h	/^#define USB_BUFSIZE /;"	d
+USB_BULK_UPLOAD_ADDR	requests.h	/^#define USB_BULK_UPLOAD_ADDR /;"	d
+USB_BULK_UPLOAD_END	requests.h	/^#define USB_BULK_UPLOAD_END /;"	d
+USB_BULK_UPLOAD_INIT	requests.h	/^#define USB_BULK_UPLOAD_INIT /;"	d
+USB_BULK_UPLOAD_NEXT	requests.h	/^#define USB_BULK_UPLOAD_NEXT /;"	d
+USB_CFG_CHECK_CRC	usbconfig.h	/^#define USB_CFG_CHECK_CRC /;"	d
+USB_CFG_CHECK_CRC	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_CHECK_CRC /;"	d
+USB_CFG_CHECK_DATA_TOGGLING	usbconfig.h	/^#define USB_CFG_CHECK_DATA_TOGGLING /;"	d
+USB_CFG_CHECK_DATA_TOGGLING	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_CHECK_DATA_TOGGLING /;"	d
+USB_CFG_CLOCK_KHZ	usbconfig.h	/^#define USB_CFG_CLOCK_KHZ /;"	d
+USB_CFG_CLOCK_KHZ	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_CLOCK_KHZ /;"	d
+USB_CFG_DESCR_PROPS_CONFIGURATION	usbconfig.h	/^#define USB_CFG_DESCR_PROPS_CONFIGURATION /;"	d
+USB_CFG_DESCR_PROPS_CONFIGURATION	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DESCR_PROPS_CONFIGURATION /;"	d
+USB_CFG_DESCR_PROPS_CONFIGURATION	usbdrv/usbdrv.c	/^#define USB_CFG_DESCR_PROPS_CONFIGURATION /;"	d	file:
+USB_CFG_DESCR_PROPS_CONFIGURATION	usbdrv/usbdrv.c	/^#undef USB_CFG_DESCR_PROPS_CONFIGURATION$/;"	d	file:
+USB_CFG_DESCR_PROPS_CONFIGURATION	usbdrv/usbdrv.h	/^#define USB_CFG_DESCR_PROPS_CONFIGURATION /;"	d
+USB_CFG_DESCR_PROPS_DEVICE	usbconfig.h	/^#define USB_CFG_DESCR_PROPS_DEVICE /;"	d
+USB_CFG_DESCR_PROPS_DEVICE	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DESCR_PROPS_DEVICE /;"	d
+USB_CFG_DESCR_PROPS_DEVICE	usbdrv/usbdrv.c	/^#define USB_CFG_DESCR_PROPS_DEVICE /;"	d	file:
+USB_CFG_DESCR_PROPS_DEVICE	usbdrv/usbdrv.c	/^#undef USB_CFG_DESCR_PROPS_DEVICE$/;"	d	file:
+USB_CFG_DESCR_PROPS_DEVICE	usbdrv/usbdrv.h	/^#define USB_CFG_DESCR_PROPS_DEVICE /;"	d
+USB_CFG_DESCR_PROPS_HID	usbconfig.h	/^#define USB_CFG_DESCR_PROPS_HID /;"	d
+USB_CFG_DESCR_PROPS_HID	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DESCR_PROPS_HID /;"	d
+USB_CFG_DESCR_PROPS_HID	usbdrv/usbdrv.c	/^#define USB_CFG_DESCR_PROPS_HID /;"	d	file:
+USB_CFG_DESCR_PROPS_HID	usbdrv/usbdrv.c	/^#undef USB_CFG_DESCR_PROPS_HID$/;"	d	file:
+USB_CFG_DESCR_PROPS_HID	usbdrv/usbdrv.h	/^#define USB_CFG_DESCR_PROPS_HID /;"	d
+USB_CFG_DESCR_PROPS_HID_REPORT	usbconfig.h	/^#define USB_CFG_DESCR_PROPS_HID_REPORT /;"	d
+USB_CFG_DESCR_PROPS_HID_REPORT	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DESCR_PROPS_HID_REPORT /;"	d
+USB_CFG_DESCR_PROPS_HID_REPORT	usbdrv/usbdrv.h	/^#       define USB_CFG_DESCR_PROPS_HID_REPORT /;"	d
+USB_CFG_DESCR_PROPS_HID_REPORT	usbdrv/usbdrv.h	/^#   undef USB_CFG_DESCR_PROPS_HID_REPORT$/;"	d
+USB_CFG_DESCR_PROPS_STRINGS	usbconfig.h	/^#define USB_CFG_DESCR_PROPS_STRINGS /;"	d
+USB_CFG_DESCR_PROPS_STRINGS	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DESCR_PROPS_STRINGS /;"	d
+USB_CFG_DESCR_PROPS_STRINGS	usbdrv/usbdrv.h	/^#define USB_CFG_DESCR_PROPS_STRINGS /;"	d
+USB_CFG_DESCR_PROPS_STRING_0	usbconfig.h	/^#define USB_CFG_DESCR_PROPS_STRING_0 /;"	d
+USB_CFG_DESCR_PROPS_STRING_0	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DESCR_PROPS_STRING_0 /;"	d
+USB_CFG_DESCR_PROPS_STRING_0	usbdrv/usbdrv.c	/^#define USB_CFG_DESCR_PROPS_STRING_0 /;"	d	file:
+USB_CFG_DESCR_PROPS_STRING_0	usbdrv/usbdrv.c	/^#undef USB_CFG_DESCR_PROPS_STRING_0$/;"	d	file:
+USB_CFG_DESCR_PROPS_STRING_0	usbdrv/usbdrv.h	/^#define USB_CFG_DESCR_PROPS_STRING_0 /;"	d
+USB_CFG_DESCR_PROPS_STRING_PRODUCT	usbconfig.h	/^#define USB_CFG_DESCR_PROPS_STRING_PRODUCT /;"	d
+USB_CFG_DESCR_PROPS_STRING_PRODUCT	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DESCR_PROPS_STRING_PRODUCT /;"	d
+USB_CFG_DESCR_PROPS_STRING_PRODUCT	usbdrv/usbdrv.c	/^#define USB_CFG_DESCR_PROPS_STRING_PRODUCT /;"	d	file:
+USB_CFG_DESCR_PROPS_STRING_PRODUCT	usbdrv/usbdrv.c	/^#undef USB_CFG_DESCR_PROPS_STRING_PRODUCT$/;"	d	file:
+USB_CFG_DESCR_PROPS_STRING_PRODUCT	usbdrv/usbdrv.h	/^#define USB_CFG_DESCR_PROPS_STRING_PRODUCT /;"	d
+USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER	usbconfig.h	/^#define USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER /;"	d
+USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER /;"	d
+USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER	usbdrv/usbdrv.c	/^#define USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER /;"	d	file:
+USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER	usbdrv/usbdrv.c	/^#undef USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER$/;"	d	file:
+USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER	usbdrv/usbdrv.h	/^#define USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER /;"	d
+USB_CFG_DESCR_PROPS_STRING_VENDOR	usbconfig.h	/^#define USB_CFG_DESCR_PROPS_STRING_VENDOR /;"	d
+USB_CFG_DESCR_PROPS_STRING_VENDOR	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DESCR_PROPS_STRING_VENDOR /;"	d
+USB_CFG_DESCR_PROPS_STRING_VENDOR	usbdrv/usbdrv.c	/^#define USB_CFG_DESCR_PROPS_STRING_VENDOR /;"	d	file:
+USB_CFG_DESCR_PROPS_STRING_VENDOR	usbdrv/usbdrv.c	/^#undef USB_CFG_DESCR_PROPS_STRING_VENDOR$/;"	d	file:
+USB_CFG_DESCR_PROPS_STRING_VENDOR	usbdrv/usbdrv.h	/^#define USB_CFG_DESCR_PROPS_STRING_VENDOR /;"	d
+USB_CFG_DESCR_PROPS_UNKNOWN	usbconfig.h	/^#define USB_CFG_DESCR_PROPS_UNKNOWN /;"	d
+USB_CFG_DESCR_PROPS_UNKNOWN	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DESCR_PROPS_UNKNOWN /;"	d
+USB_CFG_DESCR_PROPS_UNKNOWN	usbdrv/usbdrv.h	/^#define USB_CFG_DESCR_PROPS_UNKNOWN /;"	d
+USB_CFG_DEVICE_CLASS	usbconfig.h	/^#define USB_CFG_DEVICE_CLASS /;"	d
+USB_CFG_DEVICE_CLASS	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DEVICE_CLASS /;"	d
+USB_CFG_DEVICE_ID	usbconfig.h	/^#define  USB_CFG_DEVICE_ID /;"	d
+USB_CFG_DEVICE_ID	usbdrv/usbconfig-prototype.h	/^#define  USB_CFG_DEVICE_ID /;"	d
+USB_CFG_DEVICE_ID	usbdrv/usbdrv.h	/^#       define USB_CFG_DEVICE_ID /;"	d
+USB_CFG_DEVICE_NAME	usbconfig.h	/^#define USB_CFG_DEVICE_NAME /;"	d
+USB_CFG_DEVICE_NAME	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DEVICE_NAME /;"	d
+USB_CFG_DEVICE_NAME_LEN	usbconfig.h	/^#define USB_CFG_DEVICE_NAME_LEN /;"	d
+USB_CFG_DEVICE_NAME_LEN	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DEVICE_NAME_LEN /;"	d
+USB_CFG_DEVICE_SUBCLASS	usbconfig.h	/^#define USB_CFG_DEVICE_SUBCLASS /;"	d
+USB_CFG_DEVICE_SUBCLASS	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DEVICE_SUBCLASS /;"	d
+USB_CFG_DEVICE_VERSION	usbconfig.h	/^#define USB_CFG_DEVICE_VERSION /;"	d
+USB_CFG_DEVICE_VERSION	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DEVICE_VERSION /;"	d
+USB_CFG_DMINUS_BIT	usbconfig.h	/^#define USB_CFG_DMINUS_BIT /;"	d
+USB_CFG_DMINUS_BIT	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DMINUS_BIT /;"	d
+USB_CFG_DPLUS_BIT	usbconfig.h	/^#define USB_CFG_DPLUS_BIT /;"	d
+USB_CFG_DPLUS_BIT	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_DPLUS_BIT /;"	d
+USB_CFG_EP3_NUMBER	usbconfig.h	/^#define USB_CFG_EP3_NUMBER /;"	d
+USB_CFG_EP3_NUMBER	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_EP3_NUMBER /;"	d
+USB_CFG_EP3_NUMBER	usbdrv/usbdrv.h	/^#define USB_CFG_EP3_NUMBER /;"	d
+USB_CFG_HAVE_FLOWCONTROL	usbconfig.h	/^#define USB_CFG_HAVE_FLOWCONTROL /;"	d
+USB_CFG_HAVE_FLOWCONTROL	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_HAVE_FLOWCONTROL /;"	d
+USB_CFG_HAVE_INTRIN_ENDPOINT	usbconfig.h	/^#define USB_CFG_HAVE_INTRIN_ENDPOINT /;"	d
+USB_CFG_HAVE_INTRIN_ENDPOINT	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_HAVE_INTRIN_ENDPOINT /;"	d
+USB_CFG_HAVE_INTRIN_ENDPOINT3	usbconfig.h	/^#define USB_CFG_HAVE_INTRIN_ENDPOINT3 /;"	d
+USB_CFG_HAVE_INTRIN_ENDPOINT3	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_HAVE_INTRIN_ENDPOINT3 /;"	d
+USB_CFG_HAVE_INTRIN_ENDPOINT3	usbdrv/usbdrv.h	/^#define USB_CFG_HAVE_INTRIN_ENDPOINT3 /;"	d
+USB_CFG_HAVE_MEASURE_FRAME_LENGTH	usbconfig.h	/^#define USB_CFG_HAVE_MEASURE_FRAME_LENGTH /;"	d
+USB_CFG_HAVE_MEASURE_FRAME_LENGTH	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_HAVE_MEASURE_FRAME_LENGTH /;"	d
+USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH	usbconfig.h	/^ #define USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH /;"	d
+USB_CFG_IMPLEMENT_FN_READ	usbconfig.h	/^#define USB_CFG_IMPLEMENT_FN_READ /;"	d
+USB_CFG_IMPLEMENT_FN_READ	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_IMPLEMENT_FN_READ /;"	d
+USB_CFG_IMPLEMENT_FN_WRITE	usbconfig.h	/^#define USB_CFG_IMPLEMENT_FN_WRITE /;"	d
+USB_CFG_IMPLEMENT_FN_WRITE	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_IMPLEMENT_FN_WRITE /;"	d
+USB_CFG_IMPLEMENT_FN_WRITEOUT	usbconfig.h	/^#define USB_CFG_IMPLEMENT_FN_WRITEOUT /;"	d
+USB_CFG_IMPLEMENT_FN_WRITEOUT	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_IMPLEMENT_FN_WRITEOUT /;"	d
+USB_CFG_IMPLEMENT_HALT	usbconfig.h	/^#define USB_CFG_IMPLEMENT_HALT /;"	d
+USB_CFG_IMPLEMENT_HALT	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_IMPLEMENT_HALT /;"	d
+USB_CFG_INTERFACE_CLASS	usbconfig.h	/^#define USB_CFG_INTERFACE_CLASS /;"	d
+USB_CFG_INTERFACE_CLASS	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_INTERFACE_CLASS /;"	d
+USB_CFG_INTERFACE_PROTOCOL	usbconfig.h	/^#define USB_CFG_INTERFACE_PROTOCOL /;"	d
+USB_CFG_INTERFACE_PROTOCOL	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_INTERFACE_PROTOCOL /;"	d
+USB_CFG_INTERFACE_SUBCLASS	usbconfig.h	/^#define USB_CFG_INTERFACE_SUBCLASS /;"	d
+USB_CFG_INTERFACE_SUBCLASS	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_INTERFACE_SUBCLASS /;"	d
+USB_CFG_INTR_POLL_INTERVAL	usbconfig.h	/^#define USB_CFG_INTR_POLL_INTERVAL /;"	d
+USB_CFG_INTR_POLL_INTERVAL	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_INTR_POLL_INTERVAL /;"	d
+USB_CFG_IOPORT	usbdrv/usbdrv.h	/^#define USB_CFG_IOPORT /;"	d
+USB_CFG_IOPORTNAME	usbconfig.h	/^#define USB_CFG_IOPORTNAME /;"	d
+USB_CFG_IOPORTNAME	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_IOPORTNAME /;"	d
+USB_CFG_IS_SELF_POWERED	usbconfig.h	/^#define USB_CFG_IS_SELF_POWERED /;"	d
+USB_CFG_IS_SELF_POWERED	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_IS_SELF_POWERED /;"	d
+USB_CFG_LONG_TRANSFERS	usbconfig.h	/^#define USB_CFG_LONG_TRANSFERS /;"	d
+USB_CFG_LONG_TRANSFERS	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_LONG_TRANSFERS /;"	d
+USB_CFG_MAX_BUS_POWER	usbconfig.h	/^#define USB_CFG_MAX_BUS_POWER /;"	d
+USB_CFG_MAX_BUS_POWER	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_MAX_BUS_POWER /;"	d
+USB_CFG_PULLUP_IOPORT	usbdrv/usbdrv.h	/^#define USB_CFG_PULLUP_IOPORT /;"	d
+USB_CFG_SUPPRESS_INTR_CODE	usbconfig.h	/^#define USB_CFG_SUPPRESS_INTR_CODE /;"	d
+USB_CFG_SUPPRESS_INTR_CODE	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_SUPPRESS_INTR_CODE /;"	d
+USB_CFG_USE_SWITCH_STATEMENT	usbdrv/usbportability.h	/^#define USB_CFG_USE_SWITCH_STATEMENT /;"	d
+USB_CFG_VENDOR_ID	usbconfig.h	/^#define  USB_CFG_VENDOR_ID /;"	d
+USB_CFG_VENDOR_ID	usbdrv/usbconfig-prototype.h	/^#define  USB_CFG_VENDOR_ID /;"	d
+USB_CFG_VENDOR_ID	usbdrv/usbdrv.h	/^#   define  USB_CFG_VENDOR_ID /;"	d
+USB_CFG_VENDOR_NAME	usbconfig.h	/^#define USB_CFG_VENDOR_NAME /;"	d
+USB_CFG_VENDOR_NAME	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_VENDOR_NAME /;"	d
+USB_CFG_VENDOR_NAME_LEN	usbconfig.h	/^#define USB_CFG_VENDOR_NAME_LEN /;"	d
+USB_CFG_VENDOR_NAME_LEN	usbdrv/usbconfig-prototype.h	/^#define USB_CFG_VENDOR_NAME_LEN /;"	d
+USB_CONCAT	usbdrv/usbdrv.h	/^#define USB_CONCAT(/;"	d
+USB_CONCAT_EXPANDED	usbdrv/usbdrv.h	/^#define USB_CONCAT_EXPANDED(/;"	d
+USB_COUNT_SOF	usbconfig.h	/^#define USB_COUNT_SOF /;"	d
+USB_COUNT_SOF	usbdrv/usbconfig-prototype.h	/^#define USB_COUNT_SOF /;"	d
+USB_CRC	requests.h	/^#define USB_CRC /;"	d
+USB_CRC_ADDR	requests.h	/^#define USB_CRC_ADDR /;"	d
+USB_CRC_CHECK	config.h	/^#define USB_CRC_CHECK /;"	d
+USB_DDRPORT	usbdrv/usbdrv.h	/^#define USB_DDRPORT(/;"	d
+USB_DOWNLOAD_ADDR	requests.h	/^#define USB_DOWNLOAD_ADDR /;"	d
+USB_DOWNLOAD_INIT	requests.h	/^#define USB_DOWNLOAD_INIT /;"	d
+USB_FLG_MSGPTR_IS_ROM	usbdrv/usbdrv.c	/^#define USB_FLG_MSGPTR_IS_ROM /;"	d	file:
+USB_FLG_USE_USER_RW	usbdrv/usbdrv.c	/^#define USB_FLG_USE_USER_RW /;"	d	file:
+USB_INITIAL_DATATOKEN	usbdrv/usbdrv.h	/^#define USB_INITIAL_DATATOKEN /;"	d
+USB_INPORT	usbdrv/usbdrv.h	/^#define USB_INPORT(/;"	d
+USB_INTR_CFG	usbdrv/usbdrv.h	/^#       define USB_INTR_CFG /;"	d
+USB_INTR_CFG_CLR	usbdrv/usbdrv.h	/^#   define USB_INTR_CFG_CLR /;"	d
+USB_INTR_CFG_SET	usbdrv/usbdrv.h	/^#       define USB_INTR_CFG_SET /;"	d
+USB_INTR_ENABLE	usbdrv/usbdrv.h	/^#       define USB_INTR_ENABLE /;"	d
+USB_INTR_ENABLE_BIT	usbdrv/usbdrv.h	/^#   define USB_INTR_ENABLE_BIT /;"	d
+USB_INTR_PENDING	usbdrv/usbdrv.h	/^#       define USB_INTR_PENDING /;"	d
+USB_INTR_PENDING_BIT	usbdrv/usbdrv.h	/^#   define USB_INTR_PENDING_BIT /;"	d
+USB_MAX_TRANS	config.h	/^#define USB_MAX_TRANS /;"	d
+USB_MODE_AVR	requests.h	/^#define USB_MODE_AVR /;"	d
+USB_MODE_SNES	requests.h	/^#define USB_MODE_SNES /;"	d
+USB_NO_MSG	usbdrv/usbdrv.h	/^#define USB_NO_MSG /;"	d
+USB_OUTPORT	usbdrv/usbdrv.h	/^#define USB_OUTPORT(/;"	d
+USB_PID_OBDEV_SHARED_CDCACM	commandline/opendevice.h	/^#define USB_PID_OBDEV_SHARED_CDCACM /;"	d
+USB_PID_OBDEV_SHARED_CUSTOM	commandline/opendevice.h	/^#define USB_PID_OBDEV_SHARED_CUSTOM /;"	d
+USB_PID_OBDEV_SHARED_HID	commandline/opendevice.h	/^#define USB_PID_OBDEV_SHARED_HID /;"	d
+USB_PID_OBDEV_SHARED_MIDI	commandline/opendevice.h	/^#define USB_PID_OBDEV_SHARED_MIDI /;"	d
+USB_PROP_IS_DYNAMIC	usbdrv/usbdrv.h	/^#define USB_PROP_IS_DYNAMIC /;"	d
+USB_PROP_IS_RAM	usbdrv/usbdrv.h	/^#define USB_PROP_IS_RAM /;"	d
+USB_PROP_LENGTH	usbdrv/usbdrv.h	/^#define USB_PROP_LENGTH(/;"	d
+USB_PUBLIC	usbdrv/usbdrv.h	/^#define USB_PUBLIC$/;"	d
+USB_PULLUP_DDR	usbdrv/usbdrv.h	/^#define USB_PULLUP_DDR /;"	d
+USB_PULLUP_OUT	usbdrv/usbdrv.h	/^#define USB_PULLUP_OUT /;"	d
+USB_READ_FLASH	usbdrv/usbportability.h	/^#define USB_READ_FLASH(/;"	d
+USB_RX_USER_HOOK	usbdrv/usbdrv.c	/^#define USB_RX_USER_HOOK(/;"	d	file:
+USB_SET_ADDRESS_HOOK	usbdrv/usbdrv.c	/^#define USB_SET_ADDRESS_HOOK(/;"	d	file:
+USB_SET_DATATOKEN1	usbdrv/usbdrv.h	/^#define USB_SET_DATATOKEN1(/;"	d
+USB_SET_DATATOKEN3	usbdrv/usbdrv.h	/^#define USB_SET_DATATOKEN3(/;"	d
+USB_SET_LAODER	requests.h	/^#define USB_SET_LAODER /;"	d
+USB_STRING_DESCRIPTOR_HEADER	usbdrv/usbdrv.h	/^#define USB_STRING_DESCRIPTOR_HEADER(/;"	d
+USB_UPLOAD_ADDR	requests.h	/^#define USB_UPLOAD_ADDR /;"	d
+USB_UPLOAD_INIT	requests.h	/^#define USB_UPLOAD_INIT /;"	d
+USB_VID_OBDEV_SHARED	commandline/opendevice.h	/^#define USB_VID_OBDEV_SHARED /;"	d
+WGM12	timer.c	/^    #define WGM12 /;"	d	file:
+WR_DISABLE	system.h	/^    enum wr_line_e    { WR_DISABLE, WR_ENABLE } wr_line;$/;"	e	enum:system_t::wr_line_e
+WR_ENABLE	system.h	/^    enum wr_line_e    { WR_DISABLE, WR_ENABLE } wr_line;$/;"	e	enum:system_t::wr_line_e
+XH	usbdrv/usbportability.h	/^#define XH /;"	d
+XL	usbdrv/usbportability.h	/^#define XL /;"	d
+XTAL	timer.c	/^#define XTAL /;"	d	file:
+YH	usbdrv/usbportability.h	/^#define YH /;"	d
+YL	usbdrv/usbportability.h	/^#define YL /;"	d
+ZH	usbdrv/usbportability.h	/^#define ZH /;"	d
+ZL	usbdrv/usbportability.h	/^#define ZL /;"	d
+_BV	usbdrv/usbportability.h	/^#define _BV(/;"	d
+_RING_BUFFER_H_	ringbuffer.h	/^#define _RING_BUFFER_H_$/;"	d
+_VECTOR	usbdrv/usbportability.h	/^#   define _VECTOR(/;"	d
+__ASSEMBLER__	usbdrv/usbportability.h	/^#   define __ASSEMBLER__ /;"	d
+__COMMAND_H__	command.h	/^#define __COMMAND_H__$/;"	d
+__CONFIH_H__	config.h	/^#define __CONFIH_H__$/;"	d
+__CRC_H__	crc.h	/^#define __CRC_H__$/;"	d
+__DEBUG_H__	debug.h	/^#define __DEBUG_H__$/;"	d
+__DUMP_H__	dump.h	/^#define __DUMP_H__$/;"	d
+__FIFO_H__	fifo.h	/^#define __FIFO_H__$/;"	d
+__FIFO_H__	loader.h	/^#define __FIFO_H__$/;"	d
+__FIFO_H__	loader_test.h	/^#define __FIFO_H__$/;"	d
+__INFLATE_H__	inflate.h	/^#define __INFLATE_H__$/;"	d
+__INFO_H__	info.h	/^#define __INFO_H__$/;"	d
+__IRQ_H__	irq.h	/^#define __IRQ_H__$/;"	d
+__OPENDEVICE_H_INCLUDED__	commandline/opendevice.h	/^#define __OPENDEVICE_H_INCLUDED__$/;"	d
+__PWM_H__	pwm.h	/^#define __PWM_H__$/;"	d
+__REQUESTS_H__	requests.h	/^#define __REQUESTS_H__$/;"	d
+__RLE_H__	rle.h	/^#define __RLE_H__$/;"	d
+__SFR_OFFSET	usbdrv/usbdrvasm.S	/^#define __SFR_OFFSET 0      \/* used by avr-libc's register definitions *\/$/;"	d
+__SHARED_MEMORY_H__	shared_memory.h	/^#define __SHARED_MEMORY_H__$/;"	d
+__SHELL_H__	shell.h	/^#define __SHELL_H__$/;"	d
+__SRAM_H__	sram.h	/^#define __SRAM_H__$/;"	d
+__SYSTEM_H__	system.h	/^#define __SYSTEM_H__$/;"	d
+__TESTING_H__	testing.h	/^#define __TESTING_H__$/;"	d
+__TIMER_H__	timer.h	/^ #define __TIMER_H__$/;"	d
+__UART_H__	uart.h	/^#define __UART_H__$/;"	d
+__USB_BULK_H__	usb_bulk.h	/^#define __USB_BULK_H__$/;"	d
+__UTIL_H__	util.h	/^#define __UTIL_H__$/;"	d
+__WATCHDOG_H__	watchdog.h	/^#define __WATCHDOG_H__$/;"	d
+__anon1::count	fifo.h	/^    uint8_t volatile count;     \/\/ # Zeichen im Puffer$/;"	m	struct:__anon1	access:public
+__anon1::pread	fifo.h	/^    uint8_t *pread;             \/\/ Lesezeiger$/;"	m	struct:__anon1	access:public
+__anon1::pwrite	fifo.h	/^    uint8_t *pwrite;            \/\/ Schreibzeiger$/;"	m	struct:__anon1	access:public
+__anon1::read2end	fifo.h	/^    uint8_t read2end, write2end;        \/\/ # Zeichen bis zum Überlauf Lese-\/Schreibzeiger$/;"	m	struct:__anon1	access:public
+__anon1::size	fifo.h	/^    uint8_t size;               \/\/ Puffer-Größe$/;"	m	struct:__anon1	access:public
+__anon1::write2end	fifo.h	/^    uint8_t read2end, write2end;        \/\/ # Zeichen bis zum Überlauf Lese-\/Schreibzeiger$/;"	m	struct:__anon1	access:public
+__anon2::adc_int	uart.c	/^    uint8_t adc_int:1;$/;"	m	struct:__anon2	file:	access:public
+__anon2::rx_int	uart.c	/^    uint8_t rx_int:1;$/;"	m	struct:__anon2	file:	access:public
+__anon2::tmr_int	uart.c	/^    uint8_t tmr_int:1;$/;"	m	struct:__anon2	file:	access:public
+__attribute__	usbdrv/usbportability.h	/^#define __attribute__(/;"	d
+__oddebug_h_included__	usbdrv/oddebug.h	/^#define __oddebug_h_included__$/;"	d
+__usbconfig_h_included__	usbconfig.h	/^#define __usbconfig_h_included__$/;"	d
+__usbconfig_h_included__	usbdrv/usbconfig-prototype.h	/^#define __usbconfig_h_included__$/;"	d
+__usbdrv_h_included__	usbdrv/usbdrv.h	/^#define __usbdrv_h_included__$/;"	d
+__usbportability_h_INCLUDED__	usbdrv/usbportability.h	/^#define __usbportability_h_INCLUDED__$/;"	d
+_delay_ms	usbdrv/usbportability.h	/^#define _delay_ms(/;"	d
+_inline_fifo_get	fifo.h	/^static inline uint8_t _inline_fifo_get(fifo_t * f)$/;"	f	signature:(fifo_t * f)
+_inline_fifo_put	fifo.h	/^static inline uint8_t _inline_fifo_put(fifo_t * f, const uint8_t data)$/;"	f	signature:(fifo_t * f, const uint8_t data)
+_rom	loader.c	/^PGM_VOID_P _rom[ROM_BUFFER_CNT]= {&_rom01,&_rom02};$/;"	v
+_rom	loader_test.c	/^const char _rom[35543] = {$/;"	v
+_rom_size	loader.c	/^const int _rom_size[ROM_BUFFER_CNT] = {32767,887};$/;"	v
+_shellStyleMatch	commandline/opendevice.c	/^static int _shellStyleMatch(char *text, char *p)$/;"	f	file:	signature:(char *text, char *p)
+adc_int	uart.c	/^    uint8_t adc_int:1;$/;"	m	struct:__anon2	file:	access:public
 addr_current	sram.c	/^uint32_t addr_current = 0;$/;"	v
+addr_ref	inflate.c	/^int addr_ref = 0;$/;"	v
 addr_stash	sram.c	/^uint32_t addr_stash = 0;$/;"	v
-attrib	fat.h	/^	unsigned char 		attrib;			\/\/ 11,1			datei Attribut: 8=value name, 32=datei, 16=Verzeichniss, 15=linux kleingeschrieben eintrag$/;"	m	struct:File
-avr_addr_latch_hi	sram.h	108;"	d
-avr_addr_latch_lo	sram.h	109;"	d
-avr_addr_sck_hi	sram.h	115;"	d
-avr_addr_sck_lo	sram.h	116;"	d
-avr_addr_ser_hi	sram.h	122;"	d
-avr_addr_ser_lo	sram.h	123;"	d
-avr_bus_active	sram.h	158;"	d
-avr_cs_hi	sram.h	74;"	d
-avr_cs_lo	sram.h	75;"	d
-avr_data_in	sram.h	38;"	d
-avr_data_out	sram.h	41;"	d
-avr_rd_hi	sram.h	60;"	d
-avr_rd_lo	sram.h	61;"	d
-avr_wr_hi	sram.h	67;"	d
-avr_wr_lo	sram.h	68;"	d
-boot_startup_rom	main.c	/^void boot_startup_rom()$/;"	f
-bufferDirty	fat.h	/^	unsigned char 		bufferDirty;	\/\/ puffer wurde beschrieben, sector muss geschrieben werden bevor er neu geladen wird$/;"	m	struct:Fat
-cntOfBytes	fat.h	/^	unsigned int 			cntOfBytes;		\/\/ -nicht direkt aus dem dateisystem- zäht geschriebene bytes eines sektors$/;"	m	struct:File
-count	fifo.h	/^    uint8_t volatile count;     \/\/ # Zeichen im Puffer$/;"	m	struct:__anon1
-counter_down	sram.h	136;"	d
-counter_load	sram.h	129;"	d
-counter_up	sram.h	143;"	d
-crc	main.c	/^uint16_t crc = 0;$/;"	v
-crc_check_bulk_memory	crc.c	/^uint16_t crc_check_bulk_memory(uint32_t bottom_addr, uint32_t top_addr, uint32_t bank_size)$/;"	f
-crc_check_memory_range	crc.c	/^uint16_t crc_check_memory_range(uint32_t start_addr, uint32_t size,uint8_t *buffer)$/;"	f
-crc_xmodem_update	crc.c	/^uint16_t crc_xmodem_update(uint16_t crc, uint8_t data)$/;"	f
-currentSectorNr	fat.h	/^	unsigned long int 	currentSectorNr;\/\/ aktuell geladener Sektor (in sector)  \/\/beschleunigt wenn z.b 2* 512 byte puffer vorhanden, oder bei fat operationen im gleichen sektor$/;"	m	struct:Fat
-dataDirSec	fat.h	/^	unsigned long int  	dataDirSec;		\/\/ Sektor nr data area $/;"	m	struct:Fat
-data_buffer	main.c	/^uint8_t data_buffer[4];$/;"	v
-debug	debug.c	/^void debug(int level, char* format, ...) {$/;"	f
-debug	debug.h	34;"	d
-debug_level	main.c	/^uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC);$/;"	v
-dir	fat.h	/^	unsigned long int 	dir; 		  	\/\/ Direktory zeiger rootDir=='0' sonst(1.Cluster des dir; start auf root)$/;"	m	struct:Fat
-do_crc	crc.c	/^uint16_t do_crc(uint8_t * data, uint16_t size)$/;"	f
-do_crc_update	crc.c	/^uint16_t do_crc_update(uint16_t crc, uint8_t * data, uint16_t size)$/;"	f
-dump_memory	dump.c	/^void dump_memory(uint32_t bottom_addr, uint32_t top_addr)$/;"	f
-dump_packet	dump.c	/^void dump_packet(uint32_t addr, uint32_t len, uint8_t * packet)$/;"	f
-endSectors	fat.h	/^	unsigned long int 	endSectors;	$/;"	m	struct:Fat
-fat	fat.c	/^struct Fat fat;   					\/\/ wichtige daten\/variablen der fat$/;"	v	typeref:struct:Fat
-fatSec	fat.h	/^	unsigned long int  	fatSec;	 		\/\/ Sektor nr fat area$/;"	m	struct:Fat
-fatType	fat.h	/^	unsigned char  		fatType;		\/\/ fat16 oder fat32 (16 oder 32)$/;"	m	struct:Fat
-fat_cd	fat.c	/^unsigned char fat_cd(char name[]){$/;"	f
-fat_clustToSec	fat.c	/^unsigned long int fat_clustToSec(unsigned long int clust){$/;"	f
-fat_delClusterChain	fat.c	/^void fat_delClusterChain(unsigned long int startCluster){$/;"	f
-fat_getFatChainClustersInRow	fat.c	/^void fat_getFatChainClustersInRow(unsigned long int offsetCluster){$/;"	f
-fat_getFreeClustersInRow	fat.c	/^void fat_getFreeClustersInRow(unsigned long int offsetCluster){$/;"	f
-fat_getFreeRowOfCluster	fat.c	/^unsigned char fat_getFreeRowOfCluster(unsigned long secStart){$/;"	f
-fat_getFreeRowOfDir	fat.c	/^void fat_getFreeRowOfDir(unsigned long int dir){$/;"	f
-fat_getNextCluster	fat.c	/^unsigned long int fat_getNextCluster(unsigned long int oneCluster){	$/;"	f
-fat_initfat	fat.c	/^unsigned char fat_initfat(void){					$/;"	f
-fat_loadFatData	fat.c	/^unsigned char fat_loadFatData(unsigned long int sec){$/;"	f
-fat_loadFileDataFromCluster	fat.c	/^unsigned char fat_loadFileDataFromCluster(unsigned long int sec , char name[]){$/;"	f
-fat_loadFileDataFromDir	fat.c	/^unsigned char fat_loadFileDataFromDir(char name[]){ $/;"	f
-fat_loadRowOfSector	fat.c	/^unsigned char fat_loadRowOfSector(unsigned int row){$/;"	f
-fat_loadSector	fat.c	/^unsigned char fat_loadSector(unsigned long int sec){$/;"	f
-fat_makeFileEntry	fat.c	/^void fat_makeFileEntry(char name[],unsigned char attrib,unsigned long int length){$/;"	f
-fat_makeRowDataEntry	fat.c	/^void fat_makeRowDataEntry(unsigned int row,char name[],unsigned char attrib,unsigned long int cluster,unsigned long int length){$/;"	f
-fat_secToClust	fat.c	/^unsigned long int fat_secToClust(unsigned long int sec){$/;"	f
-fat_setCluster	fat.c	/^void fat_setCluster(unsigned long int cluster, unsigned long int content){  $/;"	f
-fat_setClusterChain	fat.c	/^void fat_setClusterChain(unsigned long int startCluster,unsigned int endCluster){$/;"	f
-fat_str	fat.c	/^char * fat_str(char *str){$/;"	f
-fat_writeSector	fat.c	/^unsigned char fat_writeSector(unsigned long int sec){	$/;"	f
-ffcd	file.c	/^unsigned char ffcd(char name[]){		$/;"	f
-ffcdLower	file.c	/^unsigned char ffcdLower(void){$/;"	f
-ffclose	file.c	/^unsigned char ffclose(void){$/;"	f
-ffls	file.c	/^void ffls(void){$/;"	f
-ffmkdir	file.c	/^void ffmkdir(char name[]){$/;"	f
-ffopen	file.c	/^unsigned char ffopen(char name[]){		$/;"	f
-ffread	file.c	/^inline unsigned char ffread(void){  	 $/;"	f
-ffrm	file.c	/^unsigned char ffrm(char name[]){ $/;"	f
-ffseek	file.c	/^void ffseek(unsigned long int offset){	$/;"	f
-ffwrite	file.c	/^inline void ffwrite(unsigned char c){$/;"	f
-ffwrites	file.c	/^inline void ffwrites(const char *s ){$/;"	f
-fifo_get_nowait	fifo.c	/^int fifo_get_nowait(fifo_t * f)$/;"	f
-fifo_get_wait	fifo.c	/^uint8_t fifo_get_wait(fifo_t * f)$/;"	f
-fifo_init	fifo.c	/^void fifo_init(fifo_t * f, uint8_t * buffer, const uint8_t size)$/;"	f
-fifo_put	fifo.c	/^uint8_t fifo_put(fifo_t * f, const uint8_t data)$/;"	f
+avr_addr_latch_hi	sram.h	/^#define avr_addr_latch_hi(/;"	d
+avr_addr_latch_lo	sram.h	/^#define avr_addr_latch_lo(/;"	d
+avr_addr_sck_hi	sram.h	/^#define avr_addr_sck_hi(/;"	d
+avr_addr_sck_lo	sram.h	/^#define avr_addr_sck_lo(/;"	d
+avr_addr_ser_hi	sram.h	/^#define avr_addr_ser_hi(/;"	d
+avr_addr_ser_lo	sram.h	/^#define avr_addr_ser_lo(/;"	d
+avr_bus_active	sram.h	/^#define avr_bus_active(/;"	d
+avr_cs_hi	sram.h	/^#define avr_cs_hi(/;"	d
+avr_cs_lo	sram.h	/^#define avr_cs_lo(/;"	d
+avr_data_in	sram.h	/^#define avr_data_in(/;"	d
+avr_data_out	sram.h	/^#define avr_data_out(/;"	d
+avr_rd_hi	sram.h	/^#define avr_rd_hi(/;"	d
+avr_rd_lo	sram.h	/^#define avr_rd_lo(/;"	d
+avr_reset_count	system.h	/^    uint8_t avr_reset_count;$/;"	m	struct:system_t	access:public
+avr_wr_hi	sram.h	/^#define avr_wr_hi(/;"	d
+avr_wr_lo	sram.h	/^#define avr_wr_lo(/;"	d
+await_block	neginf/neginf.c	/^void await_block()$/;"	f
+await_block	neginf/neginf_priv.h	/^static void await_block();$/;"	p	signature:()
+b	ringbuffer.c	/^#define b /;"	d	file:
+bRequest	usbdrv/usbdrv.h	/^    uchar       bRequest;$/;"	m	struct:usbRequest	access:public
+banner	command.c	/^void banner(){$/;"	f
+banner	command.h	/^void banner();$/;"	p	signature:()
+bitcnt	usbdrv/usbdrvasm.S	/^#define bitcnt  x5$/;"	d
+bmRequestType	usbdrv/usbdrv.h	/^    uchar       bmRequestType;$/;"	m	struct:usbRequest	access:public
+boot_startup_rom	command.c	/^void boot_startup_rom(uint16_t init_delay)$/;"	f	signature:(uint16_t init_delay)
+boot_startup_rom	command.h	/^void boot_startup_rom(uint16_t init_delay);$/;"	p	signature:(uint16_t init_delay)
+btldr_down	sram.h	/^#define btldr_down(/;"	d
+buf	ringbuffer.c	/^char buf[ringbuffer_size];$/;"	v
+buffer	usbdrv/usbdrv.h	/^    uchar   buffer[USB_BUFSIZE];$/;"	m	struct:usbTxStatus	access:public
+buffer_debug	debug.c	/^    uint8_t buffer_debug[FORMAT_BUFFER_LEN];$/;"	v
+buffer_info	info.c	/^    uint8_t buffer_info[FORMAT_BUFFER_LEN];$/;"	v
+bus_mode	system.h	/^    enum bus_mode_e   { MODE_AVR, MODE_SNES } bus_mode;$/;"	m	struct:system_t	typeref:enum:system_t::bus_mode_e	access:public
+bus_mode_e	system.h	/^    enum bus_mode_e   { MODE_AVR, MODE_SNES } bus_mode;$/;"	g	struct:system_t	access:public
+bytes	usbdrv/usbdrv.h	/^    uchar       bytes[2];$/;"	m	union:usbWord	access:public
+cli	usbdrv/usbportability.h	/^#define cli(/;"	d
+cli	usbdrv/usbportability.h	/^static inline void  cli(void)$/;"	f	signature:(void)
+cmds	shell.c	/^enum cmds { $/;"	g	file:
+cnt	inflate.c	/^int cnt = 0;$/;"	v
+cnt	usbdrv/usbdrvasm.S	/^#define cnt     r19$/;"	d
+cnt_hit	inflate.c	/^int cnt_hit = 0;$/;"	v
+code	neginf/neginf_priv.h	/^    nint code;$/;"	m	struct:neginf_state_s	access:public
+command_buf	shell.c	/^uint8_t command_buf[RECEIVE_BUF_LEN];$/;"	v
+compute_begin	neginf/neginf.c	/^void compute_begin(ntiny * lengths, nint * begins, nint size)$/;"	f	signature:(ntiny * lengths, nint * begins, nint size)
+compute_begin	neginf/neginf_priv.h	/^static void compute_begin(ntiny * lengths, nint * begins, nint size);$/;"	p	signature:(ntiny * lengths, nint * begins, nint size)
+compute_begins	neginf/neginf.c	/^void compute_begins()$/;"	f
+compute_begins	neginf/neginf_priv.h	/^static void compute_begins();$/;"	p	signature:()
+consume	neginf/neginf.c	/^void consume(ntiny amount)$/;"	f	signature:(ntiny amount)
+consume	neginf/neginf_priv.h	/^static void consume(ntiny amount);$/;"	p	signature:(ntiny amount)
+count	fifo.h	/^    uint8_t volatile count;     \/\/ # Zeichen im Puffer$/;"	m	struct:__anon1	access:public
+counter_load	sram.h	/^#define counter_load(/;"	d
+counter_up	sram.h	/^#define counter_up(/;"	d
+cr	shell.c	/^volatile uint8_t	cr = 0;$/;"	v
+crcBitLoop	usbdrv/usbdrvasm.S	/^crcBitLoop:$/;"	l
+crcByteLoop	usbdrv/usbdrvasm.S	/^crcByteLoop:$/;"	l
+crcNoXor	usbdrv/usbdrvasm.S	/^crcNoXor:$/;"	l
+crcReady	usbdrv/usbdrvasm.S	/^crcReady:$/;"	l
+crc_check_bulk_memory	crc.c	/^uint16_t crc_check_bulk_memory(uint32_t bottom_addr, uint32_t top_addr, uint32_t bank_size)$/;"	f	signature:(uint32_t bottom_addr, uint32_t top_addr, uint32_t bank_size)
+crc_check_bulk_memory	crc.h	/^uint16_t crc_check_bulk_memory(uint32_t bottom_addr, uint32_t bank_size,uint32_t top_addr);$/;"	p	signature:(uint32_t bottom_addr, uint32_t bank_size,uint32_t top_addr)
+crc_check_memory_range	crc.c	/^uint16_t crc_check_memory_range(uint32_t start_addr, uint32_t size,uint8_t *buffer)$/;"	f	signature:(uint32_t start_addr, uint32_t size,uint8_t *buffer)
+crc_check_memory_range	crc.h	/^uint16_t crc_check_memory_range(uint32_t start_addr, uint32_t size,uint8_t *buffer);$/;"	p	signature:(uint32_t start_addr, uint32_t size,uint8_t *buffer)
+crc_xmodem_update	commandline/snesuploader.c	/^uint16_t crc_xmodem_update(uint16_t crc, uint8_t data)$/;"	f	signature:(uint16_t crc, uint8_t data)
+crc_xmodem_update	crc.c	/^uint16_t crc_xmodem_update(uint16_t crc, uint8_t data)$/;"	f	signature:(uint16_t crc, uint8_t data)
+crc_xmodem_update	crc.h	/^uint16_t crc_xmodem_update(uint16_t crc, uint8_t data);$/;"	p	signature:(uint16_t crc, uint8_t data)
+debug	debug.h	/^#define debug(/;"	d
+debug	debug.h	/^void debug(int level, char *format, ...);$/;"	p	signature:(int level, char *format, ...)
+debug_P	debug.c	/^void debug_P(int level, PGM_P format, ...) {$/;"	f	signature:(int level, PGM_P format, ...)
+debug_P	debug.h	/^#define debug_P(/;"	d
+debug_P	debug.h	/^void debug_P(int level, PGM_P format, ...);$/;"	p	signature:(int level, PGM_P format, ...)
+debug_level	main.c	/^uint8_t debug_level = (DEBUG | DEBUG_CRC);$/;"	v
+dist_begins	neginf/neginf_priv.h	/^    nint dist_begins[14];$/;"	m	struct:neginf_state_s	access:public
+dist_lengths	neginf/neginf_priv.h	/^    ntiny dist_lengths[32];$/;"	m	struct:neginf_state_s	access:public
+dist_read	neginf/neginf.c	/^nint dist_read()$/;"	f
+dist_read	neginf/neginf_priv.h	/^static nint dist_read();$/;"	p	signature:()
+do_crc	commandline/snesuploader.c	/^uint16_t do_crc(uint8_t * data, uint16_t size)$/;"	f	signature:(uint8_t * data, uint16_t size)
+do_crc	crc.c	/^uint16_t do_crc(uint8_t * data, uint16_t size)$/;"	f	signature:(uint8_t * data, uint16_t size)
+do_crc	crc.h	/^uint16_t do_crc(uint8_t * data,uint16_t size);$/;"	p	signature:(uint8_t * data,uint16_t size)
+do_crc_update	commandline/snesuploader.c	/^uint16_t do_crc_update(uint16_t crc, uint8_t * data, uint16_t size)$/;"	f	signature:(uint16_t crc, uint8_t * data, uint16_t size)
+do_crc_update	crc.c	/^uint16_t do_crc_update(uint16_t crc, uint8_t * data, uint16_t size)$/;"	f	signature:(uint16_t crc, uint8_t * data, uint16_t size)
+do_crc_update	crc.h	/^uint16_t do_crc_update(uint16_t crc,uint8_t * data,uint16_t size);$/;"	p	signature:(uint16_t crc,uint8_t * data,uint16_t size)
+dump_memory	dump.c	/^void dump_memory(uint32_t bottom_addr, uint32_t top_addr)$/;"	f	signature:(uint32_t bottom_addr, uint32_t top_addr)
+dump_memory	dump.h	/^void dump_memory(uint32_t bottom_addr, uint32_t top_addr);$/;"	p	signature:(uint32_t bottom_addr, uint32_t top_addr)
+dump_packet	commandline/snesuploader.c	/^void dump_packet(uint32_t addr, uint32_t len, uint8_t * packet)$/;"	f	signature:(uint32_t addr, uint32_t len, uint8_t * packet)
+dump_packet	dump.c	/^void dump_packet(uint32_t addr, uint32_t len, uint8_t * packet)$/;"	f	signature:(uint32_t addr, uint32_t len, uint8_t * packet)
+dump_packet	dump.h	/^void dump_packet(uint32_t addr,uint32_t len,uint8_t *packet);$/;"	p	signature:(uint32_t addr,uint32_t len,uint8_t *packet)
+dynamic_block_begin	neginf/neginf.c	/^void dynamic_block_begin()$/;"	f
+dynamic_block_begin	neginf/neginf_priv.h	/^static void dynamic_block_begin();$/;"	p	signature:()
+dynamic_read_dist	neginf/neginf.c	/^void dynamic_read_dist()$/;"	f
+dynamic_read_dist	neginf/neginf_priv.h	/^static void dynamic_read_dist();$/;"	p	signature:()
+dynamic_read_lc	neginf/neginf.c	/^void dynamic_read_lc()$/;"	f
+dynamic_read_lc	neginf/neginf_priv.h	/^static void dynamic_read_lc();$/;"	p	signature:()
+dynamic_read_lit_len	neginf/neginf.c	/^void dynamic_read_lit_len()$/;"	f
+dynamic_read_lit_len	neginf/neginf_priv.h	/^static void dynamic_read_lit_len();$/;"	p	signature:()
+endm	usbdrv/usbportability.h	/^#define endm /;"	d
+fifo_get_nowait	fifo.c	/^int fifo_get_nowait(fifo_t * f)$/;"	f	signature:(fifo_t * f)
+fifo_get_nowait	fifo.h	/^extern int fifo_get_nowait(fifo_t *);$/;"	p	signature:(fifo_t *)
+fifo_get_wait	fifo.c	/^uint8_t fifo_get_wait(fifo_t * f)$/;"	f	signature:(fifo_t * f)
+fifo_get_wait	fifo.h	/^extern uint8_t fifo_get_wait(fifo_t *);$/;"	p	signature:(fifo_t *)
+fifo_init	fifo.c	/^void fifo_init(fifo_t * f, uint8_t * buffer, const uint8_t size)$/;"	f	signature:(fifo_t * f, uint8_t * buffer, const uint8_t size)
+fifo_init	fifo.h	/^extern void fifo_init(fifo_t *, uint8_t * buf, const uint8_t size);$/;"	p	signature:(fifo_t *, uint8_t * buf, const uint8_t size)
+fifo_put	fifo.c	/^uint8_t fifo_put(fifo_t * f, const uint8_t data)$/;"	f	signature:(fifo_t * f, const uint8_t data)
+fifo_put	fifo.h	/^extern uint8_t fifo_put(fifo_t *, const uint8_t data);$/;"	p	signature:(fifo_t *, const uint8_t data)
 fifo_t	fifo.h	/^} fifo_t;$/;"	t	typeref:struct:__anon1
-file	fat.c	/^struct File file;					\/\/ wichtige dateibezogene daten\/variablen$/;"	v	typeref:struct:File
-fileUpdate	file.c	/^void fileUpdate(void){$/;"	f
-firstCluster	fat.h	/^	unsigned long int 	firstCluster;	\/\/ 20,2 \/26,2	datei 1.cluster hi,low(möglicherweise der einzige)	(4-byte)$/;"	m	struct:File
-info	info.c	/^void info(char* format, ...) {$/;"	f
-info	info.c	34;"	d	file:
-info	info.h	34;"	d
+fixed_block_begin	neginf/neginf.c	/^void fixed_block_begin()$/;"	f
+fixed_block_begin	neginf/neginf_priv.h	/^static void fixed_block_begin();$/;"	p	signature:()
+get_bool	shell.c	/^ static int get_bool(void)$/;"	f	file:	signature:(void)
+get_dec	shell.c	/^uint8_t get_dec(uint32_t *decval)$/;"	f	signature:(uint32_t *decval)
+get_hex	shell.c	/^uint8_t get_hex(uint32_t *hexval)$/;"	f	signature:(uint32_t *hexval)
+get_hex_arg2	shell.c	/^uint8_t get_hex_arg2(uint32_t *hexval1, uint32_t *hexval2)$/;"	f	signature:(uint32_t *hexval1, uint32_t *hexval2)
+get_hex_arg3	shell.c	/^uint8_t get_hex_arg3(uint32_t *hexval1, uint32_t *hexval2, uint32_t *hexval3)$/;"	f	signature:(uint32_t *hexval1, uint32_t *hexval2, uint32_t *hexval3)
+get_int32	shell.c	/^static uint8_t get_int32(uint32_t *val)$/;"	f	file:	signature:(uint32_t *val)
+get_int8	shell.c	/^ static uint8_t get_int8(uint8_t *val)$/;"	f	file:	signature:(uint8_t *val)
+get_token	shell.c	/^uint8_t *get_token(void)$/;"	f	signature:(void)
+globals_init	main.c	/^void globals_init(){$/;"	f
+hc_begins	neginf/neginf_priv.h	/^    nint hc_begins[14];$/;"	m	struct:neginf_state_s	access:public
+hc_lengths	neginf/neginf_priv.h	/^    ntiny hc_lengths[19];$/;"	m	struct:neginf_state_s	access:public
+hclen	neginf/neginf_priv.h	/^    ntiny hclen;$/;"	m	struct:neginf_state_s	access:public
+hdist	neginf/neginf_priv.h	/^    ntiny hdist;$/;"	m	struct:neginf_state_s	access:public
+hexAscii	usbdrv/oddebug.c	/^static uchar    hexAscii(uchar h)$/;"	f	file:	signature:(uchar h)
+hi8	usbdrv/usbportability.h	/^#define hi8(/;"	d
+hlit	neginf/neginf_priv.h	/^    nint hlit;$/;"	m	struct:neginf_state_s	access:public
+huff_block	neginf/neginf.c	/^void huff_block()$/;"	f
+huff_block	neginf/neginf_priv.h	/^static void huff_block();$/;"	p	signature:()
+huff_dist	neginf/neginf.c	/^void huff_dist()$/;"	f
+huff_dist	neginf/neginf_priv.h	/^static void huff_dist();$/;"	p	signature:()
+huff_dist_addbits	neginf/neginf.c	/^void huff_dist_addbits()$/;"	f
+huff_dist_addbits	neginf/neginf_priv.h	/^static void huff_dist_addbits();$/;"	p	signature:()
+huff_len_addbits	neginf/neginf.c	/^void huff_len_addbits()$/;"	f
+huff_len_addbits	neginf/neginf_priv.h	/^static void huff_len_addbits();$/;"	p	signature:()
+huff_read	neginf/neginf.c	/^nint huff_read(ntiny * lenghts, nint * begins, nint size)$/;"	f	signature:(ntiny * lenghts, nint * begins, nint size)
+huff_read	neginf/neginf_priv.h	/^static nint huff_read(ntiny * lengths, nint * begins, nint size);$/;"	p	signature:(ntiny * lengths, nint * begins, nint size)
+inflate_done	inflate.c	/^char inflate_done = 0;$/;"	v
+inflate_flush	inflate.c	/^void inflate_flush() $/;"	f
+inflate_init	inflate.c	/^void inflate_init() $/;"	f
+info	info.c	/^#define info(/;"	d	file:
+info	info.h	/^#define info(/;"	d
+info	info.h	/^void info(char *format, ...);$/;"	p	signature:(char *format, ...)
+info_P	info.c	/^void info_P(PGM_P format, ...) {$/;"	f	signature:(PGM_P format, ...)
+info_P	info.h	/^#define info_P(/;"	d
+info_P	info.h	/^void info_P(PGM_P format, ...);$/;"	p	signature:(PGM_P format, ...)
+input_queue	neginf/neginf_priv.h	/^    nbuf input_queue; \/\/ three input bytes$/;"	m	struct:neginf_state_s	access:public
 intflags	uart.c	/^} intflags;$/;"	v	typeref:struct:__anon2
 irq_addr_hi	shared_memory.c	/^uint8_t irq_addr_hi;$/;"	v
 irq_addr_lo	shared_memory.c	/^uint8_t irq_addr_lo;$/;"	v
-lastCluster	fat.h	/^	unsigned long int 	lastCluster;	\/\/ -nicht direkt aus dem dateisystem- letzter cluster der ersten kette$/;"	m	struct:File
-led_off	sram.h	49;"	d
-led_on	sram.h	47;"	d
-length	fat.h	/^	unsigned long int 	length;			\/\/ 28,4			datei Länge (4-byte)$/;"	m	struct:File
-lsRowsOfClust	file.c	/^void lsRowsOfClust (unsigned long int start_sec){$/;"	f
-main	main.c	/^int main(void)$/;"	f
-mmc_disable	mmc.h	38;"	d
-mmc_enable	mmc.h	40;"	d
-mmc_init	mmc.c	/^uint8_t mmc_init()$/;"	f
-mmc_read_block	mmc.c	/^void mmc_read_block(uint8_t * cmd, uint8_t * Buffer, uint16_t Bytes)$/;"	f
-mmc_read_byte	mmc.c	/^uint8_t mmc_read_byte(void)$/;"	f
-mmc_read_cid	mmc.c	/^uint8_t mmc_read_cid(uint8_t * Buffer)$/;"	f
-mmc_read_csd	mmc.c	/^uint8_t mmc_read_csd(uint8_t * Buffer)$/;"	f
-mmc_read_sector	mmc.c	/^uint8_t mmc_read_sector(uint32_t addr, uint8_t * Buffer)$/;"	f
-mmc_write_byte	mmc.c	/^void mmc_write_byte(uint8_t Byte)$/;"	f
-mmc_write_command	mmc.c	/^uint8_t mmc_write_command(uint8_t * cmd)$/;"	f
-mmc_write_sector	mmc.c	/^uint8_t mmc_write_sector(uint32_t addr, uint8_t * Buffer)$/;"	f
-name	fat.h	/^	unsigned char 		name[13];		\/\/ 0,10			datei Name.ext (8.3 = max 11)(MUSS unsigned char weil E5)$/;"	m	struct:File
-nop	mmc.h	42;"	d
-pread	fifo.h	/^    uint8_t *pread;             \/\/ Lesezeiger$/;"	m	struct:__anon1
+irq_init	irq.c	/^void irq_init(){$/;"	f
+irq_init	irq.h	/^void irq_init();$/;"	p	signature:()
+irq_line	system.h	/^    enum irq_line_e   { IRQ_ON, IRQ_OFF } irq_line;$/;"	m	struct:system_t	typeref:enum:system_t::irq_line_e	access:public
+irq_line_e	system.h	/^    enum irq_line_e   { IRQ_ON, IRQ_OFF } irq_line;$/;"	g	struct:system_t	access:public
+irq_stop	irq.c	/^void irq_stop(){$/;"	f
+irq_stop	irq.h	/^void irq_stop();$/;"	p	signature:()
+jump_to_app	irq.c	/^void (*jump_to_app) (void) = 0x0000;$/;"	v
+last_block	neginf/neginf_priv.h	/^    nbool last_block;$/;"	m	struct:neginf_state_s	access:public
+lc_read	neginf/neginf.c	/^ntiny lc_read(ntiny * lenghts)$/;"	f	signature:(ntiny * lenghts)
+lc_read	neginf/neginf_priv.h	/^static ntiny lc_read(ntiny * lengths);$/;"	p	signature:(ntiny * lengths)
+leap	usbdrv/usbdrvasm.S	/^#define leap    x4$/;"	d
+leave_application	irq.c	/^void leave_application(void)$/;"	f	signature:(void)
+leave_application	irq.h	/^void leave_application(void);$/;"	p	signature:(void)
+led_off	sram.h	/^#define led_off(/;"	d
+led_on	sram.h	/^#define led_on(/;"	d
+led_pwm_off	sram.h	/^#define led_pwm_off(/;"	d
+led_pwm_on	sram.h	/^#define led_pwm_on(/;"	d
+len	usbdrv/usbdrv.h	/^    volatile uchar   len;$/;"	m	struct:usbTxStatus	access:public
+lit_len_begins	neginf/neginf_priv.h	/^    nint lit_len_begins[14];$/;"	m	struct:neginf_state_s	access:public
+lit_len_lengths	neginf/neginf_priv.h	/^    ntiny lit_len_lengths[288];$/;"	m	struct:neginf_state_s	access:public
+lit_len_read	neginf/neginf.c	/^nint lit_len_read()$/;"	f
+lit_len_read	neginf/neginf_priv.h	/^static nint lit_len_read();$/;"	p	signature:()
+lo8	usbdrv/usbportability.h	/^#define lo8(/;"	d
+loader_enabled	requests.h	/^    uint8_t loader_enabled;$/;"	m	struct:usb_transaction_t	access:public
+lookahead	neginf/neginf.c	/^nint lookahead()$/;"	f
+lookahead	neginf/neginf_priv.h	/^static nint lookahead();$/;"	p	signature:()
+macro	usbdrv/usbportability.h	/^#define macro /;"	d
+main	commandline/snesuploader.c	/^int main(int argc, char **argv)$/;"	f	signature:(int argc, char **argv)
+main	inflate_test.c	/^int main(int argc, char **argv)$/;"	f	signature:(int argc, char **argv)
+main	main.c	/^int main(void)$/;"	f	signature:(void)
+match_len	neginf/neginf_priv.h	/^    nint match_len;$/;"	m	struct:neginf_state_s	access:public
+mem_ref	inflate.c	/^char *mem_ref;$/;"	v
+memory	ringbuffer.c	/^char *memory;$/;"	v
+memory_size	ringbuffer.c	/^#define memory_size /;"	d	file:
+mode	neginf/neginf_priv.h	/^    ntiny mode;$/;"	m	struct:neginf_state_s	access:public
+mode_await_block	neginf/neginf_priv.h	/^    mode_await_block = 0,$/;"	e	enum:neginf_mode
+mode_count	neginf/neginf_priv.h	/^    mode_count$/;"	e	enum:neginf_mode
+mode_dynamic_block_begin	neginf/neginf_priv.h	/^    mode_dynamic_block_begin,$/;"	e	enum:neginf_mode
+mode_dynamic_read_dist	neginf/neginf_priv.h	/^    mode_dynamic_read_dist,$/;"	e	enum:neginf_mode
+mode_dynamic_read_lc	neginf/neginf_priv.h	/^    mode_dynamic_read_lc,$/;"	e	enum:neginf_mode
+mode_dynamic_read_lit_len	neginf/neginf_priv.h	/^    mode_dynamic_read_lit_len,$/;"	e	enum:neginf_mode
+mode_fixed_block_begin	neginf/neginf_priv.h	/^    mode_fixed_block_begin,$/;"	e	enum:neginf_mode
+mode_fun	neginf/neginf.c	/^typedef void(*mode_fun)() ;$/;"	t	file:
+mode_huff_block	neginf/neginf_priv.h	/^    mode_huff_block,$/;"	e	enum:neginf_mode
+mode_huff_dist	neginf/neginf_priv.h	/^    mode_huff_dist,$/;"	e	enum:neginf_mode
+mode_huff_dist_addbits	neginf/neginf_priv.h	/^    mode_huff_dist_addbits,$/;"	e	enum:neginf_mode
+mode_huff_len_addbits	neginf/neginf_priv.h	/^    mode_huff_len_addbits,$/;"	e	enum:neginf_mode
+mode_raw_block	neginf/neginf_priv.h	/^    mode_raw_block,$/;"	e	enum:neginf_mode
+mode_raw_block_begin	neginf/neginf_priv.h	/^    mode_raw_block_begin,$/;"	e	enum:neginf_mode
+mode_raw_block_begin2	neginf/neginf_priv.h	/^    mode_raw_block_begin2,$/;"	e	enum:neginf_mode
+mode_tab	neginf/neginf.c	/^static const mode_fun mode_tab[mode_count] = {$/;"	v	file:
+nbool	neginf/neginf_conf.h	/^typedef char nbool;$/;"	t
+nbool	neginf/neginf_conf.h	/^typedef int nbool; \/\/ boolean$/;"	t
+nbuf	neginf/neginf_conf.h	/^typedef uint32_t nbuf;$/;"	t
+nbuf	neginf/neginf_conf.h	/^typedef unsigned int nbuf; \/\/ has to be at least 24 bit, unsigned$/;"	t
+nbyte	neginf/neginf_conf.h	/^typedef uint8_t nbyte; \/\/ has to be exaclty 8 bit, unsigned$/;"	t
+nbyte	neginf/neginf_conf.h	/^typedef uint8_t nbyte;$/;"	t
+neginf_cb_byte	neginf/neginf.h	/^void neginf_cb_byte(nsize pos, nbyte byte);$/;"	p	signature:(nsize pos, nbyte byte)
+neginf_cb_completed	inflate.c	/^void neginf_cb_completed()$/;"	f
+neginf_cb_completed	neginf/neginf.h	/^void neginf_cb_completed();$/;"	p	signature:()
+neginf_cb_copy	inflate.c	/^void neginf_cb_copy(nsize from, nsize to, nint length)$/;"	f	signature:(nsize from, nsize to, nint length)
+neginf_cb_copy	neginf/neginf.h	/^void neginf_cb_copy(nsize from, nsize to, nint length);$/;"	p	signature:(nsize from, nsize to, nint length)
+neginf_cb_rel_copy	neginf/neginf.c	/^void neginf_cb_rel_copy(nint distance, nint length)$/;"	f	signature:(nint distance, nint length)
+neginf_cb_rel_copy	neginf/neginf.h	/^void neginf_cb_rel_copy(nint distance, nint length);$/;"	p	signature:(nint distance, nint length)
+neginf_cb_rel_copy	neginf/neginf_priv.h	/^void neginf_cb_rel_copy(nint distance, nint length);$/;"	p	signature:(nint distance, nint length)
+neginf_cb_seq_byte	inflate.c	/^void neginf_cb_seq_byte(nbyte byte)$/;"	f	signature:(nbyte byte)
+neginf_cb_seq_byte	neginf/neginf.c	/^void neginf_cb_seq_byte(nbyte byte)$/;"	f	signature:(nbyte byte)
+neginf_cb_seq_byte	neginf/neginf.h	/^void neginf_cb_seq_byte(nbyte byte);$/;"	p	signature:(nbyte byte)
+neginf_cb_seq_byte	neginf/neginf_priv.h	/^static void neginf_cb_seq_byte(nbyte byte);$/;"	p	signature:(nbyte byte)
+neginf_init	neginf/neginf.c	/^void neginf_init(nsize start_pos)$/;"	f	signature:(nsize start_pos)
+neginf_init	neginf/neginf.h	/^void neginf_init(nsize start_pos);$/;"	p	signature:(nsize start_pos)
+neginf_mode	neginf/neginf_priv.h	/^enum neginf_mode {$/;"	g
+neginf_output_position	neginf/neginf.c	/^nsize neginf_output_position()$/;"	f
+neginf_output_position	neginf/neginf.h	/^nsize neginf_output_position();$/;"	p	signature:()
+neginf_process_byte	neginf/neginf.c	/^void neginf_process_byte(nbyte byte)$/;"	f	signature:(nbyte byte)
+neginf_process_byte	neginf/neginf.h	/^void neginf_process_byte(nbyte byte);$/;"	p	signature:(nbyte byte)
+neginf_state	neginf/neginf_priv.h	/^typedef struct neginf_state_s neginf_state;$/;"	t	typeref:struct:neginf_state_s
+neginf_state_s	neginf/neginf_priv.h	/^struct neginf_state_s {$/;"	s
+neginf_state_s::code	neginf/neginf_priv.h	/^    nint code;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::dist_begins	neginf/neginf_priv.h	/^    nint dist_begins[14];$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::dist_lengths	neginf/neginf_priv.h	/^    ntiny dist_lengths[32];$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::hc_begins	neginf/neginf_priv.h	/^    nint hc_begins[14];$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::hc_lengths	neginf/neginf_priv.h	/^    ntiny hc_lengths[19];$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::hclen	neginf/neginf_priv.h	/^    ntiny hclen;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::hdist	neginf/neginf_priv.h	/^    ntiny hdist;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::hlit	neginf/neginf_priv.h	/^    nint hlit;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::input_queue	neginf/neginf_priv.h	/^    nbuf input_queue; \/\/ three input bytes$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::last_block	neginf/neginf_priv.h	/^    nbool last_block;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::lit_len_begins	neginf/neginf_priv.h	/^    nint lit_len_begins[14];$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::lit_len_lengths	neginf/neginf_priv.h	/^    ntiny lit_len_lengths[288];$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::match_len	neginf/neginf_priv.h	/^    nint match_len;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::mode	neginf/neginf_priv.h	/^    ntiny mode;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::order	neginf/neginf_priv.h	/^    nint order;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::output_pos	neginf/neginf_priv.h	/^    nsize output_pos;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::queue_size	neginf/neginf_priv.h	/^    ntiny queue_size; \/\/ 0 .. 24$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::raw_size	neginf/neginf_priv.h	/^    ntiny raw_size;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::tcode	neginf/neginf_priv.h	/^    ntiny tcode;$/;"	m	struct:neginf_state_s	access:public
+neginf_state_s::torder	neginf/neginf_priv.h	/^    ntiny torder;$/;"	m	struct:neginf_state_s	access:public
+nint	neginf/neginf_conf.h	/^typedef uint16_t nint;$/;"	t
+nint	neginf/neginf_conf.h	/^typedef unsigned int nint; \/\/ has to be at least 16 bit, unsigned$/;"	t
+nop2	usbdrv/usbportability.h	/^#define nop2 /;"	d
+nsize	neginf/neginf_conf.h	/^typedef size_t nsize; \/\/ has be at least 24 bit, unsigned$/;"	t
+nsize	neginf/neginf_conf.h	/^typedef uint32_t nsize;$/;"	t
+ntiny	neginf/neginf_conf.h	/^typedef uint8_t ntiny;$/;"	t
+ntiny	neginf/neginf_conf.h	/^typedef unsigned int ntiny; \/\/ has to be at least 8 bit, unsigned$/;"	t
+o	ringbuffer.c	/^char *o; \/\/ output pointer$/;"	v
+odDebug	usbdrv/oddebug.c	/^void    odDebug(uchar prefix, uchar *data, uchar len)$/;"	f	signature:(uchar prefix, uchar *data, uchar len)
+odDebug	usbdrv/oddebug.h	/^extern void odDebug(uchar prefix, uchar *data, uchar len);$/;"	p	signature:(uchar prefix, uchar *data, uchar len)
+odDebugInit	usbdrv/oddebug.h	/^#   define odDebugInit(/;"	d
+odDebugInit	usbdrv/oddebug.h	/^static inline void  odDebugInit(void)$/;"	f	signature:(void)
+order	neginf/neginf_priv.h	/^    nint order;$/;"	m	struct:neginf_state_s	access:public
+output_pos	neginf/neginf_priv.h	/^    nsize output_pos;$/;"	m	struct:neginf_state_s	access:public
+parse_hex	shell.c	/^uint8_t parse_hex(const uint8_t *s, uint32_t *hexval)$/;"	f	signature:(const uint8_t *s, uint32_t *hexval)
+phase	usbdrv/usbdrvasm.S	/^#define phase   x4$/;"	d
+pos_head	ringbuffer.c	/^int pos_head;$/;"	v
+pos_mem	ringbuffer.c	/^int pos_mem;$/;"	v
+pread	fifo.h	/^    uint8_t *pread;             \/\/ Lesezeiger$/;"	m	struct:__anon1	access:public
 prescaler	timer.c	/^uint16_t prescaler;$/;"	v
-pwrite	fifo.h	/^    uint8_t *pwrite;            \/\/ Schreibzeiger$/;"	m	struct:__anon1
-read2end	fifo.h	/^    uint8_t read2end, write2end;        \/\/ # Zeichen bis zum Überlauf Lese-\/Schreibzeiger$/;"	m	struct:__anon1
-read_buffer	main.c	/^uint8_t read_buffer[TRANSFER_BUFFER_SIZE];$/;"	v
-req_addr	main.c	/^uint32_t req_addr = 0;$/;"	v
-req_addr_end	main.c	/^uint32_t req_addr_end = 0;$/;"	v
-req_bank	main.c	/^uint8_t req_bank;$/;"	v
-req_bank_cnt	main.c	/^uint16_t req_bank_cnt;$/;"	v
-req_bank_size	main.c	/^uint32_t req_bank_size;$/;"	v
-req_percent	main.c	/^uint8_t req_percent;$/;"	v
-req_percent_last	main.c	/^uint8_t req_percent_last;$/;"	v
-req_size	main.c	/^uint32_t req_size;$/;"	v
-req_state	main.c	/^uint8_t req_state = REQ_STATUS_IDLE;$/;"	v
-rle_decode	rle.c	/^uint8_t rle_decode(PGM_VOID_P in_addr, int32_t in_len, uint32_t out_addr)$/;"	f
-rootDir	fat.h	/^	unsigned long int  	rootDir;		\/\/ Sektor(f16)\/Cluster(f32) nr root directory$/;"	m	struct:Fat
-row	fat.h	/^	unsigned char 		row;			\/\/ reihe im sektor in der die datei infos stehen (reihe 0-15)$/;"	m	struct:File
-rx_int	uart.c	/^    uint8_t rx_int:1;$/;"	m	struct:__anon2	file:
-rx_remaining	main.c	/^uint8_t rx_remaining = 0;$/;"	v
+printHex	usbdrv/oddebug.c	/^static void printHex(uchar c)$/;"	f	file:	signature:(uchar c)
+prompt	shell.c	/^ void prompt(void){$/;"	f	signature:(void)
+pwm_init	pwm.h	/^ void pwm_init(void);$/;"	p	signature:(void)
+pwm_stop	pwm.h	/^void pwm_stop(void);$/;"	p	signature:(void)
+pwrite	fifo.h	/^    uint8_t *pwrite;            \/\/ Schreibzeiger$/;"	m	struct:__anon1	access:public
+queue_size	neginf/neginf_priv.h	/^    ntiny queue_size; \/\/ 0 .. 24$/;"	m	struct:neginf_state_s	access:public
+r	ringbuffer.c	/^char *r; \/\/ position from where we can read (if rb_count > 0)$/;"	v
+raw_block	neginf/neginf.c	/^void raw_block()$/;"	f
+raw_block	neginf/neginf_priv.h	/^static void raw_block();$/;"	p	signature:()
+raw_block_begin	neginf/neginf.c	/^void raw_block_begin()$/;"	f
+raw_block_begin	neginf/neginf_priv.h	/^static void raw_block_begin();$/;"	p	signature:()
+raw_block_begin2	neginf/neginf.c	/^void raw_block_begin2()$/;"	f
+raw_block_begin2	neginf/neginf_priv.h	/^static void raw_block_begin2();$/;"	p	signature:()
+raw_size	neginf/neginf_priv.h	/^    ntiny raw_size;$/;"	m	struct:neginf_state_s	access:public
+rb_copy	ringbuffer.c	/^void rb_copy(int from,int to,int len){$/;"	f	signature:(int from,int to,int len)
+rb_count	ringbuffer.c	/^int rb_count;$/;"	v
+rb_dump	ringbuffer.c	/^void rb_dump()$/;"	f
+rb_flush	ringbuffer.c	/^void rb_flush(){$/;"	f
+rb_flush	ringbuffer.h	/^void rb_flush(void);$/;"	p	signature:(void)
+rb_free	ringbuffer.h	/^#define rb_free(/;"	d
+rb_get	ringbuffer.c	/^char rb_get(void)$/;"	f	signature:(void)
+rb_get	ringbuffer.h	/^char rb_get(void);$/;"	p	signature:(void)
+rb_init	ringbuffer.c	/^void rb_init()$/;"	f
+rb_init	ringbuffer.h	/^void rb_init(void);$/;"	p	signature:(void)
+rb_isempty	ringbuffer.h	/^#define rb_isempty(/;"	d
+rb_isfull	ringbuffer.h	/^#define rb_isfull(/;"	d
+rb_put	ringbuffer.c	/^void rb_put(char el)$/;"	f	signature:(char el)
+rb_put	ringbuffer.h	/^void rb_put(char el);$/;"	p	signature:(char el)
+rb_read	ringbuffer.c	/^char rb_read(int pos)$/;"	f	signature:(int pos)
+read2end	fifo.h	/^    uint8_t read2end, write2end;        \/\/ # Zeichen bis zum Überlauf Lese-\/Schreibzeiger$/;"	m	struct:__anon1	access:public
+recv_buf	shell.c	/^uint8_t	recv_buf[RECEIVE_BUF_LEN];$/;"	v
+recv_counter	shell.c	/^volatile uint8_t	recv_counter = 0;$/;"	v
+req_addr	requests.h	/^    uint32_t req_addr;$/;"	m	struct:usb_transaction_t	access:public
+req_addr_end	requests.h	/^    uint32_t req_addr_end;$/;"	m	struct:usb_transaction_t	access:public
+req_bank	requests.h	/^    uint8_t req_bank;$/;"	m	struct:usb_transaction_t	access:public
+req_bank_cnt	requests.h	/^    uint16_t req_bank_cnt;$/;"	m	struct:usb_transaction_t	access:public
+req_bank_size	requests.h	/^    uint32_t req_bank_size;$/;"	m	struct:usb_transaction_t	access:public
+req_percent	requests.h	/^    uint8_t req_percent;$/;"	m	struct:usb_transaction_t	access:public
+req_percent_last	requests.h	/^    uint8_t req_percent_last;$/;"	m	struct:usb_transaction_t	access:public
+req_state	requests.h	/^    uint8_t req_state;$/;"	m	struct:usb_transaction_t	access:public
+reset_irq	system.h	/^    enum reset_irq_e   { RESET_IRQ_OFF, RESET_IRQ_ON } reset_irq;$/;"	m	struct:system_t	typeref:enum:system_t::reset_irq_e	access:public
+reset_irq_e	system.h	/^    enum reset_irq_e   { RESET_IRQ_OFF, RESET_IRQ_ON } reset_irq;$/;"	g	struct:system_t	access:public
+reset_line	system.h	/^    enum reset_line_e { RESET_OFF, RESET_ON } reset_line;$/;"	m	struct:system_t	typeref:enum:system_t::reset_line_e	access:public
+reset_line_e	system.h	/^    enum reset_line_e { RESET_OFF, RESET_ON } reset_line;$/;"	g	struct:system_t	access:public
+ringbuffer_size	ringbuffer.h	/^#define ringbuffer_size /;"	d
+rle_decode	rle.h	/^uint32_t rle_decode(PGM_VOID_P in_addr, uint32_t in_len, uint32_t out_addr);$/;"	p	signature:(PGM_VOID_P in_addr, uint32_t in_len, uint32_t out_addr)
+rom_mode	system.h	/^    enum rom_mode_e   { LOROM, HIROM } rom_mode;$/;"	m	struct:system_t	typeref:enum:system_t::rom_mode_e	access:public
+rom_mode_e	system.h	/^    enum rom_mode_e   { LOROM, HIROM } rom_mode;$/;"	g	struct:system_t	access:public
+rx_buffer	requests.h	/^    uint8_t rx_buffer[8];$/;"	m	struct:usb_transaction_t	access:public
+rx_int	uart.c	/^    uint8_t rx_int:1;$/;"	m	struct:__anon2	file:	access:public
+rx_remaining	requests.h	/^    uint8_t rx_remaining;$/;"	m	struct:usb_transaction_t	access:public
 rxbuff	uart.c	/^volatile char rxbuff;$/;"	v
+schar	usbdrv/usbdrv.h	/^#define schar /;"	d
 scratchpad_cmd	shared_memory.c	/^uint8_t scratchpad_cmd;$/;"	v
+scratchpad_locked_rx	shared_memory.c	/^uint8_t scratchpad_locked_rx = 1;$/;"	v
+scratchpad_locked_tx	shared_memory.c	/^uint8_t scratchpad_locked_tx = 1;$/;"	v
 scratchpad_payload	shared_memory.c	/^uint8_t scratchpad_payload;$/;"	v
+scratchpad_region_rx	shared_memory.c	/^uint8_t scratchpad_region_rx[SHARED_MEM_RX_LOC_SIZE];$/;"	v
+scratchpad_region_tx	shared_memory.c	/^uint8_t scratchpad_region_tx[SHARED_MEM_TX_LOC_SIZE];$/;"	v
 scratchpad_state	shared_memory.c	/^uint8_t scratchpad_state;$/;"	v
-secPerClust	fat.h	/^	unsigned char 		secPerClust;	\/\/ anzahl der sektoren pro cluster$/;"	m	struct:Fat
 second	timer.c	/^uint16_t volatile second;          \/\/ count seconds$/;"	v
-sector	fat.h	/^	unsigned char 		sector[512];	\/\/ der puffer für sektoren !$/;"	m	struct:Fat
-seek	fat.h	/^	unsigned long int 	seek;			\/\/ schreib position in der datei$/;"	m	struct:File
-send_irq	command.c	/^void send_irq()$/;"	f
-send_reset	command.c	/^void send_reset()$/;"	f
-set_rom_mode	command.c	/^void set_rom_mode()$/;"	f
+sei	usbdrv/usbportability.h	/^#define sei(/;"	d
+sei	usbdrv/usbportability.h	/^static inline void  sei(void)$/;"	f	signature:(void)
+shared_memory_init	shared_memory.c	/^void shared_memory_init(void){$/;"	f	signature:(void)
+shared_memory_init	shared_memory.h	/^void shared_memory_init(void);$/;"	p	signature:(void)
 shared_memory_irq_hook	shared_memory.c	/^void shared_memory_irq_hook()$/;"	f
 shared_memory_irq_restore	shared_memory.c	/^void shared_memory_irq_restore()$/;"	f
-shared_memory_read	shared_memory.c	/^int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer)$/;"	f
+shared_memory_read	shared_memory.c	/^int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer)$/;"	f	signature:(uint8_t *cmd, uint8_t *len,uint8_t *buffer)
+shared_memory_read	shared_memory.h	/^int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer);$/;"	p	signature:(uint8_t *cmd, uint8_t *len,uint8_t *buffer)
+shared_memory_scratchpad_region_rx_restore	shared_memory.c	/^void shared_memory_scratchpad_region_rx_restore()$/;"	f
+shared_memory_scratchpad_region_rx_restore	shared_memory.h	/^void shared_memory_scratchpad_region_rx_restore();$/;"	p	signature:()
+shared_memory_scratchpad_region_rx_save	shared_memory.c	/^void shared_memory_scratchpad_region_rx_save()$/;"	f
+shared_memory_scratchpad_region_rx_save	shared_memory.h	/^void shared_memory_scratchpad_region_rx_save();$/;"	p	signature:()
+shared_memory_scratchpad_region_save_helper	shared_memory.c	/^uint8_t shared_memory_scratchpad_region_save_helper(uint32_t addr){$/;"	f	signature:(uint32_t addr)
+shared_memory_scratchpad_region_save_helper	shared_memory.h	/^uint8_t shared_memory_scratchpad_region_save_helper(uint32_t addr);$/;"	p	signature:(uint32_t addr)
+shared_memory_scratchpad_region_tx_restore	shared_memory.c	/^void shared_memory_scratchpad_region_tx_restore()$/;"	f
+shared_memory_scratchpad_region_tx_restore	shared_memory.h	/^void shared_memory_scratchpad_region_tx_restore();$/;"	p	signature:()
+shared_memory_scratchpad_region_tx_save	shared_memory.c	/^void shared_memory_scratchpad_region_tx_save()$/;"	f
+shared_memory_scratchpad_region_tx_save	shared_memory.h	/^void shared_memory_scratchpad_region_tx_save();$/;"	p	signature:()
 shared_memory_scratchpad_tx_restore	shared_memory.c	/^void shared_memory_scratchpad_tx_restore()$/;"	f
 shared_memory_scratchpad_tx_save	shared_memory.c	/^void shared_memory_scratchpad_tx_save()$/;"	f
-shared_memory_write	shared_memory.c	/^void shared_memory_write(uint8_t cmd, uint8_t value)$/;"	f
+shared_memory_write	shared_memory.c	/^void shared_memory_write(uint8_t cmd, uint8_t value)$/;"	f	signature:(uint8_t cmd, uint8_t value)
+shared_memory_write	shared_memory.h	/^void shared_memory_write(uint8_t cmd, uint8_t value);$/;"	p	signature:(uint8_t cmd, uint8_t value)
 shared_memory_yield	shared_memory.c	/^void shared_memory_yield()$/;"	f
-size	fifo.h	/^    uint8_t size;               \/\/ Puffer-Größe$/;"	m	struct:__anon1
-snes_bus_active	sram.h	162;"	d
-snes_hirom	sram.h	169;"	d
-snes_irq_hi	sram.h	83;"	d
-snes_irq_lo	sram.h	86;"	d
-snes_irq_off	sram.h	85;"	d
-snes_irq_on	sram.h	82;"	d
-snes_lorom	sram.h	170;"	d
-snes_reset_hi	sram.h	94;"	d
-snes_reset_lo	sram.h	97;"	d
-snes_reset_off	sram.h	96;"	d
-snes_reset_on	sram.h	93;"	d
-snes_wr_disable	sram.h	176;"	d
-snes_wr_enable	sram.h	178;"	d
-soft_reset	watchdog.h	32;"	d
+shellStyleMatch	commandline/opendevice.c	/^static int shellStyleMatch(char *text, char *pattern)$/;"	f	file:	signature:(char *text, char *pattern)
+shell_help	shell.c	/^void shell_help(void){$/;"	f	signature:(void)
+shell_run	shell.c	/^void shell_run(void)$/;"	f	signature:(void)
+shell_run	shell.h	/^ void shell_run(void);$/;"	p	signature:(void)
+shift	usbdrv/usbdrvasm.S	/^#define shift   r18$/;"	d
+size	fifo.h	/^    uint8_t size;               \/\/ Puffer-Größe$/;"	m	struct:__anon1	access:public
+snes_bus_active	sram.h	/^#define snes_bus_active(/;"	d
+snes_hirom	sram.h	/^#define snes_hirom(/;"	d
+snes_irq_hi	sram.h	/^#define snes_irq_hi(/;"	d
+snes_irq_lo	sram.h	/^#define snes_irq_lo(/;"	d
+snes_irq_off	sram.h	/^#define snes_irq_off(/;"	d
+snes_irq_on	sram.h	/^#define snes_irq_on(/;"	d
+snes_lorom	sram.h	/^#define snes_lorom(/;"	d
+snes_reset_count	system.h	/^    uint8_t snes_reset_count;$/;"	m	struct:system_t	access:public
+snes_reset_hi	sram.h	/^#define snes_reset_hi(/;"	d
+snes_reset_lo	sram.h	/^#define snes_reset_lo(/;"	d
+snes_reset_off	sram.h	/^#define snes_reset_off(/;"	d
+snes_reset_on	sram.h	/^#define snes_reset_on(/;"	d
+snes_reset_test	sram.h	/^#define snes_reset_test(/;"	d
+snes_wr_disable	sram.h	/^#define snes_wr_disable(/;"	d
+snes_wr_enable	sram.h	/^#define snes_wr_enable(/;"	d
+soft_reset	watchdog.h	/^#define soft_reset(/;"	d
 sram_bulk_addr_restore	sram.c	/^inline void sram_bulk_addr_restore()$/;"	f
-sram_bulk_addr_save	sram.c	/^inline void sram_bulk_addr_save()$/;"	f
-sram_bulk_copy	sram.c	/^void sram_bulk_copy_from_buffer(uint32_t addr, uint8_t * src, uint32_t len)$/;"	f
-sram_bulk_read	sram.c	/^inline uint8_t sram_bulk_read(void)$/;"	f
-sram_bulk_copy_into_buffer	sram.c	/^void sram_bulk_copy_into_buffer(uint32_t addr, uint8_t * dst, uint32_t len)$/;"	f
-sram_bulk_read_end	sram.c	/^void sram_bulk_read_end(void)$/;"	f
-sram_bulk_read_next	sram.c	/^inline void sram_bulk_read_next(void)$/;"	f
-sram_bulk_read_start	sram.c	/^void sram_bulk_read_start(uint32_t addr)$/;"	f
-sram_bulk_set	sram.c	/^void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value){$/;"	f
-sram_bulk_write	sram.c	/^inline void sram_bulk_write( uint8_t data)$/;"	f
-sram_bulk_write_end	sram.c	/^void sram_bulk_write_end(void)$/;"	f
-sram_bulk_write_next	sram.c	/^inline void sram_bulk_write_next(void)$/;"	f
-sram_bulk_write_start	sram.c	/^void sram_bulk_write_start(uint32_t addr)$/;"	f
-sram_read	sram.c	/^uint8_t sram_read(uint32_t addr)$/;"	f
-sram_write	sram.c	/^void sram_write(uint32_t addr, uint8_t data)$/;"	f
-sreg_set	sram.c	/^void sreg_set(uint32_t addr)$/;"	f
-startSectors	fat.h	/^	unsigned long int   startSectors;	\/\/ der erste sektor in einer reihe (freie oder verkettete)$/;"	m	struct:Fat
-sync_errors	main.c	/^uint16_t sync_errors = 0;$/;"	v
-system_init	sram.c	/^void system_init(void)$/;"	f
+sram_bulk_addr_restore	sram.h	/^inline void sram_bulk_addr_restore();$/;"	p	signature:()
+sram_bulk_addr_save	sram.c	/^ void sram_bulk_addr_save()$/;"	f
+sram_bulk_addr_save	sram.h	/^inline void sram_bulk_addr_save();$/;"	p	signature:()
+sram_bulk_copy_from_buffer	sram.c	/^void sram_bulk_copy_from_buffer(uint32_t addr, uint8_t * src, uint32_t len)$/;"	f	signature:(uint32_t addr, uint8_t * src, uint32_t len)
+sram_bulk_copy_from_buffer	sram.h	/^void sram_bulk_copy_from_buffer(uint32_t addr, uint8_t * src, uint32_t len);$/;"	p	signature:(uint32_t addr, uint8_t * src, uint32_t len)
+sram_bulk_copy_into_buffer	sram.c	/^void sram_bulk_copy_into_buffer(uint32_t addr, uint8_t * dst, uint32_t len)$/;"	f	signature:(uint32_t addr, uint8_t * dst, uint32_t len)
+sram_bulk_copy_into_buffer	sram.h	/^void sram_bulk_copy_into_buffer(uint32_t addr, uint8_t * dst, uint32_t len);$/;"	p	signature:(uint32_t addr, uint8_t * dst, uint32_t len)
+sram_bulk_read	sram.c	/^inline uint8_t sram_bulk_read(void)$/;"	f	signature:(void)
+sram_bulk_read	sram.h	/^uint8_t sram_bulk_read(void);$/;"	p	signature:(void)
+sram_bulk_read_end	sram.c	/^void sram_bulk_read_end(void)$/;"	f	signature:(void)
+sram_bulk_read_end	sram.h	/^inline void sram_bulk_read_end(void);$/;"	p	signature:(void)
+sram_bulk_read_next	sram.c	/^inline void sram_bulk_read_next(void)$/;"	f	signature:(void)
+sram_bulk_read_next	sram.h	/^inline void sram_bulk_read_next(void);$/;"	p	signature:(void)
+sram_bulk_read_start	sram.c	/^void sram_bulk_read_start(uint32_t addr)$/;"	f	signature:(uint32_t addr)
+sram_bulk_read_start	sram.h	/^void sram_bulk_read_start(uint32_t addr);$/;"	p	signature:(uint32_t addr)
+sram_bulk_set	sram.c	/^void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value){$/;"	f	signature:(uint32_t addr, uint32_t len,uint8_t value)
+sram_bulk_set	sram.h	/^void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value);$/;"	p	signature:(uint32_t addr, uint32_t len,uint8_t value)
+sram_bulk_write	sram.c	/^inline void sram_bulk_write( uint8_t data)$/;"	f	signature:( uint8_t data)
+sram_bulk_write	sram.h	/^void sram_bulk_write(uint8_t data);$/;"	p	signature:(uint8_t data)
+sram_bulk_write_end	sram.c	/^void sram_bulk_write_end(void)$/;"	f	signature:(void)
+sram_bulk_write_end	sram.h	/^inline void sram_bulk_write_end(void);$/;"	p	signature:(void)
+sram_bulk_write_next	sram.c	/^inline void sram_bulk_write_next(void)$/;"	f	signature:(void)
+sram_bulk_write_next	sram.h	/^inline void sram_bulk_write_next(void);$/;"	p	signature:(void)
+sram_bulk_write_start	sram.c	/^void sram_bulk_write_start(uint32_t addr)$/;"	f	signature:(uint32_t addr)
+sram_bulk_write_start	sram.h	/^void sram_bulk_write_start(uint32_t addr);$/;"	p	signature:(uint32_t addr)
+sram_init	sram.c	/^void sram_init(void)$/;"	f	signature:(void)
+sram_init	sram.h	/^void sram_init(void);$/;"	p	signature:(void)
+sram_read	sram.c	/^uint8_t sram_read(uint32_t addr)$/;"	f	signature:(uint32_t addr)
+sram_read	sram.h	/^uint8_t sram_read(uint32_t addr);$/;"	p	signature:(uint32_t addr)
+sram_read16_be	sram.c	/^uint16_t sram_read16_be(uint32_t addr){$/;"	f	signature:(uint32_t addr)
+sram_read16_be	sram.h	/^uint16_t sram_read16_be(uint32_t addr);$/;"	p	signature:(uint32_t addr)
+sram_write	sram.c	/^void sram_write(uint32_t addr, uint8_t data)$/;"	f	signature:(uint32_t addr, uint8_t data)
+sram_write	sram.h	/^void sram_write(uint32_t addr, uint8_t data);$/;"	p	signature:(uint32_t addr, uint8_t data)
+sreg_set	sram.c	/^void sreg_set(uint32_t addr)$/;"	f	signature:(uint32_t addr)
+sreg_set	sram.h	/^void sreg_set(uint32_t addr);$/;"	p	signature:(uint32_t addr)
+state	neginf/neginf.c	/^static neginf_state state;$/;"	v	file:
+sync_errors	requests.h	/^    uint16_t sync_errors;$/;"	m	struct:usb_transaction_t	access:public
+system	system.c	/^system_t system;$/;"	v
+system_init	system.c	/^void system_init(void)$/;"	f	signature:(void)
+system_init	system.h	/^void system_init(void);$/;"	p	signature:(void)
+system_send_snes_irq	system.c	/^void system_send_snes_irq()$/;"	f
+system_send_snes_irq	system.h	/^void system_send_snes_irq(void);$/;"	p	signature:(void)
+system_send_snes_reset	system.c	/^void system_send_snes_reset()$/;"	f
+system_send_snes_reset	system.h	/^void system_send_snes_reset(void);$/;"	p	signature:(void)
+system_set_bus_avr	system.c	/^void system_set_bus_avr()$/;"	f
+system_set_bus_avr	system.h	/^void system_set_bus_avr(void);$/;"	p	signature:(void)
+system_set_bus_snes	system.c	/^void system_set_bus_snes()$/;"	f
+system_set_bus_snes	system.h	/^void system_set_bus_snes(void);$/;"	p	signature:(void)
+system_set_rom_hirom	system.c	/^void system_set_rom_hirom()$/;"	f
+system_set_rom_hirom	system.h	/^void system_set_rom_hirom(void);$/;"	p	signature:(void)
+system_set_rom_lorom	system.c	/^void system_set_rom_lorom()$/;"	f
+system_set_rom_lorom	system.h	/^void system_set_rom_lorom(void);$/;"	p	signature:(void)
+system_set_rom_mode	system.c	/^void system_set_rom_mode(usb_transaction_t *usb_trans)$/;"	f	signature:(usb_transaction_t *usb_trans)
+system_set_rom_mode	system.h	/^void system_set_rom_mode(usb_transaction_t *usb_trans);$/;"	p	signature:(usb_transaction_t *usb_trans)
+system_set_wr_disable	system.c	/^void system_set_wr_disable(){$/;"	f
+system_set_wr_disable	system.h	/^void system_set_wr_disable(void);$/;"	p	signature:(void)
+system_set_wr_enable	system.c	/^void system_set_wr_enable(){$/;"	f
+system_set_wr_enable	system.h	/^void system_set_wr_enable(void);$/;"	p	signature:(void)
+system_snes_irq_off	system.c	/^void system_snes_irq_off()$/;"	f
+system_snes_irq_off	system.h	/^void system_snes_irq_off(void);$/;"	p	signature:(void)
+system_snes_irq_on	system.c	/^void system_snes_irq_on()$/;"	f
+system_status	system.c	/^void system_status(){$/;"	f
+system_status	system.h	/^void system_status();$/;"	p	signature:()
+system_status_bus	system.c	/^char* system_status_bus(uint8_t val){$/;"	f	signature:(uint8_t val)
+system_status_helper	system.c	/^char* system_status_helper(uint8_t val){$/;"	f	signature:(uint8_t val)
+system_status_rom	system.c	/^char* system_status_rom(uint8_t val){$/;"	f	signature:(uint8_t val)
+system_t	system.h	/^typedef struct system_t {$/;"	s
+system_t	system.h	/^} system_t;$/;"	t	typeref:struct:system_t
+system_t::HIROM	system.h	/^    enum rom_mode_e   { LOROM, HIROM } rom_mode;$/;"	e	enum:system_t::rom_mode_e
+system_t::IRQ_OFF	system.h	/^    enum irq_line_e   { IRQ_ON, IRQ_OFF } irq_line;$/;"	e	enum:system_t::irq_line_e
+system_t::IRQ_ON	system.h	/^    enum irq_line_e   { IRQ_ON, IRQ_OFF } irq_line;$/;"	e	enum:system_t::irq_line_e
+system_t::LOROM	system.h	/^    enum rom_mode_e   { LOROM, HIROM } rom_mode;$/;"	e	enum:system_t::rom_mode_e
+system_t::MODE_AVR	system.h	/^    enum bus_mode_e   { MODE_AVR, MODE_SNES } bus_mode;$/;"	e	enum:system_t::bus_mode_e
+system_t::MODE_SNES	system.h	/^    enum bus_mode_e   { MODE_AVR, MODE_SNES } bus_mode;$/;"	e	enum:system_t::bus_mode_e
+system_t::RESET_IRQ_OFF	system.h	/^    enum reset_irq_e   { RESET_IRQ_OFF, RESET_IRQ_ON } reset_irq;$/;"	e	enum:system_t::reset_irq_e
+system_t::RESET_IRQ_ON	system.h	/^    enum reset_irq_e   { RESET_IRQ_OFF, RESET_IRQ_ON } reset_irq;$/;"	e	enum:system_t::reset_irq_e
+system_t::RESET_OFF	system.h	/^    enum reset_line_e { RESET_OFF, RESET_ON } reset_line;$/;"	e	enum:system_t::reset_line_e
+system_t::RESET_ON	system.h	/^    enum reset_line_e { RESET_OFF, RESET_ON } reset_line;$/;"	e	enum:system_t::reset_line_e
+system_t::WR_DISABLE	system.h	/^    enum wr_line_e    { WR_DISABLE, WR_ENABLE } wr_line;$/;"	e	enum:system_t::wr_line_e
+system_t::WR_ENABLE	system.h	/^    enum wr_line_e    { WR_DISABLE, WR_ENABLE } wr_line;$/;"	e	enum:system_t::wr_line_e
+system_t::avr_reset_count	system.h	/^    uint8_t avr_reset_count;$/;"	m	struct:system_t	access:public
+system_t::bus_mode	system.h	/^    enum bus_mode_e   { MODE_AVR, MODE_SNES } bus_mode;$/;"	m	struct:system_t	typeref:enum:system_t::bus_mode_e	access:public
+system_t::bus_mode_e	system.h	/^    enum bus_mode_e   { MODE_AVR, MODE_SNES } bus_mode;$/;"	g	struct:system_t	access:public
+system_t::irq_line	system.h	/^    enum irq_line_e   { IRQ_ON, IRQ_OFF } irq_line;$/;"	m	struct:system_t	typeref:enum:system_t::irq_line_e	access:public
+system_t::irq_line_e	system.h	/^    enum irq_line_e   { IRQ_ON, IRQ_OFF } irq_line;$/;"	g	struct:system_t	access:public
+system_t::reset_irq	system.h	/^    enum reset_irq_e   { RESET_IRQ_OFF, RESET_IRQ_ON } reset_irq;$/;"	m	struct:system_t	typeref:enum:system_t::reset_irq_e	access:public
+system_t::reset_irq_e	system.h	/^    enum reset_irq_e   { RESET_IRQ_OFF, RESET_IRQ_ON } reset_irq;$/;"	g	struct:system_t	access:public
+system_t::reset_line	system.h	/^    enum reset_line_e { RESET_OFF, RESET_ON } reset_line;$/;"	m	struct:system_t	typeref:enum:system_t::reset_line_e	access:public
+system_t::reset_line_e	system.h	/^    enum reset_line_e { RESET_OFF, RESET_ON } reset_line;$/;"	g	struct:system_t	access:public
+system_t::rom_mode	system.h	/^    enum rom_mode_e   { LOROM, HIROM } rom_mode;$/;"	m	struct:system_t	typeref:enum:system_t::rom_mode_e	access:public
+system_t::rom_mode_e	system.h	/^    enum rom_mode_e   { LOROM, HIROM } rom_mode;$/;"	g	struct:system_t	access:public
+system_t::snes_reset_count	system.h	/^    uint8_t snes_reset_count;$/;"	m	struct:system_t	access:public
+system_t::wr_line	system.h	/^    enum wr_line_e    { WR_DISABLE, WR_ENABLE } wr_line;$/;"	m	struct:system_t	typeref:enum:system_t::wr_line_e	access:public
+system_t::wr_line_e	system.h	/^    enum wr_line_e    { WR_DISABLE, WR_ENABLE } wr_line;$/;"	g	struct:system_t	access:public
+t	ringbuffer.c	/^#define t /;"	d	file:
+tcode	neginf/neginf_priv.h	/^    ntiny tcode;$/;"	m	struct:neginf_state_s	access:public
 test_bulk_read_write	testing.c	/^void test_bulk_read_write()$/;"	f
+test_bulk_read_write	testing.h	/^void test_bulk_read_write();$/;"	p	signature:()
 test_crc	testing.c	/^void test_crc()$/;"	f
-test_non_zero_memory	testing.c	/^void test_non_zero_memory(uint32_t bottom_addr, uint32_t top_addr)$/;"	f
+test_crc	testing.h	/^void test_crc();$/;"	p	signature:()
+test_memory_pattern	testing.c	/^void test_memory_pattern(uint32_t bottom_addr, uint32_t top_addr, uint32_t bank_size)$/;"	f	signature:(uint32_t bottom_addr, uint32_t top_addr, uint32_t bank_size)
+test_non_zero_memory	testing.c	/^void test_non_zero_memory(uint32_t bottom_addr, uint32_t top_addr)$/;"	f	signature:(uint32_t bottom_addr, uint32_t top_addr)
+test_non_zero_memory	testing.h	/^void test_non_zero_memory(uint32_t bottom_addr, uint32_t top_addr);$/;"	p	signature:(uint32_t bottom_addr, uint32_t top_addr)
 test_read_write	testing.c	/^void test_read_write()$/;"	f
-test_sdcard	testing.c	/^void test_sdcard(void){$/;"	f
-timer_start	timer.c	/^void timer_start( void )$/;"	f
-timer_stop_int	timer.c	/^uint16_t timer_stop_int(void)$/;"	f
-tmr_int	uart.c	/^    uint8_t tmr_int:1;$/;"	m	struct:__anon2	file:
-tx_buffer	main.c	/^uint8_t tx_buffer[32];$/;"	v
-tx_remaining	main.c	/^uint8_t tx_remaining = 0;$/;"	v
-uart_init	uart.c	/^void uart_init(void)$/;"	f
-uart_putc	uart.c	/^void uart_putc(uint8_t c)$/;"	f
-uart_puts	uart.c	/^void uart_puts(const char *s)$/;"	f
-uart_puts_P	uart.c	/^void uart_puts_P(PGM_P s)$/;"	f
+test_read_write	testing.h	/^void test_read_write();$/;"	p	signature:()
+timer_start	timer.c	/^void timer_start( void )$/;"	f	signature:( void )
+timer_start	timer.h	/^int16_t timer_start( void );$/;"	p	signature:( void )
+timer_stop	timer.h	/^double timer_stop( void );$/;"	p	signature:( void )
+timer_stop_int	timer.c	/^uint16_t timer_stop_int(void)$/;"	f	signature:(void)
+timer_stop_int	timer.h	/^int16_t timer_stop_int( void );$/;"	p	signature:( void )
+tmr_int	uart.c	/^    uint8_t tmr_int:1;$/;"	m	struct:__anon2	file:	access:public
+token_ptr	shell.c	/^uint8_t *token_ptr;$/;"	v
+torder	neginf/neginf_priv.h	/^    ntiny torder;$/;"	m	struct:neginf_state_s	access:public
+transaction_status	command.c	/^void transaction_status(){$/;"	f
+transaction_status	command.h	/^void transaction_status();$/;"	p	signature:()
+tx_buffer	requests.h	/^    uint8_t tx_buffer[32];$/;"	m	struct:usb_transaction_t	access:public
+tx_remaining	requests.h	/^    uint8_t tx_remaining ;$/;"	m	struct:usb_transaction_t	access:public
+uartPutc	usbdrv/oddebug.c	/^static void uartPutc(char c)$/;"	f	file:	signature:(char c)
+uart_init	uart.c	/^void uart_init(void)$/;"	f	signature:(void)
+uart_init	uart.h	/^void uart_init(void);$/;"	p	signature:(void)
+uart_putc	uart.c	/^void uart_putc(uint8_t c)$/;"	f	signature:(uint8_t c)
+uart_putc	uart.h	/^void uart_putc(const uint8_t);$/;"	p	signature:(const uint8_t)
+uart_puts	uart.c	/^void uart_puts(const char *s)$/;"	f	signature:(const char *s)
+uart_puts	uart.h	/^void uart_puts(const char *s);$/;"	p	signature:(const char *s)
+uart_puts_P	uart.c	/^void uart_puts_P(PGM_P s)$/;"	f	signature:(PGM_P s)
+uart_puts_P	uart.h	/^void uart_puts_P(PGM_P s);$/;"	p	signature:(PGM_P s)
 uart_stdout	uart.c	/^FILE uart_stdout = FDEV_SETUP_STREAM(uart_stream, NULL, _FDEV_SETUP_WRITE);$/;"	v
-uart_stream	uart.c	/^static int uart_stream(char c, FILE * stream)$/;"	f	file:
-uint	timer.c	47;"	d	file:
-uint8_t	timer.c	46;"	d	file:
-usbFunctionRead	usb_bulk.c	/^uint8_t usbFunctionRead(uint8_t * data, uint8_t len)$/;"	f
-usbFunctionSetup	main.c	/^usbMsgLen_t usbFunctionSetup(uchar data[8])$/;"	f
-usbFunctionWrite	usb_bulk.c	/^uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)$/;"	f
-usb_connect	main.c	/^void usb_connect()$/;"	f
-wdt_init	watchdog.c	/^void wdt_init(void)$/;"	f
-write2end	fifo.h	/^    uint8_t read2end, write2end;        \/\/ # Zeichen bis zum Überlauf Lese-\/Schreibzeiger$/;"	m	struct:__anon1
+uart_stream	uart.c	/^static int uart_stream(char c, FILE * stream)$/;"	f	file:	signature:(char c, FILE * stream)
+uart_stream	uart.c	/^static int uart_stream(char c, FILE *stream);$/;"	p	file:	signature:(char c, FILE *stream)
+uchar	usbdrv/oddebug.h	/^#   define  uchar /;"	d
+uchar	usbdrv/usbdrv.h	/^#define uchar /;"	d
+uint	timer.c	/^#define uint /;"	d	file:
+uint8_t	timer.c	/^#define uint8_t /;"	d	file:
+usage	commandline/snesuploader.c	/^static void usage(char *name)$/;"	f	file:	signature:(char *name)
+usbAllRequestsAreDisabled	usbdrv/usbdrv.h	/^#define usbAllRequestsAreDisabled(/;"	d
+usbBuildTxBlock	usbdrv/usbdrv.c	/^static inline void usbBuildTxBlock(void)$/;"	f	file:	signature:(void)
+usbConfiguration	usbdrv/usbdrv.c	/^uchar       usbConfiguration;   \/* currently selected configuration. Administered by driver, but not used *\/$/;"	v
+usbCrc16	usbdrv/usbdrv.h	/^#define usbCrc16(/;"	d
+usbCrc16	usbdrv/usbdrv.h	/^extern unsigned usbCrc16(unsigned data, uchar len);$/;"	p	signature:(unsigned data, uchar len)
+usbCrc16	usbdrv/usbdrvasm.S	/^usbCrc16:$/;"	l
+usbCrc16Append	usbdrv/usbdrv.h	/^#define usbCrc16Append(/;"	d
+usbCrc16Append	usbdrv/usbdrv.h	/^extern unsigned usbCrc16Append(unsigned data, uchar len);$/;"	p	signature:(unsigned data, uchar len)
+usbCrc16Append	usbdrv/usbdrvasm.S	/^usbCrc16Append:$/;"	l
+usbCurrentDataToken	usbdrv/usbdrv.c	/^uchar       usbCurrentDataToken;\/* when we check data toggling to ignore duplicate packets *\/$/;"	v
+usbCurrentTok	usbdrv/usbdrv.c	/^uchar       usbCurrentTok;      \/* last token received or endpoint number for last OUT token if != 0 *\/$/;"	v
+usbDescriptorConfiguration	usbdrv/usbdrv.c	/^PROGMEM char usbDescriptorConfiguration[] = {    \/* USB configuration descriptor *\/$/;"	v
+usbDescriptorDevice	usbdrv/usbdrv.c	/^PROGMEM char usbDescriptorDevice[] = {    \/* USB device descriptor *\/$/;"	v
+usbDescriptorString0	usbdrv/usbdrv.c	/^PROGMEM char usbDescriptorString0[] = { \/* language descriptor *\/$/;"	v
+usbDescriptorStringDevice	usbdrv/usbdrv.c	/^PROGMEM int  usbDescriptorStringDevice[] = {$/;"	v
+usbDescriptorStringSerialNumber	usbdrv/usbdrv.c	/^PROGMEM int usbDescriptorStringSerialNumber[] = {$/;"	v
+usbDescriptorStringVendor	usbdrv/usbdrv.c	/^PROGMEM int  usbDescriptorStringVendor[] = {$/;"	v
+usbDeviceAddr	usbdrv/usbdrv.c	/^uchar       usbDeviceAddr;      \/* assigned during enumeration, defaults to 0 *\/$/;"	v
+usbDeviceConnect	usbdrv/usbdrv.h	/^#define usbDeviceConnect(/;"	d
+usbDeviceDisconnect	usbdrv/usbdrv.h	/^#define usbDeviceDisconnect(/;"	d
+usbDeviceRead	usbdrv/usbdrv.c	/^static uchar usbDeviceRead(uchar *data, uchar len)$/;"	f	file:	signature:(uchar *data, uchar len)
+usbDisableAllRequests	usbdrv/usbdrv.h	/^#define usbDisableAllRequests(/;"	d
+usbDriverDescriptor	usbdrv/usbdrv.c	/^static inline usbMsgLen_t usbDriverDescriptor(usbRequest_t *rq)$/;"	f	file:	signature:(usbRequest_t *rq)
+usbDriverSetup	usbdrv/usbdrv.c	/^static inline usbMsgLen_t usbDriverSetup(usbRequest_t *rq)$/;"	f	file:	signature:(usbRequest_t *rq)
+usbEnableAllRequests	usbdrv/usbdrv.h	/^#define usbEnableAllRequests(/;"	d
+usbFunctionDescriptor	usbdrv/usbdrv.h	/^USB_PUBLIC usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq);$/;"	p	signature:(struct usbRequest *rq)
+usbFunctionRead	usb_bulk.c	/^uint8_t usbFunctionRead(uint8_t * data, uint8_t len)$/;"	f	signature:(uint8_t * data, uint8_t len)
+usbFunctionRead	usb_bulk.h	/^uint8_t usbFunctionRead(uint8_t * data, uint8_t len);$/;"	p	signature:(uint8_t * data, uint8_t len)
+usbFunctionRead	usbdrv/usbdrv.h	/^USB_PUBLIC uchar usbFunctionRead(uchar *data, uchar len);$/;"	p	signature:(uchar *data, uchar len)
+usbFunctionSetup	main.c	/^usbMsgLen_t usbFunctionSetup(uchar data[8])$/;"	f	signature:(uchar data[8])
+usbFunctionSetup	usbdrv/usbdrv.h	/^USB_PUBLIC usbMsgLen_t usbFunctionSetup(uchar data[8]);$/;"	p	signature:(uchar data[8])
+usbFunctionWrite	usb_bulk.c	/^uint8_t usbFunctionWrite(uint8_t * data, uint8_t len)$/;"	f	signature:(uint8_t * data, uint8_t len)
+usbFunctionWrite	usb_bulk.h	/^uint8_t usbFunctionWrite(uint8_t * data, uint8_t len);$/;"	p	signature:(uint8_t * data, uint8_t len)
+usbFunctionWrite	usbdrv/usbdrv.h	/^USB_PUBLIC uchar usbFunctionWrite(uchar *data, uchar len);$/;"	p	signature:(uchar *data, uchar len)
+usbFunctionWriteOut	usbdrv/usbdrv.h	/^USB_PUBLIC void usbFunctionWriteOut(uchar *data, uchar len);$/;"	p	signature:(uchar *data, uchar len)
+usbGenericSetInterrupt	usbdrv/usbdrv.c	/^static void usbGenericSetInterrupt(uchar *data, uchar len, usbTxStatus_t *txStatus)$/;"	f	file:	signature:(uchar *data, uchar len, usbTxStatus_t *txStatus)
+usbGetStringAscii	commandline/opendevice.c	/^int usbGetStringAscii(usb_dev_handle * dev, int index, char *buf, int buflen)$/;"	f	signature:(usb_dev_handle * dev, int index, char *buf, int buflen)
+usbGetStringAscii	commandline/opendevice.h	/^int usbGetStringAscii(usb_dev_handle *dev, int index, char *buf, int buflen);$/;"	p	signature:(usb_dev_handle *dev, int index, char *buf, int buflen)
+usbHandleResetHook	usbdrv/usbdrv.c	/^static inline void usbHandleResetHook(uchar notResetState)$/;"	f	file:	signature:(uchar notResetState)
+usbHidReportDescriptor	usbdrv/usbdrv.h	/^#define usbHidReportDescriptor /;"	d
+usbInit	usbdrv/usbdrv.c	/^USB_PUBLIC void usbInit(void)$/;"	f	signature:(void)
+usbInit	usbdrv/usbdrv.h	/^USB_PUBLIC void usbInit(void);$/;"	p	signature:(void)
+usbInputBufOffset	usbdrv/usbdrv.c	/^uchar       usbInputBufOffset;  \/* offset in usbRxBuf used for low level receiving *\/$/;"	v
+usbInterruptIsReady	usbdrv/usbdrv.h	/^#define usbInterruptIsReady(/;"	d
+usbInterruptIsReady3	usbdrv/usbdrv.h	/^#define usbInterruptIsReady3(/;"	d
+usbMFTime16	usbdrv/usbdrvasm.S	/^usbMFTime16:$/;"	l
+usbMFTimeout	usbdrv/usbdrvasm.S	/^usbMFTimeout:$/;"	l
+usbMFWaitIdle	usbdrv/usbdrvasm.S	/^usbMFWaitIdle:              ; then wait until idle again$/;"	l
+usbMFWaitLoop	usbdrv/usbdrvasm.S	/^usbMFWaitLoop:$/;"	l
+usbMFWaitStrobe	usbdrv/usbdrvasm.S	/^usbMFWaitStrobe:            ; first wait for D- == 0 (idle strobe)$/;"	l
+usbMeasureFrameLength	usbdrv/usbdrv.h	/^extern unsigned usbMeasureFrameLength(void);$/;"	p	signature:(void)
+usbMeasureFrameLength	usbdrv/usbdrvasm.S	/^usbMeasureFrameLength:$/;"	l
+usbMsgFlags	usbdrv/usbdrv.c	/^static uchar        usbMsgFlags;    \/* flag values see below *\/$/;"	v	file:
+usbMsgLen	usbdrv/usbdrv.c	/^static usbMsgLen_t  usbMsgLen = USB_NO_MSG; \/* remaining number of bytes *\/$/;"	v	file:
+usbMsgLen_t	usbdrv/usbdrv.h	/^#   define usbMsgLen_t /;"	d
+usbMsgPtr	usbdrv/usbdrv.c	/^uchar               *usbMsgPtr;     \/* data to transmit next -- ROM or RAM address *\/$/;"	v
+usbNewDeviceAddr	usbdrv/usbdrv.c	/^uchar       usbNewDeviceAddr;   \/* device ID which should be set after status phase *\/$/;"	v
+usbOpenDevice	commandline/opendevice.c	/^int usbOpenDevice(usb_dev_handle ** device, int vendorID,$/;"	f	signature:(usb_dev_handle ** device, int vendorID, char *vendorNamePattern, int productID, char *productNamePattern, char *serialNamePattern, FILE * printMatchingDevicesFp, FILE * warningsFp)
+usbOpenDevice	commandline/opendevice.h	/^int usbOpenDevice(usb_dev_handle **device, int vendorID, char *vendorNamePattern, int productID, char *productNamePattern, char *serialNamePattern, FILE *printMatchingDevicesFp, FILE *warningsFp);$/;"	p	signature:(usb_dev_handle **device, int vendorID, char *vendorNamePattern, int productID, char *productNamePattern, char *serialNamePattern, FILE *printMatchingDevicesFp, FILE *warningsFp)
+usbPoll	usbdrv/usbdrv.c	/^USB_PUBLIC void usbPoll(void)$/;"	f	signature:(void)
+usbPoll	usbdrv/usbdrv.h	/^USB_PUBLIC void usbPoll(void);$/;"	p	signature:(void)
+usbProcessRx	usbdrv/usbdrv.c	/^static inline void usbProcessRx(uchar *data, uchar len)$/;"	f	file:	signature:(uchar *data, uchar len)
+usbRequest	usbdrv/usbdrv.h	/^typedef struct usbRequest{$/;"	s
+usbRequest::bRequest	usbdrv/usbdrv.h	/^    uchar       bRequest;$/;"	m	struct:usbRequest	access:public
+usbRequest::bmRequestType	usbdrv/usbdrv.h	/^    uchar       bmRequestType;$/;"	m	struct:usbRequest	access:public
+usbRequest::wIndex	usbdrv/usbdrv.h	/^    usbWord_t   wIndex;$/;"	m	struct:usbRequest	access:public
+usbRequest::wLength	usbdrv/usbdrv.h	/^    usbWord_t   wLength;$/;"	m	struct:usbRequest	access:public
+usbRequest::wValue	usbdrv/usbdrv.h	/^    usbWord_t   wValue;$/;"	m	struct:usbRequest	access:public
+usbRequest_t	usbdrv/usbdrv.h	/^}usbRequest_t;$/;"	t	typeref:struct:usbRequest
+usbResetDataToggling	usbdrv/usbdrv.c	/^static inline void  usbResetDataToggling(void)$/;"	f	file:	signature:(void)
+usbResetStall	usbdrv/usbdrv.c	/^static inline void  usbResetStall(void)$/;"	f	file:	signature:(void)
+usbRxBuf	usbdrv/usbdrv.c	/^uchar usbRxBuf[2*USB_BUFSIZE];  \/* raw RX buffer: PID, 8 bytes data, 2 bytes CRC *\/$/;"	v
+usbRxLen	usbdrv/usbdrv.c	/^volatile schar usbRxLen;        \/* = 0; number of bytes in usbRxBuf; 0 means free, -1 for flow control *\/$/;"	v
+usbRxToken	usbdrv/usbdrv.c	/^uchar       usbRxToken;         \/* token for data we received; or endpont number for last OUT *\/$/;"	v
+usbSetInterrupt	usbdrv/usbdrv.c	/^USB_PUBLIC void usbSetInterrupt(uchar *data, uchar len)$/;"	f	signature:(uchar *data, uchar len)
+usbSetInterrupt	usbdrv/usbdrv.h	/^USB_PUBLIC void usbSetInterrupt(uchar *data, uchar len);$/;"	p	signature:(uchar *data, uchar len)
+usbSetInterrupt3	usbdrv/usbdrv.c	/^USB_PUBLIC void usbSetInterrupt3(uchar *data, uchar len)$/;"	f	signature:(uchar *data, uchar len)
+usbSetInterrupt3	usbdrv/usbdrv.h	/^USB_PUBLIC void usbSetInterrupt3(uchar *data, uchar len);$/;"	p	signature:(uchar *data, uchar len)
+usbSofCount	usbdrv/usbdrv.c	/^volatile uchar  usbSofCount;    \/* incremented by assembler module every SOF *\/$/;"	v
+usbTxBuf	usbdrv/usbdrv.c	/^uchar       usbTxBuf[USB_BUFSIZE];\/* data to transmit with next IN, free if usbTxLen contains handshake token *\/$/;"	v
+usbTxBuf1	usbdrv/usbdrv.h	/^#define usbTxBuf1 /;"	d
+usbTxBuf1	usbdrv/usbdrvasm.S	/^#define usbTxBuf1   (usbTxStatus1 + 1)$/;"	d
+usbTxBuf3	usbdrv/usbdrv.h	/^#define usbTxBuf3 /;"	d
+usbTxBuf3	usbdrv/usbdrvasm.S	/^#define usbTxBuf3   (usbTxStatus3 + 1)$/;"	d
+usbTxLen	usbdrv/usbdrv.c	/^volatile uchar usbTxLen = USBPID_NAK;   \/* number of bytes to transmit with next IN token or handshake token *\/$/;"	v
+usbTxLen1	usbdrv/usbdrv.h	/^#define usbTxLen1 /;"	d
+usbTxLen1	usbdrv/usbdrvasm.S	/^#define usbTxLen1   usbTxStatus1$/;"	d
+usbTxLen3	usbdrv/usbdrv.h	/^#define usbTxLen3 /;"	d
+usbTxLen3	usbdrv/usbdrvasm.S	/^#define usbTxLen3   usbTxStatus3$/;"	d
+usbTxStatus	usbdrv/usbdrv.h	/^typedef struct usbTxStatus{$/;"	s
+usbTxStatus1	usbdrv/usbdrv.c	/^usbTxStatus_t  usbTxStatus1;$/;"	v
+usbTxStatus3	usbdrv/usbdrv.c	/^usbTxStatus_t  usbTxStatus3;$/;"	v
+usbTxStatus::buffer	usbdrv/usbdrv.h	/^    uchar   buffer[USB_BUFSIZE];$/;"	m	struct:usbTxStatus	access:public
+usbTxStatus::len	usbdrv/usbdrv.h	/^    volatile uchar   len;$/;"	m	struct:usbTxStatus	access:public
+usbTxStatus_t	usbdrv/usbdrv.h	/^}usbTxStatus_t;$/;"	t	typeref:struct:usbTxStatus
+usbWord	usbdrv/usbdrv.h	/^typedef union usbWord{$/;"	u
+usbWord::bytes	usbdrv/usbdrv.h	/^    uchar       bytes[2];$/;"	m	union:usbWord	access:public
+usbWord::word	usbdrv/usbdrv.h	/^    unsigned    word;$/;"	m	union:usbWord	access:public
+usbWord_t	usbdrv/usbdrv.h	/^}usbWord_t;$/;"	t	typeref:union:usbWord
+usb_connect	command.c	/^void usb_connect()$/;"	f
+usb_connect	command.h	/^void usb_connect();$/;"	p	signature:()
+usb_trans	main.c	/^usb_transaction_t usb_trans;$/;"	v
+usb_transaction_t	requests.h	/^typedef struct usb_transaction_t {$/;"	s
+usb_transaction_t	requests.h	/^} usb_transaction_t;$/;"	t	typeref:struct:usb_transaction_t
+usb_transaction_t::loader_enabled	requests.h	/^    uint8_t loader_enabled;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::req_addr	requests.h	/^    uint32_t req_addr;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::req_addr_end	requests.h	/^    uint32_t req_addr_end;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::req_bank	requests.h	/^    uint8_t req_bank;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::req_bank_cnt	requests.h	/^    uint16_t req_bank_cnt;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::req_bank_size	requests.h	/^    uint32_t req_bank_size;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::req_percent	requests.h	/^    uint8_t req_percent;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::req_percent_last	requests.h	/^    uint8_t req_percent_last;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::req_state	requests.h	/^    uint8_t req_state;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::rx_buffer	requests.h	/^    uint8_t rx_buffer[8];$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::rx_remaining	requests.h	/^    uint8_t rx_remaining;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::sync_errors	requests.h	/^    uint16_t sync_errors;$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::tx_buffer	requests.h	/^    uint8_t tx_buffer[32];$/;"	m	struct:usb_transaction_t	access:public
+usb_transaction_t::tx_remaining	requests.h	/^    uint8_t tx_remaining ;$/;"	m	struct:usb_transaction_t	access:public
+util_chomp	util.c	/^void util_chomp(uint8_t *s)$/;"	f	signature:(uint8_t *s)
+util_chomp	util.h	/^void util_chomp(uint8_t *s);$/;"	p	signature:(uint8_t *s)
+util_sscanbool	util.c	/^uint8_t util_sscanbool(const uint8_t *s)$/;"	f	signature:(const uint8_t *s)
+util_sscanbool	util.h	/^uint8_t util_sscanbool(const uint8_t *s);$/;"	p	signature:(const uint8_t *s)
+util_sscandec	util.c	/^uint32_t util_sscandec(const uint8_t *s)$/;"	f	signature:(const uint8_t *s)
+util_sscandec	util.h	/^uint32_t util_sscandec(const uint8_t *s);$/;"	p	signature:(const uint8_t *s)
+util_sscanhex	util.c	/^uint32_t util_sscanhex(const uint8_t *s)$/;"	f	signature:(const uint8_t *s)
+util_sscanhex	util.h	/^uint32_t util_sscanhex(const uint8_t *s);$/;"	p	signature:(const uint8_t *s)
+util_strlower	util.c	/^uint8_t *util_strlower(uint8_t *s)$/;"	f	signature:(uint8_t *s)
+util_strlower	util.h	/^uint8_t *util_strlower(uint8_t *s);$/;"	p	signature:(uint8_t *s)
+util_strupper	util.c	/^uint8_t *util_strupper(uint8_t *s)$/;"	f	signature:(uint8_t *s)
+util_strupper	util.h	/^ uint8_t *util_strupper(uint8_t *s);$/;"	p	signature:(uint8_t *s)
+util_trim	util.c	/^void util_trim(uint8_t *s)$/;"	f	signature:(uint8_t *s)
+util_trim	util.h	/^void util_trim(uint8_t *s);$/;"	p	signature:(uint8_t *s)
+w	ringbuffer.c	/^char *w; \/\/ next free position (if rb_count < ringbuffer_size))$/;"	v
+wIndex	usbdrv/usbdrv.h	/^    usbWord_t   wIndex;$/;"	m	struct:usbRequest	access:public
+wLength	usbdrv/usbdrv.h	/^    usbWord_t   wLength;$/;"	m	struct:usbRequest	access:public
+wValue	usbdrv/usbdrv.h	/^    usbWord_t   wValue;$/;"	m	struct:usbRequest	access:public
+wdt_init	watchdog.c	/^void wdt_init(void)$/;"	f	signature:(void)
+wdt_init	watchdog.h	/^void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));$/;"	p	signature:(void)
+wdt_reset	usbdrv/usbportability.h	/^#define wdt_reset(/;"	d
+word	usbdrv/usbdrv.h	/^    unsigned    word;$/;"	m	union:usbWord	access:public
+wr_line	system.h	/^    enum wr_line_e    { WR_DISABLE, WR_ENABLE } wr_line;$/;"	m	struct:system_t	typeref:enum:system_t::wr_line_e	access:public
+wr_line_e	system.h	/^    enum wr_line_e    { WR_DISABLE, WR_ENABLE } wr_line;$/;"	g	struct:system_t	access:public
+write2end	fifo.h	/^    uint8_t read2end, write2end;        \/\/ # Zeichen bis zum Überlauf Lese-\/Schreibzeiger$/;"	m	struct:__anon1	access:public
+x1	usbdrv/usbdrvasm.S	/^#define x1      r16$/;"	d
+x2	usbdrv/usbdrvasm.S	/^#define x2      r17$/;"	d
+x3	usbdrv/usbdrvasm.S	/^#define x3      r20$/;"	d
+x4	usbdrv/usbdrvasm.S	/^#define x4      r21$/;"	d
+x5	usbdrv/usbdrvasm.S	/^#define x5		r22$/;"	d

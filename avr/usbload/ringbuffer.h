@@ -3,7 +3,7 @@
 #define _RING_BUFFER_H_
 
 
-#define ringbuffer_size 32
+#define ringbuffer_size 8
 
 extern int rb_count;
 

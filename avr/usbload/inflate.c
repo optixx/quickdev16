@@ -73,11 +73,13 @@ void neginf_cb_copy(nsize from, nsize to, nint length)
     if ((to - from) < ( 1024 * 2 ) ){
         cnt_hit++;
     }
-    printf("neginf_cb_copy from=0x%06x to=0x%06x dist=%i len=%i\n",from, to, (to - from), length);
+    printf("neginf_cb_copy from=0x%06x to=0x%06x dist=%i len=%i\n",(int)from, (int)to, (int)(to - from), (int)length);
     for (i=0; i<length;i++){
         mem_ref[to+i] = mem_ref[from+i];
     }
     addr_ref = to + length;
 }
+
+
 
 

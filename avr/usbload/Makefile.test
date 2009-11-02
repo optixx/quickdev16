@@ -1,3 +1,6 @@
+
+MD5=md5
+
 all:
 	gcc -c loader_test.c
 	gcc -c inflate.c
@@ -10,7 +13,7 @@ loader:
 	
 test:
 	./inflate_test
-	@md5sum out.smc
-	@md5sum out_ref.smc
-	@md5sum ../../roms/qd16boot02_half.smc
+	@$(MD5) out.smc
+	@$(MD5) out_ref.smc
+	@$(MD5) ../../roms/qd16boot02_half.smc
 
