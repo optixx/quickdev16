@@ -238,7 +238,6 @@ void sram_bulk_write_start(uint32_t addr)
 
 inline void sram_bulk_write_next(void)
 {
-    AVR_WR_PORT &= ~(1 << AVR_WR_PIN);
     addr_current++;
     counter_up();
 }
