@@ -22,6 +22,9 @@
 #define PATCH_ERR 2
 #define PATCH_CHUNKS_MAX 512
 
+#define RLE_LEN 0
+#define RLE_VAL 1
+
 #define QD16_MAX_TX_LEN 128
 #define QD16_CMD_TIMEOUT 5000
 
@@ -44,8 +47,8 @@
 
 
 typedef struct _ips_tag {
-    uint32_t ofs;    /* offset in file to patch */
-    uint16_t len;    /* number of bytes in this chunk */
+    uint32_t ofs;    /* offset in file to patch (3 bytes (24bit address) in file!) */
+    uint16_t len;    /* number of bytes in this chunk (if len==0 : data[0] = counter / data[1] = fill byte*/
     uint8_t* data;   /* chunk data */
 } ips_tag_t;
 
@@ -142,8 +145,6 @@ int main(int argc, char * argv[])
 
     while (!feof(patch_file) && chunk_index < PATCH_CHUNKS_MAX) {
 
-        printf(".");
-
         int ret = ips_read_next_tag(patch_file,&ips_tags[chunk_index]);
 
         if (ret == PATCH_END)
@@ -157,6 +158,10 @@ int main(int argc, char * argv[])
     }
 
     fclose(patch_file);
+
+    if (patch_error){
+        printf("error at patch chunk #%d!\n",chunk_index);
+    }
 
     for (int i=0; i<chunk_index; i++){
 
@@ -179,10 +184,30 @@ int qd16_apply_ips_chunk(ips_tag_t* ips_tag)
     int addr_lo = (ips_tag->ofs)&0xffff;
 
     printf("hi:%x lo:%x len:%d\n",addr_hi,addr_lo,ips_tag->len);
-    int ret = QD16_SEND_ADDR(addr_hi,addr_lo,ips_tag->data,ips_tag->len);
-    if (ret<0){
-        printf("error executing command!:%s\n",usb_strerror());
+
+    if (ips_tag->len > 0){
+
+        int ret = QD16_SEND_ADDR(addr_hi,addr_lo,ips_tag->data,ips_tag->len);
+        if (ret<0)
+            printf("error executing command: %s\n",usb_strerror());
+
+    } else {
+
+        uint16_t len = (uint16_t)ips_tag->data[RLE_LEN];
+        uint8_t val = ips_tag->data[RLE_VAL];
+        printf("len:%d val:%x\n",len,val);
+
+        // prepare patch buffer
+        uint8_t *buff = malloc(len);
+        memset(buff,val,len);
+
+        // transfer
+        int ret = QD16_SEND_ADDR(addr_hi,addr_lo,buff,len);
+        if (ret<0)
+            printf("error executing command: %s\n",usb_strerror());
+
     }
+
 
     return 0;
 }
@@ -271,11 +296,26 @@ int ips_read_next_tag(FILE* patch_file, ips_tag_t* tag)
         return PATCH_ERR;
 
     tag->len = getc(patch_file)<<8 | getc(patch_file);
-    tag->data = malloc(tag->len);
 
-    size_t ret = fread(tag->data,1,tag->len,patch_file);
-    if (ret != tag->len)
-        return PATCH_ERR;
+    // if the length field is > 0 then it is
+    // a standard replacement tag
+    //
+    if (tag->len>0) {
+        printf("normal tag\n");
+        tag->data = malloc(tag->len);
+
+        size_t ret = fread(tag->data,1,tag->len,patch_file);
+        if (ret != tag->len)
+            return PATCH_ERR;
+
+    } else {
+        printf("rle tag\n");
+        // if the length tag is 0 then it is
+        // a RLE tag: read 3 bytes from patch: 2bytes: count / 1 byte: value
+        tag->data = malloc(sizeof(3));
+        tag->data[RLE_LEN] = (uint16_t)(getc(patch_file)<<8 | getc(patch_file));
+        tag->data[RLE_VAL] = getc(patch_file);
+    }
 
     return 0;
 }
