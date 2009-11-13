@@ -20,13 +20,14 @@
 #define EOF_TAG   0x454f46
 #define PATCH_END 1
 #define PATCH_ERR 2
-#define PATCH_CHUNKS_MAX 512
+#define PATCH_CHUNKS_MAX 2048
 
 #define RLE_LEN 0
 #define RLE_VAL 1
 
 #define QD16_MAX_TX_LEN 128
 #define QD16_CMD_TIMEOUT 5000
+
 
 
 #define QD16_SEND_DATA(__addr_hi,__addr_lo,__src,__len)\
@@ -52,6 +53,7 @@ typedef struct _ips_tag {
     uint8_t* data;   /* chunk data */
 } ips_tag_t;
 
+int qd16_transfer_data(int addr_hi, int addr_lo, uint8_t* data, int len);
 int qd16_apply_ips_chunk(ips_tag_t* ips_tag);
 int ips_read_next_tag(FILE* patch_file, ips_tag_t* tag);
 int qd16_init(void);
@@ -64,8 +66,6 @@ char vendor[] = { USB_CFG_VENDOR_NAME, 0 }, product[] = { USB_CFG_DEVICE_NAME, 0
 int cnt, vid, pid;
 
 int hirom = 0;
-int header = 0;
-int init = 0;
 int quiet = 0;
 
 uint8_t dummy[128];
@@ -74,7 +74,6 @@ void usage(void)
 {
     fprintf(stderr, "Usage: qdips [option] <patchfile>\n\n\
             Options:\n\
-            -s\tSkip ROM header\n\
             -q\tBe quiet\n\
             -h\tForce HiROM mode\n\n");
 
@@ -94,14 +93,8 @@ int main(int argc, char * argv[])
     if (argc==1)
         usage();
 
-    while ((opt = getopt(argc,argv,"qish")) != -1){
+    while ((opt = getopt(argc,argv,"qh")) != -1){
         switch (opt) {
-            case 'i':
-                init = 1;
-                break;
-            case 's':
-                header = 1;
-                break;
             case 'h':
                 hirom = 1;
                 break;
@@ -163,19 +156,62 @@ int main(int argc, char * argv[])
         printf("error at patch chunk #%d!\n",chunk_index);
     }
 
-    for (int i=0; i<chunk_index; i++){
+    int errors=0;
 
-        printf("uploading chunk %d ..\n",i);
+        for (int i=0; i<chunk_index; i++){
+
+            if (!quiet)
+                printf("uploading chunk %d ..\r",i+1);
+
+            fflush(stdout);
 
         int ret = qd16_apply_ips_chunk(&ips_tags[i]);
         if (ret!=0){
-            printf("failed applying chunk %d !\n",i);
+            printf("\nfailed applying chunk %d !\n",i);
+            errors++;
         }
     }
+
+    if (!quiet)
+        printf("\nsuccessfully applied %d chunks\n",chunk_index-errors);
 
     qd16_finish();
 
     return 0;
+}
+
+int qd16_transfer_data(int addr_hi, int addr_lo, uint8_t* data, int len)
+{
+
+    int addr = (addr_hi<<16) | (addr_lo&0xffff);
+    int pos = 0;
+    int ret;
+
+
+    int bytes_left = len;
+    int txlen;
+
+    while (bytes_left>0) {
+
+        txlen = (bytes_left>QD16_MAX_TX_LEN?QD16_MAX_TX_LEN:bytes_left);
+        ret = QD16_SEND_ADDR( ((addr>>16)&0xff), (addr&0xffff), data+pos, txlen);
+        if (ret<0)
+            break;
+
+        addr += txlen;
+        pos  += txlen;
+        bytes_left -= txlen;
+    }
+
+    if (bytes_left){
+        printf("%s\n",usb_strerror());
+        return 1;
+    }
+
+    return 0;
+
+
+
 }
 
 int qd16_apply_ips_chunk(ips_tag_t* ips_tag)
@@ -183,19 +219,17 @@ int qd16_apply_ips_chunk(ips_tag_t* ips_tag)
     int addr_hi = (ips_tag->ofs)>>16;
     int addr_lo = (ips_tag->ofs)&0xffff;
 
-    printf("hi:%x lo:%x len:%d\n",addr_hi,addr_lo,ips_tag->len);
 
     if (ips_tag->len > 0){
 
-        int ret = QD16_SEND_ADDR(addr_hi,addr_lo,ips_tag->data,ips_tag->len);
-        if (ret<0)
-            printf("error executing command: %s\n",usb_strerror());
+        int ret = qd16_transfer_data(addr_hi,addr_lo,ips_tag->data,ips_tag->len);
+        if (ret!=0)
+            printf("error transfering data to qd16\n");
 
     } else {
 
         uint16_t len = (uint16_t)ips_tag->data[RLE_LEN];
         uint8_t val = ips_tag->data[RLE_VAL];
-        printf("len:%d val:%x\n",len,val);
 
         // prepare patch buffer
         uint8_t *buff = malloc(len);
@@ -274,8 +308,8 @@ int qd16_init(void)
         USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_OUT,
         USB_BULK_UPLOAD_INIT, 
         (hirom ? HIROM_BANK_SIZE_SHIFT : LOROM_BANK_SIZE_SHIFT) , 
-        /*(hirom ? HIROM_BANK_COUNT_SHIFT : LOROM_BANK_COUNT_SHIFT), */
-        5,
+        /*(hirom ? HIROM_BANK_COUNT_SHIFT : LOROM_BANK_COUNT_SHIFT), */ // ???
+        5,                                                            
         NULL, 0, 5000);
 
     if (cnt<0) {
@@ -301,7 +335,6 @@ int ips_read_next_tag(FILE* patch_file, ips_tag_t* tag)
     // a standard replacement tag
     //
     if (tag->len>0) {
-        printf("normal tag\n");
         tag->data = malloc(tag->len);
 
         size_t ret = fread(tag->data,1,tag->len,patch_file);
@@ -309,7 +342,6 @@ int ips_read_next_tag(FILE* patch_file, ips_tag_t* tag)
             return PATCH_ERR;
 
     } else {
-        printf("rle tag\n");
         // if the length tag is 0 then it is
         // a RLE tag: read 3 bytes from patch: 2bytes: count / 1 byte: value
         tag->data = malloc(sizeof(3));
