@@ -298,36 +298,21 @@ void shell_run(void)
         snes_irq_hi();
         snes_irq_off();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_AVR]) == 0) {
-         //info_P(PSTR("Activate AVR bus\n"));
-         //avr_bus_active();
-         //snes_irq_lo();
-         //snes_irq_off();
         system_set_bus_avr();
         snes_irq_lo();
         system_snes_irq_off();
         
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_SNES]) == 0) {
-        //info_P(PSTR("Activate SNES bus\n"));
-        //snes_irq_lo();
-        //snes_irq_off();
-        //snes_wr_disable();
-        //snes_bus_active();
         snes_irq_lo();
         system_snes_irq_off();
         system_set_wr_disable();
         system_set_bus_snes();
         
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_LOROM]) == 0) {
-        //info_P(PSTR("Set LOROM\n"));
-        //snes_lorom();
-        //snes_wr_disable();
         system_set_rom_lorom();
         system_set_wr_disable();
         
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_HIROM]) == 0) {
-        //info_P(PSTR("Set HIROM\n"));
-        //snes_hirom();
-        //snes_wr_disable();
         system_set_rom_hirom();
         system_set_wr_disable();
     }else if (strcmp_P((char*)t, (PGM_P)cmdlist[CMD_WR]) == 0) {
