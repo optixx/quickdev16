@@ -27,7 +27,7 @@
 #define __WATCHDOG_H__
 
 
-void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));
+void wdt_init(void) __attribute__ ((naked)) __attribute__ ((section(".init3")));
 
 #define soft_reset()        \
 do                          \
@@ -39,4 +39,3 @@ do                          \
 } while(0)
 
 #endif
-

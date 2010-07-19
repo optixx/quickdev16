@@ -28,11 +28,12 @@
 
 extern FILE uart_stdout;
 
-extern int debug_level; /* the higher, the more messages... */
+extern int debug_level;         /* the higher, the more messages... */
 
 #if defined(NO_DEBUG) && defined(__GNUC__)
 #else
-void debug(int level, char* format, ...) {
+void debug(int level, char *format, ...)
+{
 #ifdef NO_DEBUG
 
 #else
@@ -42,28 +43,28 @@ void debug(int level, char* format, ...) {
     va_start(args, format);
     vprintf(format, args);
     va_end(args);
-#endif 
+#endif
 }
-#endif 
+#endif
 
 #ifndef NO_INFO
-    uint8_t buffer_debug[FORMAT_BUFFER_LEN];
+uint8_t buffer_debug[FORMAT_BUFFER_LEN];
 #endif
-   
+
 #if defined(NO_DEBUG) && defined(__GNUC__)
 #else
-void debug_P(int level, PGM_P format, ...) {
+void debug_P(int level, PGM_P format, ...)
+{
 #ifdef NO_DEBUG
 
 #else
     va_list args;
     if (!(debug_level & level))
         return;
-    strlcpy_P((char*)buffer_debug,format,FORMAT_BUFFER_LEN);
+    strlcpy_P((char *) buffer_debug, format, FORMAT_BUFFER_LEN);
     va_start(args, format);
-    vprintf((char*)buffer_debug, args);
+    vprintf((char *) buffer_debug, args);
     va_end(args);
 #endif
 }
-#endif 
-
+#endif

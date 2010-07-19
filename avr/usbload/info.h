@@ -29,25 +29,29 @@
 #include <avr/pgmspace.h>
 
 #if defined(NO_INFO) && defined(__GNUC__)
-/* gcc's cpp has extensions; it allows for macros with a variable number of
-   arguments. We use this extension here to preprocess pmesg away. */
+/*
+ * gcc's cpp has extensions; it allows for macros with a variable number of arguments. We use this extension here to preprocess pmesg away. 
+ */
 #define info(format, args...) ((void)0)
 #else
 void info(char *format, ...);
-/* print a message, if it is considered significant enough.
-      Adapted from [K&R2], p. 174 */
+/*
+ * print a message, if it is considered significant enough. Adapted from [K&R2], p. 174 
+ */
 #endif
 
 
 #if defined(NO_INFO) && defined(__GNUC__)
-/* gcc's cpp has extensions; it allows for macros with a variable number of
-   arguments. We use this extension here to preprocess pmesg away. */
+/*
+ * gcc's cpp has extensions; it allows for macros with a variable number of arguments. We use this extension here to preprocess pmesg away. 
+ */
 #define info_P(format, args...) ((void)0)
 #else
 void info_P(PGM_P format, ...);
-/* print a message, if it is considered significant enough.
-      Adapted from [K&R2], p. 174 */
+/*
+ * print a message, if it is considered significant enough. Adapted from [K&R2], p. 174 
+ */
 #endif
 
 
-#endif 
+#endif

@@ -24,12 +24,14 @@
 #define __SRAM_H__
 
 #include <stdlib.h>
-#include <stdint.h> 
+#include <stdint.h>
 #include <avr/io.h>
 
 
 
-/* ---------------------------- PORT A ---------------------------- */
+/*
+ * ---------------------------- PORT A ---------------------------- 
+ */
 
 #define AVR_DATA_PORT           PORTA
 #define AVR_DATA_DIR            DDRA
@@ -41,7 +43,9 @@
 #define avr_data_out()          (AVR_DATA_DIR = 0xff)
 
 
-/* ---------------------------- PORT B ---------------------------- */
+/*
+ * ---------------------------- PORT B ---------------------------- 
+ */
 
 #define AVR_PORT                PORTB
 #define AVR_DIR                 DDRB
@@ -78,7 +82,9 @@
 #define snes_irq_lo()           (SNES_IRQ_PORT &= ~(1 << SNES_IRQ_PIN))
 
 
-/* ---------------------------- PORT C ---------------------------- */
+/*
+ * ---------------------------- PORT C ---------------------------- 
+ */
 
 #define AVR_ADDR_PORT	    	PORTC
 #define AVR_ADDR_DIR	    	DDRC
@@ -140,7 +146,9 @@
 #define led_pwm_on()	        (LED_DIR &=~ (1 << LED_PIN))
 #define led_pwm_off()	        (LED_DIR |= (1 << LED_PIN))
 
-/* ---------------------------- PORT D ---------------------------- */
+/*
+ * ---------------------------- PORT D ---------------------------- 
+ */
 
 #define AVR_SNES_PORT	        PORTD
 #define AVR_SNES_DIR	        DDRD
@@ -216,7 +224,7 @@ void sram_bulk_write(uint8_t data);
 void sram_bulk_copy_from_buffer(uint32_t addr, uint8_t * src, uint32_t len);
 void sram_bulk_copy_into_buffer(uint32_t addr, uint8_t * dst, uint32_t len);
 
-void sram_bulk_set(uint32_t addr, uint32_t len,uint8_t value);
+void sram_bulk_set(uint32_t addr, uint32_t len, uint8_t value);
 
 inline void sram_bulk_addr_save();
 inline void sram_bulk_addr_restore();

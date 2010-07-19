@@ -33,7 +33,7 @@ extern FILE uart_stdout;
 
 void dump_packet(uint32_t addr, uint32_t len, uint8_t * packet)
 {
-    uint16_t i,j;
+    uint16_t i, j;
     uint16_t sum = 0;
     uint8_t clear = 0;
 
@@ -71,8 +71,8 @@ void dump_memory(uint32_t bottom_addr, uint32_t top_addr)
     uint32_t addr;
     uint8_t byte;
     sram_bulk_read_start(bottom_addr);
-    for ( addr = bottom_addr; addr < top_addr; addr++) {
-        if (addr%0x10 == 0)
+    for (addr = bottom_addr; addr < top_addr; addr++) {
+        if (addr % 0x10 == 0)
             info_P(PSTR("\n%08lx:"), addr);
         byte = sram_bulk_read();
         sram_bulk_read_next();

@@ -34,6 +34,3 @@ void uart_puts(const char *s);
 void uart_puts_P(PGM_P s);
 
 #endif
-
-
-

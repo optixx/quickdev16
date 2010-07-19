@@ -17,13 +17,13 @@
  *
  * =====================================================================================
  */
- 
- #ifndef __TIMER_H__
- #define __TIMER_H__
- 
 
-int16_t timer_start( void );
-double timer_stop( void );
-int16_t timer_stop_int( void );
+#ifndef __TIMER_H__
+#define __TIMER_H__
+
+
+int16_t timer_start(void);
+double timer_stop(void);
+int16_t timer_stop_int(void);
 
 #endif

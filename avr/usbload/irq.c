@@ -29,31 +29,32 @@
 
 
 #include "usbdrv.h"
-#include "oddebug.h"            /* This is also an example for using debug
-                                 * macros */
-#include "debug.h" 
+#include "oddebug.h"            /* This is also an example for using debug macros */
+#include "debug.h"
 #include "info.h"
 #include "sram.h"
 #include "system.h"
 
 extern system_t system;
-  
+
 void (*jump_to_app) (void) = 0x0000;
-  
-void irq_init(){
+
+void irq_init()
+{
     cli();
-    PCMSK3 |=(1<<PCINT27);
-    PCICR  |= (1<<PCIE3);
+    PCMSK3 |= (1 << PCINT27);
+    PCICR |= (1 << PCIE3);
     sei();
     system.reset_irq = RESET_IRQ_ON;
-} 
+}
 
-void irq_stop(){
+void irq_stop()
+{
     cli();
-    PCMSK3 &=~(1<<PCINT27);
+    PCMSK3 &= ~(1 << PCINT27);
     sei();
     system.reset_irq = RESET_IRQ_OFF;
-} 
+}
 
 void leave_application(void)
 {
@@ -65,12 +66,11 @@ void leave_application(void)
 
 }
 
-ISR (SIG_PIN_CHANGE3)
+ISR(SIG_PIN_CHANGE3)
 {
-    if (snes_reset_test()){
+    if (snes_reset_test()) {
         info_P(PSTR("Catch SNES reset button\n"));
         info_P(PSTR("Set watchdog...\n"));
         leave_application();
-    }    
+    }
 }
- 

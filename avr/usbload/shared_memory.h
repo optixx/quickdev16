@@ -56,13 +56,15 @@
 #define SHARED_IRQ_LOC_LO                   0x00fffe
 #define SHARED_IRQ_LOC_HI                   0x00ffff
 
-/* Use COP IRQ LOC for hooked IRQ handler */
+/*
+ * Use COP IRQ LOC for hooked IRQ handler 
+ */
 #define SHARED_IRQ_HANDLER_LO               0x0ffe4
 #define SHARED_IRQ_HANDLER_HI               0x0ffe5
 
 #define SHARED_SCRATCHPAD_DUMP              0
 #define SHARED_SCRATCHPAD_CRC               0
-        
+
 
 void shared_memory_init(void);
 uint8_t shared_memory_scratchpad_region_save_helper(uint32_t addr);
@@ -71,6 +73,6 @@ void shared_memory_scratchpad_region_tx_restore();
 void shared_memory_scratchpad_region_rx_save();
 void shared_memory_scratchpad_region_rx_restore();
 void shared_memory_write(uint8_t cmd, uint8_t value);
-int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer);
+int shared_memory_read(uint8_t * cmd, uint8_t * len, uint8_t * buffer);
 
 #endif

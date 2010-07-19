@@ -37,7 +37,8 @@ extern FILE uart_stdout;
 #define info(format, args...) ((void)0)
 
 #else
-void info(char* format, ...) {
+void info(char *format, ...)
+{
 #ifdef NO_INFO
 
 #else
@@ -45,13 +46,13 @@ void info(char* format, ...) {
     va_start(args, format);
     vprintf(format, args);
     va_end(args);
-#endif 
+#endif
 }
-#endif 
+#endif
 
 
 #ifndef NO_INFO
-    uint8_t buffer_info[FORMAT_BUFFER_LEN];
+uint8_t buffer_info[FORMAT_BUFFER_LEN];
 #endif
 
 #if defined(NO_INFO) && defined(__GNUC__)
@@ -59,16 +60,16 @@ void info(char* format, ...) {
 #define info(format, args...) ((void)0)
 
 #else
-void info_P(PGM_P format, ...) {
+void info_P(PGM_P format, ...)
+{
 #ifdef NO_INFO
 
 #else
-    strlcpy_P((char*)buffer_info,format,FORMAT_BUFFER_LEN);
+    strlcpy_P((char *) buffer_info, format, FORMAT_BUFFER_LEN);
     va_list args;
     va_start(args, format);
-    vprintf((char*)buffer_info, args);
+    vprintf((char *) buffer_info, args);
     va_end(args);
 #endif
 }
 #endif
-   

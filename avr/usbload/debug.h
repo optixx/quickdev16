@@ -29,27 +29,30 @@
 #include <avr/pgmspace.h>
 
 #if defined(NO_DEBUG) && defined(__GNUC__)
-/* gcc's cpp has extensions; it allows for macros with a variable number of
-   arguments. We use this extension here to preprocess pmesg away. */
+/*
+ * gcc's cpp has extensions; it allows for macros with a variable number of arguments. We use this extension here to preprocess pmesg away. 
+ */
 #define debug(level, format, args...) ((void)0)
 #else
 void debug(int level, char *format, ...);
-/* print a message, if it is considered significant enough.
-      Adapted from [K&R2], p. 174 */
+/*
+ * print a message, if it is considered significant enough. Adapted from [K&R2], p. 174 
+ */
 #endif
 
 
 
 #if defined(NO_DEBUG) && defined(__GNUC__)
-/* gcc's cpp has extensions; it allows for macros with a variable number of
-   arguments. We use this extension here to preprocess pmesg away. */
+/*
+ * gcc's cpp has extensions; it allows for macros with a variable number of arguments. We use this extension here to preprocess pmesg away. 
+ */
 #define debug_P(level, format, args...) ((void)0)
 #else
 void debug_P(int level, PGM_P format, ...);
-/* print a message, if it is considered significant enough.
-      Adapted from [K&R2], p. 174 */
+/*
+ * print a message, if it is considered significant enough. Adapted from [K&R2], p. 174 
+ */
 #endif
 
 
-#endif /* DEBUG_H */
-        
+#endif                          /* DEBUG_H */
