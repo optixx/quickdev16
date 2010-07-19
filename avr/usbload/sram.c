@@ -311,7 +311,7 @@ void sram_bulk_copy_into_buffer(uint32_t addr, uint8_t * dst, uint32_t len)
 {
 
     uint32_t i;
-    uint8_t *ptr = dst;
+    //uint8_t *ptr = dst;
     debug_P(DEBUG_SRAM, PSTR("sram_bulk_copy_into_buffer: addr=0x%08lx dst=0x%p len=%li\n\r"), 
         addr, dst, len);
     sram_bulk_read_start(addr);

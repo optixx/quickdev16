@@ -298,7 +298,7 @@ void shared_memory_yield()
 
 int shared_memory_read(uint8_t *cmd, uint8_t *len,uint8_t *buffer)
 {
-    uint8_t state;
+    //uint8_t state;
 #if DO_SHM
 #if DO_SHM_SCRATCHPAD    
     if (scratchpad_locked_rx){ 

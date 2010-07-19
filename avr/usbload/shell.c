@@ -119,6 +119,7 @@ uint8_t get_hex_arg3(uint32_t *hexval1, uint32_t *hexval2, uint32_t *hexval3)
  	return get_hex(hexval1) && get_hex(hexval2) && get_hex(hexval3);
 }
 
+#if 0
 static uint8_t get_int32(uint32_t *val)
  {
  	if (!get_hex(val)){
@@ -140,7 +141,7 @@ static uint8_t get_int32(uint32_t *val)
         return 1;
     }
  }
-
+#endif
  static int get_bool(void)
  {
  	const uint8_t *t;
@@ -255,10 +256,8 @@ void shell_run(void)
 	uint8_t *t;
     uint32_t arg1;
     uint32_t arg2;
-    uint32_t arg3;
 	uint16_t crc;
     uint16_t offset;
-    uint16_t i;
     uint8_t c;
     
 	if (!cr)
