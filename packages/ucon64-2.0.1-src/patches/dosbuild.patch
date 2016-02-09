@@ -1,0 +1,1445 @@
+diff -Naur ucon64/src/backup/cd64.c ucon64.dos/src/backup/cd64.c
+--- ucon64/src/backup/cd64.c	2015-12-09 01:40:57.000000000 +0100
++++ ucon64.dos/src/backup/cd64.c	2015-12-30 01:25:12.738107551 +0100
+@@ -28,7 +28,7 @@
+ #include "misc/misc.h"
+ #include "misc/parallel.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/cd64.h"
+ 
+ 
+diff -Naur ucon64/src/backup/cmc.c ucon64.dos/src/backup/cmc.c
+--- ucon64/src/backup/cmc.c	2015-12-09 01:42:49.000000000 +0100
++++ ucon64.dos/src/backup/cmc.c	2015-12-30 01:25:12.739107568 +0100
+@@ -131,7 +131,7 @@
+ #include "misc/parallel.h"
+ #include "misc/term.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/cmc.h"
+ 
+ 
+diff -Naur ucon64/src/backup/dex.c ucon64.dos/src/backup/dex.c
+--- ucon64/src/backup/dex.c	2015-12-21 03:42:19.000000000 +0100
++++ ucon64.dos/src/backup/dex.c	2015-12-30 01:25:12.740107583 +0100
+@@ -27,7 +27,7 @@
+ #include "misc/file.h"
+ #include "misc/parallel.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/dex.h"
+ #include "backup/psxpblib.h"
+ 
+diff -Naur ucon64/src/backup/doctor64.c ucon64.dos/src/backup/doctor64.c
+--- ucon64/src/backup/doctor64.c	2015-12-09 01:44:32.000000000 +0100
++++ ucon64.dos/src/backup/doctor64.c	2015-12-30 01:25:12.741107596 +0100
+@@ -29,7 +29,7 @@
+ #include "misc/file.h"
+ #include "misc/parallel.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/doctor64.h"
+ 
+ 
+diff -Naur ucon64/src/backup/doctor64jr.c ucon64.dos/src/backup/doctor64jr.c
+--- ucon64/src/backup/doctor64jr.c	2015-12-21 02:53:20.000000000 +0100
++++ ucon64.dos/src/backup/doctor64jr.c	2015-12-30 01:25:12.742107608 +0100
+@@ -135,8 +135,8 @@
+ #include "misc/archive.h"
+ #include "misc/parallel.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
+-#include "backup/doctor64jr.h"
++#include "ucon64mi.h"
++#include "backup/doctorjr.h"
+ 
+ 
+ #ifdef  USE_PARALLEL
+diff -Naur ucon64/src/backup/f2a.c ucon64.dos/src/backup/f2a.c
+--- ucon64/src/backup/f2a.c	2015-12-26 21:19:09.275440770 +0100
++++ ucon64.dos/src/backup/f2a.c	2015-12-30 01:25:12.743107619 +0100
+@@ -62,7 +62,7 @@
+ #include "misc/misc.h"
+ #include "misc/parallel.h"
+ #include "misc/property.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/gba.h"
+ #include "backup/f2a.h"
+ 
+diff -Naur ucon64/src/backup/fal.c ucon64.dos/src/backup/fal.c
+--- ucon64/src/backup/fal.c	2015-11-11 00:57:16.000000000 +0100
++++ ucon64.dos/src/backup/fal.c	2015-12-30 01:25:12.744107628 +0100
+@@ -28,7 +28,7 @@
+ #include "misc/archive.h"
+ #include "misc/parallel.h"
+ #include "misc/term.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/gba.h"
+ #include "backup/fal.h"
+ 
+diff -Naur ucon64/src/backup/fig.c ucon64.dos/src/backup/fig.c
+--- ucon64/src/backup/fig.c	2015-12-21 01:25:57.000000000 +0100
++++ ucon64.dos/src/backup/fig.c	2015-12-30 01:25:12.746107642 +0100
+@@ -27,7 +27,7 @@
+ #include <string.h>
+ #include "misc/archive.h"
+ #include "misc/file.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/snes.h"                       // for snes_get_snes_hirom()
+ #include "backup/ffe.h"
+ #include "backup/fig.h"
+diff -Naur ucon64/src/backup/gbx.c ucon64.dos/src/backup/gbx.c
+--- ucon64/src/backup/gbx.c	2015-12-20 05:48:02.000000000 +0100
++++ ucon64.dos/src/backup/gbx.c	2015-12-30 01:25:12.747107647 +0100
+@@ -65,7 +65,7 @@
+ #include "misc/misc.h"
+ #include "misc/parallel.h"
+ #include "misc/term.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/gb.h"                         // GB_NAME_LEN, gb_logodata,
+ #include "backup/gbx.h"                         //  rocket_logodata
+ 
+diff -Naur ucon64/src/backup/gd.c ucon64.dos/src/backup/gd.c
+--- ucon64/src/backup/gd.c	2015-12-21 01:00:18.000000000 +0100
++++ ucon64.dos/src/backup/gd.c	2015-12-30 01:25:12.748107651 +0100
+@@ -30,7 +30,7 @@
+ #include "misc/parallel.h"
+ #include "misc/string.h"
+ #include "misc/term.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/snes.h"                       // for snes_make_gd_names() &
+ #include "backup/gd.h"                          //  snes_get_snes_hirom()
+ 
+diff -Naur ucon64/src/backup/libcd64/Makefile ucon64.dos/src/backup/libcd64/Makefile
+--- ucon64/src/backup/libcd64/Makefile	2015-11-23 01:01:23.000000000 +0100
++++ ucon64.dos/src/backup/libcd64/Makefile	2015-12-30 04:36:05.165931443 +0100
+@@ -154,7 +154,7 @@
+ 	$(CC) $(CFLAGS) $^ -c -o $@
+ 
+ libcd64.a: cd64lib.o cd64io.o
+-	ld -r $^ $(LIBS) -o $*.o
++	ld -T C:\DJGPP\LIB\LDSCRIPT\I386GO32.XR -r $^ $(LIBS) -o $*.o
+ #	rm -f $@
+ 	ar crs $@ $*.o
+ 
+diff -Naur ucon64/src/backup/lynxit.c ucon64.dos/src/backup/lynxit.c
+--- ucon64/src/backup/lynxit.c	2015-11-21 00:32:28.000000000 +0100
++++ ucon64.dos/src/backup/lynxit.c	2015-12-30 01:25:12.750107655 +0100
+@@ -28,7 +28,7 @@
+ #include "misc/archive.h"
+ #include "misc/parallel.h"
+ #include "misc/term.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/lynx.h"
+ #include "backup/lynxit.h"
+ 
+diff -Naur ucon64/src/backup/mccl.c ucon64.dos/src/backup/mccl.c
+--- ucon64/src/backup/mccl.c	2015-12-09 01:47:34.000000000 +0100
++++ ucon64.dos/src/backup/mccl.c	2015-12-30 01:25:12.750107655 +0100
+@@ -67,7 +67,7 @@
+ #include "misc/file.h"
+ #include "misc/parallel.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/mccl.h"
+ 
+ 
+diff -Naur ucon64/src/backup/mcd.c ucon64.dos/src/backup/mcd.c
+--- ucon64/src/backup/mcd.c	2015-12-21 01:03:41.000000000 +0100
++++ ucon64.dos/src/backup/mcd.c	2015-12-30 01:25:12.751107649 +0100
+@@ -27,7 +27,7 @@
+ #include "misc/parallel.h"
+ #include "misc/term.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/mcd.h"
+ 
+ 
+diff -Naur ucon64/src/backup/md-pro.c ucon64.dos/src/backup/md-pro.c
+--- ucon64/src/backup/md-pro.c	2015-12-21 02:54:54.000000000 +0100
++++ ucon64.dos/src/backup/md-pro.c	2015-12-30 01:25:12.752107673 +0100
+@@ -30,7 +30,7 @@
+ #include <string.h>
+ #include "misc/archive.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/tototek.h"
+ #include "backup/md-pro.h"
+ 
+diff -Naur ucon64/src/backup/mgd.c ucon64.dos/src/backup/mgd.c
+--- ucon64/src/backup/mgd.c	2015-12-21 02:55:42.000000000 +0100
++++ ucon64.dos/src/backup/mgd.c	2015-12-30 01:25:12.752107673 +0100
+@@ -24,7 +24,7 @@
+ #include "misc/file.h"
+ #include "misc/string.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/mgd.h"
+ 
+ 
+diff -Naur ucon64/src/backup/msg.c ucon64.dos/src/backup/msg.c
+--- ucon64/src/backup/msg.c	2015-12-21 02:56:30.000000000 +0100
++++ ucon64.dos/src/backup/msg.c	2015-12-30 01:25:12.753107702 +0100
+@@ -25,7 +25,7 @@
+ #include "misc/archive.h"
+ #include "misc/misc.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/ffe.h"
+ #include "backup/msg.h"
+ 
+diff -Naur ucon64/src/backup/pce-pro.c ucon64.dos/src/backup/pce-pro.c
+--- ucon64/src/backup/pce-pro.c	2015-12-21 02:57:45.000000000 +0100
++++ ucon64.dos/src/backup/pce-pro.c	2015-12-30 01:25:12.754107727 +0100
+@@ -29,7 +29,7 @@
+ #include <string.h>
+ #include "misc/archive.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/tototek.h"
+ #include "backup/pce-pro.h"
+ 
+diff -Naur ucon64/src/backup/pl.c ucon64.dos/src/backup/pl.c
+--- ucon64/src/backup/pl.c	2015-12-21 02:58:47.000000000 +0100
++++ ucon64.dos/src/backup/pl.c	2015-12-30 01:25:12.755107749 +0100
+@@ -27,7 +27,7 @@
+ #include "misc/archive.h"
+ #include "misc/parallel.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/pl.h"
+ 
+ 
+diff -Naur ucon64/src/backup/quickdev16.c ucon64.dos/src/backup/quickdev16.c
+--- ucon64/src/backup/quickdev16.c	2015-12-23 01:09:14.000000000 +0100
++++ ucon64.dos/src/backup/quickdev16.c	2015-12-30 01:25:12.756107769 +0100
+@@ -38,9 +38,9 @@
+ #include "misc/term.h"
+ #include "misc/usb.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/snes.h"
+-#include "backup/quickdev16.h"
++#include "backup/quickdev.h"
+ #include "backup/swc.h"
+ 
+ 
+diff -Naur ucon64/src/backup/sflash.c ucon64.dos/src/backup/sflash.c
+--- ucon64/src/backup/sflash.c	2015-12-21 03:01:06.000000000 +0100
++++ ucon64.dos/src/backup/sflash.c	2015-12-30 01:25:12.757107785 +0100
+@@ -25,7 +25,7 @@
+ #include <stdlib.h>
+ #include "misc/archive.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/tototek.h"
+ #include "backup/sflash.h"
+ 
+diff -Naur ucon64/src/backup/smc.c ucon64.dos/src/backup/smc.c
+--- ucon64/src/backup/smc.c	2015-12-09 01:54:20.000000000 +0100
++++ ucon64.dos/src/backup/smc.c	2015-12-30 01:25:12.757107785 +0100
+@@ -25,7 +25,7 @@
+ #include <string.h>
+ #include "misc/archive.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/ffe.h"
+ #include "backup/smc.h"
+ 
+diff -Naur ucon64/src/backup/smd.c ucon64.dos/src/backup/smd.c
+--- ucon64/src/backup/smd.c	2015-12-21 03:01:51.000000000 +0100
++++ ucon64.dos/src/backup/smd.c	2015-12-30 01:25:12.757107785 +0100
+@@ -26,7 +26,7 @@
+ #include "misc/archive.h"
+ #include "misc/misc.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/ffe.h"
+ #include "backup/smd.h"
+ 
+diff -Naur ucon64/src/backup/smsgg-pro.c ucon64.dos/src/backup/smsgg-pro.c
+--- ucon64/src/backup/smsgg-pro.c	2015-12-21 03:03:40.000000000 +0100
++++ ucon64.dos/src/backup/smsgg-pro.c	2015-12-30 01:25:12.758107798 +0100
+@@ -29,9 +29,9 @@
+ #include <string.h>
+ #include "misc/archive.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "backup/tototek.h"
+-#include "backup/smsgg-pro.h"
++#include "backup/smsggpro.h"
+ 
+ 
+ #ifdef  USE_PARALLEL
+diff -Naur ucon64/src/backup/swc.c ucon64.dos/src/backup/swc.c
+--- ucon64/src/backup/swc.c	2015-12-21 03:04:30.000000000 +0100
++++ ucon64.dos/src/backup/swc.c	2015-12-30 01:25:12.758107798 +0100
+@@ -28,7 +28,7 @@
+ #include <stdlib.h>
+ #include "misc/archive.h"
+ #include "misc/misc.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/snes.h"                       // for snes_get_file_type ()
+ #include "backup/ffe.h"
+ #include "backup/swc.h"
+diff -Naur ucon64/src/config.h.orig ucon64.dos/src/config.h.orig
+--- ucon64/src/config.h.orig	2015-12-26 20:13:48.537748466 +0100
++++ ucon64.dos/src/config.h.orig	2015-12-28 13:20:28.000000000 +0100
+@@ -107,7 +107,7 @@
+ //#define USE_USB 1
+ 
+ /* build with gzip and zip support (default: yes) */
+-//#define USE_ZLIB 1
++#define USE_ZLIB 1
+ 
+ /* Define to empty if `const' does not conform to ANSI C. */
+ /* #undef const */
+diff -Naur ucon64/src/config.mak.orig ucon64.dos/src/config.mak.orig
+--- ucon64/src/config.mak.orig	2015-12-26 20:01:30.993230997 +0100
++++ ucon64.dos/src/config.mak.orig	2015-12-28 13:20:56.000000000 +0100
+@@ -1,5 +1,5 @@
+ DLOPEN=1
+-#USE_ZLIB=1
++USE_ZLIB=1
+ USE_DISCMAGE=1
+ #USE_USB=1
+ USE_LIBCD64=1
+diff -Naur ucon64/src/console/atari.c ucon64.dos/src/console/atari.c
+--- ucon64/src/console/atari.c	2015-12-20 01:58:41.000000000 +0100
++++ ucon64.dos/src/console/atari.c	2015-12-30 01:25:12.758107798 +0100
+@@ -27,7 +27,7 @@
+ #include "misc/file.h"
+ #include "misc/string.h"
+ #include "misc/term.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/atari.h"
+ #include "backup/cc2.h"
+ #include "backup/spsc.h"
+diff -Naur ucon64/src/console/coleco.c ucon64.dos/src/console/coleco.c
+--- ucon64/src/console/coleco.c	2015-11-13 01:24:58.000000000 +0100
++++ ucon64.dos/src/console/coleco.c	2015-12-30 01:25:12.759107808 +0100
+@@ -23,7 +23,7 @@
+ #include <string.h>
+ #include "misc/archive.h"
+ #include "misc/file.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/coleco.h"
+ #include "backup/backup.h"
+ 
+diff -Naur ucon64/src/console/dc.c ucon64.dos/src/console/dc.c
+--- ucon64/src/console/dc.c	2015-12-20 02:27:47.000000000 +0100
++++ ucon64.dos/src/console/dc.c	2015-12-30 01:25:12.759107808 +0100
+@@ -36,7 +36,7 @@
+ #include "misc/file.h"
+ #include "misc/property.h"
+ #include "misc/string.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/dc.h"
+ 
+ 
+diff -Naur ucon64/src/console/gba.c ucon64.dos/src/console/gba.c
+--- ucon64/src/console/gba.c	2015-11-16 21:29:14.000000000 +0100
++++ ucon64.dos/src/console/gba.c	2015-12-30 01:25:12.759107808 +0100
+@@ -40,7 +40,7 @@
+ #include "misc/misc.h"
+ #include "misc/property.h"
+ #include "misc/string.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/console.h"
+ #include "console/gba.h"
+ #include "backup/backup.h"
+diff -Naur ucon64/src/console/gb.c ucon64.dos/src/console/gb.c
+--- ucon64/src/console/gb.c	2015-11-11 01:09:44.000000000 +0100
++++ ucon64.dos/src/console/gb.c	2015-12-30 01:25:12.760107815 +0100
+@@ -27,7 +27,7 @@
+ #include "misc/file.h"
+ #include "misc/misc.h"
+ #include "misc/string.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/console.h"
+ #include "console/gb.h"
+ #include "console/nes.h"
+diff -Naur ucon64/src/console/genesis.c ucon64.dos/src/console/genesis.c
+--- ucon64/src/console/genesis.c	2015-12-20 02:36:33.000000000 +0100
++++ ucon64.dos/src/console/genesis.c	2015-12-30 01:25:12.760107815 +0100
+@@ -40,7 +40,7 @@
+ #include "misc/chksum.h"
+ #include "misc/file.h"
+ #include "misc/misc.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/genesis.h"
+ #include "backup/md-pro.h"
+ #include "backup/mgd.h"
+diff -Naur ucon64/src/console/jaguar.c ucon64.dos/src/console/jaguar.c
+--- ucon64/src/console/jaguar.c	2015-12-23 00:12:44.000000000 +0100
++++ ucon64.dos/src/console/jaguar.c	2015-12-30 01:25:12.761107819 +0100
+@@ -20,7 +20,7 @@
+ */
+ #include "misc/archive.h"
+ #include "misc/file.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/jaguar.h"
+ #include "backup/backup.h"
+ 
+diff -Naur ucon64/src/console/lynx.c ucon64.dos/src/console/lynx.c
+--- ucon64/src/console/lynx.c	2015-11-14 21:57:52.000000000 +0100
++++ ucon64.dos/src/console/lynx.c	2015-12-30 01:25:12.761107819 +0100
+@@ -24,7 +24,7 @@
+ #include "misc/archive.h"
+ #include "misc/bswap.h"
+ #include "misc/file.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/lynx.h"
+ #include "backup/backup.h"
+ 
+diff -Naur ucon64/src/console/n64.c ucon64.dos/src/console/n64.c
+--- ucon64/src/console/n64.c	2015-11-14 21:59:47.000000000 +0100
++++ ucon64.dos/src/console/n64.c	2015-12-30 01:25:12.761107819 +0100
+@@ -34,7 +34,7 @@
+ #include "misc/chksum.h"
+ #include "misc/file.h"
+ #include "misc/misc.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/n64.h"
+ #include "backup/backup.h"
+ #include "backup/doctor64.h"
+diff -Naur ucon64/src/console/nds.c ucon64.dos/src/console/nds.c
+--- ucon64/src/console/nds.c	2015-11-15 02:36:50.000000000 +0100
++++ ucon64.dos/src/console/nds.c	2015-12-30 01:25:12.762107820 +0100
+@@ -25,7 +25,7 @@
+ #include "misc/chksum.h"
+ #include "misc/file.h"
+ #include "misc/misc.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/console.h"
+ #include "console/nds.h"
+ #include "backup/backup.h"
+diff -Naur ucon64/src/console/neogeo.c ucon64.dos/src/console/neogeo.c
+--- ucon64/src/console/neogeo.c	2015-11-15 02:40:19.000000000 +0100
++++ ucon64.dos/src/console/neogeo.c	2015-12-30 01:25:12.762107820 +0100
+@@ -21,7 +21,7 @@
+ #include <string.h>
+ #include "misc/archive.h"
+ #include "misc/file.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/neogeo.h"
+ #include "backup/backup.h"
+ 
+diff -Naur ucon64/src/console/nes.c ucon64.dos/src/console/nes.c
+--- ucon64/src/console/nes.c	2015-12-20 01:59:42.000000000 +0100
++++ ucon64.dos/src/console/nes.c	2015-12-30 01:25:12.764107817 +0100
+@@ -34,7 +34,7 @@
+ #include "misc/file.h"
+ #include "misc/misc.h"
+ #include "misc/string.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/nes.h"
+ #include "backup/smc.h"
+ 
+diff -Naur ucon64/src/console/ngp.c ucon64.dos/src/console/ngp.c
+--- ucon64/src/console/ngp.c	2015-11-15 03:19:49.000000000 +0100
++++ ucon64.dos/src/console/ngp.c	2015-12-30 01:25:12.764107817 +0100
+@@ -22,7 +22,7 @@
+ #include <string.h>
+ #include "misc/archive.h"
+ #include "misc/file.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/ngp.h"
+ #include "backup/backup.h"
+ #include "backup/pl.h"
+diff -Naur ucon64/src/console/pce.c ucon64.dos/src/console/pce.c
+--- ucon64/src/console/pce.c	2015-12-20 02:35:33.000000000 +0100
++++ ucon64.dos/src/console/pce.c	2015-12-30 01:25:12.764107817 +0100
+@@ -40,7 +40,7 @@
+ #include "misc/file.h"
+ #include "misc/misc.h"
+ #include "misc/string.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/pce.h"
+ #include "backup/mgd.h"
+ #include "backup/msg.h"
+diff -Naur ucon64/src/console/sms.c ucon64.dos/src/console/sms.c
+--- ucon64/src/console/sms.c	2015-12-20 02:46:06.000000000 +0100
++++ ucon64.dos/src/console/sms.c	2015-12-30 01:25:12.765107811 +0100
+@@ -41,11 +41,11 @@
+ #include "misc/getopt2.h"                       // st_getopt2_t
+ #include "misc/misc.h"
+ #include "misc/string.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/sms.h"
+ #include "backup/mgd.h"
+ #include "backup/smd.h"
+-#include "backup/smsgg-pro.h"
++#include "backup/smsggpro.h"
+ 
+ 
+ #define SMS_HEADER_START 0x7ff0
+diff -Naur ucon64/src/console/snes.c ucon64.dos/src/console/snes.c
+--- ucon64/src/console/snes.c	2015-12-22 02:01:09.000000000 +0100
++++ ucon64.dos/src/console/snes.c	2015-12-30 01:25:12.766107804 +0100
+@@ -43,7 +43,7 @@
+ #include "misc/file.h"
+ #include "misc/misc.h"
+ #include "misc/string.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/console.h"
+ #include "console/snes.h"
+ #include "backup/backup.h"
+diff -Naur ucon64/src/console/swan.c ucon64.dos/src/console/swan.c
+--- ucon64/src/console/swan.c	2015-11-15 03:45:21.000000000 +0100
++++ ucon64.dos/src/console/swan.c	2015-12-30 01:25:12.766107804 +0100
+@@ -22,7 +22,7 @@
+ #include "misc/archive.h"
+ #include "misc/file.h"
+ #include "misc/misc.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/swan.h"
+ #include "backup/backup.h"
+ 
+diff -Naur ucon64/src/console/vboy.c ucon64.dos/src/console/vboy.c
+--- ucon64/src/console/vboy.c	2015-11-15 04:00:10.000000000 +0100
++++ ucon64.dos/src/console/vboy.c	2015-12-30 01:25:12.767107796 +0100
+@@ -21,7 +21,7 @@
+ #include <string.h>
+ #include "misc/archive.h"
+ #include "misc/file.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/console.h"
+ #include "console/vboy.h"
+ #include "backup/backup.h"
+diff -Naur ucon64/src/dosprep.sh ucon64.dos/src/dosprep.sh
+--- ucon64/src/dosprep.sh	1970-01-01 01:00:00.000000000 +0100
++++ ucon64.dos/src/dosprep.sh	2015-12-30 04:51:58.513322079 +0100
+@@ -0,0 +1,76 @@
++#! /bin/bash
++
++prepare_for_DOS()
++{
++  mv ucon64_dat.c ucon64da.c
++  mv ucon64_dat.h ucon64da.h
++  mv ucon64_defines.h ucon64de.h
++  mv ucon64_misc.c ucon64mi.c
++  mv ucon64_misc.h ucon64mi.h
++  mv ucon64_opts.c ucon64op.c
++  mv ucon64_opts.h ucon64op.h
++  mv backup/doctor64jr.c backup/doctorjr.c
++  mv backup/doctor64jr.h backup/doctorjr.h
++  mv backup/interceptor.c backup/intercep.c
++  mv backup/interceptor.h backup/intercep.h
++  mv backup/quickdev16.c backup/quickdev.c
++  mv backup/quickdev16.h backup/quickdev.h
++  mv backup/smsgg-pro.c backup/smsggpro.c
++  mv backup/smsgg-pro.h backup/smsggpro.h
++  mv misc/dxedll_pub.h misc/dxedllpu.h
++
++  mv libdiscmage discmage
++  mv discmage/libdiscmage.h discmage/discmage.h
++  mv discmage/dxedll_priv.h discmage/dxedllpr.h
++  mv discmage/dxedll_pub.h discmage/dxedllpu.h
++  mv discmage/libdm_misc.c discmage/libdmmis.c
++  mv discmage/libdm_misc.h discmage/libdmmis.h
++
++  cp config.h.orig config.h
++  cp config.mak.orig config.mak
++  cp config.h discmage
++  cp discmage/Makefile.orig discmage/Makefile
++}
++
++undo_preparations_for_DOS()
++{
++  mv ucon64da.c ucon64_dat.c
++  mv ucon64da.h ucon64_dat.h
++  mv ucon64de.h ucon64_defines.h
++  mv ucon64mi.c ucon64_misc.c
++  mv ucon64mi.h ucon64_misc.h
++  mv ucon64op.c ucon64_opts.c
++  mv ucon64op.h ucon64_opts.h
++  mv backup/doctorjr.c backup/doctor64jr.c
++  mv backup/doctorjr.h backup/doctor64jr.h
++  mv backup/intercep.c backup/interceptor.c
++  mv backup/intercep.h backup/interceptor.h
++  mv backup/quickdev.c backup/quickdev16.c
++  mv backup/quickdev.h backup/quickdev16.h
++  mv backup/smsggpro.c backup/smsgg-pro.c
++  mv backup/smsggpro.h backup/smsgg-pro.h
++  mv misc/dxedllpu.h misc/dxedll_pub.h
++
++  mv discmage libdiscmage
++  mv libdiscmage/discmage.h libdiscmage/libdiscmage.h
++  mv libdiscmage/dxedllpr.h libdiscmage/dxedll_priv.h
++  mv libdiscmage/dxedllpu.h libdiscmage/dxedll_pub.h
++  mv libdiscmage/libdmmis.c libdiscmage/libdm_misc.c
++  mv libdiscmage/libdmmis.h libdiscmage/libdm_misc.h
++
++  rm config.h
++  rm config.mak
++  rm libdiscmage/config.h
++  rm libdiscmage/Makefile
++}
++
++if [ "$1" == p ]; then
++  prepare_for_DOS
++elif [ "$1" == u ]; then
++  undo_preparations_for_DOS
++else
++  echo Usage: $0 "[p|u]"
++  echo "p      prepare for DOS"
++  echo "u      undo preparations for DOS"
++  exit
++fi
+diff -Naur ucon64/src/libdiscmage/djimport.c ucon64.dos/src/libdiscmage/djimport.c
+--- ucon64/src/libdiscmage/djimport.c	2004-07-23 01:09:15.000000000 +0200
++++ ucon64.dos/src/libdiscmage/djimport.c	2015-12-30 01:25:12.767107796 +0100
+@@ -20,8 +20,8 @@
+ */
+ #include <stdio.h>
+ #include "dlopen.h"
+-#include "dxedll_pub.h"
+-#include "libdiscmage.h"
++#include "dxedllpu.h"
++#include "discmage.h"
+ 
+ #define CHECK \
+   if (!dxe_loaded) \
+diff -Naur ucon64/src/libdiscmage/dllinit.c ucon64.dos/src/libdiscmage/dllinit.c
+--- ucon64/src/libdiscmage/dllinit.c	2015-12-28 03:51:42.411828873 +0100
++++ ucon64.dos/src/libdiscmage/dllinit.c	2015-12-30 01:25:12.767107796 +0100
+@@ -28,7 +28,7 @@
+ 
+ #include <stdio.h>
+ #include <string.h>
+-#include "libdiscmage.h"
++#include "discmage.h"
+ 
+ 
+ #if     defined __CYGWIN__ || defined _WIN32
+@@ -72,8 +72,8 @@
+ }
+ 
+ #elif   defined DJGPP
+-#include "dxedll_pub.h"                         // for st_symbol_t
+-#include "dxedll_priv.h"                        // must be included after headers
++#include "dxedllpu.h"                           // for st_symbol_t
++#include "dxedllpr.h"                           // must be included after headers
+ #include "map.h"                                //  of external libraries!
+ 
+ 
+diff -Naur ucon64/src/libdiscmage/dlopen.c ucon64.dos/src/libdiscmage/dlopen.c
+--- ucon64/src/libdiscmage/dlopen.c	2015-12-29 04:18:14.600658818 +0100
++++ ucon64.dos/src/libdiscmage/dlopen.c	2015-12-30 01:25:12.767107796 +0100
+@@ -48,7 +48,7 @@
+ 
+ 
+ #ifdef  DJGPP
+-#include "dxedll_pub.h"
++#include "dxedllpu.h"
+ #include "map.h"
+ 
+ 
+diff -Naur ucon64/src/libdiscmage/dxedll_priv.h ucon64.dos/src/libdiscmage/dxedll_priv.h
+--- ucon64/src/libdiscmage/dxedll_priv.h	2004-07-23 01:10:32.000000000 +0200
++++ ucon64.dos/src/libdiscmage/dxedll_priv.h	2015-12-30 01:25:12.768107786 +0100
+@@ -22,7 +22,7 @@
+ #ifndef DXEDLL_PRIV_H
+ #define DXEDLL_PRIV_H
+ 
+-#include "dxedll_pub.h"
++#include "dxedllpu.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+diff -Naur ucon64/src/libdiscmage/dxe_misc.c ucon64.dos/src/libdiscmage/dxe_misc.c
+--- ucon64/src/libdiscmage/dxe_misc.c	2015-12-28 04:02:33.077326915 +0100
++++ ucon64.dos/src/libdiscmage/dxe_misc.c	2015-12-30 01:25:12.768107786 +0100
+@@ -32,7 +32,7 @@
+ #include "config.h"
+ #endif
+ #include <stdio.h>
+-#include "dxedll_pub.h"
++#include "dxedllpu.h"
+ 
+ 
+ extern st_symbol_t import_export;
+diff -Naur ucon64/src/libdiscmage/format/cdi.c ucon64.dos/src/libdiscmage/format/cdi.c
+--- ucon64/src/libdiscmage/format/cdi.c	2015-12-16 01:47:52.000000000 +0100
++++ ucon64.dos/src/libdiscmage/format/cdi.c	2015-12-30 01:25:12.768107786 +0100
+@@ -30,11 +30,11 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include "../misc.h"
+-#include "../libdiscmage.h"
+-#include "../libdm_misc.h"
++#include "../discmage.h"
++#include "../libdmmis.h"
+ #include "format.h"
+ #ifdef  DJGPP
+-#include "../dxedll_priv.h"
++#include "../dxedllpr.h"
+ #endif
+ #if     defined _MSC_VER && _MSC_VER >= 1900
+ #pragma warning(pop)
+diff -Naur ucon64/src/libdiscmage/format/cue.c ucon64.dos/src/libdiscmage/format/cue.c
+--- ucon64/src/libdiscmage/format/cue.c	2015-12-16 01:47:58.000000000 +0100
++++ ucon64.dos/src/libdiscmage/format/cue.c	2015-12-30 01:25:12.768107786 +0100
+@@ -26,11 +26,11 @@
+ #include "../config.h"
+ #endif
+ #include "../misc.h"
+-#include "../libdiscmage.h"
+-#include "../libdm_misc.h"
++#include "../discmage.h"
++#include "../libdmmis.h"
+ #include "format.h"
+ #ifdef  DJGPP
+-#include "../dxedll_priv.h"
++#include "../dxedllpr.h"
+ #endif
+ #if     defined _MSC_VER && _MSC_VER >= 1900
+ #pragma warning(pop)
+diff -Naur ucon64/src/libdiscmage/format/format.c ucon64.dos/src/libdiscmage/format/format.c
+--- ucon64/src/libdiscmage/format/format.c	2015-12-16 01:47:41.000000000 +0100
++++ ucon64.dos/src/libdiscmage/format/format.c	2015-12-30 01:25:12.768107786 +0100
+@@ -49,8 +49,8 @@
+ #endif
+ #endif
+ #include "../misc.h"
+-#include "../libdiscmage.h"
+-#include "../libdm_misc.h"
++#include "../discmage.h"
++#include "../libdmmis.h"
+ #include "format.h"
+ #include "cdi.h"
+ #include "cue.h"
+@@ -58,7 +58,7 @@
+ #include "other.h"
+ #include "toc.h"
+ #ifdef  DJGPP                                   // DXEs are specific to DJGPP
+-#include "../dxedll_priv.h"
++#include "../dxedllpr.h"
+ #endif
+ #if     defined _MSC_VER && _MSC_VER >= 1900
+ #pragma warning(pop)
+diff -Naur ucon64/src/libdiscmage/format/nero.c ucon64.dos/src/libdiscmage/format/nero.c
+--- ucon64/src/libdiscmage/format/nero.c	2015-12-16 01:47:46.000000000 +0100
++++ ucon64.dos/src/libdiscmage/format/nero.c	2015-12-30 01:25:12.769107774 +0100
+@@ -30,11 +30,11 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include "../misc.h"
+-#include "../libdiscmage.h"
+-#include "../libdm_misc.h"
++#include "../discmage.h"
++#include "../libdmmis.h"
+ #include "format.h"
+ #ifdef  DJGPP
+-#include "../dxedll_priv.h"
++#include "../dxedllpr.h"
+ #endif
+ #if     defined _MSC_VER && _MSC_VER >= 1900
+ #pragma warning(pop)
+diff -Naur ucon64/src/libdiscmage/format/other.c ucon64.dos/src/libdiscmage/format/other.c
+--- ucon64/src/libdiscmage/format/other.c	2015-12-16 01:48:09.000000000 +0100
++++ ucon64.dos/src/libdiscmage/format/other.c	2015-12-30 01:25:12.769107774 +0100
+@@ -30,11 +30,11 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include "../misc.h"
+-#include "../libdiscmage.h"
+-#include "../libdm_misc.h"
++#include "../discmage.h"
++#include "../libdmmis.h"
+ #include "format.h"
+ #ifdef  DJGPP
+-#include "../dxedll_priv.h"
++#include "../dxedllpr.h"
+ #endif
+ #if     defined _MSC_VER && _MSC_VER >= 1900
+ #pragma warning(pop)
+diff -Naur ucon64/src/libdiscmage/format/toc.c ucon64.dos/src/libdiscmage/format/toc.c
+--- ucon64/src/libdiscmage/format/toc.c	2015-12-16 01:48:03.000000000 +0100
++++ ucon64.dos/src/libdiscmage/format/toc.c	2015-12-30 01:25:12.769107774 +0100
+@@ -26,11 +26,11 @@
+ #include "../config.h"
+ #endif
+ #include "../misc.h"
+-#include "../libdiscmage.h"
+-#include "../libdm_misc.h"
++#include "../discmage.h"
++#include "../libdmmis.h"
+ #include "format.h"
+ #ifdef  DJGPP
+-#include "../dxedll_priv.h"
++#include "../dxedllpr.h"
+ #endif
+ #if     defined _MSC_VER && _MSC_VER >= 1900
+ #pragma warning(pop)
+diff -Naur ucon64/src/libdiscmage/libdm_misc.c ucon64.dos/src/libdiscmage/libdm_misc.c
+--- ucon64/src/libdiscmage/libdm_misc.c	2015-11-18 00:41:43.000000000 +0100
++++ ucon64.dos/src/libdiscmage/libdm_misc.c	2015-12-30 01:25:12.769107774 +0100
+@@ -45,11 +45,11 @@
+ #endif
+ #endif
+ #include "misc.h"
+-#include "libdiscmage.h"
+-#include "libdm_misc.h"
++#include "discmage.h"
++#include "libdmmis.h"
+ #include "format/format.h"
+ #ifdef  DJGPP                                   // DXEs are specific to DJGPP
+-#include "dxedll_priv.h"
++#include "dxedllpr.h"
+ #endif
+ #include "misc_wav.h"
+ 
+diff -Naur ucon64/src/libdiscmage/Makefile.orig ucon64.dos/src/libdiscmage/Makefile.orig
+--- ucon64/src/libdiscmage/Makefile.orig	2015-12-26 20:01:10.882925819 +0100
++++ ucon64.dos/src/libdiscmage/Makefile.orig	2015-12-28 13:19:13.000000000 +0100
+@@ -1,7 +1,7 @@
+ .PHONY: all clean install
+ 
+ DLOPEN=1
+-#USE_ZLIB=1
++USE_ZLIB=1
+ 
+ prefix=/usr/local
+ exec_prefix=${prefix}
+@@ -40,7 +40,7 @@
+ endif
+ 
+ LIBNAME=discmage
+-OBJECTS=libdm_misc.o dllinit.o misc.o misc_wav.o format/format.o format/cdi.o \
++OBJECTS=libdmmis.o dllinit.o misc.o misc_wav.o format/format.o format/cdi.o \
+         format/nero.o format/cue.o format/toc.o format/other.o
+ ifneq ($(OSTYPE),beos)
+ LDFLAGS+=-lm
+@@ -229,30 +229,30 @@
+ 
+ MISC_Z_H_DEPS=misc_z.h unzip.h
+ MISC_H_DEPS=misc.h $(MISC_Z_H_DEPS) getopt.h
+-DXEDLL_PRIV_H_DEPS=dxedll_priv.h dxedll_pub.h
++DXEDLL_PRIV_H_DEPS=dxedllpr.h dxedllpu.h
+ 
+-libdm_misc.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
++libdm_misc.o: config.h $(MISC_H_DEPS) discmage.h libdmmis.h \
+               format/format.h $(DXEDLL_PRIV_H_DEPS) misc_wav.h
+-dllinit.o: config.h libdiscmage.h dxedll_pub.h $(DXEDLL_PRIV_H_DEPS) map.h
++dllinit.o: config.h discmage.h dxedllpu.h $(DXEDLL_PRIV_H_DEPS) map.h
+ misc.o: config.h $(MISC_Z_H_DEPS) $(MISC_H_DEPS) $(DXEDLL_PRIV_H_DEPS)
+ misc_wav.o: config.h $(MISC_H_DEPS) misc_wav.h
+-format/format.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
++format/format.o: config.h $(MISC_H_DEPS) discmage.h libdmmis.h \
+                  format/format.h format/cdi.h format/cue.h format/nero.h \
+                  format/other.h format/toc.h $(DXEDLL_PRIV_H_DEPS)
+-format/cdi.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
++format/cdi.o: config.h $(MISC_H_DEPS) discmage.h libdmmis.h \
+               format/format.h $(DXEDLL_PRIV_H_DEPS)
+-format/nero.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
++format/nero.o: config.h $(MISC_H_DEPS) discmage.h libdmmis.h \
+                format/format.h $(DXEDLL_PRIV_H_DEPS)
+-format/cue.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
++format/cue.o: config.h $(MISC_H_DEPS) discmage.h libdmmis.h \
+               format/format.h $(DXEDLL_PRIV_H_DEPS)
+-format/toc.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
++format/toc.o: config.h $(MISC_H_DEPS) discmage.h libdmmis.h \
+               format/format.h $(DXEDLL_PRIV_H_DEPS)
+-format/other.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
++format/other.o: config.h $(MISC_H_DEPS) discmage.h libdmmis.h \
+                 format/format.h $(DXEDLL_PRIV_H_DEPS)
+ map.o: config.h map.h $(DXEDLL_PRIV_H_DEPS)
+ misc_z.o: config.h $(MISC_Z_H_DEPS) $(MISC_H_DEPS) map.h unzip.h \
+           $(DXEDLL_PRIV_H_DEPS)
+ unzip.o: config.h unzip.h
+-dxe_misc.o: config.h dxedll_pub.h
+-djimport.o: config.h dlopen.h dxedll_pub.h libdiscmage.h
+-dlopen.o: config.h dlopen.h dxedll_pub.h map.h
++dxe_misc.o: config.h dxedllpu.h
++djimport.o: config.h dlopen.h dxedllpu.h discmage.h
++dlopen.o: config.h dlopen.h dxedllpu.h map.h
+diff -Naur ucon64/src/libdiscmage/map.c ucon64.dos/src/libdiscmage/map.c
+--- ucon64/src/libdiscmage/map.c	2015-11-08 23:15:16.000000000 +0100
++++ ucon64.dos/src/libdiscmage/map.c	2015-12-30 01:25:12.770107761 +0100
+@@ -23,7 +23,7 @@
+ #include <string.h>
+ #include "map.h"
+ #if     defined DJGPP && defined DLL
+-#include "dxedll_priv.h"
++#include "dxedllpr.h"
+ #endif
+ 
+ 
+diff -Naur ucon64/src/libdiscmage/misc.c ucon64.dos/src/libdiscmage/misc.c
+--- ucon64/src/libdiscmage/misc.c	2015-12-29 06:29:21.014100518 +0100
++++ ucon64.dos/src/libdiscmage/misc.c	2015-12-30 01:25:12.770107761 +0100
+@@ -94,7 +94,7 @@
+ #ifdef  DJGPP
+ #include <dpmi.h>                               // needed for __dpmi_int() by ansi_init()
+ #ifdef  DLL
+-#include "dxedll_priv.h"
++#include "dxedllpr.h"
+ #endif
+ #endif
+ 
+diff -Naur ucon64/src/libdiscmage/misc_z.c ucon64.dos/src/libdiscmage/misc_z.c
+--- ucon64/src/libdiscmage/misc_z.c	2015-10-07 01:47:51.000000000 +0200
++++ ucon64.dos/src/libdiscmage/misc_z.c	2015-12-30 01:25:12.771107746 +0100
+@@ -40,7 +40,7 @@
+ #include "map.h"
+ #include "unzip.h"
+ #if     defined DJGPP && defined DLL
+-#include "dxedll_priv.h"
++#include "dxedllpr.h"
+ #endif
+ 
+ 
+diff -Naur ucon64/src/Makefile ucon64.dos/src/Makefile
+--- ucon64/src/Makefile	2015-12-27 23:38:28.409282881 +0100
++++ ucon64.dos/src/Makefile	2015-12-30 01:25:12.771107746 +0100
+@@ -32,7 +32,7 @@
+ ifdef USE_DISCMAGE
+ FULLLIBNAME_DM=$(LIBNAME_DM).dll
+ ifndef DLOPEN
+-LDFLAGS+=libdiscmage/$(LIBNAME_DM).a
++LDFLAGS+=discmage/$(LIBNAME_DM).a
+ endif
+ endif
+ 
+@@ -42,7 +42,7 @@
+ ifdef USE_DISCMAGE
+ FULLLIBNAME_DM=$(LIBNAME_DM).dxe
+ ifndef DLOPEN
+-LDFLAGS+=libdiscmage/$(LIBNAME_DM).a
++LDFLAGS+=discmage/$(LIBNAME_DM).a
+ endif
+ endif
+ 
+@@ -74,7 +74,7 @@
+ else                                    # DLOPEN
+ ifdef USE_DISCMAGE                      # GNU specific: "simply expanded variable"
+ FULLLIBNAME_DM:=$(addprefix lib,$(FULLLIBNAME_DM))
+-LDFLAGS+=-Llibdiscmage -l$(LIBNAME_DM)
++LDFLAGS+=-Ldiscmage -l$(LIBNAME_DM)
+ endif
+ 
+ endif
+@@ -82,7 +82,7 @@
+ endif                                   # DJGPP
+ endif                                   # GCC_WIN
+ 
+-TARGETS+=libdiscmage/$(FULLLIBNAME_DM)
++TARGETS+=discmage/$(FULLLIBNAME_DM)
+ 
+ 
+ ifdef USE_LIBCD64
+@@ -91,7 +91,7 @@
+ endif
+ 
+ 
+-OBJECTS=ucon64.o ucon64_dat.o ucon64_misc.o ucon64_opts.o \
++OBJECTS=ucon64.o ucon64da.o ucon64mi.o ucon64op.o \
+         misc/chksum.o misc/file.o misc/getopt2.o misc/misc.o misc/parallel.o \
+         misc/property.o misc/string.o misc/term.o \
+         console/atari.o console/coleco.o console/console.o console/dc.o \
+@@ -100,13 +100,13 @@
+         console/nes.o console/ngp.o console/pce.o console/psx.o console/sms.o \
+         console/snes.o console/swan.o console/vboy.o \
+         backup/backup.o backup/cc2.o backup/cd64.o backup/cmc.o backup/dex.o \
+-        backup/doctor64.o backup/doctor64jr.o backup/f2a.o backup/fal.o \
++        backup/doctor64.o backup/doctorjr.o backup/f2a.o backup/fal.o \
+         backup/ffe.o backup/fig.o backup/gbx.o backup/gd.o \
+-        backup/interceptor.o backup/lynxit.o backup/mccl.o backup/mcd.o \
++        backup/intercep.o backup/lynxit.o backup/mccl.o backup/mcd.o \
+         backup/md-pro.o backup/mgd.o backup/msg.o backup/nfc.o \
+-        backup/pce-pro.o backup/pl.o backup/psxpblib.o backup/quickdev16.o \
++        backup/pce-pro.o backup/pl.o backup/psxpblib.o backup/quickdev.o \
+         backup/sc.o backup/sflash.o backup/smc.o backup/smd.o \
+-        backup/smsgg-pro.o backup/spsc.o backup/ssc.o backup/swc.o \
++        backup/smsggpro.o backup/spsc.o backup/ssc.o backup/swc.o \
+         backup/tototek.o backup/ufo.o backup/yoko.o backup/z64.o \
+         patch/aps.o patch/bsl.o patch/gg.o patch/ips.o patch/patch.o patch/ppf.o
+ ifneq ($(OSTYPE),cygwin)
+@@ -132,7 +132,7 @@
+ endif                                   # GCC_WIN
+ endif                                   # USE_ZLIB
+ else
+-ifeq ($(GCC_WIN),1)                     # Cygwin/MinGW code in ucon64_misc needs dlopen code
++ifeq ($(GCC_WIN),1)                     # Cygwin/MinGW code in ucon64mi needs dlopen code
+ OBJECTS+=misc/dlopen.o
+ endif                                   # GCC_WIN
+ endif                                   # DLOPEN
+@@ -152,7 +152,7 @@
+ 
+ 
+ CLEAN_CMD=rm -f $(TARGET) $(OBJECTS) *.core *.stackdump *~ */*~ */*/*~; \
+-cd libdiscmage && $(MAKE) clean; \
++cd discmage && $(MAKE) clean; \
+ cd ../backup/libcd64 && $(MAKE) clean
+ 
+ clean:
+@@ -166,7 +166,7 @@
+ 	del backup\*.o
+ 	del misc\*.o
+ 	del $(TARGET)
+-	cd libdiscmage
++	cd discmage
+ 	$(MAKE) clean
+ 	cd ../backup/libcd64
+ 	$(MAKE) clean
+@@ -178,7 +178,7 @@
+ 
+ 
+ DISTCLEAN_CMD=rm -f config.mak config.log config.status config.cache config.h; \
+-cd libdiscmage && $(MAKE) distclean; \
++cd discmage && $(MAKE) distclean; \
+ cd ../backup/libcd64 && $(MAKE) clean
+ # libcd64 Makefile has no distclean target
+ 
+@@ -192,7 +192,7 @@
+ 	del config.status
+ 	del config.cache
+ 	del config.h
+-	cd libdiscmage
++	cd discmage
+ 	$(MAKE) distclean
+ 	cd ../backup/libcd64
+ 	$(MAKE) clean
+@@ -211,16 +211,16 @@
+ 
+ 
+ ifdef USE_DISCMAGE
+-libdiscmage/$(FULLLIBNAME_DM):
++discmage/$(FULLLIBNAME_DM):
+ ifeq ($(GCC_WIN),1)
+-	cd libdiscmage && $(MAKE)
++	cd discmage && $(MAKE)
+ else
+ ifdef DJGPP
+-	cd libdiscmage
++	cd discmage
+ 	$(MAKE)
+ 	cd ..
+ else
+-	cd libdiscmage && $(MAKE)
++	cd discmage && $(MAKE)
+ endif                                   # DJGPP
+ endif                                   # GCC_WIN
+ endif                                   # USE_DISCMAGE
+@@ -266,7 +266,7 @@
+ endif                                   # msys
+ endif                                   # cygwin
+ ifndef DLOPEN
+-	cd libdiscmage && $(MAKE) install
++	cd discmage && $(MAKE) install
+ endif
+ 
+ 
+@@ -286,7 +286,7 @@
+ endif                                   # msys
+ endif                                   # cygwin
+ ifndef DLOPEN
+-	cd libdiscmage && $(MAKE) uninstall
++	cd discmage && $(MAKE) uninstall
+ endif
+ 
+ 
+@@ -298,10 +298,10 @@
+ GETOPT2_H_DEPS=misc/getopt2.h misc/getopt.h
+ MISC_H_DEPS=misc/misc.h misc/snprintf.h
+ TERM_H_DEPS=misc/term.h misc/snprintf.h
+-UCON64_H_DEPS=ucon64.h misc/itypes.h ucon64_defines.h
+-UCON64_DAT_H_DEPS=ucon64_dat.h $(GETOPT2_H_DEPS) misc/itypes.h
+-UCON64_MISC_H_DEPS=ucon64_misc.h $(GETOPT2_H_DEPS) libdiscmage/libdiscmage.h
+-UCON64_OPTS_H_DEPS=ucon64_opts.h $(UCON64_H_DEPS)
++UCON64_H_DEPS=ucon64.h misc/itypes.h ucon64de.h
++UCON64_DAT_H_DEPS=ucon64da.h $(GETOPT2_H_DEPS) misc/itypes.h
++UCON64_MISC_H_DEPS=ucon64mi.h $(GETOPT2_H_DEPS) discmage/discmage.h
++UCON64_OPTS_H_DEPS=ucon64op.h $(UCON64_H_DEPS)
+ CONSOLE_DEPS=$(GETOPT2_H_DEPS) $(UCON64_H_DEPS)
+ CONSOLE_H_DEPS=console/console.h $(CONSOLE_DEPS)
+ SNES_H_DEPS=console/snes.h $(CONSOLE_DEPS) backup/fig.h
+@@ -318,14 +318,14 @@
+           console/nes.h console/ngp.h console/pce.h console/psx.h \
+           console/sms.h $(SNES_H_DEPS) console/swan.h console/vboy.h \
+           backup/backup.h backup/cd64.h backup/cmc.h backup/dex.h \
+-          backup/doctor64.h backup/doctor64jr.h backup/f2a.h backup/fal.h \
++          backup/doctor64.h backup/doctorjr.h backup/f2a.h backup/fal.h \
+           backup/gbx.h backup/gd.h backup/lynxit.h backup/mccl.h backup/mcd.h \
+           backup/md-pro.h backup/msg.h backup/pce-pro.h backup/pl.h \
+-          backup/quickdev16.h backup/sflash.h backup/smc.h backup/smd.h \
+-          backup/smsgg-pro.h backup/swc.h \
++          backup/quickdev.h backup/sflash.h backup/smc.h backup/smd.h \
++          backup/smsggpro.h backup/swc.h \
+           patch/aps.h patch/bsl.h patch/gg.h patch/ips.h patch/patch.h \
+           patch/ppf.h
+-ucon64_dat.o: config.h $(ARCHIVE_H_DEPS) misc/file.h $(MISC_H_DEPS) \
++ucon64da.o: config.h $(ARCHIVE_H_DEPS) misc/file.h $(MISC_H_DEPS) \
+               misc/property.h misc/string.h $(UCON64_DAT_H_DEPS) \
+               $(UCON64_MISC_H_DEPS) \
+               console/atari.h console/coleco.h $(CONSOLE_H_DEPS) console/dc.h \
+@@ -333,11 +333,11 @@
+               console/lynx.h console/n64.h console/neogeo.h console/nes.h \
+               console/ngp.h console/pce.h console/sms.h $(SNES_H_DEPS) \
+               console/swan.h console/vboy.h backup/backup.h
+-ucon64_misc.o: config.h $(ARCHIVE_H_DEPS) $(BSWAP_H_DEPS) $(CHKSUM_H_DEPS) \
++ucon64mi.o: config.h $(ARCHIVE_H_DEPS) $(BSWAP_H_DEPS) $(CHKSUM_H_DEPS) \
+                misc/file.h $(MISC_H_DEPS) misc/property.h misc/string.h \
+                $(TERM_H_DEPS) $(UCON64_H_DEPS) $(UCON64_DAT_H_DEPS) \
+                $(UCON64_MISC_H_DEPS) misc/dlopen.h
+-ucon64_opts.o: config.h $(ARCHIVE_H_DEPS) misc/file.h $(MISC_H_DEPS) \
++ucon64op.o: config.h $(ARCHIVE_H_DEPS) misc/file.h $(MISC_H_DEPS) \
+                misc/parallel.h misc/string.h $(UCON64_DAT_H_DEPS) \
+                $(UCON64_MISC_H_DEPS) $(UCON64_OPTS_H_DEPS) \
+                console/dc.h console/gb.h console/gba.h console/genesis.h \
+@@ -345,11 +345,11 @@
+                console/nes.h console/pce.h console/sms.h $(SNES_H_DEPS) \
+                console/swan.h \
+                backup/backup.h backup/cd64.h backup/cmc.h backup/dex.h \
+-               backup/doctor64.h backup/doctor64jr.h backup/f2a.h backup/fal.h \
++               backup/doctor64.h backup/doctorjr.h backup/f2a.h backup/fal.h \
+                backup/gbx.h backup/gd.h backup/lynxit.h backup/mccl.h \
+                backup/mcd.h backup/md-pro.h backup/msg.h backup/pce-pro.h \
+-               backup/pl.h backup/quickdev16.h backup/sflash.h backup/smc.h \
+-               backup/smd.h backup/smsgg-pro.h backup/swc.h \
++               backup/pl.h backup/quickdev.h backup/sflash.h backup/smc.h \
++               backup/smd.h backup/smsggpro.h backup/swc.h \
+                patch/aps.h patch/bsl.h patch/gg.h patch/ips.h patch/ppf.h
+ backup/backup.o: config.h backup/backup.h $(GETOPT2_H_DEPS)
+ backup/cc2.o: config.h $(UCON64_H_DEPS) backup/cc2.h $(GETOPT2_H_DEPS)
+@@ -362,9 +362,9 @@
+ backup/dex.o: config.h $(ARCHIVE_H_DEPS) misc/file.h misc/parallel.h \
+               $(UCON64_H_DEPS) $(UCON64_MISC_H_DEPS) backup/dex.h \
+               backup/psxpblib.h $(GETOPT2_H_DEPS)
+-backup/doctor64jr.o: config.h $(ARCHIVE_H_DEPS) misc/parallel.h \
++backup/doctorjr.o: config.h $(ARCHIVE_H_DEPS) misc/parallel.h \
+                      $(UCON64_H_DEPS) $(UCON64_MISC_H_DEPS) \
+-                     backup/doctor64jr.h $(GETOPT2_H_DEPS)
++                     backup/doctorjr.h $(GETOPT2_H_DEPS)
+ backup/doctor64.o: config.h $(ARCHIVE_H_DEPS) misc/file.h misc/parallel.h \
+                    $(UCON64_H_DEPS) $(UCON64_MISC_H_DEPS) backup/doctor64.h \
+                    $(GETOPT2_H_DEPS)
+@@ -383,7 +383,7 @@
+ backup/gd.o: config.h $(ARCHIVE_H_DEPS) misc/file.h $(MISC_H_DEPS) \
+              misc/parallel.h misc/string.h $(TERM_H_DEPS) \
+              $(UCON64_MISC_H_DEPS) $(SNES_H_DEPS) backup/gd.h $(GETOPT2_H_DEPS)
+-backup/interceptor.o: config.h backup/interceptor.h $(GETOPT2_H_DEPS)
++backup/intercep.o: config.h backup/intercep.h $(GETOPT2_H_DEPS)
+ backup/lynxit.o: config.h $(ARCHIVE_H_DEPS) misc/parallel.h $(TERM_H_DEPS) \
+                  $(UCON64_MISC_H_DEPS) console/lynx.h backup/lynxit.h \
+                  $(GETOPT2_H_DEPS)
+@@ -408,9 +408,9 @@
+ backup/pl.o: config.h $(ARCHIVE_H_DEPS) misc/parallel.h $(UCON64_H_DEPS) \
+              $(UCON64_MISC_H_DEPS) backup/pl.h $(GETOPT2_H_DEPS)
+ backup/psxpblib.o: config.h misc/parallel.h $(UCON64_H_DEPS) backup/psxpblib.h
+-backup/quickdev16.o: config.h $(ARCHIVE_H_DEPS) misc/itypes.h $(MISC_H_DEPS) \
++backup/quickdev.o: config.h $(ARCHIVE_H_DEPS) misc/itypes.h $(MISC_H_DEPS) \
+                      $(TERM_H_DEPS) misc/usb.h $(UCON64_H_DEPS) \
+-                     $(UCON64_MISC_H_DEPS) $(SNES_H_DEPS) backup/quickdev16.h \
++                     $(UCON64_MISC_H_DEPS) $(SNES_H_DEPS) backup/quickdev.h \
+                      backup/swc.h
+ backup/sc.o: config.h backup/sc.h $(GETOPT2_H_DEPS)
+ backup/sflash.o: config.h $(ARCHIVE_H_DEPS) $(UCON64_H_DEPS) \
+@@ -420,8 +420,8 @@
+               $(UCON64_MISC_H_DEPS) backup/ffe.h backup/smc.h $(GETOPT2_H_DEPS)
+ backup/smd.o: config.h $(ARCHIVE_H_DEPS) $(MISC_H_DEPS) $(UCON64_H_DEPS) \
+               $(UCON64_MISC_H_DEPS) backup/ffe.h backup/smd.h $(GETOPT2_H_DEPS)
+-backup/smsgg-pro.o: config.h $(ARCHIVE_H_DEPS) $(UCON64_H_DEPS) \
+-                    $(UCON64_MISC_H_DEPS) backup/tototek.h backup/smsgg-pro.h \
++backup/smsggpro.o: config.h $(ARCHIVE_H_DEPS) $(UCON64_H_DEPS) \
++                    $(UCON64_MISC_H_DEPS) backup/tototek.h backup/smsggpro.h \
+                     $(GETOPT2_H_DEPS)
+ backup/spsc.o: config.h backup/spsc.h $(GETOPT2_H_DEPS)
+ backup/ssc.o: config.h backup/ssc.h $(GETOPT2_H_DEPS)
+@@ -476,7 +476,7 @@
+ console/psx.o: config.h console/psx.h $(CONSOLE_DEPS)
+ console/sms.o: config.h $(ARCHIVE_H_DEPS) $(CHKSUM_H_DEPS) misc/file.h \
+                $(MISC_H_DEPS) misc/string.h $(UCON64_MISC_H_DEPS) \
+-               console/sms.h backup/mgd.h backup/smd.h backup/smsgg-pro.h \
++               console/sms.h backup/mgd.h backup/smd.h backup/smsggpro.h \
+                $(CONSOLE_DEPS)
+ console/snes.o: config.h $(ARCHIVE_H_DEPS) $(BSWAP_H_DEPS) $(CHKSUM_H_DEPS) \
+                 misc/file.h $(MISC_H_DEPS) misc/string.h $(UCON64_MISC_H_DEPS) \
+@@ -489,7 +489,7 @@
+                 $(CONSOLE_H_DEPS) console/vboy.h backup/backup.h
+ misc/archive.o: config.h $(ARCHIVE_H_DEPS) misc/map.h misc/unzip.h
+ misc/chksum.o: config.h $(BSWAP_H_DEPS) $(CHKSUM_H_DEPS) $(MISC_H_DEPS)
+-misc/dlopen.o: config.h misc/dlopen.h misc/dxedll_pub.h misc/map.h
++misc/dlopen.o: config.h misc/dlopen.h misc/dxedllpu.h misc/map.h
+ misc/file.o: config.h $(ARCHIVE_H_DEPS) misc/file.h $(MISC_H_DEPS)
+ misc/getopt.o: config.h misc/getopt.h
+ misc/getopt2.o: config.h misc/file.h $(GETOPT2_H_DEPS)
+@@ -501,7 +501,7 @@
+                  misc/property.h misc/string.h
+ misc/snprintf.o: config.h
+ misc/string.o: config.h misc/string.h
+-misc/term.o: config.h $(TERM_H_DEPS) ucon64_defines.h
++misc/term.o: config.h $(TERM_H_DEPS) ucon64de.h
+ misc/unzip.o: config.h misc/unzip.h
+ misc/usb.o: config.h misc/usb.h
+ patch/aps.o: config.h $(ARCHIVE_H_DEPS) $(BSWAP_H_DEPS) misc/file.h \
+diff -Naur ucon64/src/misc/dlopen.c ucon64.dos/src/misc/dlopen.c
+--- ucon64/src/misc/dlopen.c	2015-12-29 04:17:59.067192938 +0100
++++ ucon64.dos/src/misc/dlopen.c	2015-12-30 01:25:12.771107746 +0100
+@@ -48,7 +48,7 @@
+ 
+ 
+ #ifdef  DJGPP
+-#include "misc/dxedll_pub.h"
++#include "misc/dxedllpu.h"
+ #include "misc/map.h"
+ 
+ 
+diff -Naur ucon64/src/misc/term.c ucon64.dos/src/misc/term.c
+--- ucon64/src/misc/term.c	2015-11-15 17:49:51.000000000 +0100
++++ ucon64.dos/src/misc/term.c	2015-12-30 01:25:12.771107746 +0100
+@@ -51,7 +51,7 @@
+ #include <dpmi.h>                               // needed for __dpmi_int() by ansi_init()
+ #endif
+ #include "misc/term.h"
+-#include "ucon64_defines.h"
++#include "ucon64de.h"
+ 
+ 
+ #ifdef  __CYGWIN__                              // on Cygwin (gcc for Windows) we
+diff -Naur ucon64/src/patch/aps.c ucon64.dos/src/patch/aps.c
+--- ucon64/src/patch/aps.c	2015-12-09 01:56:31.000000000 +0100
++++ ucon64.dos/src/patch/aps.c	2015-12-30 01:25:12.772107728 +0100
+@@ -32,7 +32,7 @@
+ #include "misc/file.h"
+ #include "misc/misc.h"                          // truncate()
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "patch/aps.h"
+ 
+ 
+diff -Naur ucon64/src/patch/bsl.c ucon64.dos/src/patch/bsl.c
+--- ucon64/src/patch/bsl.c	2015-12-09 01:57:06.000000000 +0100
++++ ucon64.dos/src/patch/bsl.c	2015-12-30 01:25:12.772107728 +0100
+@@ -24,7 +24,7 @@
+ #include "misc/archive.h"
+ #include "misc/file.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "patch/bsl.h"
+ 
+ 
+diff -Naur ucon64/src/patch/gg.c ucon64.dos/src/patch/gg.c
+--- ucon64/src/patch/gg.c	2015-11-23 02:32:20.000000000 +0100
++++ ucon64.dos/src/patch/gg.c	2015-12-30 01:25:12.772107728 +0100
+@@ -50,7 +50,7 @@
+ #include <ctype.h>
+ #include "misc/file.h"
+ #include "misc/misc.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "console/snes.h"
+ #include "patch/gg.h"
+ 
+diff -Naur ucon64/src/patch/ips.c ucon64.dos/src/patch/ips.c
+--- ucon64/src/patch/ips.c	2015-12-09 01:57:39.000000000 +0100
++++ ucon64.dos/src/patch/ips.c	2015-12-30 01:25:12.772107728 +0100
+@@ -25,7 +25,7 @@
+ #include "misc/file.h"
+ #include "misc/misc.h"
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "patch/ips.h"
+ 
+ 
+diff -Naur ucon64/src/patch/patch.c ucon64.dos/src/patch/patch.c
+--- ucon64/src/patch/patch.c	2015-12-09 01:58:16.000000000 +0100
++++ ucon64.dos/src/patch/patch.c	2015-12-30 01:25:12.773107724 +0100
+@@ -19,7 +19,7 @@
+ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "patch/patch.h"
+ 
+ 
+diff -Naur ucon64/src/patch/ppf.c ucon64.dos/src/patch/ppf.c
+--- ucon64/src/patch/ppf.c	2015-12-09 01:59:01.000000000 +0100
++++ ucon64.dos/src/patch/ppf.c	2015-12-30 01:25:12.773107724 +0100
+@@ -33,7 +33,7 @@
+ #include "misc/misc.h"                          // truncate()
+ #include "misc/string.h"                        // MEMCMP2_CASE
+ #include "ucon64.h"
+-#include "ucon64_misc.h"
++#include "ucon64mi.h"
+ #include "patch/ppf.h"
+ 
+ 
+diff -Naur ucon64/src/ucon64.c ucon64.dos/src/ucon64.c
+--- ucon64/src/ucon64.c	2015-12-26 20:03:37.674854084 +0100
++++ ucon64.dos/src/ucon64.c	2015-12-30 01:25:12.773107724 +0100
+@@ -60,9 +60,9 @@
+ #include "misc/property.h"
+ #include "misc/term.h"
+ #include "ucon64.h"
+-#include "ucon64_dat.h"
+-#include "ucon64_misc.h"
+-#include "ucon64_opts.h"
++#include "ucon64da.h"
++#include "ucon64mi.h"
++#include "ucon64op.h"
+ #include "console/atari.h"
+ #include "console/coleco.h"
+ #include "console/console.h"
+@@ -88,7 +88,7 @@
+ #include "backup/cmc.h"
+ #include "backup/dex.h"
+ #include "backup/doctor64.h"
+-#include "backup/doctor64jr.h"
++#include "backup/doctorjr.h"
+ #include "backup/f2a.h"
+ #include "backup/fal.h"
+ #include "backup/gbx.h"
+@@ -100,11 +100,11 @@
+ #include "backup/msg.h"
+ #include "backup/pce-pro.h"
+ #include "backup/pl.h"
+-#include "backup/quickdev16.h"
++#include "backup/quickdev.h"
+ #include "backup/sflash.h"
+ #include "backup/smc.h"
+ #include "backup/smd.h"
+-#include "backup/smsgg-pro.h"
++#include "backup/smsggpro.h"
+ #include "backup/swc.h"
+ #include "patch/aps.h"
+ #include "patch/bsl.h"
+diff -Naur ucon64/src/ucon64_dat.c ucon64.dos/src/ucon64_dat.c
+--- ucon64/src/ucon64_dat.c	2015-11-11 00:52:38.000000000 +0100
++++ ucon64.dos/src/ucon64_dat.c	2015-12-30 01:25:12.774107721 +0100
+@@ -54,8 +54,8 @@
+ #include "misc/misc.h"
+ #include "misc/property.h"
+ #include "misc/string.h"
+-#include "ucon64_dat.h"
+-#include "ucon64_misc.h"
++#include "ucon64da.h"
++#include "ucon64mi.h"
+ #include "console/atari.h"
+ #include "console/coleco.h"
+ #include "console/console.h"
+diff -Naur ucon64/src/ucon64.h ucon64.dos/src/ucon64.h
+--- ucon64/src/ucon64.h	2015-11-23 01:24:44.000000000 +0100
++++ ucon64.dos/src/ucon64.h	2015-12-30 01:25:12.774107721 +0100
+@@ -31,7 +31,7 @@
+ #endif
+ #include <stdio.h>
+ #include "misc/itypes.h"
+-#include "ucon64_defines.h"                     // MAXBUFSIZE, etc..
++#include "ucon64de.h"                           // MAXBUFSIZE, etc..
+ 
+ 
+ #define UCON64_ISSET(x) (x != UCON64_UNKNOWN)
+diff -Naur ucon64/src/ucon64_misc.c ucon64.dos/src/ucon64_misc.c
+--- ucon64/src/ucon64_misc.c	2015-12-23 01:21:29.000000000 +0100
++++ ucon64.dos/src/ucon64_misc.c	2015-12-30 01:25:12.774107721 +0100
+@@ -45,8 +45,8 @@
+ #include "misc/string.h"
+ #include "misc/term.h"
+ #include "ucon64.h"
+-#include "ucon64_dat.h"
+-#include "ucon64_misc.h"
++#include "ucon64da.h"
++#include "ucon64mi.h"
+ 
+ 
+ #ifdef  USE_DISCMAGE
+diff -Naur ucon64/src/ucon64_misc.h ucon64.dos/src/ucon64_misc.h
+--- ucon64/src/ucon64_misc.h	2015-12-27 23:29:40.593536326 +0100
++++ ucon64.dos/src/ucon64_misc.h	2015-12-30 01:25:12.774107721 +0100
+@@ -48,7 +48,7 @@
+   discmage_gauge          gauge wrapper for libdiscmage
+ */
+ #ifdef  USE_DISCMAGE
+-#include "libdiscmage/libdiscmage.h"            // dm_image_t
++#include "discmage/discmage.h"                  // dm_image_t
+ 
+ #define UCON64_DM_VERSION_MAJOR 0
+ #define UCON64_DM_VERSION_MINOR 0
+diff -Naur ucon64/src/ucon64_opts.c ucon64.dos/src/ucon64_opts.c
+--- ucon64/src/ucon64_opts.c	2015-12-26 19:58:42.587047868 +0100
++++ ucon64.dos/src/ucon64_opts.c	2015-12-30 01:25:12.775107714 +0100
+@@ -41,9 +41,9 @@
+ #include "misc/misc.h"
+ #include "misc/parallel.h"
+ #include "misc/string.h"
+-#include "ucon64_dat.h"
+-#include "ucon64_misc.h"
+-#include "ucon64_opts.h"
++#include "ucon64da.h"
++#include "ucon64mi.h"
++#include "ucon64op.h"
+ #include "console/dc.h"
+ #include "console/gb.h"
+ #include "console/gba.h"
+@@ -62,7 +62,7 @@
+ #include "backup/cmc.h"
+ #include "backup/dex.h"
+ #include "backup/doctor64.h"
+-#include "backup/doctor64jr.h"
++#include "backup/doctorjr.h"
+ #include "backup/f2a.h"
+ #include "backup/fal.h"
+ #include "backup/gbx.h"
+@@ -74,11 +74,11 @@
+ #include "backup/msg.h"
+ #include "backup/pce-pro.h"
+ #include "backup/pl.h"
+-#include "backup/quickdev16.h"
++#include "backup/quickdev.h"
+ #include "backup/sflash.h"
+ #include "backup/smc.h"
+ #include "backup/smd.h"
+-#include "backup/smsgg-pro.h"
++#include "backup/smsggpro.h"
+ #include "backup/swc.h"
+ #include "patch/aps.h"
+ #include "patch/bsl.h"

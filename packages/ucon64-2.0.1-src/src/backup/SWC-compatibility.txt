@@ -1,0 +1,428 @@
+A Super Wild Card compatibility list
+Version: 1.29
+Author: dbjh "of uCON64" with great help from CL "of NSRT" and The Dumper
+Date: 3 November 2008
+Hardware: Super Wild Card 2.8cc 32 Mbit PAL
+Software: uCON64 2.0.0
+
+
+Legend:
+0 = seems to work without modification
+1 = needs crack (uCON64 option -k)
+2 = needs NTSC/PAL fix (uCON64 option -f)
+3 = needs backup unit header fix
+4 = seems to work, but doesn't work correctly
+5 = music doesn't work
+6 = copy protection screen
+7 = wrong television standard (NTSC/PAL) screen
+8 = corrupted/distorted graphics
+9 = doesn't work
+
+
+Comment:
+I use the word seems, because I have tested most games only for a few minutes
+or so. Even for games that I played from the beginning till the end I can't be
+sure if they run as they do from a cartridge.
+Of course I tried to crack or fix the games that displayed a copy protection
+screen. The games that have that code can't be cracked with uCON64.
+Non-playing music seems to be a BS-specific problem.
+For some games I put an extra comment after the character sequence "<=". In
+some comments I mention the so-called emulation mode select byte. This is the
+byte at offset 2 in the header. You can check the value of the emulation mode
+select byte by passing the command line option -dbuh to uCON64. You can change
+it with a hex(adecimal) editor or by using the uCON64 option -poke (new in
+version 1.9.8beta8). For example, to change the emulation mode select byte for
+Mickey to Donald Magical Adventure 3 (J).swc you would type:
+  ucon64 -poke=2:1c "Mickey to Donald Magical Adventure 3 (J).swc"
+I have sent all games to the Super Wild Card via a parallel cable. Note that
+for LoROM games that don't use SRAM uCON64 adjusts the emulation mode select
+byte before sending the game. This causes that some games don't have code 3,
+because uCON64 already makes the required modification. For example, if Addams
+Family Values is loaded from diskette the emulation mode select byte should
+have the value 0x2c instead of the value 0x0c (before the file is split).
+For games marked with an asterisk uCON64 2.0.0 is required (or an updated
+version of snescopy.txt and/or snesntsc.txt/snespal.txt).
+
+
+Code    Game
+0 -     7th Saga, The (U)
+0 -     AAAHH!!! Real Monsters (U)
+8 + 9 - Ace wo Nerae! (J) <= it does work with Super Mario Kart (E) plugged in
+0 -     ActRaiser 2 (E)
+4 -     ActRaiser 2 (U) <= level(s?) (Industen) can't be entered
+0 -     ActRaiser (U)
+0 -     Addams Family, The (E)
+0 -     Addams Family, The - Pugsley's Scavenger Hunt (Beta)
+0 -     Addams Family, The - Pugsley's Scavenger Hunt (E)
+0 -     Addams Family Values (E)
+0 -     Adventures of Batman & Robin, The (E)
+0 -     Aladdin (E)
+0 -     Alcahest (J)
+0 -     Alien 3 (E)
+0 -     Alien vs. Predator (U)
+0 -     Another World (E)
+0 -     Arabian Nights - Sabaku no Seirei Ou (J)
+0 -     Arcade's Greatest Hits (E)
+0 -     Axelay (E)
+0 -     Bahamut Lagoon (J)
+0 -     Bastard!! Ankoku no Hakai-shin (J)
+0 -     Batman Returns (E)
+0 -     Batman Returns (J)
+3 -     Batman - Revenge of the Joker (U) <= emulation mode select byte: 0x0c
+0 -     Battletoads & Double Dragon - The Ultimate Team (U)
+0 -     Battletoads in Battlemaniacs (U) (26454)
+0 -     Beauty and the Beast (E)
+0 -     Bishoujo Senshi Sailor Moon (J)
+0 -     Brawl Brothers (U)
+1 -     Breath of Fire II (E)
+0 -     Breath of Fire (U)
+9 -     BS Bandai Satellaview-X BIOS
+0 -     BS Chrono Trigger - Character Library (J)
+0 -     BS Chrono Trigger - Jet Bike Special (J)
+0 -     BS Chrono Trigger - Music Library (J)
+8 -     BS Dan Dan Belt Conveyor Ukulele no Maki (J) (NG-Dump Known)
+0 -     BS Dr. Mario (J)
+0 -     BS Dynami Tracer (J)
+0 -     BS F-Zero Grand Prix 2 (J)
+0 -     BS Koi ha Balance - Battle of Lovers (J)
+5 -     BS Mario Collection 3 (J)
+8 -     BS Pokekame Magajin (J)
+9 -     BS Radical Dreamers (J) [f1] <= with the translation patch it does work
+9 -     BS Radical Dreamers (J) <= idem
+0 -     BS Super Earth Defense Force (J)
+0 -     BS Super Famicom Wars (J) [h1]
+0 -     BS Super Famicom Wars (J)
+5 -     BS Super Mario USA 4 (J)
+8 -     BS Treasure Conflix (J)
+0 -     BS Wai Wai Check 3-7th (J)
+0 -     BS Wario no Mori (J)
+0 -     BS Yoshi no Panepon (J)
+0 -     BS Zelda no Densetsu - Kamigami no Triforce (J)
+9 -     BS Zelda no Densetsu Kodai no Sekiban Dai 1 Hanashi (J)
+9 -     BS Zelda no Densetsu Kodai no Sekiban Dai 3 Hanashi (J)
+1 -     BS Zelda no Densetsu Remix (J)
+0 -     BS Zootto Mahjong! Event Version (J)
+0 -     Bubsy II (U)
+0 -     Bubsy in Claws Encounters of the Furred Kind (E)
+0 -     Castlevania - Vampire's Kiss (E)
+0 -     Choh Makai-Mura (J)
+0 -     Choplifter III (U) (30545)
+0 -     Chou Jikuu Yousai Macross - Scrambled Valkyrie (J)
+0 -     Chrono Trigger - Kurono Toriga (J)
+0 -     Chrono Trigger (U)
+0 -     Chuck Rock (U)
+0 -     Clay Fighter 2 - Judgment Clay (E)
+0 -     Clay Fighter (E)
+7 -     Clay Fighter (U)
+2 -     Clock Tower (J)
+0 -     Contra III - The Alien Wars (U)
+0 -     Cybernator (U)
+0 -     Daffy Duck - The Marvin Missions (U)
+7 -     Dai-3-Ji Super Robot Taisen (J)
+9 -     Daikaijuu Monogatari 2 (J) <= SWC DX2 64 Mbit PAL: 0
+0 -     Darius Twin (E)
+0 -     Darius Twin (U)
+1 + 2 - Demon's Crest (U)
+0 -     Der Langrisser (J) (V1.1)
+0 -     Desert Strike - Return to the Gulf (U)
+9 -     Dirt Trax FX (E)
+0 -     Donald Duck Mahou no Boushi (J)
+1 -     Donkey Kong Country 2 - Diddy's Kong Quest (E)
+1+2+4 - Donkey Kong Country 2 - Diddy's Kong Quest (U) (V1.1) <= can't get past the first level
+1 -     Donkey Kong Country 3 - Dixie Kong's Double Trouble (E)
+1 -     Donkey Kong Country 3 - Dixie Kong's Double Trouble (U)
+0 -     Donkey Kong Country - Competition Cartridge (U)
+1 -     Donkey Kong Country (E) (V1.0)
+1 -     Donkey Kong Country (E) (V1.1)
+1 + 2 - Donkey Kong Country (U) (V1.0)
+1 + 2 - Donkey Kong Country (U) (V1.1)
+9 -     Doom (U)
+0 -     Doraemon - Nobita to Yosei no Kuni (J)
+0 -     Dragon Quest I & II (J)
+0 -     Dragon Quest III (J)
+0 -     Dragon Quest VI (J)
+0 -     Dragon Quest V (J)
+0 -     Dragon's Lair (Beta)
+0 -     Dragon's Lair (E)
+0 -     Dragon - The Bruce Lee Story (E) [a1]
+2 -     Dragon - The Bruce Lee Story (U)
+2 -     Dr. Mario (J) (NP)
+2 -     Dual Orb II (J)
+1 + 2 - Earthbound (U)
+0 -     Earthworm Jim 2 (U)
+0 -     Earthworm Jim (U)
+0 -     Eek! The Cat (E)
+0 -     E.V.O. Search For Eden (U)
+0 -     F-1 Grand Prix (J)
+8 + 9 - F1 ROC II - Race of Champions (U) <= course is not visible
+0 -     Final Fantasy III (U) (V1.0)
+0 -     Final Fantasy III (U) (V1.1)
+0 -     Final Fantasy II (U) (V1.0)
+0 -     Final Fantasy IV (J)
+0 -     Final Fantasy - Mystic Quest (U) (V1.0)
+0 -     Final Fantasy VI (J)
+0 -     Final Fantasy V (J)
+0 -     Final Fight 2 (E)
+2 + 3 - Final Fight 3 (U) <= emulation mode select byte: 0x1c
+2 -     Final Fight Guy (U)
+2 + 3 - Final Fight Tough (J) <= emulation mode select byte: 0x1c
+0 -     Final Fight (U)
+6 -     Fire Emblem - Monshou no Nazo (J) <= SWC DX2 64 Mbit PAL: 0
+6 -     Fire Emblem - Seisen no Keifu (J) <= SWC DX2 64 Mbit PAL: 0
+6+8+9 - Fire Emblem - Thraki 776 (J) (V.ROM) <= after reset game starts; SWC DX2 64 Mbit PAL: 8+9
+0 -     Flashback (E) (M2)
+0 -     Frogger (U)
+1 + 2 - Front Mission - Gun Hazard (J) <= modification protection; NTSC SNES: 0
+0 -     Front Mission (J) (V1.0)
+0 -     F-Zero (E)
+0 -     Ganbare Goemon - Yuki hime Kyuushuutsu emaki (J) (V1.2)
+0 -     Ganpuru - Gunman's Proof (J)
+2 -     Gokujou Parodius (J)
+0 -     Goof Troop (E)
+0 -     Gradius III (U)
+0 -     Harvest Moon (U)
+9 -     Hayazashi Nidan Morita Shogi 2 (J) <= halts on "TRANSMIT WAIT"
+0 -     Hebereke's Popoitto (E)
+9 -     Hoshi no Kirby 3 (J)
+2 -     Illusion of Gaia (U)
+0 -     Illusion of Time (E)
+0 -     International Superstar Soccer Deluxe (E)
+0 -     International Superstar Soccer (E)
+0 -     Itchy & Scratchy Game, The (E) <= was 8 + 9!?
+2 + 9   Jikkyou Oshaberi Parodius (J)
+2 -     Joe & Mac 2 - Lost in the Tropics (U) (35468)
+2 -     Joe & Mac 2 - Lost in the Tropics (U) (54227)
+0 -     Joe & Mac - Caveman Ninja (E)
+0 -     Joe & Mac (U)
+0 -     J.R.R. Tolkien's The Lord of the Rings - Volume 1 (U)
+0 -     Juutei Senki (J)
+2 + 9 - Kaite Tukutte Asoberu Dezaemon (J)
+0 -     Kick Off (E)
+0 -     Kiki KaiKai - Nazo no Kuro Manto (J)
+1 -     Killer Instinct (E)
+2 -     Kirby no Kirakira Kids (J) (NP)
+1 -     Kirby's Dream Course (E)
+1 + 2 - Kirby's Dream Course (U)
+9 -     Kirby's Dream Land 3 (U)
+9 -     Kirby's Fun Pak (E)
+0 -     Kirby's Ghost Trap (E)
+0 -     Knights of the Round (E)
+0 -     Krusty's Super Fun House (U) (V1.1)
+0 -     Legend of The Mystical Ninja, The (E)
+0 -     Legend of Zelda, The - A Link to the Past (E)
+0 -     Legend of Zelda, The - A Link to the Past (U)
+0 -     Lemmings (E)
+2 -     Live A Live (J)
+0 -     Lost Vikings II, The (E)
+0 -     Lost Vikings, The (U)
+1 -     Lufia II - Rise of the Sinistrals (H)
+1 -     Lufia II - Rise of the Sinistrals (U)
+0 -     Lufia & The Fortress of Doom (U)
+0 -     Magical Drop (J)
+2 -     Magical Pop'n (J)
+0 -     Magical Quest Starring Mickey Mouse, The (Beta)
+0 -     Magical Quest Starring Mickey Mouse, The (E)
+0 -     Magical Quest Starring Mickey Mouse, The (U)
+1 + 2 - Mario no Super Picross (J)
+0 -     Mario Paint (E) <= I don't have a SNES mouse...
+0 -     Mario & Wario (J) <= idem
+9 -     Masou Kishin - Super Robot Taisen Gaiden - The Lord of Elemental (J)
+2 -     Mega Man's Soccer (U)
+2 -     Mega Man VII (U)
+9 -     Mega Man X 2 (E) <= the intro can be viewed
+2 + 9 - Mega Man X 2 (U) <= idem
+8 + 9 - Mega Man X 3 (U) <= game can be started, but sprites are not visible
+1 -     Mega Man X (E)
+1 + 2 - Mega Man X (U) (V1.0)
+1 + 2 - Mega Man X (U) (V1.1)
+8 + 9 - Metal Combat - Falcon's Revenge (U) <= sprites are not visible
+2 -     Metal Warriors (U)
+2 + 3 - Mickey to Donald Magical Adventure 3 (J) <= emulation mode select byte: 0x1c
+0 -     Micro Machines 2 - Turbo Tournament (E)
+0 -     Micro Machines (U)
+9 -     Momotarou Dentetsu Happy (J) <= halts on "SPC7110 check program v3.0"
+0 -     Mortal Kombat 3 (E)
+0 -     Mortal Kombat (Beta)
+0 -     Mortal Kombat (E)
+0 -     Mortal Kombat II (E) (V1.0)
+0 -     Mortal Kombat II (U) (V1.1)
+0 -     NBA Jam (Beta)
+0 -     NBA Jam (E) (V1.0)
+0 -     NHL '95 (E)
+2 -     Ninja Gaiden Trilogy (U)
+0 -     Ogre Battle - The March of the Black Queen (U)
+0 -     Out of This World (U)
+0 -     Parodius Da! Shinwa kara Owarai he (J)
+0 -     Parodius - Non-Sense Fantasy (E)
+0 -     Phalanx - The Enforce Fighter A-144 (E)
+9 -     Pilotwings (E) <= black screen as soon as the real flying begins
+9 -     Pilotwings (U) <= with the DSP patch it does work with Super Mario Kart (E)
+0 -     Pitfall - The Mayan Adventure (Beta)
+0 -     Pitfall - The Mayan Adventure (E)
+0 -     Pocky & Rocky 2 (U) (54250)
+0 -     Pocky & Rocky (E)
+0 -     Pop'n Twinbee (E)
+0 -     Pop'n Twinbee - Rainbow Bell Adventures (E)
+0 -     Primal Rage (E)
+0 -     Primal Rage (U) (With Sound Test)
+0 -     Prince of Persia 2 - The Shadow & The Flame (E)
+0 -     Prince of Persia (E)
+0 -     Prince of Persia (J)
+0 -     Push-Over (E)
+0 -     Puzzle Bobble (E)
+0 -     Ranma Nibun no Ichi - Akanekodan no Hihou (J)
+0 -     Ranma Nibun no Ichi - Hard Battle (U)
+2 -     Robotrek (U)
+0 -     Rockman & Forte (J)
+0 -     Rock N' Roll Racing (E)
+0 -     Romance of the Three Kingdoms IV - Wall of Fire (U)
+2 -     Romancing Sa-Ga 2 (J)
+2 -     Romancing Sa-Ga 3 (J) (V1.0)
+2 -     Romancing Sa-Ga 3 (J) (V1.1)
+0 -     Romancing Sa-Ga (J) (V1.0)
+0 -     RPG Tsukuru 2 (J)
+0 -     R-Type III - The Third Lightning (E) (21451)
+0 -     Rudra no Hihou (J)
+0 -     Sanrio World Smash Ball! (J)
+0 -     Secret of Evermore (U)
+0 -     Secret of Mana (E) (V1.0)
+0 -     Secret of Mana (E) (V1.1)
+2 -     Secret of Mana (U)
+2 -     Seiken Densetsu 2 (J)
+0 -     Seiken Densetsu 3 (J) (Sample)
+2 -     Seiken Densetsu 3 (J)
+0 -     Shadowrun (E)
+0 -     Shin Megami Tensei (J) (V1.0)
+0 -     Sim Ant (U) (37113)
+0 -     Sim City (E)
+0 -     Sim City (U)
+0 -     Simpsons, The - Bart's Nightmare (U)
+0 -     Smash Tennis (E)
+0 -     Smurfs, The (E)
+0 -     Soldiers of Fortune (U)
+0 -     Sonic the Hedgehog (Unl) [p1][h1]
+0 -     Soul Blazer (U)
+0 -     Spider-Man and the X-Men in Arcade's Revenge (E)
+9 -     Star Fox 2 (Beta)
+9 -     Star Fox 2 (Beta TD)
+9 -     Star Fox Super Weekend Competition (U)
+9 -     Star Fox (U) (V1.0)
+9 -     Star Fox (U) (V1.2)
+9 -     Star Ocean (J)
+9 -     StarWing (E) (V1.0)
+9 -     StarWing (E) (V1.1)
+9 -     Street Fighter Alpha 2 (E) [b1]
+9 -     Street Fighter Alpha 2 (E)
+9 -     Street Fighter Alpha 2 (U)
+0 -     Street Fighter II Champ. Edition (Hack)
+0 -     Street Fighter II - The World Warrior (E)
+0 -     Street Fighter II - The World Warrior (U)
+0 -     Street Fighter II Turbo (E) (V1.1)
+2 -     Street Fighter II Turbo (U)
+9 -     Street Fighter Zero 2 (J)
+0 -     Street Racer (Beta)
+0 -     Street Racer (E)
+0 -     Strike Gunner (E)
+9 -     Stunt Race FX (E)
+0 -     Sunset Riders (E)
+0 -     Super Adventure Island II (U)
+0 -     Super Adventure Island (U)
+0 -     Super Aleste (E)
+0 -     Super Aleste (J)
+0 -     Super Aleste (J) [t1]
+0 -     Super Alfred Chicken (E)
+0 -     Super Alfred Chicken (E) [a1][b1]
+0 -     Super Alfred Chicken (U)
+0 -     Super Battletank - War in the Gulf (U) (V1.0)
+0 -     Super Bomberman 2 (E)
+0 -     Super Bomberman 3 (E)
+0 -     Super Bomberman 4 (J)
+0 -     Super Bomberman 5 (J)
+0 -     Super Bomberman (E)
+0 -     Super Castlevania IV (E)
+0 -     Super Earth Defense Force (E)
+0 -     Super Famicom Wars (J) (NP)
+0 -     Super Ghouls 'N Ghosts (E)
+1 -     Super Mario All-Stars (E)
+1 + 2 - Super Mario All-Stars (U)
+1 -     Super Mario All-Stars & World (E)
+1 + 2 - Super Mario All-Stars & World (U)
+1 + 2 - Super Mario Collection (J) (V1.1)
+9 -     Super Mario Kart (E) <= it does work with Super Mario Kart (E) plugged in
+9 -     Super Mario Kart (U) <= idem
+9 -     Super Mario RPG (J) (V1.0)
+9 -     Super Mario RPG (J) (V1.1) (NG-Dump Known)
+9 -     Super Mario RPG - Legend of the Seven Stars (U)
+9 -     Super Mario World 2 - Yoshi's Island (E) (V1.0)
+0 -     Super Mario World (E) (V1.1)
+0 -     Super Mario World (U)
+1 -     Super Metroid (E)
+1 + 2 - Super Metroid (JU)
+0 -     Super NES Super Scope 6 (U) <= I don't have a Super Scope...
+0 -     Super Off Road (U)
+0 -     Super Power League 3 (J)
+9 -     Super Power League 4 (J) <= halts on "SPC7110 check program v3.0"
+0 -     Super Probotector - The Alien Rebels (E)
+0 -     Super Punch-Out!! (U)
+0 -     Super Puyo Puyo (J) (V1.2)
+0 -     Super R-Type (E)
+0 -     Super R-Type (U)
+0 -     Super Smash T.V. (E)
+0 -     Super Smash T.V. (U)
+0 -     Super Star Wars (E)
+0 -     Super Star Wars - Return of the Jedi (E)
+0 -     Super Star Wars - The Empire Strikes Back (Beta)
+0 -     Super Star Wars - The Empire Strikes Back (E)
+0 -     Super Star Wars - The Empire Strikes Back (U) (V1.1)
+0 -     Super Star Wars (U) (31438)
+0 -     Super Street Fighter II - The New Challengers (E)
+0 -     Super Tennis (E) (V1.0)
+0 -     Super Turrican (E)
+0 -     Syndicate (E)
+0 -     T2 - The Arcade Game (U)
+0 -     Tactics Ogre - Let Us Cling Together (J) (V1.2)
+9 -     Tales of Phantasia (J) <= SWC DX2 64 Mbit PAL: 0
+0 -     Teenage Mutant Hero Turtles IV - Turtles in Time (E)
+0 -     Teenage Mutant Hero Turtles - Tournament Fighters (E)
+0 -     Teenage Mutant Ninja Turtles IV - Turtles in Time (A)
+0 -     Teenage Mutant Ninja Turtles IV - Turtles in Time (Beta)
+0 -     Teenage Mutant Ninja Turtles - Turtles in Time (J)
+0 -     Tenchi Muyou! Game Hen (J)
+9 -     Tengai Makyou Zero (J)
+9 -     Tengai Makyou Zero - Shounen Jump no Sho (J)
+0 -     Terranigma (E)
+0 -     Terranigma (S)
+0 -     Test Drive II - The Duel (U) (20429)
+1 -     Tetris Attack (E)
+1 + 2 - Tetris Attack (U)
+0 -     Theme Park (E)
+0 -     Thoroughbred Breeder III (J)
+0 -     Tiny Toon Adventures - Buster Busts Loose! (E)
+2+8+9 - Tokimeki Memorial - Densetsu no Ki no Shita de (J) (V1.1) <= the game halts after a while
+0 -     Tom & Jerry (U)
+0 -     Top Racer (J)
+0 -     Treasure Hunter G (J)
+0 -     Ultimate Mortal Kombat 3 (U)
+0 -     Ultima VII - The Black Gate (Beta)
+0 -     Ultima VII - The Black Gate (U)
+0 -     Uncharted Waters - New Horizons (U)
+1 -     Uniracers (U)
+1 -     Unirally (E)
+0 -     U.N. Squadron (E)
+9 -     Vortex (E)
+0 -     Wario's Woods (U)
+0 -     Wolfenstein 3D (E)
+2 -     Wolfenstein 3D (U)
+0 -     Wolverine - Adamantium Rage (U)
+0 -     Worms (E)
+0 -     WWF Super Wrestlemania (E)
+9 -     X-Band Modem BIOS (U)
+0 -     X-Men - Mutant Apocalypse (E)
+2 -     Yoshi's Safari (U) <= I don't have a Super Scope...
+2 -     Ys V - Expert (J)
+2 -     Yuu Yuu Hakusho - Tokubetsuhen (J)
+0 -     Zelda no Densetsu - Kamigami no Triforce (J) (V1.0)
+0 -     Zombies (E)
+0 -     Zool (E)
+
+EOF

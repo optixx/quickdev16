@@ -1,0 +1,258 @@
+.PHONY: all clean install
+
+DLOPEN=1
+#USE_ZLIB=1
+
+prefix=/usr/local
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+
+INSTALL=/usr/bin/install -c
+INSTALL_PROGRAM=${INSTALL}
+INSTALL_DATA=${INSTALL} -m 644
+#RANLIB=ranlib
+
+CC=gcc
+CFLAGS0=-I. -Wall -W -O3 -DHAVE_CONFIG_H
+CFLAGS=$(CFLAGS0) -DDLL
+ifdef DLOPEN
+CFLAGS+=-DDLOPEN
+endif
+ifeq ($(findstring darwin,$(OSTYPE)),darwin) # for example "darwin7.0"
+# On Mac OS X using -s gives the following warning:
+# /usr/bin/libtool: -static not specified, -s invalid
+LDFLAGS=
+else
+LDFLAGS=-s
+endif
+
+# The test for Cygwin should be done before the test for DJGPP, because the
+# environment variable DJGPP can be set in Bash for people who have installed
+# both GCC (and friends) ports.
+
+GCC_WIN=0
+ifeq ($(OSTYPE),cygwin)                 # test cygwin before DJGPP
+GCC_WIN=1
+endif
+ifeq ($(OSTYPE),msys)                   # test msys (MinGW's POSIX build env.) before DJGPP
+GCC_WIN=1
+endif
+
+LIBNAME=discmage
+OBJECTS=libdm_misc.o dllinit.o misc.o misc_wav.o format/format.o format/cdi.o \
+        format/nero.o format/cue.o format/toc.o format/other.o
+ifneq ($(OSTYPE),beos)
+LDFLAGS+=-lm
+endif
+ifdef USE_ZLIB
+LDFLAGS+=-lz
+OBJECTS+=map.o misc_z.o unzip.o
+else
+ifeq ($(GCC_WIN),1)
+else
+ifdef DJGPP                             # DJGPP code in dllinit needs map code
+OBJECTS+=map.o
+endif                                   # DJGPP
+endif                                   # GCC_WIN
+endif                                   # USE_ZLIB
+
+
+ifeq ($(OSTYPE),cygwin)                 # test cygwin before DJGPP
+
+FULLLIBNAME=$(LIBNAME).dll
+GCCA_DIR=/lib/gcc/i686-pc-cygwin/4.9.3/
+
+ifdef DLOPEN
+ENTRY=__cygwin_dll_entry@12
+else
+ENTRY=_DllMain@12
+endif
+
+LDFLAGS+=-L$(GCCA_DIR) -lgcc -lcygwin -lkernel32 --dll -e $(ENTRY)
+# kernel32 for DLOPEN and DisableThreadLibraryCalls()
+
+else
+ifeq ($(OSTYPE),msys)                   # test msys before DJGPP
+
+FULLLIBNAME=$(LIBNAME).dll
+GCCA_DIR=/mingw/lib/gcc/mingw32/4.8.1/
+LDFLAGS+=-L$(GCCA_DIR) -lgcc -L/mingw/lib -lkernel32 -lmsvcrt --dll -e _DllMain@12
+# MSYS problem: Specifying the library directory is necessary when compiling on
+# a different filesystem than the filesystem that MinGW is installed on.
+
+else
+ifdef DJGPP
+
+FULLLIBNAME=$(LIBNAME).dxe
+GCCA_DIR=c:/djgpp/lib/gcc/djgpp/5.30
+LDFLAGS+=-L$(GCCA_DIR) -lgcc
+OBJECTS+=dxe_misc.o
+
+else                                    # UNIX, BeOS or Mac OS X (Darwin)
+
+CFLAGS+=-fPIC
+
+ifeq ($(findstring darwin,$(OSTYPE)),darwin)
+FULLLIBNAME=$(LIBNAME).dylib
+else
+FULLLIBNAME=$(LIBNAME).so
+endif
+
+ifndef DLOPEN                           # GNU specific: "simply expanded variable"
+FULLLIBNAME:=$(addprefix lib,$(FULLLIBNAME))
+endif
+
+ifeq ($(OSTYPE),beos)
+LDFLAGS+=-nostart
+else
+ifeq ($(findstring darwin,$(OSTYPE)),darwin)
+LDFLAGS+=-dynamiclib
+else
+LDFLAGS+=-shared
+endif                                   # darwin
+endif                                   # beos
+
+endif                                   # DJGPP
+endif                                   # msys
+endif                                   # cygwin
+
+
+all: $(FULLLIBNAME)
+
+
+clean:
+ifeq ($(GCC_WIN),1)
+	rm -f $(FULLLIBNAME) $(LIBNAME).a $(OBJECTS) *.core *.stackdump *.o tmp.*
+else
+ifdef DJGPP
+	del $(FULLLIBNAME)
+ifndef DLOPEN
+	del $(LIBNAME).a
+endif
+	del *.o
+	del format\*.o
+else                                    # UNIX, BeOS or Mac OS X (Darwin)
+	rm -f $(FULLLIBNAME) $(OBJECTS) *.core *.stackdump *.o
+endif                                   # DJGPP
+endif                                   # GCC_WIN
+
+
+distclean: clean
+ifeq ($(GCC_WIN),1)
+	rm -f Makefile config.log config.status config.cache config.h
+else
+ifdef DJGPP
+	del Makefile
+	del config.log
+	del config.status
+	del config.cache
+	del config.h
+else
+	rm -f Makefile config.log config.status config.cache config.h
+endif                                   # DJGPP
+endif                                   # GCC_WIN
+
+
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+
+
+ifeq ($(GCC_WIN),1)
+
+DLLTOOLFLAGS=-d $(LIBNAME).def -b tmp.base -e tmp.exp -D $(FULLLIBNAME)
+ifndef DLOPEN
+DLLTOOLFLAGS+=-l $(LIBNAME).a
+$(FULLLIBNAME) $(LIBNAME).a: $(OBJECTS)
+else
+$(FULLLIBNAME): $(OBJECTS)
+endif
+#	echo EXPORTS > tmp.def
+##	nm $(OBJECTS) | grep ' T _' | sed 's/.* T _//' >> tmp.def
+#	nm $(OBJECTS) | grep '^........ [T] _' | sed 's/[^_]*_//' >> tmp.def
+# We use nm instead of dlltool --output-def, so that we don't have to
+# specify explicitly (in the source code) which symbols should be exported.
+# We don't create the .def file automatically anymore. Using nm resulted in a
+# (too large?) .def file which resulted in a non-working DLL when using Cygwin.
+
+	ld --base-file tmp.base $(OBJECTS) $(LDFLAGS) -o $(FULLLIBNAME)
+	dlltool $(DLLTOOLFLAGS)
+	ld tmp.exp $(OBJECTS) $(LDFLAGS) -o $(FULLLIBNAME)
+
+else
+ifdef DJGPP
+
+ifndef DLOPEN
+$(FULLLIBNAME) $(LIBNAME).a: $(OBJECTS) djimport.o dlopen.o
+else
+$(FULLLIBNAME): $(OBJECTS)
+endif
+	dxegen $(FULLLIBNAME) _import_export $(OBJECTS) $(LDFLAGS)
+ifndef DLOPEN
+# Recompile map.c, because it has to be a normal object file for the import
+# library (no references to import_export)
+	$(CC) $(CFLAGS0) -c map.c -o map.o
+	ar rs $(LIBNAME).a djimport.o map.o dlopen.o
+endif
+
+else                                    # UNIX, BeOS or Mac OS X (Darwin)
+# UNIX uses LD_LIBRARY_PATH for dynamic linking, BeOS uses LIBRARY_PATH, Darwin
+# uses LD_LIBRARY_PATH, DYLD_LIBRARY_PATH and DYLD_FALLBACK_LIBRARY_PATH
+
+$(FULLLIBNAME): $(OBJECTS)
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $(FULLLIBNAME)
+
+endif                                   # DJGPP
+endif                                   # GCC_WIN
+
+
+install:
+ifndef DLOPEN
+	[ -d $(DESTDIR)$(libdir) ] || \
+	    (mkdir -p $(DESTDIR)$(libdir); chmod 755 $(DESTDIR)$(libdir))
+	$(INSTALL_DATA) $(FULLLIBNAME) $(DESTDIR)$(libdir)/$(FULLLIBNAME)
+#	$(RANLIB) $(DESTDIR)$(libdir)/$(FULLLIBNAME)
+#	$(LIBTOOL) --mode=install $(INSTALL) $(FULLLIBNAME) $(libdir)/$(FULLLIBNAME)
+	[ -d $(DESTDIR)$(includedir) ] || \
+	    (mkdir -p $(DESTDIR)$(includedir); chmod 755 $(DESTDIR)$(includedir))
+	$(INSTALL_DATA) lib$(LIBNAME).h $(DESTDIR)$(includedir)
+endif
+
+uninstall:
+ifndef DLOPEN
+	rm -f $(DESTDIR)$(libdir)/$(FULLLIBNAME)
+	rm -f $(DESTDIR)$(includedir)/lib$(LIBNAME).h
+endif
+
+
+# Dependencies
+
+MISC_Z_H_DEPS=misc_z.h unzip.h
+MISC_H_DEPS=misc.h $(MISC_Z_H_DEPS) getopt.h
+DXEDLL_PRIV_H_DEPS=dxedll_priv.h dxedll_pub.h
+
+libdm_misc.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
+              format/format.h $(DXEDLL_PRIV_H_DEPS) misc_wav.h
+dllinit.o: config.h libdiscmage.h dxedll_pub.h $(DXEDLL_PRIV_H_DEPS) map.h
+misc.o: config.h $(MISC_Z_H_DEPS) $(MISC_H_DEPS) $(DXEDLL_PRIV_H_DEPS)
+misc_wav.o: config.h $(MISC_H_DEPS) misc_wav.h
+format/format.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
+                 format/format.h format/cdi.h format/cue.h format/nero.h \
+                 format/other.h format/toc.h $(DXEDLL_PRIV_H_DEPS)
+format/cdi.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
+              format/format.h $(DXEDLL_PRIV_H_DEPS)
+format/nero.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
+               format/format.h $(DXEDLL_PRIV_H_DEPS)
+format/cue.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
+              format/format.h $(DXEDLL_PRIV_H_DEPS)
+format/toc.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
+              format/format.h $(DXEDLL_PRIV_H_DEPS)
+format/other.o: config.h $(MISC_H_DEPS) libdiscmage.h libdm_misc.h \
+                format/format.h $(DXEDLL_PRIV_H_DEPS)
+map.o: config.h map.h $(DXEDLL_PRIV_H_DEPS)
+misc_z.o: config.h $(MISC_Z_H_DEPS) $(MISC_H_DEPS) map.h unzip.h \
+          $(DXEDLL_PRIV_H_DEPS)
+unzip.o: config.h unzip.h
+dxe_misc.o: config.h dxedll_pub.h
+djimport.o: config.h dlopen.h dxedll_pub.h libdiscmage.h
+dlopen.o: config.h dlopen.h dxedll_pub.h map.h
