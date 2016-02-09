@@ -1,7 +1,0 @@
-SDcard header
-Add structs for machine state
-Shell: dump cart header
-Shell: dump and set irq vector
-Shell: Dump and set reset vector
-verbose system status values
-interchange for cs line and try to steal bus
