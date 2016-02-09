@@ -46,7 +46,7 @@
 #define FORMAT_BUFFER_LEN           0x080
 #define RECEIVE_BUF_LEN             0x030
 #define HW_VERSION                  "2.6"
-#define SW_VERSION                  "1.0"
+#define SW_VERSION                  "1.1"
 
 #define DO_CRC_CHECK_LOADER         0
 #define DO_CRC_CHECK                0

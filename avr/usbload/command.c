@@ -134,7 +134,7 @@ void banner()
     info_P(PSTR("\n"));
     info_P(PSTR("                               www.optixx.org\n"));
     info_P(PSTR("\n"));
-    info_P(PSTR("System Hw: %s Sw: %s\n"), HW_VERSION, SW_VERSION);
+    info_P(PSTR("Hardware Version: %s Software Version: %s Build Date: %s \n"), HW_VERSION, SW_VERSION, __DATE__ );
 
 }
 
