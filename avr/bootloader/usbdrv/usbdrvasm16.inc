@@ -1,11 +1,10 @@
 /* Name: usbdrvasm16.inc
- * Project: AVR USB driver
+ * Project: V-USB, virtual USB port for Atmel's(r) AVR(r) microcontrollers
  * Author: Christian Starkjohann
  * Creation Date: 2007-06-15
  * Tabsize: 4
  * Copyright: (c) 2007 by OBJECTIVE DEVELOPMENT Software GmbH
- * License: GNU GPL v2 (see License.txt) or proprietary (CommercialLicense.txt)
- * Revision: $Id: usbdrvasm16.inc 607 2008-05-13 15:57:28Z cs $
+ * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
  */
 
 /* Do not link this file! Link usbdrvasm.S instead, which includes the
@@ -41,10 +40,13 @@ USB_INTR_VECTOR:
 ;----------------------------------------------------------------------------
 ;sync byte (D-) pattern LSb to MSb: 01010100 [1 = idle = J, 0 = K]
 ;sync up with J to K edge during sync pattern -- use fastest possible loops
-;first part has no timeout because it waits for IDLE or SE1 (== disconnected)
+;The first part waits at most 1 bit long since we must be in sync pattern.
+;YL is guarenteed to be < 0x80 because I flag is clear. When we jump to
+;waitForJ, ensure that this prerequisite is met.
 waitForJ:
-    sbis    USBIN, USBMINUS     ;[-18] wait for D- == 1
-    rjmp    waitForJ
+    inc     YL
+    sbis    USBIN, USBMINUS
+    brne    waitForJ        ; just make sure we have ANY timeout
 waitForK:
 ;The following code results in a sampling window of < 1/4 bit which meets the spec.
     sbis    USBIN, USBMINUS     ;[-15]
@@ -64,6 +66,9 @@ waitForK:
     inc     YL
     sts     usbSofCount, YL
 #endif  /* USB_COUNT_SOF */
+#ifdef USB_SOF_HOOK
+    USB_SOF_HOOK
+#endif
     rjmp    sofError
 foundK:                         ;[-12]
 ;{3, 5} after falling D- edge, average delay: 4 cycles [we want 5 for center sampling]
@@ -111,12 +116,15 @@ haveTwoBitsK:
 ; Receiver loop (numbers in brackets are cycles within byte after instr)
 ;----------------------------------------------------------------------------
 
+; duration of unstuffing code should be 10.66666667 cycles. We adjust "leap"
+; accordingly to approximate this value in the long run.
+
 unstuff6:
     andi    x2, USBMASK ;[03]
     ori     x3, 1<<6    ;[04] will not be shifted any more
     andi    shift, ~0x80;[05]
     mov     x1, x2      ;[06] sampled bit 7 is actually re-sampled bit 6
-    subi    leap, 3     ;[07] since this is a short (10 cycle) bit, enforce leap bit
+    subi    leap, -1    ;[07] total duration = 11 bits -> subtract 1/3
     rjmp    didUnstuff6 ;[08]
 
 unstuff7:
@@ -124,7 +132,7 @@ unstuff7:
     in      x2, USBIN   ;[00] [10]  re-sample bit 7
     andi    x2, USBMASK ;[01]
     andi    shift, ~0x80;[02]
-    subi    leap, 3     ;[03] since this is a short (10 cycle) bit, enforce leap bit
+    subi    leap, 2     ;[03] total duration = 10 bits -> add 1/3
     rjmp    didUnstuff7 ;[04]
 
 unstuffEven:
@@ -133,8 +141,8 @@ unstuffEven:
     andi    shift, ~0x80;[01]
     andi    x1, USBMASK ;[02]
     breq    se0         ;[03]
-    subi    leap, 3     ;[04] since this is a short (10 cycle) bit, enforce leap bit
-    nop                 ;[05]
+    subi    leap, -1    ;[04] total duration = 11 bits -> subtract 1/3
+    nop2                ;[05]
     rjmp    didUnstuffE ;[06]
 
 unstuffOdd:
@@ -143,8 +151,8 @@ unstuffOdd:
     andi    shift, ~0x80;[01]
     andi    x2, USBMASK ;[02]
     breq    se0         ;[03]
-    subi    leap, 3     ;[04] since this is a short (10 cycle) bit, enforce leap bit
-    nop                 ;[05]
+    subi    leap, -1    ;[04] total duration = 11 bits -> subtract 1/3
+    nop2                ;[05]
     rjmp    didUnstuffO ;[06]
 
 rxByteLoop:
@@ -208,13 +216,13 @@ macro POP_STANDARD ; 14 cycles
     pop     x1
     pop     shift
     pop     bitcnt
-endm
+    endm
 macro POP_RETI     ; 7 cycles
     pop     YH
     pop     YL
     out     SREG, YL
     pop     YL
-endm
+    endm
 
 #include "asmcommon.inc"
 

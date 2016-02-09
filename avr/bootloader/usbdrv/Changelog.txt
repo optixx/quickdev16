@@ -231,3 +231,99 @@ Scroll down to the bottom to see the most recent changes.
   - Added 20 MHz module contributed by Jeroen Benschop.
 
 * Release 2008-05-13
+
+  - Fixed bug in libs-host/hiddata.c function usbhidGetReport(): length
+    was not incremented, pointer to length was incremented instead.
+  - Added code to command line tool(s) which claims an interface. This code
+    is disabled by default, but may be necessary on newer Linux kernels.
+  - Added usbconfig.h option "USB_CFG_CHECK_DATA_TOGGLING".
+  - New header "usbportability.h" prepares ports to other development
+    environments.
+  - Long transfers (above 254 bytes) did not work when usbFunctionRead() was
+    used to supply the data. Fixed this bug. [Thanks to Alexander Neumann!]
+  - In hiddata.c (example code for sending/receiving data over HID), use
+    USB_RECIP_DEVICE instead of USB_RECIP_INTERFACE for control transfers so
+    that we need not claim the interface.
+  - in usbPoll() loop 20 times polling for RESET state instead of 10 times.
+    This accounts for the higher clock rates we now support.
+  - Added a module for 12.8 MHz RC oscillator with PLL in receiver loop.
+  - Added hook to SOF code so that oscillator can be tuned to USB frame clock.
+  - Added timeout to waitForJ loop. Helps preventing unexpected hangs.
+  - Added example code for oscillator tuning to libs-device (thanks to
+    Henrik Haftmann for the idea to this routine).
+  - Implemented option USB_CFG_SUPPRESS_INTR_CODE.
+
+* Release 2008-10-22
+
+  - Fixed libs-device/osctune.h: OSCCAL is memory address on ATMega88 and
+    similar, not offset of 0x20 needs to be added.
+  - Allow distribution under GPLv3 for those who have to link against other
+    code distributed under GPLv3.
+
+* Release 2008-11-26
+
+  - Removed libusb-win32 dependency for hid-data example in Makefile.windows.
+    It was never required and confused many people.
+  - Added extern uchar usbRxToken to usbdrv.h.
+  - Integrated a module with CRC checks at 18 MHz by Lukas Schrittwieser.
+
+* Release 2009-03-23
+
+  - Hid-mouse example used settings from hid-data example, fixed that.
+  - Renamed project to V-USB due to a trademark issue with Atmel(r).
+  - Changed CommercialLicense.txt and USBID-License.txt to make the
+    background of USB ID registration clearer.
+
+* Release 2009-04-15
+
+  - Changed CommercialLicense.txt to reflect the new range of PIDs from
+    Jason Kotzin.
+  - Removed USBID-License.txt in favor of USB-IDs-for-free.txt and
+    USB-ID-FAQ.txt
+  - Fixed a bug in the 12.8 MHz module: End Of Packet decection was made in
+    the center between bit 0 and 1 of each byte. This is where the data lines
+    are expected to change and the sampled data may therefore be nonsense.
+    We therefore check EOP ONLY if bits 0 AND 1 have both been read as 0 on D-.
+  - Fixed a bitstuffing problem in the 16 MHz module: If bit 6 was stuffed,
+    the unstuffing code in the receiver routine was 1 cycle too long. If
+    multiple bytes had the unstuffing in bit 6, the error summed up until the
+    receiver was out of sync.
+  - Included option for faster CRC routine.
+    Thanks to Slawomir Fras (BoskiDialer) for this code!
+  - Updated bits in Configuration Descriptor's bmAttributes according to
+    USB 1.1 (in particular bit 7, it is a must-be-set bit now).
+
+* Release 2009-08-22
+
+  - Moved first DBG1() after odDebugInit() in all examples.
+  - Use vector INT0_vect instead of SIG_INTERRUPT0 if defined. This makes
+    V-USB compatible with the new "p" suffix devices (e.g. ATMega328p).
+  - USB_CFG_CLOCK_KHZ setting is now required in usbconfig.h (no default any
+    more).
+  - New option USB_CFG_DRIVER_FLASH_PAGE allows boot loaders on devices with
+    more than 64 kB flash.
+  - Built-in configuration descriptor allows custom definition for second
+    endpoint now.
+
+* Release 2010-07-15
+
+  - Fixed bug in usbDriverSetup() which prevented descriptor sizes above 255
+    bytes.
+  - Avoid a compiler warning for unused parameter in usbHandleResetHook() when
+    compiler option -Wextra is enabled.
+  - Fixed wrong hex value for some IDs in USB-IDs-for-free.txt.
+  - Keep a define for USBATTR_BUSPOWER, although the flag does not exist
+    in USB 1.1 any more. Set it to 0. This is for backward compatibility.
+
+* Release 2012-01-09
+
+  - Define a separate (defined) type for usbMsgPtr so that projects using a
+    tiny memory model can define it to an 8 bit type in usbconfig.h. This
+    change also saves a couple of bytes when using a scalar 16 bit type.
+  - Inserted "const" keyword for all PROGMEM declarations because new GCC
+    requires it.
+  - Fixed problem with dependence of usbportability.h on usbconfig.h. This
+    problem occurred with IAR CC only.
+  - Prepared repository for github.com.
+
+* Release 2012-12-06

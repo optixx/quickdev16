@@ -1,17 +1,16 @@
 /* Name: usbdrv.h
- * Project: AVR USB driver
+ * Project: V-USB, virtual USB port for Atmel's(r) AVR(r) microcontrollers
  * Author: Christian Starkjohann
  * Creation Date: 2004-12-29
  * Tabsize: 4
  * Copyright: (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
- * License: GNU GPL v2 (see License.txt) or proprietary (CommercialLicense.txt)
- * This Revision: $Id: usbdrv.h 607 2008-05-13 15:57:28Z cs $
+ * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
  */
 
 #ifndef __usbdrv_h_included__
 #define __usbdrv_h_included__
 #include "usbconfig.h"
-#include "iarcompat.h"
+#include "usbportability.h"
 
 /*
 Hardware Prerequisites:
@@ -34,8 +33,8 @@ usbDeviceConnect() and usbDeviceDisconnect() further down in this file.
 
 Please adapt the values in usbconfig.h according to your hardware!
 
-The device MUST be clocked at exactly 12 MHz, 15 MHz or 16 MHz
-or at 16.5 MHz +/- 1%. See usbconfig-prototype.h for details.
+The device MUST be clocked at exactly 12 MHz, 15 MHz, 16 MHz or 20 MHz
+or at 12.8 MHz resp. 16.5 MHz +/- 1%. See usbconfig-prototype.h for details.
 
 
 Limitations:
@@ -105,9 +104,9 @@ interrupt routine.
 Interrupt latency:
 The application must ensure that the USB interrupt is not disabled for more
 than 25 cycles (this is for 12 MHz, faster clocks allow longer latency).
-This implies that all interrupt routines must either be declared as "INTERRUPT"
-instead of "SIGNAL" (see "avr/signal.h") or that they are written in assembler
-with "sei" as the first instruction.
+This implies that all interrupt routines must either have the "ISR_NOBLOCK"
+attribute set (see "avr/interrupt.h") or be written in assembler with "sei"
+as the first instruction.
 
 Maximum interrupt duration / CPU cycle consumption:
 The driver handles all USB communication during the interrupt service
@@ -122,7 +121,7 @@ USB messages, even if they address another (low-speed) device on the same bus.
 /* --------------------------- Module Interface ---------------------------- */
 /* ------------------------------------------------------------------------- */
 
-#define USBDRV_VERSION  20080513
+#define USBDRV_VERSION  20121206
 /* This define uniquely identifies a driver version. It is a decimal number
  * constructed from the driver's release date in the form YYYYMMDD. If the
  * driver's behavior or interface changes, you can use this constant to
@@ -163,11 +162,24 @@ USB messages, even if they address another (low-speed) device on the same bus.
  */
 #define USB_NO_MSG  ((usbMsgLen_t)-1)   /* constant meaning "no message" */
 
+#ifndef usbMsgPtr_t
+#define usbMsgPtr_t uchar *
+#endif
+/* Making usbMsgPtr_t a define allows the user of this library to define it to
+ * an 8 bit type on tiny devices. This reduces code size, especially if the
+ * compiler supports a tiny memory model.
+ * The type can be a pointer or scalar type, casts are made where necessary.
+ * Although it's paradoxical, Gcc 4 generates slightly better code for scalar
+ * types than for pointers.
+ */
+
 struct usbRequest;  /* forward declaration */
 
 USB_PUBLIC void usbInit(void);
 /* This function must be called before interrupts are enabled and the main
- * loop is entered.
+ * loop is entered. We exepct that the PORT and DDR bits for D+ and D- have
+ * not been changed from their default status (which is 0). If you have changed
+ * them, set both back to 0 (configure them as input with no internal pull-up).
  */
 USB_PUBLIC void usbPoll(void);
 /* This function must be called at regular intervals from the main loop.
@@ -176,7 +188,7 @@ USB_PUBLIC void usbPoll(void);
  * Please note that debug outputs through the UART take ~ 0.5ms per byte
  * at 19200 bps.
  */
-extern uchar *usbMsgPtr;
+extern usbMsgPtr_t usbMsgPtr;
 /* This variable may be used to pass transmit data to the driver from the
  * implementation of usbFunctionWrite(). It is also used internally by the
  * driver for standard control requests.
@@ -273,6 +285,8 @@ USB_PUBLIC uchar usbFunctionRead(uchar *data, uchar len);
  * to 1 in usbconfig.h and return 0xff in usbFunctionSetup()..
  */
 #endif /* USB_CFG_IMPLEMENT_FN_READ */
+
+extern uchar usbRxToken;    /* may be used in usbFunctionWriteOut() below */
 #if USB_CFG_IMPLEMENT_FN_WRITEOUT
 USB_PUBLIC void usbFunctionWriteOut(uchar *data, uchar len);
 /* This function is called by the driver when data is received on an interrupt-
@@ -339,6 +353,12 @@ extern volatile uchar   usbSofCount;
  * the macro USB_COUNT_SOF is defined to a value != 0.
  */
 #endif
+#if USB_CFG_CHECK_DATA_TOGGLING
+extern uchar    usbCurrentDataToken;
+/* This variable can be checked in usbFunctionWrite() and usbFunctionWriteOut()
+ * to ignore duplicate packets.
+ */
+#endif
 
 #define USB_STRING_DESCRIPTOR_HEADER(stringLength) ((2*(stringLength)+2) | (3<<8))
 /* This macro builds a descriptor header for a string descriptor given the
@@ -380,11 +400,13 @@ extern volatile schar   usbRxLen;
  * about the various methods to define USB descriptors. If you do nothing,
  * the default descriptors will be used.
  */
-#define USB_PROP_IS_DYNAMIC     (1 << 14)
+#define USB_PROP_IS_DYNAMIC     (1u << 14)
 /* If this property is set for a descriptor, usbFunctionDescriptor() will be
- * used to obtain the particular descriptor.
+ * used to obtain the particular descriptor. Data directly returned via
+ * usbMsgPtr are FLASH data by default, combine (OR) with USB_PROP_IS_RAM to
+ * return RAM data.
  */
-#define USB_PROP_IS_RAM         (1 << 15)
+#define USB_PROP_IS_RAM         (1u << 15)
 /* If this property is set for a descriptor, the data is read from RAM
  * memory instead of Flash. The property is used for all methods to provide
  * external descriptors.
@@ -438,43 +460,43 @@ extern volatile schar   usbRxLen;
 #ifndef __ASSEMBLER__
 extern
 #if !(USB_CFG_DESCR_PROPS_DEVICE & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const
 #endif
 char usbDescriptorDevice[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_CONFIGURATION & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const
 #endif
 char usbDescriptorConfiguration[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_HID_REPORT & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const
 #endif
 char usbDescriptorHidReport[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_0 & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const
 #endif
 char usbDescriptorString0[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_VENDOR & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const
 #endif
 int usbDescriptorStringVendor[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_PRODUCT & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const
 #endif
 int usbDescriptorStringDevice[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const
 #endif
 int usbDescriptorStringSerialNumber[];
 
@@ -501,22 +523,22 @@ int usbDescriptorStringSerialNumber[];
 #if !defined __ASSEMBLER__ && (!defined USB_CFG_VENDOR_ID || !defined USB_CFG_DEVICE_ID)
 #warning "You should define USB_CFG_VENDOR_ID and USB_CFG_DEVICE_ID in usbconfig.h"
 /* If the user has not defined IDs, we default to obdev's free IDs.
- * See USBID-License.txt for details.
+ * See USB-IDs-for-free.txt for details.
  */
 #endif
 
 /* make sure we have a VID and PID defined, byte order is lowbyte, highbyte */
 #ifndef USB_CFG_VENDOR_ID
-#   define  USB_CFG_VENDOR_ID   0xc0, 0x16  /* 5824 in dec, stands for VOTI */
+#   define  USB_CFG_VENDOR_ID   0xc0, 0x16  /* = 0x16c0 = 5824 = voti.nl */
 #endif
 
 #ifndef USB_CFG_DEVICE_ID
 #   if USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH
-#       define USB_CFG_DEVICE_ID    0xdf, 0x05  /* 1503 in dec, shared PID for HIDs */
+#       define USB_CFG_DEVICE_ID    0xdf, 0x05  /* = 0x5df = 1503, shared PID for HIDs */
 #   elif USB_CFG_INTERFACE_CLASS == 2
-#       define USB_CFG_DEVICE_ID    0xe1, 0x05  /* 1505 in dec, shared PID for CDC Modems */
+#       define USB_CFG_DEVICE_ID    0xe1, 0x05  /* = 0x5e1 = 1505, shared PID for CDC Modems */
 #   else
-#       define USB_CFG_DEVICE_ID    0xdc, 0x05  /* 1500 in dec, obdev's free PID */
+#       define USB_CFG_DEVICE_ID    0xdc, 0x05  /* = 0x5dc = 1500, obdev's free PID */
 #   endif
 #endif
 
@@ -546,6 +568,10 @@ int usbDescriptorStringSerialNumber[];
 #define USB_CFG_EP3_NUMBER  3
 #endif
 
+#ifndef USB_CFG_HAVE_INTRIN_ENDPOINT3
+#define USB_CFG_HAVE_INTRIN_ENDPOINT3   0
+#endif
+
 #define USB_BUFSIZE     11  /* PID, 8 bytes data, 2 bytes CRC */
 
 /* ----- Try to find registers and bits responsible for ext interrupt 0 ----- */
@@ -558,7 +584,14 @@ int usbDescriptorStringSerialNumber[];
 #   endif
 #endif
 #ifndef USB_INTR_CFG_SET    /* allow user to override our default */
-#   define USB_INTR_CFG_SET ((1 << ISC00) | (1 << ISC01))    /* cfg for rising edge */
+#   if defined(USB_COUNT_SOF) || defined(USB_SOF_HOOK)
+#       define USB_INTR_CFG_SET (1 << ISC01)                    /* cfg for falling edge */
+        /* If any SOF logic is used, the interrupt must be wired to D- where
+         * we better trigger on falling edge
+         */
+#   else
+#       define USB_INTR_CFG_SET ((1 << ISC00) | (1 << ISC01))   /* cfg for rising edge */
+#   endif
 #endif
 #ifndef USB_INTR_CFG_CLR    /* allow user to override our default */
 #   define USB_INTR_CFG_CLR 0    /* no bits to clear */
@@ -695,7 +728,8 @@ typedef struct usbRequest{
 #define USBDESCR_HID_REPORT     0x22
 #define USBDESCR_HID_PHYS       0x23
 
-#define USBATTR_BUSPOWER        0x80
+//#define USBATTR_BUSPOWER        0x80  // USB 1.1 does not define this value any more
+#define USBATTR_BUSPOWER        0
 #define USBATTR_SELFPOWER       0x40
 #define USBATTR_REMOTEWAKE      0x20
 
