@@ -18,7 +18,6 @@
  * =====================================================================================
  */
 
-#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdlib.h>
@@ -35,7 +34,7 @@
 
 
 extern usb_transaction_t usb_trans;
-extern system_t system;
+extern system_t my_system;
 
 extern const char *_rom[];
 extern const char _rom01[];

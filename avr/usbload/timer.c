@@ -24,7 +24,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <avr/io.h>
-#include <avr/io.h>
 #include <avr/interrupt.h>      /* for sei() */
 
 #include "debug.h"
@@ -53,8 +52,7 @@ extern uint8_t snes_reset_line;
 uint16_t prescaler;
 uint16_t volatile second;       // count seconds
 
-
-ISR(SIG_OUTPUT_COMPARE1A)
+ISR(TIMER1_COMPA_vect)
 {
 
 

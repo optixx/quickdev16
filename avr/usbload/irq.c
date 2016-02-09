@@ -23,7 +23,6 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <avr/io.h>
 #include <avr/interrupt.h>      /* for sei() */
 #include <avr/wdt.h>
 
@@ -35,7 +34,7 @@
 #include "sram.h"
 #include "system.h"
 
-extern system_t system;
+extern system_t my_system;
 
 void (*jump_to_app) (void) = 0x0000;
 
@@ -45,7 +44,7 @@ void irq_init()
     PCMSK3 |= (1 << PCINT27);
     PCICR |= (1 << PCIE3);
     sei();
-    system.reset_irq = RESET_IRQ_ON;
+    my_system.reset_irq = RESET_IRQ_ON;
 }
 
 void irq_stop()
@@ -53,20 +52,20 @@ void irq_stop()
     cli();
     PCMSK3 &= ~(1 << PCINT27);
     sei();
-    system.reset_irq = RESET_IRQ_OFF;
+    my_system.reset_irq = RESET_IRQ_OFF;
 }
 
 void leave_application(void)
 {
     cli();
     usbDeviceDisconnect();
-    system.avr_reset_count++;
+    my_system.avr_reset_count++;
     wdt_enable(WDTO_15MS);
     while (1);
 
 }
 
-ISR(SIG_PIN_CHANGE3)
+ISR(PCINT3_vect)
 {
     if (snes_reset_test()) {
         info_P(PSTR("Catch SNES reset button\n"));

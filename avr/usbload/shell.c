@@ -42,7 +42,7 @@
 #include "system.h"
 
 
-extern system_t system;
+extern system_t my_system;
 
 const char STR_ROM[] PROGMEM = "Rom";
 const char STR_RAM[] PROGMEM = "Sram";
@@ -219,7 +219,7 @@ enum cmds {
     CMD_HELP
 };
 
-uint8_t cmdlist[][CMD_HELP] PROGMEM = {
+const uint8_t cmdlist[][CMD_HELP] PROGMEM = {
     {"DUMP"},
     {"DUMPVEC"},
     {"DUMPHEADER"},
@@ -339,7 +339,7 @@ void shell_run(void)
         }
     } else if (strcmp_P((char *) t, (PGM_P) cmdlist[CMD_DUMPVEC]) == 0) {
         uint16_t offset;
-        if (system.rom_mode == LOROM)
+        if (my_system.rom_mode == LOROM)
             offset = 0x8000;
         else
             offset = 0x0000;
@@ -359,7 +359,7 @@ void shell_run(void)
 
     } else if (strcmp_P((char *) t, (PGM_P) cmdlist[CMD_DUMPHEADER]) == 0) {
 
-        if (system.rom_mode == LOROM)
+        if (my_system.rom_mode == LOROM)
             offset = 0x8000;
         else
             offset = 0x0000;

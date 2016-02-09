@@ -20,7 +20,6 @@
 
 
 
-#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdlib.h>
@@ -54,7 +53,7 @@
 #ifndef NO_DEBUG
 extern FILE uart_stdout;
 #endif
-extern system_t system;
+extern system_t my_system;
 
 uint8_t debug_level = (DEBUG | DEBUG_USB | DEBUG_CRC);
 
