@@ -7,6 +7,5 @@
          \__>             \/     \/        \/     \/                 \/
  
  ```
-                              [Documentation](../../wiki)
-                                   
-                                  
+[Go to the Documentation](../../wiki)
+
