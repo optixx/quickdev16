@@ -114,3 +114,4 @@ cfile.write('''};
 cfile.close()
 shutil.copy("/tmp/loader.c", os.path.join(TARGET, "loader.c"))
 shutil.copy("/tmp/loader.h", os.path.join(TARGET, "loader.h"))
+print "Copy loader.h and loader.c to %s" % TARGET

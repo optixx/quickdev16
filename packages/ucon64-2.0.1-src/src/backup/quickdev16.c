@@ -115,7 +115,7 @@ quickdev16_write_rom (const char *filename)
   uint32_t bank_size, address = 0;
   uint16_t bank_shift;
 
-#if     (defined __unix__ || defined __BEOS__) && !defined __MSDOS__
+#if     (defined __unix__ || defined __BEOS__ || defined __APPLE__) && !defined __MSDOS__
   init_conio ();
   if (register_func (deinit_conio) == -1)
     {
