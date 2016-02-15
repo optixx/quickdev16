@@ -1,0 +1,373 @@
+
+             Disabling the Super NES/Super Famicom "Lockout Chip"
+             ====================================================
+			     (rev. 0.5 27-Dec-97)
+
+[Expert summary: disconnect CIC pin 4]
+
+This document is copyright © 1997 by Mark Knibbs <mark_k@iname.com>. The latest
+version, and several other console-related documents, should be available at:
+                  http://www.netcomuk.co.uk/~markk/index.html
+The direct URL for this file is:
+          http://www.netcomuk.co.uk/~markk/Consoles/SNES_Lockout.txt
+
+You are explicitly permitted to include the *unmodified* document on web sites,
+FTP sites and the like. But it is best to simply link to the document on my web
+page, as this means that you automatically pick up any changes made.
+
+If you have any comments, suggestions or questions about this document, please
+contact me. If you would like to perform a similar modification to your NES 8-
+bit console, you should see:
+           http://www.netcomuk.co.uk/~markk/Consoles/NES_Lockout.txt
+
+
+
+Revision History
+----------------
+0.1   27-Jul-97   First release.
+0.2   19-Aug-97   Added information about another PCB revision and the lockout
+                  chip used in U.S./Japanese consoles.Various other small
+                  changes.
+0.3   21-Aug-97   Added information about later model U.S. console (PCB
+                  revision SNS-CPU-GPM-01). Added section about removing a game
+                  pak with power on. Other minor changes.
+0.4   22-Sep-97   Changed email address and web URLs. Added "Possible
+                  Incompatibilities" section.
+0.5   27-Dec-97   Added step describing how to dissipate stored charge in the
+                  console before opening it. Added paragraph on precautions
+                  against static electricity. Added pointer to my SNES 50/60Hz
+                  modification document. Minor edits and changes.
+
+
+
+Introduction
+------------
+This document details a simple modification that you can perform on your Super
+NES or Super Famicom 16-bit video game console in order to disable the "lockout
+chip" protection system. The "lockout chip" system means that no PAL games can
+be played on an unmodified U.S. or Japanese console, or vice versa.
+
+If you have a PAL model Super NES, I strongly recommend that you also fit a
+switch to change between 50Hz and 60Hz modes. 60Hz mode runs games full-screen,
+at the correct speed (20% faster than the usual PAL speed). Additionally, more
+recent games (e.g. Super Mario All-Stars, Super Metroid) contain code to check
+for 60Hz. So it is not usually possible to run, say, the Japanese version of
+such a game on a PAL console. Details of this modification, and an accompanying
+picture, can be found at:
+                  http://www.netcomuk.co.uk/~markk/index.html
+
+
+The procedure given here should work for ANY model Super NES or Super Famicom,
+both NTSC and PAL versions. As of this writing I have only applied the
+modification to two UK model PAL Super NES consoles.
+
+Why might you want to do this? Well, I can think of a few reasons:
+· You own a PAL Super NES, and currently have to use a clumsy "universal
+  adapter" to be able to use American or Japanese games - with this
+  modification you are able to directly use Japanese cartridges, and can use
+  American games either by cutting a larger hole for the cartridge, or using
+  an extension adapter (you can use your old universal adapter for this - you
+  will no longer need to plug in the second "domestic" cartridge);
+· You own illicit or unlicensed games which can't be played on your console (I
+  have seen a counterfeit Street Fighter II cartridge which contains no lockout
+  chip, and thus normally requires that a universal adapter be used);
+· If you own an American model console, you can make it run almost every SNES
+  game by removing the tabs behind the cartridge slot, disabling the lockout
+  chip, and fitting a 50Hz/60Hz switch. If you have a PAL or Japanese console,
+  you will need to file away the cartridge slot in order to accomodate the
+  larger U.S. cartridges, if you want to be able to directly run every game.
+
+
+If you perform this procedure on your console, PLEASE LET ME KNOW WHETHER IT
+WORKS! I want to update this document so that it's applicable to as many
+consoles as possible. Please also tell me which PCB revision your console has
+(e.g. "SHVC-CPU-01"), the model (e.g. "SNS-001"), serial number, and the date
+code stamped on the label underneath (e.g. "9313"). I don't anticipate there
+being many relevant differences between different SNES models, though. I would
+welcome any comments you have about this document. Send them to the email
+address given above.
+
+
+If you are interested in the operation of the lockout chip and Nintendo's
+history in general, you might like to read David Sheff's book "Game Over", and
+consult U.S. patents 4,799,635 and/or 5,070,479. Indeed, I obtained the
+information necessary to carry out this modification from one of the patents.
+
+
+
+Background
+----------
+Before the NES was first released in the U.S.A., Nintendo developed a system
+for preventing the use of unauthorised software with it. Much counterfeit
+software had apparently been produced for their Famicom (Family Computer)
+system, and Nintendo wanted to avoid this happening for the NES.
+
+Another benefit (to Nintendo) of the system was that legal third-party
+development was severely hindered. Only Nintendo licensees could buy the
+lockout chips, one of which was fitted inside every game cartridge. Licensees
+were apparently charged around US$9 for each chip, in addition to having to pay
+steep royalties. Nintendo patented the lockout chip concept, and copyrighted
+the code contain within it.
+
+Nintendo also used the lockout system to provide "territorial protection". This
+means that you can't use a U.K. or European NES game in a U.S. console, for
+example.
+
+Nintendo used exactly the same system for the Super NES. American and Japanese
+consoles use identical lockout chips. You can run Japanese games on an American
+console by simply removing two plastic tabs from behind the cartridge slot.
+
+PAL versions of the Super NES use a different lockout chip. So PAL cartridges
+cannot be played on an American or Japanese machine, or vice versa. Many
+companies produced "universal adapters" to get around this problem. Typically,
+these have two cartridge slots. You put the foreign game in one, and a domestic
+game in the other. The adapter uses the lockout chip from the domestic game to
+enable the foreign game to be played.
+
+
+
+How the Lockout System Works
+----------------------------
+This is a very brief, simplified description. Consult Nintendo's patent for
+detailed information.
+
+Functionally identical chips are fitted in the console and inside every game
+cartridge. (For the SNES, the chips are packaged differently - the one inside
+the console is surface-mounted, and the one in game cartridges is usually a
+normal DIL package.)
+
+Depending on whether a certain pin (pin 4) of the chip is grounded or at +5V,
+the chip functions as either a lock or as a key. Inside the console, pin 4 of
+the lockout chip is at +5V (lock), and inside the game cartridge pin 4 is at 0V
+(key).
+
+When you switch on the console, the CPU and PPU chips are held in a reset
+state. The two lockout chips talk to each other. Since they are identical, they
+should be saying exactly the same thing at exactly the same time. Each chip
+compares its output with that of its counterpart. If they match, the lock chip
+releases the reset state of the console, and the game can start. The two chips
+still talk to each other, and if their outputs ever differ, the lock chip
+causes the console to reset, and the key chip (inside the game cartridge) may
+use the chip select lines of the cartridge ROM chips to disable the ROMs.
+
+The lockout chip is in fact a 4-bit microprocessor with its own internal ROM
+and RAM. The program it runs was called "10NES" for the NES version of the
+chip.
+
+
+
+How the Modification Works
+--------------------------
+This depends on changing the lock device to think that it's actually a key. If
+both devices are configured to be the same type (i.e., both keys), to quote
+Nintendo's patent "an unstable state takes place and no operations are
+performed at all." This means that the two chips will do nothing. So the
+console will not be reset, and the key device will not disable the cartridge
+ROM chips.
+
+To carry out the modification you need to disconnect pin 4 of the lockout chip,
+and connect this pin to ground (0V) instead. (In fact, it seems that you only
+need to disconnect the pin.)
+
+Whilst coming up with this method, I considered two other possible ways of
+achieving the result. I have not tried either of these, and I would be
+interested to hear if they work. If you feel like doing one of these, contact
+me for pinout information. The first involves connecting the lockout chip's
+input to its own output. Thus it may always think that its counterpart chip is
+present. The second involves simply disconnecting the chip's clock input.
+
+
+
+Performing the Modification
+---------------------------
+Whilst the modification is very simple, if you have not used a soldering iron
+before I suggest that you ask someone who has some experience with soldering
+and electronics in general to help you. Maybe your local TV repair person will
+be willing to do it for you, if you provide a copy of this document and a
+screwdriver for opening the Super NES case.
+
+Game consoles, in common with most modern electronic devices are VERY SENSITIVE
+TO STATIC ELECTRICITY. Ideally, wear a grounding strap and work on a conductive
+surface when modifying your console. Avoid wearing clothes containing man-made
+fibres, which are prone to static (e.g. nylon). As far as possible, avoid
+touching component leads or PCB tracks. Handle the board by its edges.
+
+Print out and read this document several times before opening your console.
+
+
+You will need the following:
+
+· A screwdriver suitable for opening the Super NES case. The screws are special
+  tamperproof screws, referred to as "System Zero" or "Line Head System". A
+  suitable screwdriver can be obtained from a company called MCM Electronics in
+  the USA (http://www.mcmelectronics.com/) or from RS Components in the UK.
+
+· A crosshead screwdriver suitable for removing some screws inside the Super
+  NES (a "No. 1" bit will be suitable).
+
+· A low power grounded soldering iron with a fine bit and some desoldering
+  braid.
+
+· A thin needle or similar implement.
+
+· A pair of sharp scissors.
+
+
+When removing screws, make sure you remember which type goes in which hole!
+Here are step-by-step instructions:
+
+ 1. Turn off the console and remove all leads attached to it (AC adapter,
+    controller, A/V lead, etc.). After doing this, turn the power switch on for
+    a couple of seconds and then off again. This dissipates any stored charge
+    inside; you may see the power LED light for a moment as you do this. IT IS
+    *VERY IMPORTANT* THAT YOU DO THIS! YOU RISK DAMAGING YOUR CONSOLE IF YOU
+    DO NOT!
+
+ 2. Turn the console upside-down, and remove the six screws from the base. Turn
+    it back over, and lift off the upper part of the case. Position the console
+    so that it is facing you.
+
+ 3. Remove the eject lever. Pull up the right-hand side of the metal rod and
+    slide it out, then remove the lever and spring.
+
+ 4. Remove the two screws which secure the power switch to the casing. Lift up
+    the switch so that you can get at the screw below.
+
+ 5. Gently remove the ribbon cable which leads to the controller socket PCB
+    from the connector at the front of the PCB.
+
+    You do not need to do this if you have a late revision console. You can
+    identify this by the fact that there are only two screws holding down the
+    shielding, and you can see that the ribbon cable does not interfere with
+    removal of the shielding.
+
+ 6. Now unscrew the metal shielding from in front of the cartridge slot. The
+    exact details of this step depend on which revision PCB your console has. I
+    will give specifics for the three variants that are known to me.
+
+    · For early consoles, which can be identified by the separate plug-in sound
+      module "SHVC-SOUND", there are six screws to remove from the shielding,
+      including the two which are on either side of the cartridge slot. (After
+      removing the shielding, you may see "SHVC-CPU-01" printed on the PCB if
+      you have a U.S. or Japanese console.)
+
+    · For later consoles, which have no separate sound module, there are four
+      screws to remove. (You may see "SNSP-CPU-02" printed on the PCB after
+      removing the shielding for a PAL console.)
+
+    · For still later consoles, there are two screws to remove. For this type
+      of console, there is no need to remove the controller ribbon cable. (You
+      may see "SNS-CPU-GPM-01" printed on the PCB after removing the shielding
+      for a U.S. model console.)
+
+ 7. Carefully lift up the metal shielding. The edges may be quite sharp. You
+    will see various chips. There is more than one type of SNES PCB. Earlier
+    models can be distinguished because the sound hardware is contained in a
+    separate plug-in module labelled "SHVC-SOUND" (towards the rear right of
+    the console). Later revisions integrated this onto the main PCB.
+
+    The position of the lockout chip depends on which kind of PCB your console
+    has. For a U.S. model console with separate sound module, PCB revision
+    "SHVC-CPU-01", the lockout chip is labelled U8 on the PCB, and says:
+				   F411
+				   © 1990
+				  Nintendo
+    It is located just behind the reset switch.
+
+    For a later revision PAL console with integrated sound, PCB revision
+    "SNSP-CPU-02", the lockout chip is labelled U8 on the PCB, and says:
+				   F413A
+				   © 1992
+				  Nintendo
+    It is located towards the front left of the PCB, near the power switch.
+
+    For a still later revision U.S. console, PCB revision "SNS-CPU-GPM-01", the
+    lockout chip is labelled U8 on the PCB, and says:
+				   F411A
+				   © 1990
+				  Nintendo
+    It is located behind and to the left of the reset switch.
+
+ 8. Locate pin 4 of the lockout chip. The pins at each corner are numbered on
+    the PCB. Just count along from pin 1 to find pin 4.
+
+ 9. Use the desoldering braid and soldering iron to remove some of the solder
+    from pin 4. It may help to cut the end of the braid into a "V" shape, so
+    that you don't inadvertently desolder any adjacent pins. Position the end
+    of the braid over where pin 4 meets the PCB, and briefly press down on this
+    with the soldering iron bit. You should see that some solder has been
+    "sucked into" the braid.
+    
+    Using the needle, apply a gentle levering action to the pin as you
+    momentarily touch the soldering iron to it. The pin should come away from
+    the PCB. Carefully pull it up using the tip of the needle as a lever, so
+    that the end is a couple of millimetres away from the PCB.
+
+10. That's it! You can optionally solder a short length of wire between pin 4
+    and 0V. Pin 9 of the lockout chip is at 0V, so you could connect these two
+    pins. Alternatively, you may wish to add a switch; see the "Possible
+    Incompatibilities" section below.
+
+11. It is a good idea to test the console before putting it back together. Rest
+    the power switch on its mounting and connect the AC adapter, controller,
+    video lead and a game pak. Switch the console on. If all has gone well, the
+    display should appear as usual. Turn the console off, and insert a foreign
+    game pak (i.e., a U.S. or Japanese game pak if you have a PAL console; PAL
+    game pak if you have a U.S. or Japanese console). Turn the console off and
+    remove all attachments (AC adapter, etc.). Turn the power switch on and
+    then off.
+
+12. Put the console back together. The procedure is the reverse of steps 2 to 7
+    above. You may find fitting the eject lever tricky. If so, put the metal
+    rod through the lever, and put the spring on the left end of this, so that
+    the outwards-pointing end of the spring is downwards. The outwards-pointing
+    end should be the longer of the two. Ease the spring and lever into
+    position, ensuring that the end of the spring goes into the recess in the
+    casing. Now carefully move the other end of the spring back until it is in
+    the recess in the lever.
+
+
+
+Possible Incompatibilities
+--------------------------
+A few very recent titles may be incompatible with this modification. One
+example is PAL "Street Fighter Alpha 2", used with a PAL SNES whose lockout
+chip has been disabled. The graphics were reported to be corrupted in some way.
+There is also reported to be more than one version of "Super Mario RPG", one of
+which may be incompatible.
+
+I know why this is. One explanation might be that Nintendo changed the lockout-
+related circuitry inside the cartridges, to detect the "deadlock" situation
+caused by disabling the console's lockout chip, and interfere with normal use
+of the game in this case.
+
+To solve this problem, and allow at least all domestic titles to be played, you
+can fit a DPST switch to pin 4 of the lockout chip. Connect the middle switch
+terminal to pin 4, and the other two terminals to +5V and ground respectively.
+Then, with the switch in one position the lockout chip will be disabled, and in
+the other it will operate as normal. Contact me if you are unsure of how to do
+this.
+
+
+
+At Your Own Risk!
+-----------------
+There are some interesting things which can be done now that the lockout chip
+is disabled. If you try the following, it is at your own risk. Be aware that
+removing a game pak while the console is on may damage your console or your
+game pak.
+
+If your SNES has an "eject prevention lever", you will have to try this before
+fitting the case back on. (To see whether your console has one, open the game
+pak shutter, and move the power switch. If you see a piece of plastic move out
+when the switch is in the "on" position, that is the eject prevention lever.
+Nintendo removed this from later U.S. models of the SNES, at least.)
+
+Plug in a game pak; "Street Fighter II" is a suitable one. Turn on the console,
+and wait until some music starts playing. Now carefully remove the game pak,
+without turning off the console first. You should find that the display blanks,
+but the music keeps playing until the end of the tune! This is because the
+sound processor has its own RAM, and the music code is loaded into this. So
+music continues to play even after removing the game pak.
+
+---

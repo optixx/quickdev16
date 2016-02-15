@@ -1,0 +1,65 @@
+Addressing mode quick reference
+By Qwertie (QwertMan@hotmail.com)
+
+I lifted this straight from my emulator code, which I tend to comment heavily :)
+
+Please correct me if any of this is wrong...
+
+// ADDRESSING MODES - several categories, one mode from each category can be combined
+// None of the instructions can use all combinations, and certain combinations are
+// never used with any instruction.
+	// Used to calculate memory address:
+	//   Absolute: Argument is two bytes and specifies a memory location
+	//     + Long: Argument is three bytes instead             opcode $addr
+	//   Direct: Argument is one byte; memory address formed by adding D.
+	//     Bank is always 0, unless indirect addressing is also used, in
+	//     which case the bank is the program bank.            opcode <$addr
+	//   Stack Relative: Argument is one byte, which is added to the stack pointer
+	//     to find the final address.                          opcode $addr,S
+	// Indexed addressing:
+	//   Indexed: Memory location argument is added to X or Y to get the final
+	//     memory location.                                    opcode $addr,X or Y
+	//   Note that certain indexed addressing modes only work with the X register
+	//     or only with the Y register.
+	//
+	// Note! The above addressing mode specifiers are used only to specify the
+	// size of the argument and how it is used.  The specifiers DO NOT SPECIFY
+	// anything about the actual memory location being referenced.
+	// For example, suppose the Absolute Indexed mode is used.  This means that
+	// the argument to the opcode is 16 bits and will be added to an index
+	// register.  It does not, however, mean that the value at the calculated
+	// memory location will be a 16-bit value.  The size of the value at the memory
+	// location is determined by either:
+	//   a. whether the processor is in 16-bit mode (and whether E=0), or
+	//   b. if indirect addressing is used, whether the Long Indirect mode is used.
+	//
+	// Indirect addressing:
+	//   Indirect: Uses indirection (pointers).  In other words, after the memory
+	//     location is found and the contents are loaded, the contents are used as
+	//     a SECOND memory location and the value at the second memory location is
+	//     used in the operation.                              opcode ($addr)
+	//     + Direct Long: Normally, the pointer found at the specified location
+	//       will be two bytes.  If Direct Indirect Long is used, the pointer
+	//       at the memory address found will be a three-byte long address.
+	//                                                         opcode [$addr]
+	// Indexed Indirect (preindexed; (arg,x)) vs. Indirect Indexed (postindexed;
+	// (arg),x): remember, these two are different!
+	//
+	// Stack relative addressing: denoted by arg,s, the address is calculated by
+	//   adding the argument value to the stack pointer.  Always accesses bank 0,
+	//   since the stack is always in bank 0.
+// There is also two more modes, which are never used with any other specifiers:
+	// Implied: Opcode has no arguments
+	// Immediate: The argument specifies an actual constant value to be used,
+	//   rather than a memory address. [opcode #$XX or #$XXXX]
+
+Vector Locations:
+In Emulation Mode:      In Native Mode:
+00.FFFE  /IRQ or BRK    00.FFEE  /IRQ
+00.FFFC  /RESET         00.FFEC  (Unused)
+00.FFFA  /NMI           00.FFEA  /NMI
+00.FFF8  /ABORT         00.FFE8  /ABORT
+00.FFF6  (Unused)       00.FFE6  BRK
+00.FFF4  CSP            00.FFE4  CSP
+-The location after the one listed holds the high byte of the address
+-CSP (Call system procedure) is same as the COP mnemonic

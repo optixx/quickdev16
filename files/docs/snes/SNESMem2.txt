@@ -1,0 +1,82 @@
+                      +=-=-=-=-=-=-=-=-=-=-=+
+                      | SNES Memory Mapping |
+                      |    By: ]SiMKiN[     |
+                      |         v1.0        |
+                      +=-=-=-=-=-=-=-=-=-=-=+
+
+
+• LoROM: Mode 20
+• HiROM: Mode 21
+
+• FastROM's can execute at 3.58Mhz
+• SlowROM's can only execute 2.68Mhz
+
+  • The SNES lets you access ROM through bank $00 onwards and bank 
+    $80 onwards such that locations $00:8000 and $80:8000 are congruent,
+    (they access the same locations.)
+  • When accessing bank $00 onwards the 65816 runs at 2.68Mhz. However, 
+    when accessing bank $80 onwards the 65816 can run at 2.68Mhz or 
+    3.58Mhz depending on how you set bit 0 of $420D.
+
++=========+=============+====================================+=========+
+| Bank    | Offset      | Definition                         | Shadow  |
++=========+=============+====================================+=========+
+| $00-$2f | $0000-$1fff | LowRAM, each bank is shadowed      | $00-$3f |
+|         |             | From bank $7e                      |   $7e   |
+|         | $2000-$2fff | PPU1, APU                          | $00-$3f |
+|         | $3000-$3fff | SFX, DSP, etc.                     | $00-$3f |
+|         | $4000-$41ff | Controller                         | $00-$3f |
+|         | $4200-$5fff | PPU2, DMA, etc.                    | $00-$3f |
+|         | $6000-$7fff | Reserved?                          | $00-$3f |
+|         | $8000-$ffff | (Mode 20, 21 - ROM)                | ------- |
++---------+-------------+------------------------------------+---------+
+| $30-$3f | $0000-$1fff | LowRAM, each bank is shadowed      | $00-$3f |
+|         |             | From bank $7e                      |   $7e   |
+|         | $2000-$2fff | PPU1, APU                          | $00-$3f |
+|         | $3000-$3fff | SFX, DSP, etc.                     | $00-$3f |
+|         | $4000-$41ff | Controller                         | $00-$3f |
+|         | $4200-$5fff | PPU2, DMA, etc.                    | $00-$3f |
+|         | $6000-$7fff | (Mode 21 - SRAM) 256KBytes         | ------- |
+|         | $8000-$ffff | (Mode 20, 21 - ROM)                | ------- |
++---------+-------------+------------------------------------+---------+
+| $40-$6f | $0000-$7fff | (Mode 21 - ROM)                    | ------- |
+|         | $8000-$ffff | (Mode 20, 21 - ROM)                | ------- |
++---------+-------------+------------------------------------+---------+
+| $70-$77 | $0000-$ffff | (Mode 20, 21 - SRAM) 256KBytes     | ------- |
++---------+-------------+------------------------------------+---------+
+| $78-$7d | $0000-$ffff | Never Used                         | ------- |
++---------+-------------+------------------------------------+---------+
+|   $7e   | $0000-$1fff | LowRAM                             | $00-$3f |
+|         |             | Shadowed to banks $00-$3f          | ------- |
+|         | $2000-$7fff | HighRAM                            | ------- |
+|         | $8000-$ffff | Expanded Ram                       | ------- |
++---------+-------------+------------------------------------+---------+
+|   $7f   | $0000-$ffff | More Expanded RAM                  | ------- |
++---------+-------------+------------------------------------+---------+
+| $80-$ef | $0000-$ffff | Mirror of $00-$6f                  | $00-$6f |
++---------+-------------+------------------------------------+---------+
+| $f0-$ff | $0000-$ffff | (Mode 21 - ROM)                    | ------- |
++=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-+
+
+• ROM: The SNES ROM Image
+• RAM: The SNES Work Memory (WRAM)
+       LowRAM, HighRAM, & Expanded RAM 
+       All together = 128 Kilo-Bytes
+• SRAM: Save RAM (Extra RAM added by Cart)
+        The SNES only utilizes 256 Kilo-bits
+        However 256 Kilo-Bytes are provided.
+
+• APU: Audio Processing Unit
+       SPC700, Inside which has a DSP   
+• PPU: Picture Processing Unit
+       PPU1: 5c77-01
+       PPU2: 5c78-03
+
+• SFX: Super FX Cart Chip, by Nintendo
+• DSP: Digital Signal Processing Cart Chip
+       a.k.a. 'NEC mUPD77C25'
+
+• Shadow: "Congruent Bank". Same meaning as Mirror.
+
+          _________________________________________________
+       .o(_Thanx to: Y0SHi, zsKnight, MrGrim, and MintaBoo_)o.

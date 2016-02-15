@@ -1,0 +1,15 @@
+ ----------------------------------------------------------------------------
+|Here's a really basic memory map of the SNES's memory. Thanks to Geggin of  |
+|Censor for supplying this. Reminder: this is a memory map in MODE 20.       |
+|----------------------------------------------------------------------------|
+|Bank   |Address       |Description                                          |
+|-------|--------------|-----------------------------------------------------|
+|$00-$3F|$0000-$1FFF   |Scratchpad RAM. Set D-reg here if you'd like (I do)  |
+|       |$2000-$5FFF   |Reserved (PPU, DMA)                                  |
+|       |$6000-$7FFF   |Expand (???)                                         |
+|       |$8000-$FFFF   |ROM (for code, graphics, etc.)                       |
+|$70    |$0000-$7FFF   |SRAM (BRAM) - Battery RAM                            |
+|$7E    |$0000-$1FFF   |Scratchpad RAM (same as bank $00 to $3F)             |
+|       |$2000-$FFFF   |RAM (for music, or whatever)                         |
+|$7F    |$0000-$FFFF   |RAM (for whatever)                                   |
+ ----------------------------------------------------------------------------

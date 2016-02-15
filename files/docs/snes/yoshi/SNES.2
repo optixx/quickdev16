@@ -1,0 +1,21 @@
+ ----------------------------------------------------------------------------
+|The SNES has some interesting colour characteristics. The colour, theoret-  |
+|ically is 15 bit; each RGB value (Red, Green, and Blue) has 5 bits for each |
+|colour.                                                                     |
+|                                                                            |
+|When it comes to putting the colour data into $2122, the format (in binary) |
+|is the following:                                                           |
+|  b: Blue                   ?bbbbbgg gggrrrrr                               |
+|  g: Green                                                                  |
+|  r: Red                                                                    |
+|  ?: The infamous bit-of-confusion. :-)                                     |
+|                                                                            |
+|A quick colour chart could be the following:                                |
+|  $7FFF [0111 1111 1111 1111]: White.                                       |
+|  $001F [0000 0000 0001 1111]: Red.                                         |
+|  $03E0 [0000 0011 1110 0000]: Green.                                       |
+|  $7C00 [0111 1100 0000 0000]: Blue.                                        |
+|  $7C1F [0111 1100 0001 1111]: Purple.                                      |
+|  $7FE0 [0111 1111 1110 0000]: Aqua.                                        |
+|  $03FF [0000 0011 1111 1111]: Yellow.                                      |
+ ----------------------------------------------------------------------------

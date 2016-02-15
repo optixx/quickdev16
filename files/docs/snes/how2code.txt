@@ -1,0 +1,156 @@
+       BASELINE 2091 Presents The First Guide To Coding The SNES
+                    Guide and Source Code by -Pan-
+                         Released on 4/20/93
+
+
+       Welcome to the first installment of "How to code SNES"
+ This first volume will show you how to make a simple text intro. It uses
+mode 0 graphics with no DMAs (Horizontal or General) and is the simplest
+type of intro you can make. We're starting small so you can easily understand
+what to do. Other future volumes will contain other graphic modes,
+Horizontal DMA (HDMA, the SNES version of an amiga copperlist), General DMA,
+Interrupts, and a brief section on Sound. Originally we were going to release
+the full Super Famicom Programmer's Manual but believe it or not, this manual
+a pile of garbage. Contrary to the popular belief that we always had the
+manual, this is NOT true. The White Knight happened to meet a very cool
+guy at the CEBIT in Germany and has gotten the manual 2 weeks ago!
+Yes! What you have seen from us before was true coding. We started out
+by hacking and working our way to the top. We didn't wait until we bought
+a manual. In fact, the manual was sent to us for FREE! This book isn't
+worth paying for!
+ 
+Let's clear up a few misunderstandings about that SNES manual!
+ 
+1) This book does NOT teach you assembly language!!
+   It would help if you knew a little before trying to code this machine!
+
+2) This book was not written such as other reference guides you can find in
+   a store, like Mapping the Amiga, or even Mapping the C64.
+   It tells you barely and confusingly what the registers do. Period.
+
+3) This book is about 148 pages long and that includes the Sound Section.
+   Some have said it was the size of a phone book. Unless live in
+   Mud Hole, Kentucky this is NOT the case!
+ 
+
+So much for the introduction. I personally feel that experience is better
+than a reference guide. Reading a text file does not give you the feel of the
+machine. In the included source file, you will notice that almost every line
+has a description of what it is doing. This is better than telling you the
+registers and letting you fiddle around. You know what it will do, and you
+can see it in action in the assembled output (also included). I suggest
+you examine the source code right after reading this brief introduction on
+how the SNES system operates.
+ 
+The SNES runs on a 65816 processor. This is similar to the 6502, but many
+new instructions are available. You will use the most popular commands
+like LDA, LDX, STA, PHA, PLA, RTS, JMP.. etc etc.   There are some new
+ones but we will get into that subject in the next volume as it is not
+very important right now.
+The 65816 is a 16 bit processor that does 24 bit addressing.
+You can load and store 16 bit numbers, as well as 8 bit. The addressing is
+is different than the 6502 in that it includes a bank. If you have coded on
+the C64 you know that the addressing on the C64 was from $0000-$FFFF.
+That is 16 bit addressing. 24 bit includes 1 extra byte. This one byte
+is the BANK number.  The SNES memory is broken down into fragments of
+32k blocks each. They are addressed from $8000-$FFFF and are stored into
+banks sequentially. If you wanted to access the first ROM byte in memory, 
+the address would be $008000. The first $00 is the bank number, the first
+bank you can access. The $8000 is the 16 bit address. All banks (unless in
+high rom 64k bank memory) start at $8000!
+Remember that you can not write ROM. If you have coded on a C64 you have
+written a routine that looked like this:
+
+lda #$00
+sta $c000
+ 
+You cannot do this! $c000 is ROM and you can not write to ROM!
+To write to ram, simply write to any address between $0000-$1fff.
+If you need more memory you will find plenty at bank $7e and $7f
+These 2 banks contain memory from $0000-$ffff. These 2 banks each contain
+64k ofram totalling 128k for your own use!
+If you need to write to these directly, just use the LONG STA command
+example:
+sta $7ec000
+ 
+This will write to bank $7e at address $c000!
+
+Fair enough. This was only a brief lecture on how the memory works.
+
+ 
+The SNES hardware registers and how the work:
+
+You will notice when looking at the source code something very strange.
+Some registers are written to twice in a row! This because some registers
+need more than one 8 bit info, such as the scroll X registers. In these
+registers you can enter any number between $0-$07ff, but they are written
+as two 8 bit numbers, one right after another.
+example:
+ 
+lda #$07
+sta $210d
+lda #$00
+sta $210d
+ 
+This writes #$0007 to $210d, plane 0 scroll x register.
+
+Using 16 bit data storage will not work for this type of register!
+example:
+
+lda #$0007
+sta $210d
+
+This will not work because it will write #$07 to $210d, then a #$00 to $210e.
+
+Another strange register is the self-incrementing register such as the VRAM
+address registers $2116 and $2117.
+After writing to $2119 (or $2118 in another setting) the VRAM address in
+$2116 and $2117 will be increased. You do not have to do it yourself.
+This can be seen in the Character set (font set) transfer  routine in the 
+source code.
+
+ 
+Introduction to Video RAM (VRAM)
+ 
+The Super NES system has it own graphics processor. This requires its own
+ram to read/write graphics data.  This ram can only be accessed through
+certain registers such as $2118 + $2119.  To access Video Ram you MUST
+turn off the video or you must be in screen blank (horizontal or vertical).
+This is one of the downsides of the SNES.
+Video Ram allows the storage of map planes and tile graphics.
+VRAM is only 64k long and can not be used as regular ram. You can not
+program in it, it is a separate unit!
+
+In this volume we show you how to make a text screen in Mode 0. There are
+8 graphic modes numbered from Mode 0 to Mode 7.   Mode 0 is the most 
+simplistic. It allows only 4 colors per tile, but allows all four 
+planes to be used.
+ 
+A normal video screen on the SNES is 32*32 tiles, which comes out to an
+even 1024 tiles. You can widen the screen but you still may only have
+1024 tiles. There are 2 parts to displaying a graphic on the screen.
+There is the tile graphic data which gives the tile its picture. Then there
+is the Map data. These are individually placed tiles placed on the screen
+to produce an image.
+
+example:
+
+                BBBBB   SSSSS  LL
+                BB  BB SS      LL
+                BBBBB   SSSS   LL
+                BB  BB     SS  LL
+                BBBBB  SSSSS   LLLLLLL
+
+Notice that all the small B's are the same. These woulds be drawn as
+Tile Graphics. They all form together to create the large B image.
+These B's together would be the Map data. The same would go for the S and L.
+
+This is enough info to understand the basics of this 2 color intro.
+This next installment on "How to code SNES" will feature more interesting
+subjects as:
+ 
+ - How the color works
+ - 16 color graphic mode
+ - the entire 65816 instruction set with op-codes
+ - more info on the joypad
+

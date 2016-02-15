@@ -1,0 +1,89 @@
+ ----------------------------------------------------------------------------
+|For those of you who don't know how the SNES does do it's graphics, it      |
+|uses tiles (surprise surprise!).                                            |
+|                                                                            | 
+|There are different MODEs on the SNES; the most famous being MODE 7.        |
+|Most people think that $2106 (Screen Pixelation: Look in SNES.1 for an ex-  |
+|planation on this register) is MODE 7. *** THIS IS NOT MODE 7!!! ***.       |
+|So, the next time the pixels get really "big" (almost making them look like |
+|look like IBM-clone 320x200x256 MODE 13h graphics), and your friend says    |
+|"WOW! MODE 7 is really awesome," punch him/her in the nose for me. Just     |
+|joking. :-)                                                                 |
+|                                                                            |
+|I'll be explaining MODE 1. I know how MODE 7 works, but since i've never    |
+|used it, don't plan on me explaining it in the near future. Sorry to those  |
+|who were looking for a MODE 7 document. Look elsewhere...                   |
+|                                                                            |
+|MODE   # of BGs       MaxColour/Tile  Palettes      Colours                 |
+|----------------------------------------------------------------------------|
+|0      4              4               8             32                      |
+|1      3              16/16/4         8             128                     |
+|                                                                            |
+|MODE 0 is good for geometric shapes (if you were going to rotate a wire-    |
+|frame cube, or something like that), basic star scrolls, or a very 'bland'  |
+|text scroller... it's pretty cool and doesn't take up much space.           |
+|                                                                            |
+|I'm going to explain MODE 1, since MODE 0 is the same thing but with less   |
+|bitplanes. :-)                                                              |
+|                                                                            |
+|MODE 1 is really best for things; detailed star scrolls, text scrollers,    |
+|geometric shapes, and filled objects. It's the most common used MODE in the |
+|the professional SNES programming world.                                    |
+|                                                                            |
+|You need to "setup the plane" to tell it what tile goes where. If you want  |
+|demo-code, check out 'test.asm' in 'test.lzh'.                              |
+|----------------------------------------------------------------------------|
+|So, lets assume we have a character (a 8x8 tile) which we want to work with |
+|to figure out the SNES's colour scheme:                                     |
+|                                                                            |
+|TestCHR1       dcb $00,$00,$00,$00,$00,$00,$00,$00 ; '@'                    |
+|TestCHR2       dcb $00,$3C,$4E,$5E,$5E,$40,$3C,$00 ; '@'                    |
+|                                                                            |
+|You're probably wondering how the two lines above turn into actual graphic  |
+|data on your monitor or television set. Very simple. Consider each byte     |
+|(each new $xx statement) a new pixel line. Tile size is 8x8.                |
+|                                                                            |
+|      %00000000          = $00                                              |
+|      %00000000          = $00    This is TestCHR1                          |
+|      %00000000          = $00                                              |
+|      %00000000          = $00                                              |
+|      %00000000          = $00                                              |
+|      %00000000          = $00                                              |
+|      %00000000          = $00                                              |
+|      %00000000          = $00                                              |
+|                                                                            |
+|      %00000000          = $00                                              |
+|      %00111100          = $3C    This is TestCHR2                          |
+|      %01001110          = $4E                                              |
+|      %01011110          = $5E                                              |
+|      %01011110          = $5E                                              |
+|      %01000000          = $40                                              |
+|      %00111100          = $3C                                              |
+|      %00000000          = $00                                              |
+|                                                                            |
+|The at-symbol ('@') is visible in TestCHR2. Now you're probably wondering   |
+|"Well, that tells me how to define a pixel on and off; what about the colour|
+|itself!" Once again, very simple, but a tad more complex:                   |
+|                                                                            |
+|If you have a 0 for bitplane 0, a 0 for bitplane 1, a 0 for bitplane 2,     |
+|and a 0 for bitplane 3, you get color #0; eg.:                              |
+|                       0000 = Color #0                                      |
+|                       ||||___________Bitplane 0                            |
+|                       |||__________Bitplane 1                              |
+|                       ||_________Bitplane 2                                |
+|                       |________Bitplane 3                                  |
+|                                                                            |
+|So, now, think about a 0 for bitplane 0, a 1 for bitplane 1 and 2, and a 0  |
+|for bitplane 3:                                                             |
+|                       0110 = Color #6                                      |
+|                       ||||___________Bitplane 0                            |
+|                       |||__________Bitplane 1                              |
+|                       |_________Bitplane 2                                 |
+|                       |________Bitplane 3                                  |
+|                                                                            |
+|Keep in mind, this is the best explanation i've ever seen done about SNES   |
+|pixel color definition. Until I see better, I'd have to say this is the     |
+|best it's gonna get.                                                        |
+|The result above gives you the color # per pixel; it's interesting. It's an |
+|"overlay" method, so-to-speak, not to confuse this w/ main and sub-screens. |
+ ----------------------------------------------------------------------------

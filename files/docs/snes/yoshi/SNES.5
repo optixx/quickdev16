@@ -1,0 +1,48 @@
+ ----------------------------------------------------------------------------
+|The OBJs use a lookup table that contains info on their X and Y position on |
+|the screen, their size, if they're flipped vertically or horizontally, their|
+|colour, and the actual data.                                                |
+|                                                                            |
+|The format you need to make the table is as follows:                        |
+|                                                                            |
+|                                                                            |
+|Spr. #   Size   Offset        Explanation                                   |
+|----------------------------------------------------------------------------|
+|   0     Byte   0             xxxxxxxx           x: X-location.             |
+|         Byte   1             yyyyyyyy           y: Y-location.             |
+|         Byte   2             abcdeeeC           a: Vertical flip.          |
+|                                                 b: Horizontal flip.        |
+|                                                 c: Playfield priority.     |
+|                                                 d: Playfield priority.     |
+|                                                 e: Pallete #.              |
+|         Byte   3             CCCCCCCC           C: Character data.         |
+|                                                                            |
+|   1     Byte   4             xxxxxxxx           x: X-location.             |
+|         Byte   5             yyyyyyyy           y: Y-location.             |
+|         Byte   6             abcdeeeC           a: Vertical flip.          |
+|                                                 b: Horizontal flip.        |
+|                                                 c: Playfield priority.     |
+|                                                 d: Playfield priority.     |
+|                                                 e: Pallete #.              |
+|         Byte   7             CCCCCCCC           C: Character data.         |
+|...and so on...                                                             |
+|----------------------------------------------------------------------------|
+|Continue this table all the way down to OBJ #127 (out of 128). Don't think  |
+|you're finished quite yet: There is one more table of data required.        |
+|                                                                            |
+|2 bits are defined for each OBJ (eg. byte #0 holds the info for OBJ 0, 1, 2,|
+|and 3; byte #1 holds the info for OBJ 4, 5, 6, and 7). Therefore, 128/4 is  |
+|32 bytes of data for the following table:                                   |
+|                                  ab                                        |
+|                                  ||____Size toggle bit.                    |
+|                                  |_____MSB of X-position bit.              |
+|                                                                            |
+|So, the 4 bytes/sprites + the block are put into the OAM table by consec-   |
+|utive writes to the OAM data register. You first should set the OAM address |
+|to $0000, then shove your data into it.                                     |
+|                                                                            |
+|If you don't set the block after the OAM as well, the results are bad. All  |
+|the data for the MSB stuff wouldn't be defined correctly, which would result|
+|in your entire OBJ table being wacko. Have atleast some 0's there or a table|
+|which you really want to use in the long run.                               |
+ ----------------------------------------------------------------------------

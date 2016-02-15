@@ -1,0 +1,34 @@
+This file was given to me by one of my friends from #emu, I can't remember who
+it was. I believe it was taken from the person's SWC game manual, so it should
+be accurate.
+
+	-avatar_Z - http://mana.nfinity.com/node99
+------------------------------------------------------------------------------
+
+byte 0	 - numbers of block (low byte)
+byte 1   - numbers of block (high byte)
+
+     total numbers of block = (byte1 * 256) + byte0
+
+byte 2	 - program execution mode
+
+   bit: 76543210
+        X            : 0, reserved
+         X           : 0=no more split file, the last fule
+                       1=search for next split file
+          X          : SRAM memory mapping,
+                       0=mode20, 1=mode21
+           X         : program memory mapping,
+                       0=mode20, 1=mode21
+            XX       : SRAM mode (size),
+                       00=256K, 01=64K, 10=16K, 11=off
+              XX     : 00, reserved
+
+byte 3~7  - 00, reserved
+byte 8    - aa, file id
+byte 9    - bb, file id
+byte 10   - file type
+            04: program
+            05: battery back-up data
+            08: real-time save data
+byte 11~511  - 00, reserved

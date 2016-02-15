@@ -1,0 +1,302 @@
+                
+                   E.V.O.L.U.T.I.O.N.   A.U.S.T.R.A.L.I.A.
+o                o        o
+               /\                /\      /\           ___o               ___o
+o_____________/  \_ _______o    /  \    /  \_________|   |____________o |   |
+\      __    /   / |\       \  /  ./  __\   \    _   \   |\       \   \ |  .|
+ \ \__/_/___/  ./  |/\  /\  .\/  o/  |  .\   \___\)  .) .|/\  /\   \ \ \|  o|
+ /\_______//  o/   /   / /  o/  O/___|  o|\   \  /  o/  o/   / /  o/ .\ \  O|
+/   /_/  O/  O/|  (   (_/  O/   /_)   ) O|_)   )/  O/|  (   (_/  O/  o|\    |
+\    ____/_________\   \___/_________/________//   / |___\_______/|  O| \___|
+_\   \______________\   \_____________________/   /               |   |______
+_________________________________________________/ Poise/RaZoR PC |__________
+
+   Presents : The Super Wild Card & Super Magicom Programmers Handbook.
+
+   Typed by : MicroChip/Evolution/Submission
+   
+   Call the Evolution WHQ on : Southern Cross BBS (SNES/MD/PC/AMIGA)
+                               --> +61-3-428-9359 (2 Nodes Ringdown)
+
+                                  
+ ***************************************************************************
+
+
+HardWare Specifcations & Features
+---------------------------------
+
+
+1) DRAM - 28Mega Bits Maximum Available
+2) SRAM - 256k (Battery Backup)
+3) ROM - 128k (Firmware)
+4) Floppy Drive Interface -
+   * Motorola MCS3201 Chip (NEC 765A Compatible)
+   * Compatible with IBM PC/AT & XT Disk Drive System
+   * Suports 3.5" & 5.25" Flopy Disk Drive.
+   * DB-25 Female Connector (non-standard)
+   * Supports only Non-DMA mode (polling)
+5) Parallel Port Interface -
+   * 8 bits input, 4 bits output, 1 bit handshake.
+   * DB-25 Female Connector
+   * Use Male to Male DB-25 Connector to connect to PC's Parallel Port
+6) Core Chip -
+   * Altera EP1810 Chip (First Generation)
+   * Front Far East FC9203 Chip (Currently Shipping)
+   * Front Far East FC9304 Chip (Not Avilable)
+7) Versions -
+   Ver.  Bios-Name   Core    Mode21   Saver   Description
+   'A'   Magicom     EP1810  No       Yes     External Drive
+   'B'   Wild Card   EP1810  Yes      Yes     External or Bulid-in DD
+   'C'   Wild Card   FC9203  Yes      Yes     External or Bulid-in DD
+   'D'   Wild Card   FC9304  Yes      Yes     (Under Development)
+   'E'   Wild Card   EP1810  Yes      No      Magic Drive Adapter
+   'F'   Wild Card   FC9203  Yes      No      Magic Drive Adapter
+
+
+SoftWare Specifications & Features
+----------------------------------
+
+1) Registers -
+
+   [Floppy Drive I/O]
+   C000R : Input Register
+           Bit 7 - MCS3201 IRQ Signal
+           Bit 6 - Drive 'Index' Signal (Disk Insert Check)
+   C002W : Digital Output Register
+   C004R : Main Status Register
+   C005RW: Data Register
+   C007R : Digital Input Register
+   C007W : Disk Control Register
+   * Consult the MCS3201 Data Sheet for more detailed information.
+
+   [Parallel I/O]
+   C008R : Bit 07 : Parallel Data Input (reading this register will
+                                         reverse the busy flag)
+   C008W : Bit 03 : Parallel Data Output
+           Bit 00 :  0=Mode 20, 1=Mode 21 (DRAM Mapping)
+           Bit 01 :  0=Mode 1, 1=Mode 2 (SRAM Mapping)
+
+   C009R : Busy Flag, Bit 7 (EP1810 Version)
+   C000R : Busy Flag, Bit 5 (FC9203 Version)
+
+   [Page Select]
+   E000W : Memory Page 0
+   E001W : Memory Page 1
+   E002W : Memory Page 2
+   E003W : Memory Page 3
+
+   [Mode Select]
+   E004W : System Mode 0 (Bios Mode, Power On Default)
+   E004W : System Mode 0 (Play Cartridge)
+   E004W : System Mode 0 (Cartridge Emulation 1)
+   E004W : System Mode 0 (Cartridge Emulation 2)
+
+   [Others]
+   
+   E008W : 44256 Dram Type (For 2,4,6,8 Mega Dram Card.
+   E009W : 441000 Dram Type (For 8,16,24,32 Mega Dram Card)
+
+   E00CW : Enable cartridge page mapping at A000FFF (Sys Mode 0)
+           Disable cartridge page mapping at bank 205F,A0 (Sys Mode 2,3)
+   E00DW : Enable SRAM page mapping at A000FFF (Sys Mode 0)
+           Enable cartridge mapping at Bank 205F,A0 (Sys Mode 2,3) 
+           
+   * The bank address of the above registers is 007D,80.
+   * The above registers are available only in System Mode 0 (BIOS Mode)
+   * [Mode Select] registers also available in System Mode 2.
+
+2) Memory Mapping -
+
+   [System Mode 0]
+   bb2000B3FFFRW : SRAM or Cartridge page mapping, bb=407D,C0 
+   bb8000B9FFFRW : DRAM page mapping, bb=007D,80
+   bbA000bBFFFRW : SRAM or Cartridge page mapping, bb=007D,90
+   bbC000W : I/O Registers, bb=007D,80 (Registers)
+   bbE000bFFFFR  : ROM Page mapping, bb=01 (Firmware)
+
+   * 1 Page = 8k Bytes, 1 Bank = 4 pages
+   * bb:000F = 4 Mega Bytes
+   * bb:001F = 8 Mega Bytes
+   * bb:002F = 12 Mega Bytes
+   * bb:003F = 16 Mega Bytes
+
+   [System Mode 1]
+   bb0000b7FFFR : Cartridge Mapping, bb=407D,C0 (Mode 21)
+   bb8000bFFFFR : Cartridge Mapping, bb=007d,80 (Mode 20,21)
+
+   [System Mode 2]
+   bb0000b7FFFR : DRAM Mapping, bb=407D,C00 (Mode 21)
+   bb8000BFFFFR : DRAM Mapping, bb=0070,800 (Mode 20,21)
+   70800070FFFFRW : SRAM Mode 1 Mapping
+   306000307FFFRW : SRAM Mode 2 Mapping, Page 0
+   316000317FFFRW : SRAM Mode 2 Mapping, Page 1
+   326000327FFFRW : SRAM Mode 2 Mapping, Page 2
+   336000337FFFRW : SRAM Mode 2 Mapping, Page 3
+
+   * bbE004bE007W : Mode Select Registers, bb=007D,80
+
+   [System Mode 3]
+   bb0000b7FFFR : DRAM Mapping, bb=406F,C0 (Mode 21)
+   bb8000BFFFFR : DRAM Mapping, bb=006F,80 (Mode 20,21)
+   70800070FFFFRW : SRAM Mode 1 Mapping
+   306000307FFFRW : SRAM Mode 2 Mapping, Page 0
+   316000317FFFRW : SRAM Mode 2 Mapping, Page 1
+   326000327FFFRW : SRAM Mode 2 Mapping, Page 2
+   336000337FFFRW : SRAM Mode 2 Mapping, Page 3
+
+   * Mode 21 - Even DRAM is mapped to bb0000b7FFF
+               Odd  DRAM is mapped to bb8000bFFFF
+
+
+3) Parallel I/O Protocol - 
+
+   [Protocol used in PC]
+                                 
+   * Byte Output procedure:
+       Wait Busy Bit = 1           Status Port Bit 7  (Hex n79,n7D)
+       Write One Bytes             Data Latch         (Hex n78,n7C)
+       Reverse Strobe bit          Control Port Bit 0 (Hex n7a,n7E)
+
+   * Byte Input procedure:
+       Wait Busy Bit = 0           Status Port Bit 7  (Hex n79.n7D)
+       Read Low 4 bits of byte     Status Port Bit 36 (Hex n79.n7D)
+       Reverse Strobe bit          Control Port Bit 0 (Hex n7A.n7E)
+       Wait Bust Bit = 0           Status PortBit 7   (Hex n79.n7D)
+       Read High 4 Bits of byte    Status Port Bit 36 (Hex n79.n7D)
+       Reverse Strobe Bit          Control Port Bit 0 (Hex n7A.n7E)
+
+    * 5 Types of Commands
+
+    * Command length = 9 bytes
+
+    * Command Format:
+      Byte 1  D5              ID Code 1
+      Byte 2  AA              ID Code 2
+      Byte 3  96              ID Code 3
+      Byte 4  00|01|04|05|06  Command Code
+      Byte 5  A1              Low Byte of Address
+      Byte 6  AH              High Bytes of Address
+      Byte 7  LL              Low Byte of Data Length
+      Byte 8  LH              High Byte of data Length
+      Byte 9  CC              Checksum = 81^Byte4^Byte5^Byte6^Byte7^Byte8
+     
+     * Command [00] : Download Data
+       a1,ah = Address
+       11,1h = Data Length
+       Output Data after Command
+     
+     * Command [01] : Upload Data
+       a1,ah = Address
+       11,1h = Data Length
+       Input Data after Command 
+       
+     * Command [04] : Force SFC Program to JMP  
+       a1,ah = address
+
+     * Command [05] : Set Memory Page Number
+       a1 Bit 1 = Page Number
+       a1 Bit27 + ah Bit 1 = Bank Number
+
+     * Command [06] : SUB Function
+       a1 = 0  Initial Device
+       a1 = 1  Play Game in DRAM
+       a1 = 2  Play Cartridge
+
+
+Password Format
+---------------
+
+1) Description -
+   Use the Data in the password to replace the data in the memory
+   at the offset address (according to the game file)
+
+2) Format 1 -
+   * Game Doctor Gold Finger Format
+   * 20 bits address space assigment
+   * 3 data bytes per string
+   * [Gaaaaaddddddccc]
+     'G'    = Means Game Doctor Format 
+     aaaaa  = Offser address of game file (Excluding 512 bytes header)
+     dddddd = 3 data Bytes (If the second ot the third data is '00',
+                            this means that the data is uncganged in
+                            the second of third byte)
+     ccc    = Checksum (Not used in SWC and SMC)
+
+3) Format 2 -
+   * 'FFE' Format
+   * 24 bit address space assigment
+   * 1 to 36 data bytes per string
+   * No Checksum
+   * [nnaaaaaadd....]
+     nn     = Data bytes length
+     aaaaaa = Offset Address of Game file (excluding 512 bytes header)
+     dd.... = nn Bytes data (Should be nn*2 Characters)
+
+File Header
+-----------
+
+1) Created by JSI/Front Far East
+
+2) 512 Bytes Length
+
+3) Byte
+    0   - Low Byte of 8k-Bytes page Counts
+    1   - High Byte of 8k-Bytes page Counts
+    2   - Emulation Mode Select
+          Bit 7 6 5 4 3 2 1
+              x             : 1=Run in Mode 0 (Jump $8000)
+                x           : 0=Last File of the Game (Multi-File)
+                  x         : 0=Mode 1, 1=Mode 2 (SRAM Mapping)
+                    x       : 0=Mode 20, 1=Mode 21 (DRAM Mapping)
+                        x   : 0=Run in Mode 3, 1=Run in Mode 2 (JMP Reset)
+                          x : 0=Disable, 1=Enable (external cartridge
+                              memory image at Bank 205F,A0 System Mode 2,3)
+    8   - File ID Code 1 (Should be 'AA')
+    9   - File ID Code 2 (Should be 'BB')
+    10  - Check this byte if ID 1 & 2 Match
+          02 : Magic Griffin Game File (PC Engine)
+          03 : Magic Griffin SRAM Data File
+          04 : SWC & SMC Game File (SNES)
+          05 : SWC & SMC Password, SRAM data, Saver Data File.
+          06 : SMD Game File (Megadrive)
+          07 : SMD SRAM Data File
+    37  - Reserved (Should be 00)
+    11511 - Reserved (Should be 00)
+
+
+  ****************************** The End ***********************************
+
+
+Personal Greetings go to:
+
+Ice/ATX - See ya at the Rave!
+Krayzi/PE - Stop pulling those pipes.
+Krimsym - See ya at Insanity!
+VIking Child/Submission - Use a condom next time!
+Ginnie/Razor - PC's RULE - NOT!
+TV & Revenger/Submission - Why an A4000?
+Poise/Razor - Where's my text screen??
+Itec/Submission - Lets get TCC going again? 
+Mixer/Mel - See ya at Kentucky!
+WormEater & RAM - Call my board!
+Kirk/Anthrox - How ya going Pete? Will Call ya soon!
+Mat - Speed kills - NOT!
+Choronzon - Let me see ya trade!
+Sweet Thing - Thanx for the support!
+Woody & Sandman - Call my bbs you lazy bastards.. hehe
+Cameo - I want a pre-release...
+Rotox - Call me..
+Mr. IRQ - Dove' il mio manuale?
+Jacknife - Thanx for the Support Dude!
+And to all my friends I have forgotten about coz I am tired!
+
+Group Greetings go to:
+
+Submission, Magical, Anthrox, Paradox, Razor, Fairlight, BSL, Elitendo, 
+PE, Quartex, Skid Row and to all others I missed! 
+
+NOTE: If any Australian's wish to purchase a Super Wild Card they are
+      asked to call (03) 883-0297 (24hour paging service)............
+
+
+ 

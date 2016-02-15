@@ -1,0 +1,1385 @@
+I have no idea where this document came from (EPR? Who knows..), there's no credits anywhere
+or anything... weird.  Anyways, it was really hard with my eyes so I told Wordperfect to convert it
+to  initial caps' since there was no  Capitalize the first word of each line or sentence and leave
+abbreviations the way they are' option.
+     - Qwertie
+
+Address  : $2100
+Name     : Inidisp
+Contents : Initial Settings for Screen
+
+     D7   Blanking:
+               Forced Blanking, 0:non-blanking,1:blanking.
+
+        D6-d4   ---
+
+        D3-d0   Fade In/out:
+               0000-darkest,1111-brightest.
+
+
+Address  : $2101
+Name     : Obsel
+Contents : Object Size & Object Data Area Designation
+
+     D7-d5     Size Select:
+               D7 D6 D5   0   1  (Size Large/small)
+                0  0  0   8  16
+                0  0  1   8  32
+                0  1  0   8  64
+                0  1  1  16  32
+                1  0  0  16  64
+                1  0  1  32  64 (Dots.)
+
+     D4-d3     Name Select
+               The Upper 4k-word Out of the Area (8k-word)
+               Designated by "Object Base Address" is Assigned
+               As the Base Area, and the Area of the Lower 4k-
+               Word Combined with its Base Area Can Be
+               Selected. (See Appendix 1 & 2)
+
+     D2-d0     Name Base Select (Upper-3 Bit)
+               Designate the Segment (8k-word) Address Which
+               The Obj Data is Stored in Vram.    (Appendix 1 & 2)
+
+
+Address  : $2102/$2103
+Name     : Oamaddl/oamaddh
+Contents : Address for Accessing Oam
+
+     D7-d0     Oam Address (A7-a0)                2102h
+
+     D7   Oam Priority Rotation                   2103h
+     D6-d1     ---
+     D0   Oam Address Msb (A8)
+
+          This is the Initial Address to Be Set in Advance When Reading
+       Reading From the Oam Or Writing to the Oam.
+
+          By Writing "1" to D7 of Register <2103h> and Setting the Oam-
+       Address the Obj for the Address Set Has Highest Priority.
+
+          The Address Which Has Been Set Just Before Every Field
+       (Beginning of V-blank) Will Be Set Again to Registers <2102h>
+       <2103h> Automatically. But, the Address Can Not Be Set
+       Automatically During Forced Blank Period.
+
+
+Address  : $2104
+Name     : Oamdata
+Contents : Data for Oam Write
+
+     D7-d0     Oam Data (Low,high)
+
+          This is the Oam Data to Be Writting At Any Address of the Oam.
+       (See Appendix-3)
+
+          After Register <2102h> Or <2103h> is Accessed, the Data Must
+       Be Written in the Order of Lower 8-bit & Upper 8-bit of Register
+       <2104h>.
+
+          The Data Can Be Written Only During V-blank Or Forced Blank
+       Period.
+
+
+Address  : $2105
+Name     : Bgmode
+Contents : Bg Mode & Character Size Settings
+
+     D7-d4     Bg Size Designation (Bg4-bg1)
+               0:   8 X  8 Dot/character
+               1:  16 X 16 Dot/character
+
+     D3   Highest Priority Designation for Bg-3 in Mode 1
+               0: Off (See Appendix-16)
+               1: on
+
+     D2-d0     Bg Screen Mode Select (See Appendix-5)
+
+
+Address  : $2106
+Name     : Mosaic
+Contents : Size & Screen Designation for Mosaic Display
+
+     D7-d4     Mosaic Size (See Appendix-6)
+               1111 - Largest, 0000 - Smallest.
+
+     D3-d0     Mosaic Enable (Bg4-b1)
+               0: Off
+               1: on
+
+
+Address  : $2107/$2108/$2109/$210a
+Name     : Bg1sc/bg2sc/bg3sc/bg4sc
+Contents : Address for Storing Sc-data of Each Bg & Sc Size Designation
+
+     D7-d2     Sc Base Address
+               Designate the Segment Which Bg-sc in the Vram
+               Is Stored. (1k-word/segment)
+
+     D1-d0     Sc Size
+               Designate Background Screen Size (Appendix-18 & 19)
+               0 0  0 0    1 0  0 0    0 1  0 1    1 1  0 1
+                    0 0         1 1         0 1         2 3
+
+
+Address  : $210b/$210c
+Name     : Bg12nba/bg34nba
+Contents : Bg Character Data Are Designation
+
+     D7-d4     Bg2 Base Address                   210bh
+     D3-d0     Bg1 Base Address
+
+     D7-d4     Bg4 Base Address                   210ch
+     D3-d0     Bg3 Base Address
+
+          Background Name Base Address (Upper 4-bit), Segment Address
+       In the Vram Where Bg Character Data is Stored. (4k-word/segment)
+
+
+Address  : $210d/$210e/$210f/$2110/$2111/$2112/$2113/$2114
+Name     : Bg1hofs/bg1vofs/bg2hofs/bg2vofs/bg3hofs/bg3vofs/bg4hofs/bg4vofs
+Contents : H/v Scroll Value Designation for Bg
+
+     D7-d0     H-offset (Low,high)                Hofs
+
+     D7-d0     V-offset (Low,high)                Vofs
+
+          10 Bit Maximum (0-1023) Can Be Designated for H/v Scroll Value.
+       [The Size of 13-bit Maximum (-4096->4095) Can Be Designated in
+       Mode 7] (See Appendix-8 & 9)
+
+          By Writing to the Register Twice, the Data Can Be Set in Order
+       Of Low & High.
+
+
+Address  : $2115
+Name     : Vmain
+Contents : Vram Address Increment Value Designation
+
+     D7   H/l Inc (Word Or Byte Vram Access)
+
+               Designate the Increment Timing for the Address
+               0: the Address Will Be Increased After the Data Has
+                  Been Written to Register <2118h> Or the Data
+                  Has Been Read From Register <2139h>.
+                  This Will Result in Byte Vram Access, I.e. for
+                  Mode 7 Tile Map Change.
+
+               1: the Address Will Be Increased After the Data Has
+                  Been Written to Register <2119h> Or the Data
+                  Has Been Read From Register <213ah>.
+                  This Will Result in Word Vram Access, I.e. for
+                  Mode 1 Tile Map Change.
+
+     D6-d4     ---
+
+     D3-d2     Full Graphic (G1 & G0)
+
+     D1-d0     Sc Increment (I1 & I0)
+
+
+     G1 G0 I1 I0 | Increment Value
+     ----------------------------
+      0  1  0  0 | Increment by 8 for 32 Times (2-bit Formation)
+      1  0  0  0 | Increment by 8 for 64 Times (4-bit Formation)
+      1  1  0  0 | Increment by 8 for 128 Times (8-bit Formation)
+      0  0  0  0 | Address Increments 1 by 1
+      0  0  0  1 | Address Increments 32 by 32
+      0  0  1  0 | Address Increments 64 by 64
+      0  0  1  1 | Address Increments 128 by 128
+
+
+Address  : $2116/$2117
+Name     : Vmaddl/vmaddh
+Contents : Address for Vram Read
+
+     D7-d0     Vram Address (Low)                 2116h
+     D7-d0     Vram Address (High)                2117h
+
+          This is the Initial Address for Reading From the Vram Or Writing
+       To the Vram.
+
+          The Data is Read Or Written by the Address Set Initially, and
+       Every Time the Data is Read the Address Wil Be Increased
+       Automatically.
+
+          The Value to Be Increased is Determined by "Sc Increment" of
+       Register <2115h> and the Setting Value of the "Full Graphic".
+
+
+Address  : $2118/$2119
+Name     : Vmdatal/vmdatah
+Contents : Data for Vram Write
+
+     D7-d0     Vram Data (Low)                         2118h
+     D7-d0     Vram Data (High)                   2119h
+
+          This is the Screen Data and Character Data (Bg & Obj), Which
+       Can Write At Any Address of the Vram.
+
+          According to the Setting of Register <2115h> "H/l Inc.", the
+       Data Can Be Written to the Vram As Follows:
+
+     H/l Inc  |  Write to Register  |  Operation
+        --------------------------------------------------------------
+         0    |  Write to <2118h>   |  the Data is Written to Lower 8bit
+              |  Only.              |  of the Vram & the Address Will Be
+           |                     |  Increased Automatically.
+         1    |  Write to <2119h>   |  the Data is Written to Upper 8bit
+              |  Only.              |  of the Vram & the Address Will Be
+              |                     |  Increased Automatically.
+         0    |  Write in Order of  |  When the Data is Set in the Order
+              |  <2119h> & <2118h>  |  of Upper & Lower the Address Will
+              |                     |  Be Increased.
+         1    |  Write in Order of  |  When the Data is Set in the Order
+              |  <2118h> & <2119h>  |  of Lower & Upper the Address Will
+              |                     |  Be Increased.
+
+     Note:     the Data Can Only Be Written During V-blank Or Forced Blank
+     ~~~~~     Period.
+
+
+Address  : $211a
+Name     : M7sel
+Contents : Initial Setting in Screen Mode-7
+
+     D7-d6     Screen Over (O1 & O0)
+               Process Made If the Screen to Be Displayed is
+               Outside of the Screen Area. (See Below)
+
+     D5-d2     ---
+
+     D1-d0     Screen Flip (V/h)
+               0: Normal
+               1: Flipped
+
+     O1 O0  |  Process Out of Area
+        --------------------------------------------------------------
+      0  0  |  Screen Repetition If Outside of Screen Area
+      1  0  |  Character 0x00 Repetition If Outside of Screen Area
+      1  1  |  Outside of the Screen Area is the Back Drop Screen in
+            |  Single Color
+
+
+Address  : $211b/$211c/$211d/$211e/$211f/$2120
+Name     : M7a/m7b/m7c/m7d/m7x/m7y
+Contents : Rotation/enlargement/reduction in Mode-7, Center Coordinate
+        Settings & Multiplicand/multiplier Settings of Complementary
+        Multiplication.
+
+     D7-d0     Matrix Parameter A (Low[mp7-mp0],High[mp15-mp8])211bh
+     D7-d0     Matrix Parameter B (Low[mp7-mp0],High[mp15-mp8])211ch
+     D7-d0     Matrix Parameter C (Low[mp7-mp0],High[mp15-mp8])211dh
+     D7-d0     Matrix Parameter D (Low[mp7-mp0],High[mp15-mp8])211eh
+
+          The 8-bit Data Should Be Written Twice in the Order of Lower &
+       Upper. Then, the Parameter of Rotation, Enlargement and Reduction
+       Should Be Set by its 16-bit Area.
+
+          The Value Down to A Decimal Point Should Be Set to the Lower
+       8-bit. The Most Significant Bit of the Upper 8-bit is for the
+       Signed Bit. (Mp15 is the Signed Bit. There is A Decimal Point
+       Between M7 & M8)
+
+          Formula for Rotaion/enlargement/reduction (See Appendix-13)
+
+          / X2 \   / A B \ / X1-x0 \   / X0 \
+          |    | = |     | |       | + |    |
+          \ Y2 /   \ C D / \ Y1-y0 /   \ Y0 /
+
+       A=cos(gamma)*(1/alpha), B=sin(gamma)*(1/alpha)
+       C=-sin(gamma)*(1/beta), D=cos(gamma)*(1/beta)
+
+          Gamma: Rotation Angle
+          Alpha: Reduction Rates for X(h)
+          Beta : Reduction Rates for Y(v)
+          X0&y0: Center Coordinate
+          X1&y1: Display Coordinate
+          X2&y2: Coordinate Before Calculation
+
+          Set the Value of "A" to Register <211bh>. In the Same Way,
+       Set "B-d" to the Registers <211ch>-<211eh>.
+
+     * the Complementary Multiplication (16bit X 8bit) Can Be Done by
+       Using Registers <211bh> <211c>.
+       When Setting 16 Bit Data to Register <211bh> and 8bit Data to
+       Register <211ch>, the Multiplication Result Can Be Indicated
+       Rapidly by Reading Registers <2134h>-<2136h>.
+
+     D7-d0     Center Position X0 (Low[x7-x0],High[x12-x8]) 211fh
+     D7-d0     Center Position Y0 (Low[y7-x0],High[y12-x8]) 2120h
+
+          The Center Coordinate (X0,y0) for Rotation/enlargement/reduction
+       Can Be Designated by this Register.
+
+          The Coordinate Value of X0 & Y0 Can Be Designated by 13-bit
+       (Complement of 2).
+
+          The Register Requires That the Lower 8-bit is Set First and the
+       Upper 5-bit is Set. Therefore, 13-bit Data in Total Can Be Set.
+
+
+Address  : $2121
+Name     : Cgadd
+Contents : Address for Cg-ram Write
+
+     D7-d0     Cg-ram Address
+
+          This is the Initial Address for Reading From the Cg-ram Or
+       Writing to the Cg-ram
+
+          The Data is Read by the Address Set Initially, and Every Time
+       The Data is Read Or Written the Address Will Be Increased
+       Automatically.
+
+
+Address  : $2122
+Name     : Cgdata
+Contents : Data for Cg-ram Write
+
+     D7-d0     Cg-ram Data (Low[d7-d0],High[d14-d8])
+
+          This is the Color Generater Data to Be Written At Any Address
+       Of the Cg-ram.
+
+          The Mapping of Bg1-bg4 and Obj Data in Cg-ram Will Be Determined,
+       Which is Performed by Every Mode Selected by "Bg Mode" of
+       Register <2105h>. (See Appendix-14)
+
+          There Area the Color Data of 8-palettes for Each Screen of
+       Bg1-bg4. The Palette Selection is Determined by 3-bit of the
+       Sc Data "Color"
+
+          Because the Cg-ram Data is 15-bit/word, it is Necessary to Set
+       Lower 8-bit First to this Register and the the Upper 7-bit.
+       When Both Lower & Upper Are Set, the Address Will Be Increased
+       By 1 Automatically.
+
+     Note:     After the Address is Set, the Data Should Be Written From
+     ~~~~~     the Lower As Well As the Oam.
+
+     Note:     the Data Can Be Written Only During H/v Blank Or Forced-
+     ~~~~~     Blank Period.
+
+
+Address  : $2123/$2124/$2125
+Name     : W12sel/w34sel/wobjsel
+Contents : Window Mask Settins (Bg1-bg4, Obj, Color)
+
+     D7   Bg2 Window-2 Enable                2123h
+               0: Off
+               1: on
+
+     D6   Bg2 Window-2 In/out
+               The Window Mask Area Can Be Designated Whether
+               Inside Or Outside of the Frame Designated by the
+               Window Position.
+               0: in
+               1: Out
+
+     D5   Bg2 Window-1 Enable
+     D4   Bg2 Window-1 In/out
+     D3   Bg1 Window-2 Enable
+     D2   Bg1 Window-2 In/out
+     D1   Bg1 Window-1 Enable
+     D0   Bg1 Window-1 In/out
+
+     D7   Color Window-2 Enable                   2125h
+     D6   Color Window-2 In/out
+     D5   Color Window-1 Enable
+     D4   Color Window-1 In/out
+     D3   Obj Window-2 Enable
+     D2   Obj Window-2 In/out
+     D1   Obj Window-1 Enable
+     D0   Obj Window-1 In/out
+
+          The Color Window is A Window for Main & Sub Screen (It is
+       Related to Register <2130h>.
+
+
+Address  : $2126/$2127/$2128/$2129
+Name     : Wh0/wh1/wh2/wh3
+Contents : Window Position Designation (See Appendix-15)
+
+     D7-d0     Window Pposition
+
+     H0,h2     Left Position Designation
+     H1,h3     Right Position Designation
+
+     Note:     If "Left Position Setting Value > Right Position Value"
+     ~~~~~     is Assumed, There Will Be No Range of the Window.
+
+
+Address  : $212a/$212b
+Name     : Wbglog/wobjlog
+Contents : Mask Logic Settings for Window-1 & 2 on Each Screen
+
+     D7-d6     Bg4 D1/d0                     212ah
+     D5-d4     Bg3 D1/d0
+     D3-d2     Bg2 D1/d0
+     D1-d0     Bg1 D1/d0
+
+     D7-d4     ---                           212bh
+     D3-d2     Colorwindow D1/d0
+     D1-d0     Objwindow D1/d0
+
+          D1 D0  |  Logic
+             ------------------
+           0  0  |  Or
+           0  1  |  and
+           1  0  |  Xor
+           1  1  |  Xnor
+
+     Note:     "In/out" of Registers <2123h>-<2125h> Becomes the
+     ~~~~~     "Not-logic" for Each Window-1 & Window-2.
+
+
+Address  : $212c
+Name     : Tm
+Contents : Main Screen, Designation
+
+
+     D7-d5     ---
+     D4   Obj
+     D3   Bg4
+     D2   Bg3
+     D1   Bg2
+     D0   Bg1
+
+     Main Screen Designation:
+
+          Designate the Screen (Bg1-bg4, Obj) to Be Displayed
+          As the Main Screen. Designate the Screen to Be Added
+          for the Screen Addition/subtraction
+
+               0: Disable
+               1: Enable
+
+
+Address  : $212d
+Name     : Ts
+Contents : Sub Screen Designation
+
+     D7-d5     ---
+     D4   Obj
+     D3   Bg4
+     D2   Bg3
+     D1   Bg2
+     D0   Bg1
+
+     Sub Screen Designation:
+
+          Designate the Screen (Bg1-bg4, Obj) to Be Displayed
+          As Sub Screen. Designate the Addition/subtraction
+          Screen At the Point When the Screen Addition/subtraction
+          is Functioning.
+
+               0: Disable
+               1: Enable
+
+     * When the Screen Addition/subtraction is Functioning, the Sub
+       Screen is A Screen to Be Added Or Subtracted Against the Main
+       Screen.
+
+
+Address  : $212e
+Name     : Tmw
+Contents : Window Mask Designation for Main Screen
+
+
+     D7-d5     ---
+     D4   Obj
+     D3   Bg4
+     D2   Bg3
+     D1   Bg2
+     D0   Bg1
+
+     Window Mask Designation for Main Screen:
+
+          In the Window Area Designated by Register <2123h>-<2129h>,
+          the Screen to Be Displayed Can Be Designated, Which is
+          Selected Among the Main Screen Designated by Register
+          <212ch>.
+
+               0: Disable
+               1: Enable
+
+
+Address  : $212f
+Name     : Tsw
+Contents : Window Mask Designation for Sub Screen
+
+     D7-d5     ---
+     D4   Obj
+     D3   Bg4
+     D2   Bg3
+     D1   Bg2
+     D0   Bg1
+
+     Window Mask Designation for Sub Screen:
+
+          In the Window Area Designated by Register <2123h>-<2129h>,
+          the Screen to Be Displayed Can Be Designated, Which is
+          Selected Among the Sub Screen Designated by Register
+          <212ch>.
+
+               0: Disable
+               1: Enable
+
+     * When the Screen Addition/subtraction is Functioning, the Sub
+       Screen is A Screen to Be Added Or Subtracted Against the Main
+       Screen.
+
+
+Address  : $2130
+Name     : Cgwsel
+Contents : Initial Settings for Fixed Color Addition Or Screen Addition
+
+     D7-d6     Main Sw (M1/m0)
+     D5-d4     Sub Sw (S1/s0)
+     D3-d2     ---
+     D1   Cc Add Enable, Fixed Color Addition/subtraction Enable
+               Designate Whether 2 Kinds of the Data Should
+               Be Added/subtracted Each Other Or Not, Which Are
+               The Fixed Color Set by Register <2132h>, and
+               The Color Data Which is Set to Cgram.
+                    0: Addition/subtraction for Fixed Color
+                    1: Addition/subtraction for Sub Screen
+
+     D0   Direct Select (See Appendix-14)
+               The Vram Data (Color & Character Data) Become the
+               Color Data Directly. [Only When Mode-3,4 & 7]
+                    0: Disable
+                    1: Enable
+
+
+     M1(s1) M0(s0)  |  Normal Display Is:
+     --------------------------------------------------------------
+       0      0     |  All the Time
+       0      1     |  Inside Window Only
+       1      0     |  Outside Window Only
+       1      1     |  All the Time
+
+
+Address  : $2131
+Name     : Cgadsub
+Contents : Addition/subtraction & Subtraction Designation for Each Screen,
+        Obj & Background Color
+
+     D7   Color Data Addition/subtraction Select
+               Designate the Selection Either of the Addition
+               Or the Subtraction Mode.
+                    0: Addition Mode Select
+                    1: Subtraction Mode Select
+
+     D6   "1/2 of Color Data" Designation
+               When the Color Constant Addition/subtraction Or the
+               Screen Addition/subtraction is Performed, Designate
+               Whether the Rgb Result in the Addition/subtraction
+               Area Should Be "1/2" Or Not. However, in the Back
+               Color Constant Area on the Sub Screen, it Does Not
+               Become "1/2"
+                    0: Disable
+                    1: Enable
+     D5   Back
+     D4   Obj
+     D3   Bg4
+     D2   Bg3
+     D1   Bg2
+     D0   Bg1
+               Color Data Addition/subtraction Enable
+                    0: Disable
+                    1: Enable
+
+
+Address  : $2132
+Name     : Coldata
+Contents : Fixed Color Data for Fixed Color Addition/subtraction
+
+     D7   Blue
+     D6   Green
+     D5   Red
+               Bit for Selecting Desired Color
+
+     D4-d0     Color Brilliance Data
+               Set the Color Constant Data for Color Constant
+               Addition/subtraction
+
+     * R/g/b Brightness Should Be Set by the Data of Each 5-bit.
+
+          [Example] Red   : C0h, 3fh (B=00h, G=00h, R=1fh)
+                    Green : A0h, 5fh (B=00h, G=1fh, R=00h)
+                    Blue  : 60h, 9fh (B=1fh, G=00h, R=00h)
+                    White : Ffh
+                    Black : 00h
+
+
+Address  : $2133
+Name     : Setini
+Contents : Screen Initial Setting
+
+     D7   External Synchronization
+               It is Used for Super Impose and Etc. Normally,
+               "0" Should Be Written.
+
+     D6   Extbg Mode (Screen Expand)
+               Enable the Data Supplied From the External Lsi.
+               For the Sfx, Enable When the Screen with Priority
+               Is Used on Mode-7.
+
+     D5-d4     ---
+
+     D3   Horizontal Pseudo 512 Mode
+               512 Imaginary Resolution (Horizontal Can Be Made
+               By Shifting the Subscreen Half Dot to the Left.)
+                    0: Disable
+                    1: Enable
+
+     D2   Bg V-direction Display
+               Switch the Display Line of A Field to 224 Line Or
+               239 Line. (In Case of Interalace it Will Be
+               Doubled Dot.)
+                    0: 224 Line
+                    1: 239 Line
+
+     D1   Obj V-direction Display
+               In the Interlace Mode, Select Either of 1-dot Per
+               Line Or 1-dot Repeated Every 2-lines. If "1" is
+               Written, the Obj Seems Reduced Half Vertically in
+               Appearance.
+
+     D0   Scanning
+               Interlace/non-interlace Selection (It Relates to
+               <2105h>.
+                    0: Non Interlace
+                    1: Interlace
+
+
+Address  : $2134/$2135/$2136
+Name     : *Mpyl/*mpym/*mpyh
+Contents : Multiplication Result
+
+     D7-d0     Mpy (Low)                     2134h
+     D7-d0     Mpy (Mid)                     2135h
+     D7-d0     Mpy (High)                         2136h
+
+          This is A Multiplication Result (Complement of 2) Can Be Read
+       By Setting 16-bit to Register <211bh> and Setting 8 Bit to
+       Register <211ch>
+
+
+Address  : $2137
+Name     : *Slhv
+Contents : Software Latch for H/v Counter
+
+     D7-d0     Soft Latch for H/v Counter
+
+          This is A Register, Which Generate the Pulse for Latching the H/v
+       Counter Value.
+
+          The H/v Counter Value At the Point When Register <2137h> is Read
+       Can Be Latched. The Data Which Was Read is Meaningless Data.
+
+          The H/v Counter Value Latched Can Be Reffered by Registers
+       <213ch> & <213dh>.
+
+
+Address  : $2138
+Name     : Oamdataread (Name Differs From Snes Manual)
+Contents : Read Data From Oam
+
+     D7-d0     Oam Data (Low,high)
+
+          This is A Register, Which Can Read the Data At Any Address of
+       The Oam.
+
+         When the Address is Set to Register <2102h><2103h> and Register
+       <2138h> is Also Accessed the Data Can Be Read in the Order of
+       Low 8-bit/high 8-bit.
+       Afterward, the Address Will Be Increased Automatically, and the
+       Data of the Next Address Can Be Read.
+
+     Note:     the Data Can Be Read Only During H/v Blank Or Forced
+     ~~~~~     Blank Period.
+
+
+Address  : $2139/$213a
+Name     : Vmdatalread/vmdatahread (Names Differ From Snes Manual)
+Contents : Read Data From Vram
+
+     D7-d0     Vram Data (Low)                         2139h
+     D7-d0     Vram Data (High)                   213ah
+
+          This is A Register, Which Can Read the Data At Any Address of
+       The Vram.
+
+          The Initial Address Should Be Set by Registers <2116h> and
+       <2117h>. The Data Can Be Read by the Address Which Has Been Set
+       Initially.
+
+          When Reading the Data Continously, the First Data for the Address
+       Increment Should Be Read As A Dummy Data After the Address Has
+       Been Set.
+
+          Quantity to Be Increased Will Be Determined by "Sc Increment" of
+       Register <2115h> and the Setting Value of the "Full Graphic".
+
+     Note:     the Data Can Be Read Only During H/v Blank Or Forced
+     ~~~~~     Blank Period.
+
+
+Address  : $213b
+Name     : Cgdataread (Name Differs From Snes Manual)
+Contents : Read Data From Cg-ram
+
+     D7-d0     Cg Data (Low,high)
+
+          This is A Register, Which Can Read the Data At Any Address of
+       The Cg-ram.
+
+          The Initial Address Should Be Set by Register <2121h>. The Lower
+       8-bit is Read First, and the the Upper 7-bit Will Be Read by
+       Accessing this Register. The Current Address Will Be Increased
+       To the Next Address At the Same Time the Upper 7-bit is Read.
+
+     Note:     the Data Can Be Read Only During H/v Blank Or Forced
+     ~~~~~     Blank Period.
+
+
+Address  : $213c/$213d
+Name     : *Ophct/*opvct
+Contents : H/v Counter Data by External Or Software Latch
+
+     D7-d0     Output Data of H-counter [9-bit]        213ch
+     D7-d0     Output Data of V-counter [9-bit]        213dh
+
+          The H/v Counter is Latched by Reading Register <2137h>, and its
+       H/v Counter Value Can Be Read by this Register.
+
+          The H/v Counter is Also Latched by the External Latch, and its
+       Value Can Be Read by this Register.
+
+          If Register <213ch> Or <213dh> is Read After Register <213fh> Has
+       Been Read, the Lower 8-bit Data Will Be Read First, and Then the
+       Upper 1-bit Will Be Read by Reading the Register.
+
+
+Address  : $213e
+Name     : *Stat77
+Contents : Ppu Status Flag & Version Number
+
+     D7   Time Over  \
+     D6   Range Over /
+               Obj Display Status (On A Horizontal Line)
+               Range:    When Quantity of the Obj (Regardless of
+                    The Size) Becomes 33 Pcs Or More, "1"
+                    Will Be Set.
+               Time:     When Quantity of the Obj Which is Converted
+                    To "8 X 8-size" is 35 Pcs Or More, "1"
+                    Will Be Set.
+
+     D5   Master/slave Mode Select. Lsi Mode (Normally "0" is Set.)
+
+     D4   ---
+
+     D3-d0     5c77 Version Number
+
+     Note:     the Flag Will Be Reset At the End of the V-blank Period.
+     ~~~~~
+
+
+Address  : $213f
+Name     : *Stat78
+Contents : Ppu Status Flag & Version Number
+
+     D7   Field
+               This is A Status Flag, Which Indicated Whether 1st
+               Field is Scanned Or 2nd Field is Scanned in Inter-
+               Lace Mode. (The Definition is Different From the
+               Field of Ntsc.)
+                    0: 1st Field
+                    1: 2nd Field
+
+     D6   External Latch Flag
+               When the External Signal (Light Pen, Etc.) Is
+               Applied, it Enables to Latch the H/v Counter Value.
+
+     D5   ---
+
+     D4   Ntsc/pal Mode
+                    0: Ntsc
+                    1: Pal
+
+     D3-d0     5c78 Version Number
+
+     Note:     When this Register is Read, Registers <213ch><213dh> Will
+     ~~~~~     Be Initialized Individually in the Order of Low & High.
+
+
+Address  : $2140/$2141/$2142/$2143
+Name     : Apui00/apui01/apui02/apui03
+Contents : Communication Port with Apu
+
+     D7-d0     Apu I/o Port
+
+          This Port Provides More Registers for the Purpose of In/out,
+       Which Are 8 Registers in Total in the Apu. Therefore, the
+       Different Register Will Be Accessed, Whether Reading Or
+       Writing for the Same Address.
+
+          See "Apu Manual" for the Details of the Communication Method.
+
+
+Address  : $2180
+Name     : Wmdata
+Contents : Data to Consecutivley Read From and Write to Wram
+
+     D7-d0     Work Ram Data
+
+          Data to Consecutivley Read From and Write to Wram
+
+          Data is Read and Written At Address Set by Register <2181h>-<2183h>,
+       And Address Automatically Increases Each Time Data is Read Or Written.
+
+
+Address  : $2181/$2182/$2183
+Name     : Wmaddl/wmaddm/wmaddh
+Contents : Address to Consecutively Read and Write Wram
+
+     D7-d0     Wram Data (Low)                         2181h
+     D7-d0     Wram Data (Mid)                         2182h
+     D0   Wram Data (High)                   2183h
+
+          Address to Be Set Before Wram is Consecutivley Read Or Written.
+
+          A0 Trough A16 At Register <2181h>-<2183h> is Lower 17 Bit Address
+       To Show Address $7e0000-$7fffff in Memory.
+
+
+Address  : $4200
+Name     : Nmitimen
+Contents : Enable Flag for V-blank, Timer Interrupt & Joy Controller Read
+
+     D7   Nmi Enable
+               Enable Nmi At the Point When V-blank Begins
+               (When Power is Turned on Or the Reset Signal is
+               Applied, it Will Be "0".)
+                    0: Nmi Disabled
+                    1: Nmi Enabled
+
+     D6   ---
+
+     D5-d4     Timer Enable (V-en/h-en)
+
+     D3-d1     ---
+
+     D0   Joy-c Enable
+               0: Disable Automatic Reading of the Joy-controller.
+               1: Enable Automatic Reading of the Joy-controller.
+
+     V-en H-en  |  Function
+     --------------------------------------------------------
+        0    0  |  Disable Both H & V
+        0    1  |  Enable H Only, Irq Applied by H-count Timer Value Designated
+        1    0  |  Enable V Only, Irq Applied by V-count Timer Value Designated
+        1    1  |  Enable Both V & H, Irq Applied by Both H & V Count Timer Val
+                |  Designated.
+
+     * Reading the Data Can Be Started At the Beginning of V-blank
+       Period, But it Takes About for 3 Or 4 Scanning Period Until
+       Completion of Reading.
+
+
+Address  : $4201
+Name     : Wrio
+Contents : Programmable I/o Port (Out-port)
+
+     D7-d0     I/o Port
+
+          This is A Programmable I/o Port (Out-port). The Written Data
+       Will Be Output Directly From the Out-port.
+
+          When this is Used As A Inport. "1" Should Be Written to the
+       Particular Bit Which Will Be Used As in Port. The Input Can
+       Be Read by Register <4213h>.
+
+
+Address  : $4202/$4203
+Name     : Wrmpya/wrmpyb
+Contents : Multiplier & Multiplicand by Multiplication
+
+     D7-d0     Multiplicand-a                     4202h
+     D7-d0     Multiplier-b                       4203h
+
+          This is A Register, Which Can Set A Mulitplicand (A) and A
+       Multiplier (B) for Absolute Multiplication of
+       "A (8-bit) * B (8-bit)=c (16-bit)"
+
+          A Product (C) Can Be Read by Registers <4216h><4217h>
+
+          Set in the Order of (A) and (B). The Operation Will Start As
+       Soon As (B) Has Been Set, and it Will Be Completed Right After
+       8-machine Cycle Period.
+
+          Once the Data of the A-register is Set, it Will Not Be Destroyed
+       Until New Data is Set.
+
+
+Address  : $4204/$4205/$4206
+Name     : Wrdivl/wrdivh/wrdivb
+Contents : Divisor & Dividend Divide
+
+     D7-d0     Multiplier-c (Low)                 4204h
+     D7-d0     Multiplier-c (High)                4205h
+     D7-d0     Divisor-b                     4206h
+
+          This is A Register, Which Can Set A Dividend (C) and A Divisor (B)
+       For Absolute Divide of
+       "C (16-bit) / B (8-bit)=a (16-bit)"
+
+          The Divisor (A) Can Be Read by Registers <4214h><4215h>, and the
+       Remainder Can Also Be Read by Registers <4216h><4217h>.
+
+          Set in the Order of (C) and (B). The Operation Will Start As Soon
+       As (B) Has Been Set, and it Will Be Completed Right After 16-
+       Machine Cycle Period.
+
+          Once the Data of the A-register is Set, it Will Not Be Destroyed
+       Until New Data is Set.
+
+
+Address  : $4207/$4208
+Name     : Htimel/htimeh
+Contents : H-count Timer Settings
+
+     D7-d0     H Count Timer (H7-h0)                   4207h
+
+     D7-d1     ---
+     D0   H Count Timer (H8)                 4208h
+
+          This is A Register, Which Can Set the H-count Timer Value.
+
+          The Setting Value Should Be From 0 Through 339, Which is Counted
+       From the Far Left on the Screen.
+
+          Hwen the Coordinate Counter Becomes the Count Value Set, the Irq
+       Will Be Applied. And At the Same Time. "1" Will Be Written to
+       "Timer Irq" of Register <4211h>. (Read Reset)
+       Enable/disable of the Interrupt Will Be Determined by Setting
+       Register <4200h>
+
+     * this Continous Counter is Reset Every Scanning Line, Therefore
+       Once the Count Value is Set, it is Possible to Apply the Irq
+       Every Time the Scanning Line Comes to the Same Horizontal
+       Position on the Screen.
+
+
+Address  : $4209/$420ah
+Name     : Vtimel/vtimeh
+Contents : V-count Timer Settings
+
+     D7-d0     V Count Timer (V7-v0)                   4209h
+
+     D7-d1     ---
+     D0   V Count Timer (V8)                 420ah
+
+          This is A Register, Which Can Set the V-count Timer Value.
+
+          The Setting Value Should Be From 0 Through 261(262), Which is
+       Counted From the Far Top of the Screen. [The Line Number Described
+       Is Different From the Actual Line Number on the Screen.]
+
+          Hwen the Coordinate Counter Becomes the Count Value Set, the Irq
+       Will Be Applied. And At the Same Time. "1" Will Be Written to
+       "Timer Irq" of Register <4211h>. (Read Reset)
+       Enable/disable of the Interrupt Will Be Determined by Setting
+       Register <4200h>
+
+     * this is A Continous Counter Same As H-counter, and it Will Be
+       Reset Every Time 262(263) Line Are Scanned. Once the Count
+       Value is Set, it is Possible to Apply the Irq Every Time the
+       Scanning Line Comes to the Same Vertical Line on the Screen.
+
+
+Address  : $420b
+Name     : Mdmaen
+Contents : Channel Designation for General Purpose Dma & Trigger (Start)
+
+     D7-d0     General Purpose Ch7-ch0 Enable
+
+          The General Purpose Dma Consists of 8-channels in Total.
+
+          This Register is Used to Designate the Channel Out of 8-channels.
+
+          The Channel Which Should Be Used Can Be Designated by Writing "1"
+       To the Bit of this Channel. As Soon As "1" is Written to the
+       Bit (After A Few Cycles Passed), the General Purpose Dma Transfer
+       Will Be Started.
+
+          When the General Purpose Dma of the Designated Channel is
+          Completed, the Flag Will Be Cleared.
+
+     Note:     Because the Data Area (Register <4300>-) of Each Channel
+     ~~~~~     is Held in Common with the Data of Each H-dma Channel, the
+          Channel Designated by the H-dma Channel Designation
+          Register <420ch> Can Not Be Used.
+          (It is Prohibited to Write "1" to the Bit of the Channel)
+          Therefore, 8 Channels (Ch0-ch7) Should Be Assigned by the
+          H-dma and the General Purpose Dma)
+
+     Note:     If the H-blank Come During the Operation of the General
+     ~~~~~     Purpose Dma and the H-dma is Started, the General Purpose
+          Dma Will Be Discontinued in the Middle, and Re-started Right
+          After the H-dma is Complete.
+
+     Note:     If 2 Or More Channels Are Designated, the Dma Transfer Will
+     ~~~~~     Be Performed Continously According to the Priority Described
+          in Appendix-1.
+          And Also, the Cpu Stops Operation Until All the General
+          Purpose Dma Are Completed.
+
+
+Address  : $420c
+Name     : Hdmaen
+Contents : Channel Designation for H-dma
+
+     D7-d0     H-dma Ch7-dh0 Enable
+
+          The H-dma Consists of 8-channels in Total
+
+          This Register is Used to Designate the Channel Out of 8-channels
+
+          The Channel Which Should Be Used Can Be Designated by Writing
+       "1" to the Bit of this Channel. As Soon As H-blank Begins (After
+       A Few Cycles Passed), the H-dma Transfer Will Be Started.
+
+     Note:     Once this Flag is Set, it Will Not Be Destroyed (Cleared)
+     ~~~~~     Until New Data is Set. Therefore, the Initial Settings Are
+          Done Automatically Every Field, and the Same Transfer
+          Pattern Will Be Repeated.
+          And Also, the Flag is Set Out of V-blank Period, the Dma-
+          Transfer Will Be Performed Properly From Next Screen Frame.
+
+
+Address  : $420d
+Name     : Memsel
+Contents : Access Cycle Designation in Memory (2) Area
+
+     D7-d1     ---
+     D0   Access Cycle Designation in Memory (2) Area
+               0: 2.68mhz Access Cycle
+               1: 3.58mhz Access Cycle (Only When High Speed
+                               Memory is Used.)
+
+          Memory (2) Shows the Address (8000h-ffffh) of the Bank (80h-bfh)
+       And All the Address of the Bank (C0h-ffh).
+
+          When Power is Turned on Or the Reset Signal is Applied it Becomes
+       "0".
+
+          High Speed Memory Requiers 120ns Or Faster Eproms.
+
+
+Address  : $4210
+Name     : *Rdnmi
+Contents : Nmi Flag by V-blank & Version Number
+
+     D7   Nmi Flag by V-blank
+               When "1" is Written to "Nmi Enable" of Register
+               <4200h>, this Flag Will Show Nmi Status.
+                    0: Nmi Status is "Disable"
+                    1: Nmi Status is "Enable"
+
+     D6-d4     ---
+
+     D3-d0     5a22 Version Number
+
+     * "1" is Set to this Flag At Beginning of V-blank, and "0" is
+       Set At End of V-blank. Also, it Can Be Set by Reading this
+       Register.
+
+     Note:     it is Necessary to Reset by Reading this Flag During
+     ~~~~~     Nmi Processing. (See Appendix-3)
+
+
+Address  : $4211
+Name     : *Timeup
+Contents : Irq Flag by H/v Count Timer
+
+     D7   Irq Flag by H/v Count Timer
+               [In Case the Time Enable is Set by "Timer Enable"
+               Of Register <4200h>] As Soon As H/v Counter Timer
+               Becomes the Count Value Set, Irq Will Be Applied
+               And "1" Will Be Set to this Flag.
+               This Flag is "Read-reset".
+
+     D6-d0     ---
+
+     * Even If V-en="0" and H-en="0" Are Set by "Timer Enable" of
+       Register <4200h>, this Flag Will Be Reset.
+          0: Either H/v Counter is in Active Or Disable.
+          1: H/v Count Timer is Time Up.
+
+
+Address  : $4212
+Name     : Hvbjoy
+Contents : H/v Blank Flag & Joy Controller Enable Flag
+
+     D7   V-blank Period Flag
+               0: Out of V-blank Period
+               1: in V-blank Period
+
+     D6   H-blank Period Flag
+               0: Out of H-blank Period
+               1: in H-blank Period
+
+     D5-d1     ---
+
+     D0   Joy Controller Enable Flag
+               This Flag Shows the Timing to Read the Data of the
+               Joy Controller. (However, it is Limited to the Case
+               Which the "Joy-c Enable" of Register <4200h> is Set
+               To "1".
+
+
+Address  : $4213
+Name     : *Rdio
+Contents : Programmable I/o Port (In-port)
+
+     D7-d0     I/o Port
+
+          This is A Programmable I/o Port (In Port). The Data Which is Set
+       To the In-port Should Be Read Directly.
+
+          The Bit Which "1" is Written by Register <4201h> is Used As the
+       In Port.
+
+
+Address  : $4114/$4115
+Name     : *Rddivl/*rddivh
+Contents : Quotient of Divide Result
+
+     D7-d0     Quotent-a (Low)                         4114h
+     D7-d0     Quotent-a (High)                   4115h
+
+          This is A Quotent (A), Which is A Result for Absolute Divide of
+       "C (16-bit) / B (8-bit) = A (16-bit)".
+
+          Dividend (C) and Divisor (B) Are Set by Registers <4204h>-<4206h>.
+
+
+Address  : $4216/$4217
+Name     : *Rdmpyl/*rdmpyh
+Contents : Product of Multiplication Result Or Remainder of Divide Result
+
+     D7-d0     Product-c [Mul] / Remainder [Div] (Low)      4216h
+     D7-d0     Product-c [Mul] / Remainder [Div] (High)     4217h
+
+     (1) in Case of Multiplication
+          This is A Product (C) Which is A Result for Absolute
+       Multiplication of "A (8-bit) * B (8-bit) = C (16-bit)".
+
+          A Multiplicand (A) and A Multiplier (B) Are Set by Registers
+       <4202h> & <4203h>.
+
+     (2) in Case of Divide
+          This is the Remainder, Which is A Result for the Absolute
+       Divide of "C (16-bit) / B (8-bit) = A (16-bit)".
+
+          A Dividend (C) and Divisor (B) Are Set by the Registers
+       <4204h><4205h> & <4206h>.
+
+
+Address  : $4218/$4219/$421a/$421b/$421c/$421d/$421e/$421f
+Name     : Joy1l/joy1h/joy2l/joy2h/joy3l/joy3h/joy4l/joy4h
+Contents : Data for Joy Controller I, Ii, Iii & Iv
+
+     D7   X Button                      Low
+     D6   Y Button
+     D5   Tl Button
+     D4   Tr Button
+     D3-d0     ----
+
+     D7   A Button                      High
+     D6   B Button
+     D5   Select Button
+     D4   Start Button
+     D3   Up
+     D2   Down
+     D1   Left
+     D0   Right
+
+          Registers <4016h><4017h> Can Be Used the Same As the Family
+       Computer.
+
+     4016h-rd
+          D0 : Data for Controller I
+          D1 : Data for Controller Iii
+     4016h-wr
+          Out0,out1,out2
+     4017h-rd
+          D0 : Data for Controller Ii
+          D1 : Data for Controller Iv
+
+     Note:     Whether the Standard Joy Controllers Are Connected to the
+     ~~~~~     Sfx Or Not Can Be Reffered by Reading 17th Bit of <4016h>
+          and <4017h> (See Page 22).
+               0: Connected
+               1: Not Connected
+
+
+Address  : $43x0 (X: Channel Number 0-7)
+Name     : Dmapx
+Contents : Parameter for Dma Transfer
+
+     D7   Transfer Origination Designation (See Appendix-1)
+               Transfer Direction  A-bus -> B-bus
+                                   B-bus -> A-bus Designation
+                    0: A-bus -> B-bus (Cpu Memory -> Ppu)
+                    1: B-bus -> A-bus (Ppu -> Cpu Memory)
+
+     D6   Type Designation (H-dma Only)
+               Addressing Mode Designation When Accessing the
+               Data (See Appendix-2).
+                    0: Absolute Addressing
+                    1: Indirect Addressing
+
+     D5   ---
+
+     D4-d3     Fixed Address for A-bus & Automatic Inc./dec. Select.
+               D3   0: Automatic Address Increment/decrement
+                    1: Fixed Address <To Be Used When Clearing
+                       Vram Etc.>
+               D4   0: Automatic Increment
+                    1: Automatic Decrement (In Case "0" is
+                       Written to D3)
+
+     D2-d0     Dma Transfer Word Select
+               General Purpose Dma: B-address Change Method
+
+                    D2 D1 D0  | Address to Be Written
+                    ---------------------------------
+                     0  0  0  | 1-address
+                     0  0  1  | 2-address (Vram Etc.)   L,h
+                     0  1  0  | 1-address
+                     0  1  1  | 2-address (Write Twice) L,l,h,h
+                     1  0  0  | 4-address               L,h,l,h
+
+               H-dma: the Number of Byte to Be Transfered Per Line
+               And Write Method Designation
+
+                    D2 D1 D0  | Address to Be Written
+                    ---------------------------------
+                     0  0  0  | 1-address                     (1)
+                     0  0  1  | 2-address (Vram Etc.)  L,h    (2)
+                     0  1  0  | Write Twice            L,l    (1)
+                     0  1  1  | 2-address/write Twice  L,l,h,h(2)
+                     1  0  0  | 4-address              L,h,l,h(4)
+
+
+Address  : $43x1 (X: Channel Number 0-7)
+Name     : Bbadx
+Contents : B-bus Address for Dma
+
+     D7-d0     B-address
+
+          This is A Register, Which Can Set the Address of B-bus.
+
+          Whether this is the Address of the "Transfer Destination" Or
+       The Address of the "Transfer Origination" Can Be Determined by
+       D7 (Transfer Origination) of Register <4300h>.
+
+     * When the H-dma is Performed, it Will Be Address of "Transfer
+       Destination".
+
+
+Address  : $43x2/$43x3/$43x4 (X: Channel Number 0-7)
+Name     : A1txl/a1txh/a1bx
+Contents : Table Address of A-bus for Dma <A1 Table Address>
+
+     D7-d0     A1 Table Address (Low)                  43x2h
+     D7-d0     A1 Table Address (High)                 43x3h
+     D7-d0     A1 Table Bank                      43x4h
+
+          This is A Register, Which Can Set the Address of A-bus
+
+          Whether this is the Address of the "Transfer Destination" Or
+       The Address of the "Transfer Origination" Can Be Determined by
+       D7 (Transfer Origination) of Register <4300h>.
+       "0" Should Be Written to D7 Except A Special Case.
+
+          In the H-dma Mode, the Address of the Transfer Origination is
+       Designated by this Address, the Data (Appendix-2) Must Be
+       Set by the Absolute Addressing Mode Or the Indirect Addressing
+       Mode.
+
+          This Address Becomes the Basic Address on the A-bus During Dma
+       Transfer Period, and the Address Will Be Increased Or Decreased
+       Based on this Address. (When the General Purpose Dma is Performed
+       It Will Be Decreased.)
+
+
+Address  : $43x5/$43x6/$43x7 (X: Channel Number 0-7)
+Name     : Dasxl/dasxh/dasbx
+Contents : Data Address Store by H-dma & Number of Byte to Be Transfered
+        Settings by General Purpose Dma
+
+     D7-d0     Data Address (Low)             H-dma    43x5h
+          Number of Bytes to Be Transfered (Low)  Gp-dma
+
+     D7-d0     Data Address (High)            H-dma    43x6h
+          Number of Bytes to Be Transfered (High) Gp-dma
+
+     D7-d0     Data Bank                     43x7h
+
+          In Case of H-dma
+          this is A Register Which the Indirect Address Will Be
+          Stored Automatically in the Indirect Addressing Mode.
+          The Indirect Address Means the Data Address Described
+          on Appendix-2. It is Not Necessary to Read Or Write
+          Directly by the Cpu Except in Special Cases.
+
+          In Case of General Purpose Dma
+          this is the Register, Which Can Set the Number of Byte
+          to Transfer Or to Be Transfered. However, the Number of
+          Byte "0000h" Means "10000h".
+
+
+Address  : $43x8/$43x9 (X: Channel Number 0-7)
+Name     : A2axl/a2axh
+Contents : Table Address of A-bus by Dma < A2 Table Address
+
+     D7-d0     A2 Table Address (Low)                  43x8h
+     D7-d0     A2 Table Address (High)                 43x9h
+
+          These Are the Addresses, Which Are Used to Access the Cpu & Ram,
+       And it Will Be Increased Automatically. (See Appendix-2)
+
+          The Data of These Registers Are Used As the Basic Address Which
+       Is the Addresss Set by the "A1 Table Address". Afterwards,
+       Because it Will Be Increased Or Decreased Automatically, it is
+       Necessary to Set the Address Into this Register by the Cpu
+       Directly.
+
+     Following Apply to H-dma Only:
+          However, If the Data Which is Transfered Need to Be Changed
+          by Force, it Can Be Done by Setting the Cpu Memory Address
+          to this Register. And Also, the Address of the Cpu Which is
+          Accessed Currently Will Be Changed by Reading this Register.
+
+
+Address  : $43xa (X: Channel Number 0-7)
+Name     : Ntrlx
+Contents : the Number of Lines to Be Transfered by H-dma›0;31;40m
+
+     D7   Continue
+     D6-d0     Number of Lines to Be Transfered
+
+          This is A Register Which Shows Number of Lines for H-dma Transfer
+       (See Appendix-2)
+
+          The Number of Lines Written to the Cpu Memory Will Be the Basic
+       Number of Line, it is Not Necessary to Set the Address Into
+          This Register Directly.
+
+

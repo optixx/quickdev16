@@ -1,0 +1,227 @@
+_________________________________________________________________________
+\_____________________   _______________________________________________/
+       _________  ___|!  | ________  
+      /   __   | /   /:  ||   __   \ -%*]  THE HOLE /  LSD USHQ!  [*%-
+  o _(___( |!  |/   /|o  ||   |_)___) 
+     /\    |:  /   __    ||!  ______/ SYSOPS: OLDMAN, ETRON, HIGHLANDER
+    o  o   |o (   (  |   ||:  |_)   ) D-MAN, ZANDOR
+__________ |   \___\ |___||o  _____/_______________________      __
+\________ \|___|__________|___|____/ ______________________>    (__)
+ ________\________      ____________/__________          _        _
+ \  __  !| |   | /__/\__\ |   |   \  __   __   \    __  _)\      (_)
+  \ \|  :|_|   |/ \ OO / \|  !|____\ \|!  |_)___)   \ \/  o\     O
+   \/|   ___   /  /_\/_\  \  :|\   \\/|:  ______/    ) /|\__). o
+    /    | |! (     \/     ) o|_)   )/ o  |_)   )   /_/\___/
+   /_____| |:  \__________/________//__   _____/            
+ __________|o  |______________________|   |____
+/______________________________________________\
+
+          Node1               Node2                Node3
+         PRIVATE         419-899-2754           419-899-2765
+                           RINGDOWN
+ <-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=->
+                        This file was leeched from:
+ ..THE..
+   _______/\_______    /\____    /\_________/\  _____/\/\_______/\______
+  /       \____    \  /  \   \  /  \   ______/\/    /  \____    \____   \
+ // __|___  /  |    \/    \   \/   /   ___/___   __/    \/  |    \   |   \
+/   \__   \/      __/      \      /   |   |  /   |/      \     __/   |   \\
+\      |  /    \   \__ /\   \__  /    |   | /  __/   /\   \ \   \|_  |    /
+ \________\____|\    /__/\    / /\________| \__\    /\____/_|\    /______/
+                 \  /     \  /\/-rAt            \  /          \  /
+<---- --- - ---- -\/--- ---\/---- ---- ------ -- \/-- - - --- -\/---- ---->
+          Q.U.A.R.T.E.X  MEGA HQ (AMIGA+CONSOLE) & H.Y.B.R.I.D (IBM)
+
+            Uploaded at: 02:36:04 on: 23-Apr-93 By: RAMRAIDER           
+
+ <-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=->
+;       Welcome to the first installment of "How to code SNES"
+; This first volume will show you how to make a simple text intro. It uses
+;mode 0 graphics with no DMAs (Horizontal or General) and is the simplest
+;type of intro you can make. We're starting small so you can easily understand
+;what to do. Other future volumes will contain other graphic modes,
+;Horizontal DMA (HDMA, the SNES version of an amiga copperlist), General DMA,
+;Interrupts, and a brief section on Sound. Originally we were going to release
+;the full Super Famicom Programmer's Manual but believe it or not, this manual
+;a pile of garbage. Contrary to the popular belief that we always had the
+;manual, this is NOT true. The White Knight happened to meet a very cool
+;guy at the CEBIT in Germany and has gotten the manual 2 weeks ago!
+;Yes! What you have seen from us before was true coding. We started out
+;by hacking and working our way to the top. We didn't wait until we bought
+;a manual. In fact, the manual was sent to us for FREE! This book isn't
+;worth paying for!
+
+
+ If White Knight had contacted us anytime in the last 6 months he could of had
+ a manual - instead he took the huff at Quattro's attitude.
+
+ 
+;Let's clear up a few misunderstandings about that SNES manual!
+; 
+;1) This book does NOT teach you assembly language!!
+;   It would help if you knew a little before trying to code this machine!
+;
+;2) This book was not written such as other reference guides you can find in
+;   a store, like Mapping the Amiga, or even Mapping the C64.
+;   It tells you barely and confusingly what the registers do. Period.
+;
+;3) This book is about 148 pages long and that includes the Sound Section.
+;   Some have said it was the size of a phone book. Unless live in
+;   Mud Hole, Kentucky this is NOT the case!
+
+
+ I dont know what fuckin manual you have got but mine is 300 pages and
+ includes a full section on the assembler as well.
+ The manual is a good reference manual, the english is a bit confusing but
+ it works well.  It is not an idiots guide to the SNES, but it aint intended
+ as this - only veteran coders are supposed to have it.
+ 
+ 
+;You cannot do this! $c000 is ROM and you can not write to ROM!
+;To write to ram, simply write to any address between $0000-$1fff.
+;If you need more memory you will find plenty at bank $7e and $7f
+;These 2 banks contain memory from $0000-$ffff. These 2 banks each contain
+;64k ofram totalling 128k for your own use!
+;If you need to write to these directly, just use the LONG STA command
+;example:
+;sta $7ec000
+; 
+;This will write to bank $7e at address $c000!
+
+
+ dont forget there is only 120k at the top of memory the other 8k is mapped 
+ through the whole memory map at 0-$1fff.
+
+
+;You will notice when looking at the source code something very strange.
+;Some registers are written to twice in a row! This because some registers
+;need more than one 8 bit info, such as the scroll X registers. In these
+;registers you can enter any number between $0-$07ff, but they are written
+;as two 8 bit numbers, one right after another.
+;example:
+; 
+;lda #$07
+;sta $210d
+;lda #$00
+;sta $210d
+; 
+;This writes #$0007 to $210d, plane 0 scroll x register.
+
+
+
+	why not use the efficient method
+
+	lda	#$7
+	sta	$210d
+	stz	$210d
+
+
+;The Super NES system has it own graphics processor. This requires its own
+;ram to read/write graphics data.  This ram can only be accessed through
+;certain registers such as $2118 + $2119.  To access Video Ram you MUST
+;turn off the video or you must be in screen blank (horizontal or vertical).
+;This is one of the downsides of the SNES.
+;Video Ram allows the storage of map planes and tile graphics.
+;VRAM is only 64k long and can not be used as regular ram. You can not
+;program in it, it is a separate unit!
+
+
+ you can store wotevere ya want in vram, programs if ya want!!!!
+
+ you can put data in at anytime u like not just the blank times - less time
+ available outside of the blanks though..
+ 
+ apart from these little quotes of critism, not bad, a good idea would
+ be nice to see some intros that aren't lame - I thought they would
+ improve but the last few have been so shite it aint tru, i'm sure as we 
+ ripped music 12 months ago, other peeps would be able to do it by now
+ and put it in intros.
+
+ I find it funny that PAN-HANDLE goes on about going the Klan and killing
+ a Nigger, I thought White Knight was slightly tainted in that direction,
+ so when ya gonna kill him then??? Leave the nogs for now and get those
+ bone-idle curry peddlers.................
+
+ hehehe rant rant rant - MAKE A EFFORT ON THE SNES DONT JUST PUT A PISS
+ SIMPLE INTRO OUT - PUSH THE FUCKIN MACHINE>>>>>>>>>>>>>>>>>>>>>
+
+ Corsair..........
+
+ Additional note about the source code :
+
+ A "veteran coder" would take one look at it and tell you it is inefficent.
+
+RamRaider at the keys now :
+
+If you really want to code on the SNES and need help from professionals :
+
+Call The GRaVEYARD BBS QUARTEX MEGA-HQ  +44-YOU-KNOW-IT, which has just
+started running a developers conference to help promote professional coding.
+
+Peeps In Charge : Corsair & Dax 
+
+Peep who pesters and Leaves stupid msgs about cheese : RamRaider!
+
+Two Points :
+
+1. SNASM for the 68k and 65816 (SNES) cracked will be available for
+   download from the above BBS in the developers conference.
+   It will be uploaded there and no where else. Unless someone spreads
+   it for the glory. 
+2. We also have the latest SNES manual with F/X, DSP1, DSP2 etc notes.
+   It is less than a week old.
+
+PS.  If ya take offence from this Text then fuck off.
+     Spelling Mistkes are Copyright.
+
+PPS. We do not give a shit wot ya think, and if ya take it the wrong way
+     Then fuck you!
+
+Quick greet from RamRaider to Beast/QTX, fuking southern wanker!! hahaha
+
+And also to Dax who seems to be working FAR too HARD.
+
+BBS Ads to follow this wonderfully Piece of text :
+ <-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=->
+
+                        This file was leeched from:
+ ..THE..
+   _______/\_______    /\____    /\_________/\  _____/\/\_______/\______
+  /       \____    \  /  \   \  /  \   ______/\/    /  \____    \____   \
+ // __|___  /  |    \/    \   \/   /   ___/___   __/    \/  |    \   |   \
+/   \__   \/      __/      \      /   |   |  /   |/      \     __/   |   \\
+\      |  /    \   \__ /\   \__  /    |   | /  __/   /\   \ \   \|_  |    /
+ \________\____|\    /__/\    / /\________| \__\    /\____/_|\    /______/
+                 \  /     \  /\/-rAt            \  /          \  /
+<---- --- - ---- -\/--- ---\/---- ---- ------ -- \/-- - - --- -\/---- ---->
+          Q.U.A.R.T.E.X  MEGA HQ (AMIGA+CONSOLE) & H.Y.B.R.I.D (IBM)
+ <-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=->
+                                                     [A¡RaDDer v3.1 By A¡Rcø]
+
+------------------------------------------------------------------------------
+                   CaLL THe øNe aND øNLY PLeaSuRE DøME
+------------------------------------------------------------------------------
+
+     |  ____   _       _____   _____   _____   ___|\   _____   _____  |
+  ___|_/  _¬\_/¬|    _/   __\_/ _  ¬\_/ ____\_/   | \_/   _¬\_/   __\_|__ _
+    ø:    |  |  |    |    |_\|  |    |  |___\|    |  |    | _|    |_\_:ø__
+     :    |  |  |   _|   __/ |  _    |\__    |    |  |    _ \_   __/ _|__ _
+     :    |  |  |__/¬|   ¬|_/|  |    |\_|    |    |  |    |  |   ¬|_/ :ø
+     :    |  |  |    |    |  |  |    |  |    |    |  |    |  |    |   :
+     :    |  |  |    |    |  |  |    |  |    |    |  |    |  |    |   :
+     :    |  |  |    |    |  |  |    |  |    |    |  |    |  |    |   :
+     :    ¬ _|  |    |    |  |  |    |  |    |    |  |    |  |    |   :
+     :   __/ |  |    |    |  |  |    |  |    |    |  |    |  |    |   :
+     :   ¬|  |  |    |    |  |  |    |  |    |    |  |    |  |    |   :
+  _ø_:_   |  |  ¬    |    ¬  |  |    |  ¬    |    ¬  |    |  |    ¬  _:_ø_
+     | \__|  ¯\_____/¯\_____/¯\ |___/¯\_____/¯\_____/¯\___| /¯\_____/ |
+     |                         \|                         |/          |-rS!
+                                  °° DD ° OO ° MM ° EE °°    
+     NøDE 1(DHST):+43-XXXX-XXXX                  NøDE 2(HST):+43-XXXX-XXXX
+
+                           DiaMøNDS & RuST euRøPeaN HQ
+                    ----------------------------------------
+                          aMiGa / SNeS / GeNeSiS / iBM
+
+        SYSøPS: [-STE\/E/D&R-],BøøN KiD/D&R,eTRøN&JøKer,eDø,CeViN KeY
+ 

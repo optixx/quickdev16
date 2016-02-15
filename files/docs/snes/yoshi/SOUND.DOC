@@ -1,0 +1,450 @@
+From PARADIS@htu.tu-graz.ac.at Fri Mar 25 08:41:08 1994
+
+        The Bloody SPC-700
+        ------------------
+
+
+A try to stumble into the inner secret of a nasty chip.
+
+By Antitrack exclusively for the FAMIDEV development group.
+
+
+Chapter 1:
+----------
+
+
+FACTS
+
+* The SPC 700 is a very stupid sound chip with about the worst 
+handling
+  that you have seen in your lifetime.
+
+* This chip is a co processor. He has a quite large instruction set
+  (contrary to the Amiga's COPPER, who has a very small one) and 64KB 
+RAM
+  memory, of which you can use atleast 32KB.  (or so)
+
+* All program and data that is supposed to be run by this chip must 
+be'
+  moved to the SPC's own ram with a small loop that pokes each byte of
+  your SPC assembler program and (e.g. sample-)data into four memory
+  locations : $2140 - $2143. They are your only chance to communicate 
+with
+  the SPC.
+
+* These four memory locations have different meanings for read and 
+write;
+  if you read (LDA) $2140, you get the data from memory loc. 00f4 (or 
+so)
+  of the sound chip.
+
+* On power-on, the SPC 700 jumps (much like the main processor) to a 
+very
+  small ROM area that resides from $ffc0 to $ffff inside the SPC.
+  (This chip REALLY follows the black box principle, eh...) This 
+program
+  at $ffc0 is waiting to get the data in the right format on his 
+input ports
+  at $00f4/5/6/7 , which are $2140/1/2/3 from the 65c816's (e.g. 
+your's )
+  point of view.
+
+* Your main program will therefore have to follow the SPC's 
+conditions and
+  poke all the program and data for the SPC into 2140/1/2/3 in a 
+special
+  order.
+
+* When transmission is completed, you will also have transmitted the 
+start
+  address of your SPC code, and the SPC will start to execute your 
+program
+  there.
+
+
+
+--------------------QUESTIONS.
+
+
+Q: How do I move my program and data to the SPC then, what format do 
+I have
+to use?
+
+
+A: First, your SPC data/code has to be moved from ROM to the extra 
+RAM at
+e.g. $7f0000 . Dont ask me why it has to be in RAM, probably it doesnt
+but all the existing routines that send data to the SPC do something 
+like
+that.
+
+Your data/code has to be in groups which I will call "chunks". A 
+valid chunk
+looks like that:
+
+first word: number of bytes to transmit to SPC           -+
+sec. word : start address where to move data to the SPC   |  one chunk
+byte 4-???? : your data/code                             -+
+
+You can have as many chunks as you want to , but the last chunk must 
+be like
+that:
+
+first word : $0000
+second word: Start address of your code.
+
+
+Q: So if you are right, this means: After I transmitted all my code 
+and
+data, and my own SPC code takes over the control, I might encounter 
+problems
+if my SPC program has to communicate with the outer world (the 
+65c816).
+What if the main program wants to change sounds? What if a background 
+melody
+shall always play on two voices, and extra two voices will be used for
+sound effects whenever the player sprite e.g. picks up an object?
+
+A: That is sure a point. Your own code will have to look at memory 
+locations
+$00f4/00f5/00f6/00f7 , because they are the only accessible from 
+outside
+at $2140/1/2/3. The easiest way would be: As soon as any of $f4-$f7 
+change,
+jump into the Boot ROM at $ffc0 (?) so the SPC is executing his 
+receive
+routine again. Then you *probably* can send another SPC chunk with new
+sound and code to the SPC....
+
+Q: This only helps if a complete new tune is to be played, this 
+doesnt help
+if a melody using two voices shall still remain....
+
+A: Thats true. The best approach is to send own command bytes to the 
+SPC and
+your SPC code has to check out $f4-$f7 constantly and react to it.....
+A command byte like $00 could mean: sound off,
+                    $01           : play tune 1
+                    .
+                    .
+                    .
+                    $0f          : play tune $0f
+                    $10           : play jingle (fx) 01
+                    .
+                    .
+                    .
+                    $ff           : jump to $ffc0 (??) the receive 
+ROM routine
+
+
+
+Q: is there another approach?
+
+A: Yes there is. As you probably know, all important addresses of the
+SPC 700 reside inside its own RAM's zeropage:
+
+Address         / register          / usage
+0000            Volume left
+0001            Volume right
+0002            Pitch low
+0003            Pitch high          (The total 14 bits of pitch 
+height)
+0004            SRCN                Designates source number from 0-
+255
+0005            ADSR 1
+0006            ADSR 2
+0007            GAIN            Envelope can be freely designated by 
+your code
+0008            ENVX            Present val of envelope with DSP 
+rewrites
+0009            VALX            Present wave height val
+
+(and so on...)
+
+Your approach would be to move only sample data there, and/or (lots 
+of) very
+small chunks of data with a target address in the zeropage, and a 
+starting
+address of e.g. $ffc0. The small chunks would access zeropage 
+addresses e.g.
+for the volume etc and thus result in tones; if this is done every 
+frame
+you might end up with a music player quite similar to the C64 styled 
+ones.
+
+
+Q: So anyway, in what format exactly do I have to move data to the 
+SPC?
+
+A: I have the following source code for you, but let me explain it a 
+bit
+BEFORE you start to dig into it.
+
+I've already mentioned the general "chunk" format. The loop does the 
+following:
+
+
+- move ram destination address to $2142/3 (akku: 16 bit)
+- move either #$00 or #$01 into 2141, this depends if you have more 
+than $0100
+  bytes of data for the SPC;
+
+- first time (first chunk you transmit): move constant #$cc into 2140
+
+- loop: poke each byte that you want to be transmitted into 2140 
+(word)
+  the higher 7-15 bits of your accu-word contain the number of bytes 
+already
+  moved (e.g. 00 on the start)
+
+- cmp $2140 with this number of bytes already moved (lower 8 bits of 
+this
+  number only!) and wait if its not equal.
+
+- until the loop is over.
+
+- for the next chunk header this is repeated, but not #$cc is moved 
+into
+  2140 but "nn" (lobyte of number of bytes moved) +3 or +6 if it was 
+00 when
+  +3 was used.
+
+EXAMPLE:
+
+        move #$0400 to 2142 /word access
+
+        move #$01 to 2141
+        move #$cc to 2140
+
+        move "gg00" to 2140 where "gg" is the first real code/data 
+byte for
+                            the SPC
+
+        wait till 2140 is #$00
+
+        move hh01 to 2140 where "hh" is the second byte of code or 
+data for SPC
+
+        wait till 2140 is #$01
+
+        move ii02 to 2140 where "ii" is the 3rd byte of data for the 
+SPC....
+
+        wait till 2140 is #$02
+
+
+       lets say "ii" was the last byte. Now we add #$04 (3+carry) to 
+#$02
+       (#$02 being the number-1 of how many bytes we moved to the 
+SPC), we
+       will push it onto the stack), now :
+
+       fetch the next header , poke target RAM address into $2142 
+(word)
+       poke 00 or 01 into 2141 depending of how many bytes to send,
+       poke #$06 into 2140 (06 : number of bytes sent from last chunk-
+1 + 3 )
+
+
+I think I got this scheme pretty much right this time. Now, is PLEASE 
+someone
+going to donate their home-brewed SPC dis/assemblers to me? Oh pretty 
+please,
+I hate silent SNES's !  :)
+
+
+Source code follows, reassembled from a PAN/Baseline demo "xmas wish 
+92/93":
+----------------------------------------------------------------------
+------
+
+
+; entry to the code starts here
+
+
+            SEP #$30       ; x y a set to 8 bit length
+            LDA #$FF       ; ff into audio0w (write)
+            STA $2140
+            REP #$10       ; x,y: 16 bit length
+            LDX #$7FFF
+l0DB5B      LDA $018000,X  ; move rom music data to ram at $7f0000
+            STA $7F0000,X
+            LDA $028000,X  ; move rom music data to ram at $7f0000
+            STA $7F8000,X
+            DEX
+            BPL l0DB5B
+            LDA #$80       ; screen on , probably not important at all
+            STA $2100
+            LDA #$00       ; 00fd/00fe/00ff point to the data that is 
+now
+            STA $00FD      ; in ram at $7f0000
+            LDA #$00
+            STA $00FE
+            LDA #$7F
+            STA $00FF
+            STZ $4200      ; disable nmi and timer h/v count
+            SEI            ; disable irq
+
+            JSR l0DBCD     ; unknown sub routine, labeled "RESTART" 
+by PAN/ATX
+
+            SEP #$30       ; all regs 8 bit
+l0DB8B      LDA $2140      ; wait for reply from sound chip ?
+            BNE l0DB8B
+            LDA #$E0       ; audio3w ?
+            STA $2143
+            LDA #$FF       ; send data to sound chip ?
+            STA $2142      ; $ffe0 this could be an address within the
+                           ; sound chip ROM between $ffc0 and $ffff 
+in the
+                           ; ROM mask.......
+            LDA #$01       ; send data to sound chip ?
+            STA $2141
+            LDA #$01       ; send data to sound chip ?
+            STA $2140
+
+l0DBA4      LDA $2140      ; wait for reply from sound chip ?
+            CMP #$01       ; what a fuck of a protocol .... :(
+            BNE l0DBA4
+
+l0DBAB      LDA $2140      ; wait again for reply from soundchip ?
+            CMP #$55
+            BNE l0DBAB
+
+            LDA $0207       ; aha ... move $0207 to sound chip ?
+            STA $2141       ; probably sound number selector
+            LDA #$07
+            STA $2140       ; send data to sound chip
+l0DBBD      LDA $2140       ; wait until sound chip accepted data?
+            CMP #$07
+            BNE l0DBBD
+l0DBC4      LDA $2140       ; wait for reply ?
+            CMP #$55
+            BNE l0DBC4
+            CLI
+            RTS
+
+l0DBCD      PHP            ; labeled "RESTART" by pan/ATX
+            JSR l0DBD8     ;
+            PLP
+            LDA #$00       ; 00 into audio0w
+            STA $2140
+            RTS
+
+l0DBD8      PHP
+            REP #$30       ; a,x,y 16 bit regs
+            LDY #$0000     ; needed first time at lda [$fd],y : 
+pointer to ram
+            LDA #$BBAA
+l0DBE1      CMP $2140      ; wait for sound chip $2140/2141 ?
+            BNE l0DBE1
+            SEP #$20      ; akku  8 bit
+            LDA #$CC
+            BRA l0DC12    ;  oh well, another mystery  :-)
+
+
+; jump here if overflow is set  e.g. if more than $0100 data to move
+l0DBEC      LDA [$FD],Y   ; get data from ram pointer
+            INY           ; the accumulator is about to get "xx00" 
+where
+            XBA           ;    /"xx" is the byte from [fd],y (first 
+data byte)
+            LDA #$00      ;    /and resides into bit 15-7 of accu, 
+and 00 is
+            BRA l0DBFF    ;    /#$00 (8bit number of bytes already 
+sent)
+
+
+l0DBF4      XBA           ; accu is now "nn??" ?? is old data from 
+last loop
+            LDA [$FD],Y   ; accu is now "nnxx" with xx the newest 
+data byte
+            INY           ;                                   /for 
+the SPC!
+            XBA           ; accu is now "xxnn"
+l0DBF9      CMP $2140     ; wait for sound chip to reply with "nn" !!
+            BNE l0DBF9
+            INC A         ; increment number of bytes that were 
+sent...
+                          ; accu is now "xxnn" with newest val for 
+nn:=nn+1
+
+l0DBFF      REP #$20      ; akku 16 bit
+            STA $2140     ; poke "xxnn" to soundchip. xx is actual 
+data,
+            SEP #$20      ; akku 8 bit  ! nn is the 8-bit cutted 
+number of bytes
+            DEX                         ! which were already sent!!
+            BNE l0DBF4    ; as many times as xreg says...
+
+
+l0DC09      CMP $2140     ; byte "nn" will be replied from the SPC if 
+data
+            BNE l0DC09    ; received correctly!
+l0DC0E      ADC #$03      ; compare accu with #$fb  ADC WILL ADD #$04 
+COZ
+                          ; CARRY IS ALWAYS SET AFTER THE CMP!!! 
+ATTENTION!
+            BEQ l0DC0E    ; if accu was $fb then accu := $03 . (what 
+for?)
+
+l0DC12      PHA           ; push value accu+$04 to stack (or 
+beginning: #$cc)
+            REP #$20      ; accu = 16 bit
+            LDA [$FD],Y   ; get ram data 2 bytes
+            INY           ; point to next word
+            INY
+            TAX           ; x:=a : number of bytes to transmit
+            LDA [$FD],Y   ; get ram data
+            INY
+            INY
+            STA $2142     ; audio2w  : possibly the dest. area in the 
+spc700
+            SEP #$20      ; accu 8 bit
+            CPX #$0100    ; set carry if first ram data was >= 0100
+            lda #$00      ;
+            ROL           ;
+            STA $2141     ; if ram data >= 0100, poke "1" into reg 1 
+otherw 0
+            ADC #$7F      ; SET OVERFLOW FLAG IF X>=$0100 !!!! (nice 
+trick!)
+            PLA
+            STA $2140     ; $cc in the first case , nn+4 on all later 
+cases
+
+l0DC32      CMP $2140    ; wait for snd chip reply
+            BNE l0DC32
+            BVS l0DBEC   ; if there were more than $0100 data for the 
+spc's RAM
+                         ; move them where they R supposed to belong 
+to!
+            PLP
+            RTS
+
+
+            PLA
+            STA $2140    ; same shit, never been jumped into
+l0DC3F      CMP $2140
+            BNE l0DC3F
+            BVS l0DBF9
+            PLP
+            RTS
+
+
+
+
+
+
+; also lets look at 7f0000: the first few bytes at 7f0000 are:
+
+7f0000: b7 0e 00 04 20 cd cf bd e8 00 5d af c8 f0 d0 fb 5d d5 00 01 
+d5 00 02
+
+b7 0e should be number of bytes to transmit, 0400 the destination 
+inside the
+spc....
+at this point I really need an SPC dis/assembler.....  :(((
+
+Okay well my first source was incompetent, sure thing. But I think I 
+could
+solve a lot of questions meanwhile.

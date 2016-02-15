@@ -1,0 +1,70 @@
+ _________________  _________________  _________________  _________________
+|                 ||                 ||                 ||                 |
+|                 ||                 ||                 ||                 |
+|       __________||                 ||        _________||      ___________|
+|                  |        |        ||             /    |
+|                 ||        |        ||            /     |                 |
+ __________       ||        |        ||        ___/_____  ___________      |
+|                 ||        |        ||                 ||                 |
+|                 ||        |        ||                 ||                 |
+|_________________||________|________||_________________||_________________|
+****************************************************************************
+SNES Documentation v2.30: Written by Yoshi
+****************************************************************************
+        Well, seems like you're interested in the SNES programming world.
+ 
+        First off, learn 65c816 assembly. This document will probably be
+        WAY over your head if you don't even understand basic opcodes. I
+        don't plan on adding a "how.to.code.in.65c816" section to this
+        document, *EVER*. Learn it yourself. I can help you with it, but
+        you need to learn the basics yourself. It's worth it in the long-
+        run, trust me.
+ 
+        This document currently covers more than ANY other document i've
+        ever seen: No, i'm not bragging. I'm stating a fact. I'm proud to be
+        the one to release this information, too. I feel everyone has the
+        right to know about all of this, especially if they're interested in
+        getting a career in the SNES-world.
+ 
+        If you have any information to send me, such as typo comments, or
+        information which is "wrong" or *NEW* information, do so! I'm always
+        updating this thing: the more the better. It's looking great so
+        far, and I plan on keeping the rate-of-progress steady.
+ 
+        For more information about moi, read on! :-)
+****************************************************************************
+        I'm 17 years old; brown hair, blue/grey eyes. 5 foot 10 inches
+        tall (175cm), 145 pounds (62.25kg). I am currently in my 5th
+        year of high school (I failed my senior year), attending Corvallis
+        High School in Corvallis, Oregon.
+ 
+        I'm currently without a job, but i'd love to do development work
+        in a CS-related job, ESPECIALLY SNES-related. I'm available! :-)
+ 
+        In my spare time, I enjoy writing stories (books, if you must know.
+        I love writing, so...), SNES documentation (ha ha ha), programming
+        (in just about anything and everything), biking, sleeping, sketch-
+        ing, and IRCing. You can *ALWAYS* find me on IRC at just about ANY
+        time of the day. Leave me a /MSG -info note (which is sent to me
+        via EMail, FYI), and i'll get it when I log in to check my mail.
+
+        As of January 24th, 1995, I will be 18 years old. I'm not employed
+        (vs. unemployed, where you've actually HAD a job). Dunno what'll
+        happen to me. Maybe i'll die. Who knows. I hope to move in with
+        a good friend of mine, but i'm too chicken to ask. I'd rather be
+        out on the street w/out foot than be told "No you can't" - it's a
+        huge flaw in my philosophy... Sorry.
+
+        You can reach via the following ways:
+                  InterNET: yoshi@CSOS.ORST.EDU (fast, and is preferred)
+                            yoshi@drift.winternet.com
+                       IRC: Yoshi
+                     Phone: 1+ 503-753-2431
+                 SnailMail: Jeremy Chadwick
+                            33811 Twin Maple Lane
+                            Corvallis, OR  97333
+                            USA
+****************************************************************************
+
+                                    December 28th, 1994
+                                                                - Yoshi

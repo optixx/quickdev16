@@ -1,0 +1,1072 @@
+; The following program is a reassembly of the c64-soundchip emulation routines
+; written by Alfatech/Triad ooops I mean Alfatech/Censor. I have tried to make
+; this code as readable as possible in order to help people get started with
+; snes SPC700 sound programming.
+
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ THANKS TO ABSOLUTELY EVERYONE FOR BEING SUCH A LACK OF A HELP!!!!  (grrrr) ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+; especially you guys on #snes, #snes!, famidev; Corsair, Pothead, Sir Jinx,
+; and the rest of the Internet!
+; or in other words, i had to find out everything myself again.  :(
+; And no, I still dont have an assembler for the spc700, just a disassembler :(
+; thats why you will notice the big lack of pseudoopcodes, macros etc.   :((
+
+;----------------------------------------------------------------------------
+
+; Well first let us remember how a sound usually works on the C64. The C64
+; sound chip is located at memory $d400 to $d41b, with these memory locations
+; having the following (registers) meaning:
+
+hexadec.
+address     meaning;  /bit7/bit6/bit5/bit4/bit3/bit2/bit1/bit0/
+
+d400        frequency to play lobyte      voice 1
+d401        frequency to play hibyte      voice 1
+d402        pulsewidth        lobyte
+d403        pulsewidth        hibyte bit 7-4 unused: max width:=$07ff
+d404        Waveform: noise/pulse/sawtooth/triangle/test/ringmod/syncmod/gate
+d405        attack decay    (4 bit attack,  4bit decay)
+d406        sustain release (4 bit sustain, 4bit release)
+
+d407        frequency to play lobyte      voice 2
+d408        frequency to play hibyte      voice 2
+d409        pulsewidth        lobyte
+d40a        pulsewidth        hibyte bit 7-4 unused: max width:=$07ff
+d40b        Waveform: noise/pulse/sawtooth/triangle/test/ringmod/syncmod/gate
+d40c        attack decay    (4 bit attack,  4bit decay)
+d40d        sustain release (4 bit sustain, 4bit release)
+
+d40e        frequency to play lobyte      voice 3
+d40f        frequency to play hibyte      voice 3
+d410        pulsewidth        lobyte
+d411        pulsewidth        hibyte bit 7-4 unused: max width:=$07ff
+d412        Waveform: noise/pulse/sawtooth/triangle/test/ringmod/syncmod/gate
+d413        attack decay    (4 bit attack,  4bit decay)
+d414        sustain release (4 bit sustain, 4bit release)
+
+d415        filter frequency lowbyte. bit 7-3 unused...
+d416        filter frequency highbyte
+d417        filter resonance upper 4 bits/filtex/filt3,2,1 (=select filter type)
+d418        3off/highpass/medpass/lowpass/vol3/vol2/vol1/vol0
+d419        unused
+d41a        unused
+d41b        unused too for this case ;)
+d41c        unused too for this case ;)
+
+
+A typical C64 sound routine consist of two parts, an INIT subroutine and a
+PLAYER subroutine. The INIT routine clears the sound chip registers and
+initializes all kind of pointers and variables for the PLAYER routine.
+The PLAYER routine is typically being called once every time the screen makes
+the vertical blank (VBL), thus, once the 24th part of a second.
+
+SO, if one emulates the c64 SID, he has at least to do the following:
+
+- move the C64 sound routine to ram at $7f0000  (64 k ram)
+- call the C64 sound PLAYER routine every VBL. The NMI of the SNES is
+  perfectly suitable to do this, but you can also do an IRQ routine of
+  your own.
+- Immidately afterwards, you should send the memory loactions $7fd400 to $7fd418
+  from SNES RAM memory to SPC RAM memory, using send (65c18) and receive
+  (spc700) routines of your own.
+- After receiving and putting in his own RAM memory, the SPC700 shall
+  evaluate the new RAM data, set its own DSP registers accordingly and
+  start playing, if appropriate.
+
+
+; Before you jump at the supposedly source code, let me warn that my
+; SPC disassembler seems to have some slight bugs, as well as my SPC manual.
+; the opcode $8f (mov $xx, #$yy) seems, accordingly to this sourcecode
+; move the value xx into the mem location yy. Thus the real syntax of this
+; command should be:  mov #$xx, $yy
+; e.g  8f 00 f6   mov #$00, $f6  ; move the value "00" into memory location $f6.
+; take note of this when reading this source code.
+
+
+
+;-------------------------------------------------
+;SPC700 Disassembler v0.1
+;Loading Blocks
+;Block 00: start $0400 length $07DB
+;Execution Address: $0400
+;-------------------------------------------------
+
+
+
+;------------------------------------------------------------------
+; Reassembly work (c) Antitrack Oct-17-1994
+;------------------------------------------------------------------
+
+
+
+0400 20         CLRP                  ;  clear direct page flag
+0401 CD CF      MOV     X,#$CF        ;  x:=$cf
+0403 BD         MOV     SP,X          ;  stack pointer := x
+0404 8F FF F4   MOV     $FF,#$F4      ;  2140 = ff
+0407 E8 00      MOV     A,#$00        ;  a := 0
+0409 5D         MOV     X,A           ;  x := 0
+040A AF         MOV     (X)+,A        ; Ä¿   clear 0000-00ef
+040B C8 F0      CMP     X,#$F0        ;  ³
+040D D0 FB      BNE     $040A         ; ÄÙ
+040F 5D         MOV     X,A           ;  x := 0
+0410 D5 00 01   MOV     $0100+X,A     ; ÄÄ¿  clear 0100-03ff
+0413 D5 00 02   MOV     $0200+X,A     ;   ³
+0416 D5 00 03   MOV     $0300+X,A     ;   ³
+0419 3D         INC     X             ;   ³
+041A D0 F4      BNE     $0410         ; ÄÄÙ
+041C 8F 00 F1   MOV     $00,#$F1      ;  port clear reg: do not clear ports.
+041F 8F 30 F1   MOV     $30,#$F1      ;  clear 2140-2143 aka 00f4-00f7
+0422 3F 4C 0A   CALL    $0A4C         ;  init and clear all dsp registers
+
+; if you have read the comments at $0a4c , you remembered I had told you we
+will have some very important data at $0200 real soon now. This data is the
+table of pointers to the start of each sample, so indeed its important. :)
+The following loop below will move the table from $09fc to $0200 and make
+it more appropriate, that is, if you consider the bytes at $09fc being:
+
+09fc:    $ww $xx $yy $zz
+
+the table at $0200 will be like the following:
+
+0200:    $ww $xx $ww $xx $yy $zz $yy $zz   and so on.
+
+or in other words, each 16 bit that appreared at $09fc (a word) will now
+appear twice at 0200:
+
+09fc:  dc.w  word1, word2, word3, word4....
+
+0200:  dc.w  word1, word1, word2, word2, word3, word3, word4, word4
+
+
+This table at $09fc contains the start pointers of all samples.  When you
+e.g. use sample 10, the DSP now looks at $0200+10 and finds the pointer to
+the sample. Neat innit?
+
+
+0425 CD 00      MOV     X,#$00        ;  I think this is understood now. :)
+0427 8D 00      MOV     Y,#$00        ;
+0429 F5 FC 09   MOV     A,$09FC+X     ;
+042C D6 00 02   MOV     $0200+Y,A     ;
+042F D6 02 02   MOV     $0202+Y,A     ;
+0432 3D         INC     X             ;
+0433 FC         INC     Y             ;
+0434 F5 FC 09   MOV     A,$09FC+X     ;
+0437 D6 00 02   MOV     $0200+Y,A     ;
+043A D6 02 02   MOV     $0202+Y,A     ;
+043D 3D         INC     X             ;
+043E FC         INC     Y             ;
+043F FC         INC     Y             ;
+0440 FC         INC     Y             ;
+0441 C8 50      CMP     X,#$50        ; this means we have got $25 samples,
+0443 D0 E4      BNE     $0429         ; which is decimal 37 samples. Makes
+                                      ; perfect sense if you look at the
+                                      ; sample table where we start at
+                                      ; sample 0 and end with sample 36.
+
+;-----------------------------------------------------------------
+; Anyway now we really have finished initializing a lot. We initialized
+; the DSP, we set up the sample pointer table, etc. etc.  now its time
+; for the real action.... hopefully (bleugh, sweat, cough, etc....)
+; The real action is: First we have to get the SID data from the 65c816 to
+; the SPC's ram; we will receive the data through the ports 2140-43 (from
+; the 65c816's point of view) and $f4-f7 (from the spc700's point).
+;-----------------------------------------------------------------
+
+
+0445 8F 00 F6   MOV     $00,#$F6      ;  00 into 2142
+
+; At 0448 is the (endless) main loop. Endless, that is, except a reset code
+; was received through the ports.
+
+0448 8F FD F4   MOV     $FD,#$F4      ;  fd into 2140
+044B 78 FE F4   CMP     $FE,#$F4      ;  wait till 2140=fe
+044E D0 FB      BNE     $044B         ;
+0450 8F FE F4   MOV     $FE,#$F4      ;  answer to the 65c816 by returning $fe
+0453 CD 00      MOV     X,#$00        ;  X:=0
+0455 3E F4      CMP     X,$F4         ;  wait for $00 in 2140 from the 65816
+0457 D0 FC      BNE     $0455         ;
+0459 E4 F5      MOV     A,$F5         ;  data ready in 2141
+045B D4 80      MOV     $80+X,A       ;  poke $d400-$d414 into $0080-$0095
+045D 3D         INC     X             ;     (7fd400/65c816)    (spc700)
+045E D8 F4      MOV     $F4,X         ; I guess this also means he doesnt emu-
+0460 C8 15      CMP     X,#$15        ; late the filter of the 64 soundchip !!
+0462 D0 F1      BNE     $0455         ;
+
+:----------------------------voice one emulation start here-----------------
+
+
+0464 E4 84      MOV     A,$84         ; $d404: check waveform
+0466 28 7F      AND     A,#$7F        ; mask out the 7th bit (noise waveform)
+0468 68 24      CMP     A,#$24        ; check for SAWTOOTH+RINGMODULATION wave
+046A D0 07      BNE     $0473         ; if no SAWTOOTH+RING, jmp to 0473
+046C 8F 34 F2   MOV     $34,#$F2      ; DSP register 34: voice 3, SAMPLE.
+046F C4 F3      MOV     $F3,A         ; we select sample $24 for SAWT+RING
+0471 2F 48      BRA     $04BB         ; sample $24 (36 dec.) is empty, SAW+RING is
+                                      ; thus not implemented here!!!
+
+0473 5D         MOV     X,A           ; This code is exec if NO SAW+RING.
+                                      ; X=A=actual waveform.
+0474 28 20      AND     A,#$20        ; check for waveform=SAWTOOTH.
+0476 F0 16      BEQ     $048E         ; NO sawtooth, continue at 048e
+0478 E4 84      MOV     A,$84         ; get voice1 waveform register again(d404)
+047A 8F 90 72   MOV     $90,#$72      ; 72/73 now point to $0990 ! which is the
+047D 8F 09 73   MOV     $09,#$73      ; sample #37's memory location.
+0480 FA 83 7A   MOV     $83<d>,$7A<s> ; well this seems to be another bug of
+                                      ; either the disassembler or the manual,
+; or both. Let me explain. The only thing that makes sense and that happens
+; here is: the contents of ram location $0083 is being moved to
+; 007a. or to speak BASIC: poke $7a, peek($83) / poke $7b, peek 84 (not sure)
+
+; This implies the <d> and <s> should be vice versa, shoudnt they.
+; Explanation: 83 contains the pulseHI width value, a backup of the pulse
+; width value is being made to mem loc 7a - the subroutine that will
+; be called soon (0b61) needs it that way. Akku still contains the waveform
+; register, d404.
+
+
+0483 3F 61 0B   CALL    $0B61         ;  calculate sample 37 (see there)
+0486 8F 34 F2   MOV     $34,#$F2      ;  voice 3, byte 4, source number: select
+0489 8F 25 F3   MOV     $25,#$F3      ;  sample #37, much to noones surprise :)
+048C 2F 1E      BRA     $04AC         ;  and go to 04ac
+
+;
+; Here we go if there is no sawtooth to play...
+;
+
+048E 7D         MOV     A,X           ;  a=x=d404=(waveform and #$7f) (bit7=0)
+048F 68 03      CMP     A,#$03        ;  all wave off, sync+gate on?
+0491 D0 09      BNE     $049C         ;  if not, goto 049c
+
+;
+; This is the code we execute if there is no(?) waveform to play but the
+; gate and syncronisation bits are both set....
+;
+
+0493 18 08 7B   OR      $08,#$7B     ; if sync+gate on, select random wave-
+                                     ; form for the DSP and lower the volume
+                                     ; by shifting SID's sustain/release.
+
+
+
+0496 4B 86      LSR     $86           ; shifting c64's sustain/release
+0498 4B 86      LSR     $86           ; right by two.
+                                      ; if the old bits were ssssrrrr, they
+                                      ; are now      00ssssrr.
+                                      ; (2 zerobits, 4 bit sustain , 2 release)
+049A 2F 1F      BRA     $04BB         ; jmp to 04bb
+
+
+049C 68 02      CMP     A,#$02        ; Syncronsisation on , gate off, ?
+049E D0 03      BNE     $04A3         ; no, goto 04a3
+04A0 60         CLRC                  ;
+04A1 84 83      ADC     A,$83         ; YES: add pulseHIbyte  to accu
+
+
+
+; remember here we also jump if the sync bit is not set at all. (bit1 of wave)
+04A3 8F 34 F2   MOV     $34,#$F2      ; voice 3, byte 4: source number
+04A6 1C         ASL     A             ; multiply accu by 2
+04A7 60         CLRC                  ;
+04A8 84 82      ADC     A,$82         ; add pulselow byte to accu
+04AA C4 F3      MOV     $F3,A         ; resulting in the Selected sample value.
+
+; now I really wonder if there could go something wrong. Imagine a tune
+; playing waveform $41: (pulse wave + gate bit on); lets say its pulse low is
+; $01. This would make us play sample ($41*2)+$01 = $83.
+; This is a nonexistant sample value coz we have only got samples from $00
+; to 50. I wonder if this is an actual bug in the routine here or
+; if I am wrong.   :-)
+
+
+
+
+04AC 8F 32 F2   MOV     $32,#$F2      ; voice 3, byte 2: pitch low!
+04AF E4 80      MOV     A,$80         ; get d400: frequency low
+04B1 28 F0      AND     A,#$F0        ; and it w $f0
+04B3 C4 F3      MOV     $F3,A         ; resulting in the pitch low value!
+04B5 8F 33 F2   MOV     $33,#$F2      ; voice 3, byte 3: pitch hi!
+04B8 FA 81 F3   MOV     $81<d>,$F3<s> ; poke $f3, peek($81): pitch hi=d401!!!
+
+
+
+04BB 8F 30 F2   MOV     $30,#$F2      ; voice 3, volume left:
+04BE FA 86 F3   MOV     $86<d>,$F3<s> ; set volume left to c64 Sustain/Release?!
+04C1 8F 31 F2   MOV     $31,#$F2      ; voice 3, volume right:
+04C4 FA 86 F3   MOV     $86<d>,$F3<s> ; set volume right to c64 Sus/Release ??!!
+
+; We seem to be finished w the emulation of voice1 of the 64's SID chip here.
+; If SAWTOOTH was selected, the precalculated sample #37 is played.
+
+; Whatever waveform it was anyway, we will use
+; the same frequency that the c64 uses, except they dont call it frequency,
+; they call it pitch.  :-)
+; Puzzling things happen to the sustain/release bytes of the 64, they are
+; nearly directly being poked into the _volume_ registers of the DSP.
+; I am still speaking what should happen most of the time, i am not talking
+; about syncronisation effect.
+; The sync effect is obvioulsy included whilst the RINGMODULATION seems
+; not to be included at all, which is a pity.
+
+;-----------------------voice 2 emulation start here --------------------
+
+
+04C7 E4 8B      MOV     A,$8B         ; accu=$8b=$d40b=waveform voice 2
+04C9 28 7F      AND     A,#$7F        ; mask out noise bit
+04CB 68 24      CMP     A,#$24        ; sawtooth+ringmod selected?
+04CD D0 07      BNE     $04D6         ; if no, goto 04d6
+04CF 8F 44 F2   MOV     $44,#$F2      ; voice 4, source number:
+04D2 C4 F3      MOV     $F3,A         ; play sample #$24 = 36 = empty
+                                ; thus we can see SAWT+RING is not implemented.
+04D4 2F 48      BRA     $051E         ;  jmp to end of routine
+
+
+04D6 5D         MOV     X,A           ; X=a, note that noise (bit7)=0    ?!!
+04D7 28 20      AND     A,#$20        ; is the sawtooth bit on?
+04D9 F0 16      BEQ     $04F1         ; NO, goto 04f1
+
+04DB E4 8B      MOV     A,$8B         ; get $d40b (waveform reg) again into acc
+04DD 8F B4 72   MOV     $B4,#$72      ; 72/73 point to 09b4: sample #38
+04E0 8F 09 73   MOV     $09,#$73      ;
+04E3 FA 8A 7A   MOV     $8A<d>,$7A<s> ; poke 7a, peek(8a): pulse hi voice 2
+04E6 3F 61 0B   CALL    $0B61         ; calculate sample 38
+04E9 8F 44 F2   MOV     $44,#$F2      ; voice 2 , source sample number
+04EC 8F 26 F3   MOV     $26,#$F3      ; is #38, no surprise .
+04EF 2F 1E      BRA     $050F         ; play sawtooth sample #38, end of routine
+
+04F1 7D         MOV     A,X           ; no sawtooth
+04F2 68 03      CMP     A,#$03        ; sync and gate on?
+04F4 D0 09      BNE     $04FF         ; if no sync+gate, goto 04ff
+04F6 18 10 7B   OR      $10,#$7B      ; Select Random samples YES
+04F9 4B 8D      LSR     $8D           ; shift right sustain/release
+04FB 4B 8D      LSR     $8D           ; ssssrrrr -> 00ssssrr
+04FD 2F 1F      BRA     $051E         ; end of routine
+
+04FF 68 02      CMP     A,#$02        ; sync on, gate off?`
+0501 D0 03      BNE     $0506         ; no, goto 0506
+0503 60         CLRC                  ;
+0504 84 8A      ADC     A,$8A         ; add pulse hi to accu (to 02)
+0506 8F 44 F2   MOV     $44,#$F2      ; voice 4 source number
+0509 1C         ASL     A             ; multiply (pulsehi+2) * 2
+050A 60         CLRC                  ;
+050B 84 89      ADC     A,$89         ; add pulse low
+050D C4 F3      MOV     $F3,A         ; and select it as sample # to play
+050F 8F 42 F2   MOV     $42,#$F2      ; volume left
+0512 E4 87      MOV     A,$87         ; frequency low
+0514 28 F0      AND     A,#$F0        ; and freq low w %11110000
+0516 C4 F3      MOV     $F3,A         ; put frequency low into pitch of voice4
+0518 8F 43 F2   MOV     $43,#$F2      ; select voice 4, pitch high
+051B FA 88 F3   MOV     $88<d>,$F3<s> ; put frequency hi into pitchhi of voice4
+051E 8F 40 F2   MOV     $40,#$F2      ; select voice 4 volume left
+0521 FA 8D F3   MOV     $8D<d>,$F3<s> ; put sustain/rel into voice 4 vol left
+0524 8F 41 F2   MOV     $41,#$F2      ; select volume right voice 4
+0527 FA 8D F3   MOV     $8D<d>,$F3<s> ; put sustain/rel into voice 4 vol right
+
+
+;------------------------------------------voice 3 emulation start here
+
+
+052A E4 92      MOV     A,$92         ; accu=$92=$d412=waveform voice 3
+052C 28 7F      AND     A,#$7F        ; mask out noise bit (bit 7)
+052E 68 24      CMP     A,#$24        ; sawtooth+ringmod selected?
+0530 D0 07      BNE     $0539         ; if no, goto 0539
+0532 8F 24 F2   MOV     $24,#$F2      ; voice 4, source number:
+0535 C4 F3      MOV     $F3,A         ; play sample #$24 = 36 = empty
+0537 2F 4A      BRA     $0583         ; we can see SAWT+RING is not implemented.
+0539 5D         MOV     X,A           ; X=a, note that noise (bit7)=0    ?!!
+053A 28 20      AND     A,#$20        ; is the sawtooth bit on?
+053C F0 16      BEQ     $0554         ; NO, goto 04f1
+053E E4 92      MOV     A,$92         ; get waveform of SIDvoice3 again
+0540 8F D8 72   MOV     $D8,#$72      ; set 0072/0073 to point to 09d8
+0543 8F 09 73   MOV     $09,#$73      ; 09d8 is sample #39
+0546 FA 91 7A   MOV     $91<d>,$7A<s> ; make a backup of pulse hi in $007a
+0549 3F 61 0B   CALL    $0B61         ; calculate sample #39
+054C 8F 24 F2   MOV     $24,#$F2      ; select DSPvoice2, source number:
+054F 8F 27 F3   MOV     $27,#$F3      ; set source number to #39, sample #39
+0552 2F 20      BRA     $0574         ; end of routine
+0554 7D         MOV     A,X           ; a=x=waveform SIDvoice3 and #$7f(bit7=0)
+0555 68 03      CMP     A,#$03        ; is the gatebit and sync on?
+0557 D0 09      BNE     $0562         ; no, end of routine
+0559 18 04 7B   OR      $04,#$7B      ; yes: select NOISE for this voice and...
+055C 4B 94      LSR     $94           ; change SID's sustain release bits from
+055E 4B 94      LSR     $94           ; ssssrrrr to 00ssssrr by shifting, thus
+                                      ; lowering the volume!
+0560 2F 21      BRA     $0583         ; end of routine
+0562 68 02      CMP     A,#$02        ; gatebit off, sync on?
+0564 D0 04      BNE     $056A         ; no, end of routine
+0566 60         CLRC                  ;
+0567 84 91      ADC     A,$91         ; add SID pulse hi to accu (which=01)
+0569 00         NOP                   ;
+056A 1C         ASL     A             ; multiply by 2
+056B 60         CLRC                  ;
+056C 84 90      ADC     A,$90         ; add SID's pulse low
+056E 5D         MOV     X,A           ; and store it in x register
+056F 8F 24 F2   MOV     $24,#$F2      ; select DSPvoice2, sample #
+0572 C4 F3      MOV     $F3,A         ; akku=sample #
+0574 8F 22 F2   MOV     $22,#$F2      ; select DSPvoice2, reg2: pitch low
+0577 E4 8E      MOV     A,$8E         ; SID frequency low
+0579 28 F0      AND     A,#$F0        ; is anded with %11110000, and gives....
+057B C4 F3      MOV     $F3,A         ; ...the value for DSPvoice2 pitch low
+057D 8F 23 F2   MOV     $23,#$F2      ; select DSP voice 2 reg3: pitch hi
+0580 FA 8F F3   MOV     $8F<d>,$F3<s> ; DSP pitch hi := SID freq hi
+0583 8F 20 F2   MOV     $20,#$F2      ; select DSP voice 2 reg 0: volume left
+0586 FA 94 F3   MOV     $94<d>,$F3<s> ; DSP vol left := SID Sustain/Release
+0589 8F 21 F2   MOV     $21,#$F2      ; select DSP voice 2 reg 1: volume right
+058C FA 94 F3   MOV     $94<d>,$F3<s> ; DSP vol right := SID Sustain/Release
+058F 8F 3D F2   MOV     $3D,#$F2      ; !!! DSP noise on/off register
+
+; now i understand! $7b is a ram memory location that is zeroed at the
+; beginning. Some bits of $7b will contain either 0 or 1 , depending if
+; a NOISE (random) waveform shall be played or not. These bits
+; are being set during the emulation routines, watch for  "or xx, $7b".
+
+
+0592 FA 7B F3   MOV     $7B<d>,$F3<s> ; set SID noise emulation if necessary
+0595 FA 92 F6   MOV     $92<d>,$F6<s> ; DSP f6=2142, send a signal to 65c816
+0598 D8 F7      MOV     $F7,X         ; send signal to 2143 / 65c816
+059A 8F 00 7B   MOV     $00,#$7B      ; clear noise emulation bits
+059D E4 F6      MOV     A,$F6         ; get a value from port 2142
+059F 68 40      CMP     A,#$40        ; is it $40 ?
+05A1 D0 15      BNE     $05B8         ; no, goto main loop
+05A3 C4 F6      MOV     $F6,A         ; send value #$40 back to 2142/65c816
+05A5 3F 4C 0A   CALL    $0A4C         ; init the sound chip registers!
+05A8 CD 00      MOV     X,#$00        ;
+05AA F5 9B 0B   MOV     A,$0B9B+X     ; move the reset routine to $ffc0
+05AD D5 C0 FF   MOV     $FFC0+X,A     ; (needless coz its ROM and should
+05B0 3D         INC     X             ; stay ROM anyway?!)
+05B1 C8 40      CMP     X,#$40        ; move $40 bytes
+05B3 D0 F5      BNE     $05AA         ;
+05B5 5F C0 FF   JMP     $FFC0         ; make sound chip reset.
+05B8 5F 48 04   JMP     $0448         ; main endless loop here
+
+;-------------------------------------------------------------------------
+;-------------------------------------------------------------------------
+;------------------------THE SAMPLE DATA----------------------------------
+;-------------------------------------------------------------------------
+;-------------------------------------------------------------------------
+
+; Here is the data area where all the samples start. They are grouped to-
+; gether in groups of nine bytes, where the first byte contains header
+; information, which is, in the following cases, either $b0 or $b3.
+; It is $b0 all the time at the start of each sample, and $b3 to indicate
+; that it is the last 9-byte-group of sample data.
+; I dont know too much myself about the samples, so look up your manual
+; will you  :)
+
+; take note, below you will find sample 5 , sample 7, sample 9 etc up to
+; sample 35 (giving 15 samples) and the difference between them is the
+; amount of "$88" sample values instead of "$77" sample values. If you
+; look at them you will easily see how each sample gets more and more
+; $88 bytes instead of $77 bytes. The meaning ? I dunno.  :-)
+
+
+;------------------------------------------------------------------
+; Reassembly work (c) Antitrack Oct-17-1994
+;------------------------------------------------------------------
+
+
+
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+
+
+; 05bb is sample 5
+05BB                                               B0   ....=.@.._.._H..
+05BC  77 77 77 77 77 77 77 77-B3 77 77 77 77 77 77 77   wwwwwwww.wwwwwww
+05CC  77
+
+
+; 05cd is sample #7
+05cd     B0 88 77 77 77 77 77-77 77 B3 77 77 77 77 77   w..wwwwwww.wwwww
+05DC  77 77 77
+
+
+; 05df is sample #9
+05df           B0 88 88 77 77-77 77 77 77 B3 77 77 77   www...wwwwww.www
+05EC  77 77 77 77 77
+
+
+; 05f1 is sample #11
+05f1                 B0 88 88-88 77 77 77 77 77 B3 77   wwwww....wwwww.w
+05FC  77 77 77 77 77 77 77
+
+; 0603 is sample #13
+0603                       B0-88 88 88 88 77 77 77 77   wwwwwww.....wwww
+060C  B3 77 77 77 77 77 77 77-77
+
+; 0615 is sample #15
+0615                             B0 88 88 88 88 88 77   .wwwwwwww......w
+061C  77 77 B3 77 77 77 77 77-77 77 77
+
+; 0627 is sample #17
+0627                                   B0 88 88 88 88   ww.wwwwwwww.....
+062C  88 88 77 77 B3 77 77 77-77 77 77 77 77
+
+; 0639 is sample #19
+0639                                         B0 88 88   ..ww.wwwwwwww...
+063C  88 88 88 88 88 77 B3 77-77 77 77 77 77 77 77
+
+; 064b is sample #21
+064b                                               B0   .....w.wwwwwwww.
+064C  88 88 88 88 88 88 88 88-B3 77 77 77 77 77 77 77   .........wwwwwww
+065C  77
+
+; 065d is sample #23
+065d     B0 88 88 88 88 88 88-88 88 B3 88 77 77 77 77   w...........wwww
+066C  77 77 77
+
+; sample #25
+066f           B0 88 88 88 88-88 88 88 88 B3 88 88 77   www............w
+067C  77 77 77 77 77
+
+; sample#27
+0681                 B0 88 88-88 88 88 88 88 88 B3 88   wwwww...........
+068C  88 88 77 77 77 77 77
+
+; sample#29
+0693                       B0-88 88 88 88 88 88 88 88   ..wwwww.........
+069C  B3 88 88 88 88 77 77 77-77
+
+; sample#31
+06a5                             B0 88 88 88 88 88 88   .....wwww.......
+06AC  88 88 B3 88 88 88 88 88-77 77 77
+
+; sample#33
+06b7                                   B0 88 88 88 88   ........www.....
+06BC  88 88 88 88 B3 88 88 88-88 88 88 77 77
+
+; sample#35
+06c9                                         B0 88 88   ...........ww...
+06CC  88 88 88 88 88 88 B3 88-88 88 88 88 88 88 77
+
+;------------------------------------------------------------------------
+; this was sample 5 to sample 35, a kinda important sequence of samples or so
+; i think it might emulate one effect only but dont ask which one.
+; -----------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+
+
+
+; 06db is sample #3
+06db                                               B0   ..............w.
+06DC  00 11 22 33 44 55 66 77-B3 88 99 AA BB CC DD EE   .."3DUfw........
+06EC  FF
+
+
+; 06ed is the sample #1 data according to the table at $09fd...
+06ed     B0 01 23 45 67 65 43-21 0F B3 FE DC BA 98 89   ...#EgeC!.......
+06FC  AB CD EF
+
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+
+; here is sample 4 up to sample 34. very much like in sample 5 to sample
+; 35, the samples here are quite similar to each other. This is another
+; indicator for my theory that sample 4 up to sample 35 (31 samples alltoge-
+; ther!) are being used to emulate one effect only.  (Or one waveform, or
+; one  WHATEVER. I will still have to figure....)
+
+; 06ff is sample #4
+06ff           B0 77 77 77 77-77 77 77 77 B0 77 77 77   ....wwwwwwww.www
+070C  77 77 77 77 77 B0 77 77-77 77 77 77 77 77 B3 77   wwwww.wwwwwwww.w
+071C  77 77 77 77 77 77 77
+
+
+; 0723 is sample #6
+0723                       B0-88 88 77 77 77 77 77 77   wwwwwww...wwwwww
+072C  B0 77 77 77 77 77 77 77-77 B0 77 77 77 77 77 77   .wwwwwwww.wwwwww
+073C  77 77 B3 77 77 77 77 77-77 77 77
+
+; 0747 is sample #8
+0747                                   B0 88 88 88 88   ww.wwwwwwww.....
+074C  77 77 77 77 B0 77 77 77-77 77 77 77 77 B0 77 77   wwww.wwwwwwww.ww
+075C  77 77 77 77 77 77 B3 77-77 77 77 77 77 77 77
+
+; 076b is sample #10
+076b                                               B0   wwwwww.wwwwwwww.
+076C  88 88 88 88 88 88 77 77-B0 77 77 77 77 77 77 77   ......ww.wwwwwww
+077C  77 B0 77 77 77 77 77 77-77 77 B3 77 77 77 77 77   w.wwwwwwww.wwwww
+078C  77 77 77
+
+; 078f is sample #12
+078f           B0 88 88 88 88-88 88 88 88 B0 77 77 77   www..........www
+079C  77 77 77 77 77 B0 77 77-77 77 77 77 77 77 B3 77   wwwww.wwwwwwww.w
+07AC  77 77 77 77 77 77 77
+
+
+; 07b3 is sample #14
+07b3                       B0-88 88 88 88 88 88 88 88   wwwwwww.........
+07BC  B0 88 88 77 77 77 77 77-77 B0 77 77 77 77 77 77   ...wwwwww.wwwwww
+07CC  77 77 B3 77 77 77 77 77-77 77 77
+
+
+; 07d7 is sample #16
+07d7                                   B0 88 88 88 88   ww.wwwwwwww.....
+07DC  88 88 88 88 B0 88 88 88-88 77 77 77 77 B0 77 77   .........wwww.ww
+07EC  77 77 77 77 77 77 B3 77-77 77 77 77 77 77 77
+
+; 07fb is sample #18
+07fb                                               B0   wwwwww.wwwwwwww.
+07FC  88 88 88 88 88 88 88 88-B0 88 88 88 88 88 88 77   ...............w
+080C  77 B0 77 77 77 77 77 77-77 77 B3 77 77 77 77 77   w.wwwwwwww.wwwww
+081C  77 77 77
+
+; 081f is sample #20
+081f           B0 88 88 88 88-88 88 88 88 B0 88 88 88   www.............
+082C  88 88 88 88 88 B0 77 77-77 77 77 77 77 77 B3 77   ......wwwwwwww.w
+083C  77 77 77 77 77 77 77
+
+; 0843 is sample #22
+0843                       B0-88 88 88 88 88 88 88 88   wwwwwww.........
+084C  B0 88 88 88 88 88 88 88-88 B0 88 88 77 77 77 77   ............wwww
+085C  77 77 B3 77 77 77 77 77-77 77 77
+
+; 0867 is sample #24
+0867                                   B0 88 88 88 88   ww.wwwwwwww.....
+086C  88 88 88 88 B0 88 88 88-88 88 88 88 88 B0 88 88   ................
+087C  88 88 77 77 77 77 B3 77-77 77 77 77 77 77 77
+
+; 088b is sample #26
+088b                                               B0   ..wwww.wwwwwwww.
+088C  88 88 88 88 88 88 88 88-B0 88 88 88 88 88 88 88   ................
+089C  88 B0 88 88 88 88 88 88-77 77 B3 77 77 77 77 77   ........ww.wwwww
+08AC  77 77 77
+
+; 08af is sample #28
+08af           B0 88 88 88 88-88 88 88 88 B0 88 88 88   www.............
+08BC  88 88 88 88 88 B0 88 88-88 88 88 88 88 88 B3 77   ...............w
+08CC  77 77 77 77 77 77 77
+
+; 08d3 is sample #30
+08d3                       B0-88 88 88 88 88 88 88 88   wwwwwww.........
+08DC  B0 88 88 88 88 88 88 88-88 B0 88 88 88 88 88 88   ................
+08EC  88 88 B3 88 88 77 77 77-77 77 77
+
+
+; 08f7 is sample #32
+08f7                                   B0 88 88 88 88   .....wwwwww.....
+08FC  88 88 88 88 B0 88 88 88-88 88 88 88 88 B0 88 88   ................
+090C  88 88 88 88 88 88 B3 88-88 88 88 77 77 77 77
+
+; 091b  is sample #34
+091b                                               B0   ...........wwww.
+091C  88 88 88 88 88 88 88 88-B0 88 88 88 88 88 88 88   ................
+092C  88 B0 88 88 88 88 88 88-88 88 B3 88 88 88 88 88   ................
+093C  88 77 77
+
+
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+
+
+
+; 093f is sample #2...
+
+               B0 00 00 11 11-22 22 33 33 B0 44 44 55   .ww.....""33.DDU
+094C  55 66 66 77 77 B0 88 88-99 99 AA AA BB BB B3 CC   Uffww...........
+095C  CC DD DD EE EE FF FF
+
+
+; 0963 seems to be sample 0.
+
+                           B0-00 11 22 33 44 55 66 77   .........."3DUfw
+096C  B0 77 66 55 44 33 22 11-00 B0 FF EE DD CC BB AA   .wfUD3".........
+097C  99 88 B3 88 99 AA BB CC-DD EE FF 03
+
+
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;------------------------------------------------------------------
+; Reassembly work (c) Antitrack Oct-17-1994
+;------------------------------------------------------------------
+
+
+
+0987 is either sample #36 or i am mistaken?  :-)
+0987                                      00 00 00 00   ................
+098C  00 00 00 00
+
+; well this IS sample 36 and should be sawtooth+ring modulation. Something
+; that *is* actually very rarely used together on the 64, coz it sounds
+; so faint that its nearly not there (if you ever tried it on the 64).
+;
+
+
+
+0990 is either sample #37 . it is getting calculated in realtime.... (voice1)
+0990              00 00 00 00-00 00 00 00 00 00 00 00   ................
+099C  00 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00   ................
+09AC  00 00 00 00 00 00 00 00-
+
+09b4 seems to be sample #38. its real values are being calculated in realtime
+; it is used to emulate the 64's voice 2.
+09b4                          00 00 00 00 00 00 00 00   ................
+09BC  00 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00   ................
+09CC  00 00 00 00 00 00 00 00-00 00 00 00
+
+09d8 is sample #39. calculated in realtime, used for voice3 emulation.
+09d8                                      00 00 00 00   ................
+09DC  00 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00   ................
+09EC  00 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00   ................
+
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;------------------------------------------------------------------
+; Reassembly work (c) Antitrack Oct-17-1994
+;------------------------------------------------------------------
+
+
+
+; let us do a little summary of the samples here. If you recall,
+; sample 0,1,2,3 seem to be independent. Sample 4 up to sample 35 (31 samples)
+; are very similar to each other. Sample 36 is not being
+; used for the obvious reason that it consists of zerobytes only and doesn't
+; make too much sense.
+
+; Sample 37, 38 and 39 are being calculated in realtime before being played.
+
+; My guess is that samples 0,1,2,3 emulate noise, sawtooth, pulse and
+; triangle, and the rest of the samples (31 of them, sample4 to sample35)
+; are trying to emulate the ring modulation, or the sync modulation, or
+; some special effect like that.
+
+; Well lets look again at sample 0, 1, 2, 3 here:
+
+; 0963 seems to be sample 0.
+
+                           B0-00 11 22 33 44 55 66 77   .........."3DUfw
+096C  B0 77 66 55 44 33 22 11-00 B0 FF EE DD CC BB AA   .wfUD3".........
+097C  99 88 B3 88 99 AA BB CC-DD EE FF 03
+
+; 06ed is the sample #1..
+06ed     B0 01 23 45 67 65 43-21 0F B3 FE DC BA 98 89   ...#EgeC!.......
+06FC  AB CD EF
+
+; 093f is sample #2...
+
+               B0 00 00 11 11-22 22 33 33 B0 44 44 55   .ww.....""33.DDU
+094C  55 66 66 77 77 B0 88 88-99 99 AA AA BB BB B3 CC   Uffww...........
+095C  CC DD DD EE EE FF FF
+
+; 06db is sample #3
+06db                                               B0   ..............w.
+06DC  00 11 22 33 44 55 66 77-B3 88 99 AA BB CC DD EE   .."3DUfw........
+06EC  FF
+
+; damn they are similar to each other too! ..... ?? Dunno what to say
+; about it. If thats one effect only too, then the SID got two
+; effects only, yea rite?  ;-)
+; I am not getting smart out of it...at the moment. Sorry....
+
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+
+
+; here at 09fc is the pointer table for the samples. they point to the
+; start of each sample.
+
+
+09FC  63 09 ED 06 3F 09 DB 06-FF 06 BB 05 23 07 CD 05   c...?.......#...
+0A0C  47 07 DF 05 6B 07 F1 05-8F 07 03 06 B3 07 15 06   G...k...........
+0A1C  D7 07 27 06 FB 07 39 06-1F 08 4B 06 43 08 5D 06   ..'...9...K.C.].
+0A2c  67 08 6F 06 8B 08 81 06-AF 08 93 06 D3 08 A5 06   g.o.............
+0A3c  F7 08 B7 06 1B 09 C9 06-87 09 90 09 B4 09 D8 09   ................
+
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+
+;------------------------------------------------------------------
+; Reassembly work (c) Antitrack Oct-17-1994
+;------------------------------------------------------------------
+
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+;--------------------------------------------------------------------------
+
+;
+;  init all DSP sound chip registers
+;
+
+0A4C CD 00      MOV     X,#$00        ; ***init dsp registers***
+0A4E 60         CLRC                  ; clear carry
+0A4F 7D         MOV     A,X           ; a=x=0
+0A50 C4 F2      MOV     $F2,A         ; dsp register 0, VOL Left voice 0
+0A52 8F 00 F3   MOV     $00,#$F3      ; dsp register VALUE, e.g VOL left = 0
+0A55 88 10      ADC     A,#$10        ; a= 10 : dsp register $10, vol left
+0A57 C4 F2      MOV     $F2,A         ; ../of voice 1  !
+0A59 8F 00 F3   MOV     $00,#$F3      ; voice 1 VOL left = 0
+0A5C 88 10      ADC     A,#$10        ; a= 10 : dsp register $20, vol left
+0A5E C4 F2      MOV     $F2,A         ; ../of voice 2  !
+0A60 8F 00 F3   MOV     $00,#$F3      ; voice 2 VOL left = 0
+0A63 88 10      ADC     A,#$10        ; a= 10 : dsp register $30, vol left
+0A65 C4 F2      MOV     $F2,A         ; ../of voice 3  !
+0A67 8F 00 F3   MOV     $00,#$F3      ; voice 3 VOL left = 0
+0A6A 88 10      ADC     A,#$10        ; a= 10 : dsp register $40, vol left
+0A6C C4 F2      MOV     $F2,A         ; ../of voice 4  !
+0A6E 8F 00 F3   MOV     $00,#$F3      ; voice 4 VOL left = 0
+0A71 88 10      ADC     A,#$10        ; a= 10 : dsp register $50, vol left
+0A73 C4 F2      MOV     $F2,A         ; ../of voice 5  !
+0A75 8F 00 F3   MOV     $00,#$F3      ; voice 5 VOL left = 0
+0A78 88 10      ADC     A,#$10        ; a= 10 : dsp register $60, vol left
+0A7A C4 F2      MOV     $F2,A         ; ../of voice 6  !
+0A7C 8F 00 F3   MOV     $00,#$F3      ; voice 6 VOL left = 0
+0A7F 88 10      ADC     A,#$10        ; a= 10 : dsp register $70, vol left
+0A81 C4 F2      MOV     $F2,A         ; ../of voice 7  !
+0A83 8F 00 F3   MOV     $00,#$F3      ; voice 7 VOL left = 0
+0A86 3D         INC     X             ; since this is a loop , we hereby
+0A87 C8 0A      CMP     X,#$0A        ; clear all DSP registers (00-09)
+0A89 D0 C4      BNE     $0A4F         ; of all voices!
+0A8B CD 0C      MOV     X,#$0C        ;
+0A8D 60         CLRC                  ;
+0A8E 7D         MOV     A,X           ; akku=x=$0c
+0A8F C4 F2      MOV     $F2,A         ;
+0A91 8F 00 F3   MOV     $00,#$F3      ; clear $0c, 0d, 0e, 0f
+0A94 88 10      ADC     A,#$10        ;
+0A96 C4 F2      MOV     $F2,A         ;
+0A98 8F 00 F3   MOV     $00,#$F3      ; clear $1c, 1d, 1e, 1f
+0A9B 88 10      ADC     A,#$10        ;
+0A9D C4 F2      MOV     $F2,A         ;
+0A9F 8F 00 F3   MOV     $00,#$F3      ; clear $2c, 2d, 2e, 2f
+0AA2 88 10      ADC     A,#$10        ;
+0AA4 C4 F2      MOV     $F2,A         ;
+0AA6 8F 00 F3   MOV     $00,#$F3      ; clear $3c, 3d, 3e, 3f
+0AA9 88 10      ADC     A,#$10        ;
+0AAB C4 F2      MOV     $F2,A         ;
+0AAD 8F 00 F3   MOV     $00,#$F3      ; clear $4c, 4d, 4e, 4f
+0AB0 88 10      ADC     A,#$10        ;
+0AB2 C4 F2      MOV     $F2,A         ;
+0AB4 8F 00 F3   MOV     $00,#$F3      ; clear $5c, 5d, 5e, 5f
+0AB7 88 10      ADC     A,#$10        ;
+0AB9 C4 F2      MOV     $F2,A         ;
+0ABB 8F 00 F3   MOV     $00,#$F3      ; clear $6c, 6d, 6e, 6f
+0ABE 88 10      ADC     A,#$10        ;
+0AC0 C4 F2      MOV     $F2,A         ;
+0AC2 8F 00 F3   MOV     $00,#$F3      ; clear $7c, 7d, 7e, 7f
+0AC5 3D         INC     X             ;
+0AC6 C8 10      CMP     X,#$10        ;
+0AC8 D0 C4      BNE     $0A8E         ; loop.
+0ACA 8F 3D F2   MOV     $3D,#$F2      ; register 3d: noise on/off.
+0ACD 8F 00 F3   MOV     $00,#$F3      ; in this case: noise for all voices off
+0AD0 8F 4D F2   MOV     $4D,#$F2      ; register 4d: echo on/off.
+0AD3 8F 00 F3   MOV     $00,#$F3      ; in this case: echo for all voices off
+0AD6 8F 6C F2   MOV     $6C,#$F2      ; reg 6c: ECEN: d5=0 means echo enable,
+0AD9 8F 20 F3   MOV     $20,#$F3      ; so d5=1 means echo disable, yea rite?
+0ADC 8F 0C F2   MOV     $0C,#$F2      ; main volume left = 7f
+0ADF 8F 7F F3   MOV     $7F,#$F3      ;
+0AE2 8F 1C F2   MOV     $1C,#$F2      ; main volume right = 7f
+0AE5 8F 7F F3   MOV     $7F,#$F3      ;
+0AE8 8F 5D F2   MOV     $5D,#$F2      ; this is tricky, its called "offset
+0AEB 8F 02 F3   MOV     $02,#$F3      ; address of source directory".
+
+; Basically it means that we have an important table at $0200 in this case
+; and i will describe the table: each table entry at $0200 contains a pointer
+; to the sampled data that your voice should play! The sampled data must be
+; in a special format called "BRR" (bit rate reductio) format, which I will
+; describe whenever we discuss the samples .
+
+0AEE 8F 30 F2   MOV     $30,#$F2      ;  voice 3 volume left = 7f
+0AF1 8F 7F F3   MOV     $7F,#$F3      ;
+0AF4 8F 31 F2   MOV     $31,#$F2      ;  voice 3 volume right = 7f
+0AF7 8F 7F F3   MOV     $7F,#$F3      ;
+0AFA 8F 35 F2   MOV     $35,#$F2      ;  ADSR(1) voice 3 = 67  (bit7=0 !!!)
+
+; bit7 = 0 of adsr(1) is very important. it tells us that the GAIN byte
+; gets operable. The gain byte is byte 7 of each voice, which will be used
+; soon... watch out... :-) Anyway I dont feel like typing in so much , but,
+
+            bit7  bit6  bit5  bit4  bit3  bit2  bit1  bit0
+
+ADSR(1) :   GAIN  DR2   DR1   DR0   AR3   AR2   AR1   AR0
+ADSR(2) :   SL2   SL1   SL0   SR4   SR3   SR2   SR1   SR0
+
+AR3-0 is Attack time,  DR0-2 is Decay time, SL0-2 Sustain low(?), SR0-4
+is Sustain/Release. (Hopefully. You gotta play around with these for quite
+a while till you get results, believe me...)
+
+
+0AFD 8F 67 F3   MOV     $67,#$F3      ;   67=01100111; DR=110, AR=0111
+0B00 8F 36 F2   MOV     $36,#$F2      ;  ADSR(2) voice 3 = 18
+0B03 8F 18 F3   MOV     $18,#$F3      ;  18=00011000  ratio=000, SR=11000=180ms
+0B06 8F 37 F2   MOV     $37,#$F2      ;  voice 3 gain!
+0B09 8F 7F F3   MOV     $7F,#$F3      ;  the GAIN value is set to %1111111
+
+; Now this was the gain stuff. Since bit 7 of reg 7, voice 3, is zero, it means
+; "direct designation": the value of GAIN is set directly according to
+; the rest of the bits in this byte. Thus, all to 1. Thus, maximum GAIN. What
+; ever GAIN was.
+
+0B0C 8F 40 F2   MOV     $40,#$F2      ; volume left voice 4 = 7f
+0B0F 8F 7F F3   MOV     $7F,#$F3      ;
+0B12 8F 41 F2   MOV     $41,#$F2      ; volume rite voice 4 = 7f
+0B15 8F 7F F3   MOV     $7F,#$F3      ;
+0B18 8F 45 F2   MOV     $45,#$F2      ; adsr voice 4 same like voice 3
+0B1B 8F 67 F3   MOV     $67,#$F3      ; adsr voice 4 same like voice 3
+0B1E 8F 46 F2   MOV     $46,#$F2      ; adsr voice 4 same like voice 3
+0B21 8F 18 F3   MOV     $18,#$F3      ; adsr voice 4 same like voice 3
+0B24 8F 47 F2   MOV     $47,#$F2      ; gain voice 4 7f , same like voice 3
+0B27 8F 7F F3   MOV     $7F,#$F3      ;
+0B2A 8F 20 F2   MOV     $20,#$F2      ; volume voice 2 left = 7f
+0B2D 8F 7F F3   MOV     $7F,#$F3      ;
+0B30 8F 21 F2   MOV     $21,#$F2      ; volume voice 2 rite = 7f (max, eh)
+0B33 8F 7F F3   MOV     $7F,#$F3      ;
+0B36 8F 25 F2   MOV     $25,#$F2      ; adsr voice 2 same like voice 3
+0B39 8F 67 F3   MOV     $67,#$F3      ; adsr voice 2 same like voice 3
+0B3C 8F 26 F2   MOV     $26,#$F2      ; adsr voice 2 same like voice 3
+0B3F 8F 18 F3   MOV     $18,#$F3      ; adsr voice 2 same like voice 3
+0B42 8F 27 F2   MOV     $27,#$F2      ; gain voice 4 same like voice 3
+0B45 8F 7F F3   MOV     $7F,#$F3      ; ----- end of DSP init
+0B48 8F 00 7C   MOV     $00,#$7C      ; clear mem 7c-7f of spc RAM memory
+0B4B 8F 00 7D   MOV     $00,#$7D      ;
+0B4E 8F 00 7E   MOV     $00,#$7E      ;
+0B51 8F 00 7F   MOV     $00,#$7F      ;
+0B54 8F 6C F2   MOV     $6C,#$F2      ; DSP register 6c:
+0B57 8F 38 F3   MOV     $38,#$F3      ;
+
+; 38: = %01101100  bit 7: soft reset is off, DSP ready to play or so
+                       6: =1  "MUTE" is turned on
+                       5: =1  ECEN (echo enable)   =1, means echo disabled
+                       4-0: 01100: Noise clock generator speed. Impessive, huh
+
+
+
+0B5A 8F 4C F2   MOV     $4C,#$F2      ; DSP register 4c, KEY ON
+0B5D 8F 1C F3   MOV     $1C,#$F3      ;
+
+; Now this is the important part, its the KEY ON thingie. :-) $1c is
+; binary %11100 and what does this tell you? It tells you that they use voice
+; 2, 3 and 4 for the emulation. Oh yeah! :)
+
+0B60 6F         RET                   ;
+
+;-------------------------------------------------------------------------
+;-------------------------------------------------------------------------
+;-------------------------------------------------------------------------
+
+The following routine calculates a new sample and puts it at sample #37's
+memory location (0990-09b4), or into sample #38's memory location if
+we are currently calculating for voice2, or into sample #39's memory location
+if we are calculating the data for voice3.
+
+The calculations are based on whatever waveform bits are set or not.
+
+
+0B61 8F FC 78   MOV     $FC,#$78      ; 78/79 points to 09fc which is the
+0B64 8F 09 79   MOV     $09,#$79      ; array of sample pointers
+0B67 5D         MOV     X,A           ; x=a=actual waveform
+0B68 5C         LSR     A             ; shift waveform left 4 bits
+0B69 5C         LSR     A             ; noise, pulse, sawtooth and triangle
+0B6A 5C         LSR     A             ; will now be at bit 3, bit 2, bit 1 and
+0B6B 5C         LSR     A             ; bit 0 of the akku
+0B6C C4 7C      MOV     $7C,A         ; 007c now gets the val of akku
+0B6E 7D         MOV     A,X           ; akku gets old val back
+0B6F 28 03      AND     A,#$03        ; check for bit 0/1: bit0:gate on/off,
+0B71 60         CLRC                  ; ...bit1: sync modulation bit
+0B72 84 7A      ADC     A,$7A         ; we add 00-03 (depending if the gate
+                                      ; and the sync bit are set) to the pulse
+                                      ; hi value.
+
+0B74 1C         ASL     A             ; and multiply by 4.
+0B75 1C         ASL     A             ; this value now is the index of which
+0B76 FD         MOV     Y,A           ; sample pointer to grab from the sample
+0B77 F7 78      MOV     A,[$78]+Y     ; pointer table!
+0B79 C4 74      MOV     $74,A         ; 74/75=pointer to acual sample
+0B7B FC         INC     Y             ; actual sample=[samplearray+index]
+0B7C F7 78      MOV     A,[$78]+Y     ;
+0B7E C4 75      MOV     $75,A         ;
+0B80 E4 7C      MOV     A,$7C         ; noise/pulse/saw/triangl  (bits3-0)
+                                      ; this command seems to be useless since
+                                      ; the accu soon gets a completely new
+                                      ; value.
+0B82 8D 00      MOV     Y,#$00        ;
+0B84 F7 78      MOV     A,[$78]+Y     ; put address of sample 0 into 76/77
+0B86 C4 76      MOV     $76,A         ;
+0B88 FC         INC     Y             ;
+0B89 F7 78      MOV     A,[$78]+Y     ;
+0B8B C4 77      MOV     $77,A         ;
+0B8D 8D 00      MOV     Y,#$00        ;
+0B8F F7 74      MOV     A,[$74]+Y     ;the 1stbyte of the actual sample 74/75...
+0B91 37 76      AND     A,[$76]+Y     ;..is ANDED w/ the first byte of sample 0
+0B93 D7 72      MOV     [$72]+Y,A     ;the RESULTING SAMPLE is being moved
+0B95 FC         INC     Y             ;to sample 37+x (72/73 point to it, they
+0B96 AD 24      CMP     Y,#$24        ;point to 0990 ....)
+                                      ; "sample 37+x" where x is voice number
+                                      ; -1 of the 64
+
+; let me sum up and recall here what happened. An *acutal sample* was being
+; chosen and calculated from the waveform bits noise/pulse/saw and triangle,
+; as well as from the wave bits SYNC and GATE. A pointer, 74/75, is set to this
+; calculated actual sample. Another pointer, 72/73, points to the very first
+; sample always. The *actual sample*'s bytes are ANDed with all the bytes from
+; sample 0, the resulting sample is located at sample #37/8/9's memory location,
+; from 0990-09b4 ($24 bytes as the loop says).
+
+; Its my guess that this resulting sample #37/8/9 is gonna be played sooner or
+; later!  :-)
+
+
+
+0B98 D0 F5      BNE     $0B8F         ;
+0B9A 6F         RET                   ;
+
+;-------------------------------------------------------------------------
+;-------------------------------------------------------------------------
+;-------------------------------------------------------------------------
+
+
+; this routine is a copy of the SPC700's RESET routine, which was discussed
+; in the famidev development group intensely already.
+; It basically gets the SPC data from the CPU (65c816)'s RAM into the
+; SPC700's ram.
+
+
+0B9B CD EF      MOV     X,#$EF        ;  normal start is $ffc0
+0B9D BD         MOV     SP,X          ;
+0B9E E8 00      MOV     A,#$00        ;
+0BA0 C6         MOV     (X),A         ;
+0BA1 1D         DEC     X             ;
+0BA2 D0 FC      BNE     $0BA0         ;
+0BA4 8F AA F4   MOV     $AA,#$F4      ;
+0BA7 8F BB F5   MOV     $BB,#$F5      ;
+0BAA 78 CC F4   CMP     $CC,#$F4      ;
+0BAD D0 FB      BNE     $0BAA         ;
+0BAF 2F 19      BRA     $0BCA         ;
+0BB1 EB F4      MOV     Y,$F4         ;
+0BB3 D0 FC      BNE     $0BB1         ;
+0BB5 7E F4      CMP     Y,$F4         ;
+0BB7 D0 0B      BNE     $0BC4         ;
+0BB9 E4 F5      MOV     A,$F5         ;
+0BBB CB F4      MOV     $F4,Y         ;
+0BBD D7 00      MOV     [$00]+Y,A     ;
+0BBF FC         INC     Y             ;
+0BC0 D0 F3      BNE     $0BB5         ;
+0BC2 AB 01      INC     $01           ;
+0BC4 10 EF      BPL     $0BB5         ;
+0BC6 7E F4      CMP     Y,$F4         ;
+0BC8 10 EB      BPL     $0BB5         ;
+0BCA BA F6      MOVW    YA,$F6        ;
+0BCC DA 00      MOVW    $00,YA        ;
+0BCE BA F4      MOVW    YA,$F4        ;
+0BD0 C4 F4      MOV     $F4,A         ;
+0BD2 DD         MOV     A,Y           ;
+0BD3 5D         MOV     X,A           ;
+0BD4 D0 DB      BNE     $0BB1         ;
+0BD6 1F 00 00   JMP     [$0000+X]     ;
+0BD9 C0         DI                    ;   reset vector
+0BDA FF         STOP                  ;
+
+
+;------------------------------------------------------------------
+; Reassembly work (c) Antitrack Oct-17-1994
+;------------------------------------------------------------------
+
+

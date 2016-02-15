@@ -1,0 +1,971 @@
+=-=-=
+SNES Documentation v1.3: Written by Yoshi of Digital Exodus. 
+=-=-=
+1)    Memory Map.
+	 i) "Main" memory map.
+	ii) Additional info.
+2)    SNES Color explaination.
+3)    SNES DMA Memory Map and explaination.
+4)    SNES Graphics (tiles) explaination.
+5)    SNES Screen mode definitions.
+6)    SNES OAM/Sprite explaination.
+7)    Magicom Disk registers and Memory controller locations.
+69)   About the author...
+FF)   Greetings, Thanx, etc...
+=-=-=
+1)    Memory Map.
+	 i) "Main" memory map.
+-----------                              
+	Just so you know... the R and/or W's on the left side before the             
+	memory location mean [R]eadable and/or [W]riteable. I don't know
+	what happens if you try to read from the write-only registers:
+	I think you get bogus data, but that's about it.
+-----------                              
+ W   |$2100: Screen display register.
+			x000bbbb
+					x: 0 = Screen on.
+					   1 = Screen off.
+				   bbbb: 0-$F = Brightness of screen.
+
+			*** If you increment $2100 so the register goes up
+			    to $xF (x being whatever), you can make the
+			    screen "fade in". Make -SURE- you do this only
+			    during the VBlank period! If you don't, the screen
+			    goes totally wacko! The 'GS programmers like myself
+			    call it "Syncing to the VBL". 
+-----------                              
+ W   |$2101: OAM (Sprite) sizes.
+			sssnnbbb
+					s: Size. 
+					n: Name selection (upper 4k word address).
+					b: Base selection (8k word segment address).
+
+			*** The sizes are defined as follows:
+					000: 8x8 or 16x16
+					001: 8x8 or 32x32
+
+			*** I've never used this register, nor sprites.
+			    Check Section 6 for information
+			    which was not done by me: If you understand
+			    it better than I do, good deal.
+-----------                              
+ W   |$2102: Address of OAM (Sprites).
+			???????? | ????????  
+			
+			*** This register i've never used. All I know is
+			    that it's a -WORD- in length, not a byte.
+-----------                              
+ W   |$2104: Data for OAM (Sprites).
+			????????
+
+			*** I've never used this register. It's like $210D:
+			    You have to store a value in it twice.
+-----------                              
+ W   |$2105: Screen mode.
+			abcdfeee
+					a: Plane 3 tile size.
+					b: Plane 2 tile size.
+					c: Plane 1 tile size.
+					d: Plane 0 tile size.
+						0 = 8x8 tiles.
+						1 = 16x16 tiles.
+					e: MODE definition. 
+					f: Make Plane 2 take highest priority.
+-----------                              
+ W   |$2106: Screen pixelation (aka. MOSAIC) register.
+			xxxxabcd
+					x: 0-$F = Pixel size.
+					a: Affect plane 3.
+					b: Affect plane 2.
+					c: Affect plane 1.
+					d: Affect plane 0.
+
+			*** Just like $2100, this only works during VBlank.
+			    I recommend you setup what planes you want to
+			    affect at the start of the program, then to
+			    make them change, do the following:
+					LDA #$03    ; Affect planes 0 and 1.
+					STA TempReg1
+					STA $2106
+					JSR WaitVBlank
+					LDA TempReg1
+				 Loop STA $2106
+					CLC
+					ADC #$10
+					CMP #$F3
+					BNE Loop
+-----------                              
+ W   |$2107: Plane 0 VRAM location register.
+			xxxxxxab
+					x: Address of VRAM location.
+				     ab: Virtual screen size selection.
+
+		  *** The virtual screen size dealy goes like this:
+			32x32 to 32x64 to 64x32 to 64x64. Visually,
+			you only see 32x32(x25) at once unless you
+			change the ACTUAL screen size.
+
+			*** The way I use this register is pretty simple.
+			    Lets say the VRAM is in $2000... Therefore,
+			    we'd go like this:
+					LDA #$20
+					STA $2107
+-----------                              
+ W   |$2108: Plane 1 VRAM location register.
+ W   |$2109: Plane 2 VRAM location register.
+ W   |$210A: Plane 3 VRAM location register.
+			*** All of these follow the same definition as $2107.
+-----------                              
+ W   |$210B: Tile VRAM location register.
+			aaaabbbb
+					a: Location of tiles for Plane 1.
+					b: Location of tiles for Plane 0.
+
+			***  The way you use this register is fairly neat.
+			     Since you only have a nybble to work with (which
+			     ranges from $0-F only) your Tile location can
+			     only be $0000 to $F000. You can't have an address
+			     such as $5F91 or $1C4A which holds your tile
+			     data. You just can't have it. :-)
+
+-----------                              
+ W   |$210C: Tile VRAM location register.
+			ccccdddd
+					c: Location of tiles for Plane 3.
+					d: Location of tiles for Plane 2.
+
+			*** Same stats for $210B go for this one; 'cept the
+			    plane registers are different.
+-----------                              
+ W   |$210D: Plane 0 X-scroll register.
+			*** This register is really funky. You have to write
+			    to it twice in a row (each piece of data being
+			    1 byte). The register is setup as the following:
+			    - You store the first 8 bits (the first byte) which
+				ranges from $00 to $FF. After you store this
+				value, you have to store the next 3 bits in the
+				same register.
+			*** The following code demonstrates how to move plane 0
+			    left:
+					LDA Plane0X
+					DEC
+					STA Plane0X
+					STA $210D
+					STZ $210D
+			    If you make that into a loop by itself, the result
+			    is the plane keeps scrolling left forever; it even
+			    wraps around back to the start.
+
+		  *** Note: I've been told this is a nasty way to do it
+			    because MODE 7 uses 13 bits of the above,
+			    while the rest use 10. I'm not taking care of
+			    the MSB. :-(
+
+-----------                              
+ W   |$210E: Plane 0 Y-Scroll register.
+ W   |$210F: Plane 1 X-Scroll register.
+ W   |$2110: Plane 1 Y-Scroll register.
+ W   |$2111: Plane 2 X-Scroll register.
+ W   |$2112: Plane 2 Y-Scroll register.
+ W   |$2113: Plane 3 X-Scroll register.
+ W   |$2114: Plane 3 Y-Scroll register.
+			*** All of these follow the same definition as $210D.
+-----------                              
+ W   |$2115: Video port control.
+		  *** If you store the following listed values in this register,
+			the following happens:
+
+		$80: H/L increment which determines if the address will be
+		     incremented after it reads/writes to/from $2118 and
+		     $2139, or $2119 and $213A.
+
+ W   |$2116: Video port address. 
+			*** 16 bit VRAM address.
+	$2117: Video port address (continued, due to 16 bits).
+ W   |$2118: Video port data. 
+			*** Data register for writing VRAM data.
+	$2119: Video port data.
+		  *** Same as above.
+-----------                              
+ W   |$211A: MODE 7 Information register.
+			xy????ab
+					a: Horizontal or Vertical flip. 
+					b: Horizontal or Vertical flip.
+					x: Landscape repeat type.
+					y: Landscape repeat type.
+
+			*** I have not the SLIGHTEST idea what the hell
+			    the original author means by this. If someone
+			    can explain it, tell me.
+-----------                              
+ W   |$211B: COS (COSIN) rotate angle / X Expansion.
+ W   |$211C: SIN (SIN) rotate angle / X Expansion.
+ W   |$211D: SIN (SIN) rotate angle / Y Expansion.
+ W   |$211E: COS (COSIN) rotate angle / Y Expansion.
+ W   |$211F: 13 bit address for the center of Rotate X.
+ W   |$2120: 13 bit address for the center of Rotate Y.
+
+			*** All above things i've never used, nor do I
+			    have any explainations on them. Use them at
+			    your own risk, or until I get info on 'em.
+
+			*** $211F and $2120 are like $210D: You have to
+			    write a byte to them twice.
+-----------                              
+ W   |$2121: Color # (or pallete) selection register.
+			xxxxxxxx
+					x: Color # ($00-$FF).
+ 
+			*** This register is probably one of the most simple
+			    registers I know of to use. You simply store the
+			    # of the color you want to modify before writing
+			    to $2122. This register is autoincrementing, so
+			    you don't have to "LDA #$01, STA $2121, LDA #$02,
+			    STA $2121, LDA #$03..." and so on...
+			    Code is as follows:
+					STZ $2121   ; Start at color 0.
+					STZ $2122   ; Color #0 = 00 00
+					STZ $2122
+					LDA #$FF    ; Color #1 = 7F FF (white).
+					STA $2122
+					LDA #$7F
+					STA $2122
+					LDA #$1F    ; Color #2 = 00 1F (red).
+					STA $2122
+					STZ $2122
+-----------                              
+ W   |$2122: Color data register.
+			xxxxxxxx
+					x: Value of color.
+
+			*** Color on the SNES is trippy; it's 15 bit. Check
+			    Section 2 on how the SNES colors are setup. Some
+			    example code I listed for $2121... Anyways, this
+			    register is like $210D (plane X-scroll) and those
+			    types: You have to store the value in it twice.
+			    For instance: If you wanted the color white (which
+			    is $7FFF in SNES-color), you would have to do the
+			    following:
+					LDA [whatever color #]
+					STA $2121
+					LDA #$FF    ; We first store the "lower half"
+					STA $2122
+					LDA #$7F    ; Then the upper...
+					STA $2122
+			    It's really not that hard, but it'll take some
+			    getting used to :-) Remember, check Section 2 on
+			    how the SNES does it's color, and for tile-setup,
+			    check Section 4.
+-----------                              
+ W   |$212C: Playfield/Sprite-enable register.
+			abcdefgh
+					a: Plane 3 enable (for Sprites).
+					b: Plane 2 enable (for Sprites).
+					c: Plane 1 enable (for Sprites).
+					d: Plane 0 enable (for Sprites).
+					e: Enable plane 3.
+					f: Enable plane 2.
+					g: Enable plane 1.
+					h: Enable plane 0.
+			*** This register allows you to enable which planes
+			    you want to put sprites on (to move or etc.) and
+			    to scroll, or other neato things. If you wanna
+			    use all 4 planes, but no sprites, shove $0F into
+			    this register. If you want to use all the planes,
+			    but want sprites on planes 1 and 3, you would shove
+			    $AF into this register. It's very easy to do.
+-----------                              
+ W   |$2133: Screen mode register. 
+			????ab?c
+					a: Interlace Y.
+					b: Overscan.
+					c: Interlace X.
+
+			*** To be blatently honest, I have -NO IDEA- what
+			    this register does; I don't understand what
+			    Corsair & Dax meant by Interlace and Overscan.
+			    If someone can explain this register to me, i'd
+			    be very grateful :-).
+-----------                              
+ R   |$2139: VRAM port data (reading).
+	$213A: "                       "
+----------- 
+??   |$2140       *** These are the audio registers. 'never used 'em.
+??   |$2141           Try shoving data into them; who knows, if you get
+??   |$2142           music sometime, then you know you're on the right
+??   |$2143           track. :-)
+-----------                              
+??   |$4200: Counter Enable.
+			??yx???a
+					a: Joypad-read Enable (1 = Readable).
+					x: Horizontal Counter Enable.
+					y: Vertical Counter Enable.
+-----------                              
+??   |$4201: 8 bit parallel data.
+
+			*** This is the expansion bus for the Famicom.
+-----------                              
+RW   |$420B: DMA enable register.
+			abcdefgh
+					a: DMA #7.
+					b: DMA #6.
+					c: DMA #5.
+					d: DMA #4.
+					e: DMA #3.
+					f: DMA #2.
+					g: DMA #1.
+					h: DMA #0.
+
+			*** I've personally never used DMA for anything. I hope
+			    someone out there has, and can tell me how to use
+			    it. :-)
+-----------                              
+??   |$420D: Memory select.
+			???????x
+					x: Fast/Normal ROM flip.
+				  0 = Normal.
+				  1 = Fast.
+-----------
+R    |$4210: VBL register.
+			x???????
+					x: VBlank period
+					   1 = On.
+					   0 = Off.
+
+			*** This is probably the most important register
+			    you should work with. Without it, you die,
+			    and other things happen. :-) The following
+			    routine allows you to sync to the VBL/wait
+			    for the VBL to pass by so you can do your work:
+			    -       LDA $4210
+				    AND #$80
+			            BEQ -
+				    LDA $4210
+
+			    From a programmers' standpoint, the following
+			    code should do the EXACT SAME as the above,
+			    but faster. NOTE thou, that it doesn't. I
+			    think the timing is off, that's why it doesn't
+			    work right. But, here-goes:
+
+			    -       LDA $4210
+				    BPL -
+				    LDA $4210
+-----------                              
+??   |$4211: ?????.
+			x???????
+					x: IRQ Enable flag (1: Enabled).
+
+			*** I don't even know the DESCRIPTION of the reg-
+			    ister! :-)
+-----------                              
+RW   |$4212: Joypad-ready register.
+			???????x
+					x: Ready-state bit (1: Ready).
+
+			*** I'm not sure how this register is setup; all I know
+			    is how to use it. Code is as follows:
+					PadLoop LDA $4212
+						  AND #$01
+						  BNE PadLoop
+			    This waits for the joypad to become ready to read.
+-----------                              
+RW   |$4218: Joypad #0 register (1 out of 2).
+			abcd0000
+					a:    0 = A button not pressed.
+						1 = A button pressed.
+					b:    0 = X button not pressed.
+						1 = X button pressed.
+					c:    0 = Top-left button not pressed.
+						1 = Top-left button pressed.
+					d:    0 = Top-right button not pressed.
+						1 = Top-right button pressed.
+			*** These are self-explainitory. To find out the
+			    status of each bit, just AND #$ for that bit...
+			    The code for checking is the following:
+					LDA $4218
+					AND #$80    ; Is the A button pressed?
+					BNE YesA    ; Button pressed (bit is 1).
+					LDA $4218
+					AND #$40    ; Is button X pressed?
+					BNE YesX    ; Button pressed (bit is 1).
+					LDA $4218
+					AND #$10    ; Is the top-right button pressed?
+					BNE YesTopR ; Button pressed (bit is 1).
+			    ...and so on. It's very simple.
+			*** Note: The Corsair & Dax document was -WRONG-.
+				    It took me a good hour or two to find this
+				    out, so I decided i'd better write down the
+				    CORRECT way to do things).
+-----------                              
+RW   |$4219: Joypad #0 register (2 out of 2).
+			abcdefgh
+					a:    0 = B button not pressed.
+						1 = B button pressed.
+					b:    0 = Y button not pressed.
+						1 = Y button pressed.
+					c:    0 = Select button not pressed.
+						1 = Select button pressed.
+					d:    0 = Start button not pressed.
+						1 = Start button pressed.
+					e:    0 = Up not pressed.
+						1 = Up pressed.
+					f:    0 = Down not pressed.
+						1 = Down pressed.
+					g:    0 = Left not pressed.
+						1 = Left pressed.
+					h:    0 = Right not pressed.
+						1 = Right pressed.
+			*** Same as $4218... Some demo code follows:
+					LDA $4219
+					AND #$80    ; Is the B button pressed?
+					BNE YesB    ; Button pressed (bit is 1).
+					LDA $4219
+					AND #$04    ; Is Down pressed?
+					BNE YesDown ; Button pressed (bit is 1).
+					LDA $4219
+					AND #$02    ; Is Left pressed?
+					BNE YesLeft ; Button pressed (bit is 1).
+-----------                              
+RW   |$421A: Joypad #1 register (1 out of 2).
+RW   |$421B: Joypad #1 register (2 out of 2).
+RW   |$421C: Joypad #2 register (1 out of 2).
+RW   |$421D: Joypad #2 register (2 out of 2).
+RW   |$421E: Joypad #3 register (2 out of 2).
+RW   |$421F: Joypad #3 register (2 out of 2).
+				*** Setup is the same as $4218 and $4219.
+=-=-=
+1)    Memory Map
+	ii) Additional info.
+-----------                              
+RW   |$FFC0: Cartridge title.
+RW   |$FFD6: ROM/RAM Info on cart..
+RW   |$FFD7: ROM Size.
+RW   |$FFD8: RAM Size.
+RW   |$FFD9: Maker ID Code.
+RW   |$FFDB: Version #.
+RW   |$FFDC: Checksum complement.
+RW   |$FFDE: Checksum.
+RW   |$FFEA: NMI vector/VBL Interrupt.
+RW   |$FFEC: Reset vector.
+
+			*** With SMC (Magicom) files the offset is $7e00 less
+			    than above.
+			*** I've never actually used this information before:
+			    This could be SMC header only; but then why would
+			    there be memory locations for such? Strange. I'll
+			    leave the information I put in up to SNESASM v1.05.
+			    I use the psuedo-ops NAM, VER, and other things.
+
+=-=-=
+2)    SNES Color explaination.
+-----------                              
+	Oh BOY! So you're interested in finding out how the SNES does
+	it's color (via $2122), right? Well here ya go...
+
+	The SNES has a strange way of doing color (atleast that i've
+	seen in my lifetime). Color is 15 bit; each "RGB" value (red,
+	green, and blue) has 5 bits a piece.
+
+	When it comes to putting data into $2122, the format (in binary)
+	is the following (I put them into each byte):
+				0bbbbbgg gggrrrrr
+				|
+				|_ Someone needs to tell me what this bit
+				   -REALLY- is. I've just been told to set
+				   it to 0...
+	We guess that the Japanese didn't like the idea of putting them
+	in the "standard" order of R, G, then B: but instead wanted them
+	in alphabetical order. Silly! :-).
+
+	The way -I- do my color conversions is on a calculator... Just
+	plug in the bits you want to set in binary, then let the calc.
+	convert it into hexadecimal. It's pretty easy; or you can be
+	a Studly Programmer (hehehe) and do it in your head.
+
+	A quick color chart:          $7FFF: White  (0111 1111 1111 1111)
+						$001F: Red    (0000 0000 0001 1111)
+						$03E0: Green  (0000 0011 1110 0000)
+						$7C00: Blue   (0111 1100 0000 0000)
+						$7C1F: Purple (0111 1100 0001 1111)
+						$7FE0: Aqua   (0111 1111 1110 0000)
+						$03FF: Yellow (0000 0011 1111 1111);
+	Well there you have it. It's pretty simple after you get the hang
+	of it; when using the SNES, you get REALLY good with binary math:
+	You'll find this out after working with the machine for awhile.
+
+=-=-=
+3)    DMA Memory Map and explaination.
+-----------                              
+??   |$43x0: DMA Control register (??? Not sure ???).
+ W   |$43x1: DMA Destination register.
+			$18 = Video Port access.
+			$22 = Color pallete access.
+
+			*** This gives access to only some of the video chip.
+			    registers. Hell if I know which ones.
+-----------                              
+ W   |$43x2: Source address.
+			*** THIS REGISTER IS A WORD IN LENGTH ***
+			*** The document I have says:
+			    "lo-hi  16 lowest bits". Who knows... 
+-----------                              
+ W   |$43x4: Source bank address.
+			*** The document I have says:
+			    "8 highest bits". 
+-----------                              
+ W   |$43x5: Transfer size register.
+			*** Same as above:
+			    "lo-hi". 
+-----------                              
+	All the "x"s represent the DMA # (ranging from 0 to 7).
+	DMA #0: $4300-$4305.
+	DMA #1: $4310-$4315.
+	......
+	DMA #7: $4370-$4375.
+=-=-=
+4)    SNES Graphics (tiles) explaination.
+-----------                              
+	This is probably the most requested section of the document for
+	people whom are starting out on the SNES and want to learn just
+	how in the hell the SNES -DOES- do it's graphics.
+
+	There's so much to explain!!!
+
+	The SNES does it's graphics in tiles (surprise surprise!).
+
+	There are different MODEs on the SNES; the most famous being
+	is MODE 7. Alas: Most people think using $2106 is MODE 7 ($2106
+	is for screen pixelation: Where the pixels get "larger". Look 
+	in Section 1 for an explaination of this register).
+				*** THIS IS NOT MODE 7!!! ***. 
+	So the next time the pixels get really "big" (almost making them
+	look like IBM PC 320x200x256 mode :-)), and your friend says "WOW!
+	MODE 7 is COOL," punch 'em in the nose for me. Just kidding.
+
+	Also, another thing I should mention: Bitplanes are NOT THE SAME
+	AS PLANES. Planes are like "screens." You can scroll a plane, but
+	not a bitplane. Bitplanes are put ONTO a plane, which can be
+	scrolled any direction.
+
+	I'll be explaining MODE 1. MODE 7 is too tough for me to
+	explain, since you end up losing colors and other screwy things...
+	Check Section-5 for a mode-# list.
+	
+MODE   #/Playfields    MaxColor/Tile   Palettes        Colors
+---------------------------------------------------------------------------
+0      4               4               8               16
+1      3               16/16/4 (HUH?)  8               128
+	
+	MODE 0 is good for geometric shapes (if you were going to rotate
+	a wireframe cube), basic star scrolls, or a very "bland" text
+	scroller.
+
+	Let's start with MODE 1.
+
+	MODE 1 is best for really basic things: Star scrollers, text
+	scrolls, geometric (non detailed) art, or line drawings; it's
+	only 16 colors/bitplane, and there's only 4 bitplanes to play
+	with.
+
+	What you need is 4 bitplanes of data. You don't -HAVE- to
+	use 4 bitplanes... You can use 1 bitplane if you want, but
+	you only get 16 colors (NO!!! :-)).
+
+	You also need a plane map: You can't just have the predefined
+	graphics data and thats it: You have to "setup the plane" to
+	tell it what tile goes where.
+	
+	For demonstration purposes, i'll use code to explain it.
+
+-----------                              
+	The "lda #$0000" "tcd" transfers the DP location pointer to
+	where the scratchpad RAM is. This makes things go much faster,
+	because DP is always faster than normal RAM (yay for DP!!!)
+	
+	The other part puts where the location of the data in the
+	binary/image is into two DP locations: font and font2.
+
+font  equ $00     ; Direct page equates.
+font2 equ font+1
+	
+	sei
+	phk          
+	plb          
+	clc
+	xce
+	rep #$30     
+	lda #$0000   
+	tcd
+	lda #charset
+	sta font
+	lda #charset2
+	sta font2
+-----------                              
+	The following code tells the SNES where the actual data
+	is in VRAM memory.
+				     
+	lda #$10                ; Plane 0 text @ VRAM $1000. 
+	sta $2107               
+	
+	lda #$02                ; Tiles for Plane 0 @ VRAM $2000.
+	sta $210b               
+-----------                              
+	The following code actually MOVES the data in the binary/image
+	into the SNES's VRAM.
+
+	sep #$20
+	ldx #$2000              ; This puts the data sent thru $2118 and 
+					; $2119 into VRAM $2000.
+	stx $2116
+	ldy #$0000
+-     lda (font),y            ; Get bitplane 0 data (font)
+	sta $2118               ; ... and store it in bitplane 0.
+	lda (font2),y           ; Get bitplane 1 data (font2)
+	sta $2119               ; ... and store it in bitplane 1...
+	stz $2118               ; I don't want to use bitplane 2 and 3,
+	stz $2119               ; so I store zeros here. You could put
+					; more font data in there if you wanted.
+	iny
+	cpy #$0200        
+	bne -
+	
+	ldx #$1000              ; This puts the data sent thru $2118 and              
+	stx $2116               ; $2119 into VRAM $1000.
+	ldx #$0000
+-     lda TEXT,x              ; Get the character from TEXT...
+	and #$3f                ; AND #$3F because we only want the first
+					; 64 characters in the font.
+	sta $2118               ; 
+	stz $2119               ; Check near the end of this Section for
+					; an explaination on what the actual bits
+					; do instead of just storing 0 there all
+					; the time.
+	inx
+	cpx #$0400
+	bne -            
+-----------                              
+	Here's the actual data names (charset, charset2, and TEXT).
+	My new source has them in dcb % statements to make the font
+	more readable: The first time I did this, I had to convert
+	the binary stuff I wrote on paper into hex, then put them
+	into decent hex statements in an orderly fashion.
+
+charset 
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;'@'  
+	dcb     $00,$3c,$66,$7e,$66,$66,$66,$00 ;'A'
+	dcb     $00,$7c,$66,$7c,$66,$66,$7c,$00 ;'B'
+	dcb     $00,$3c,$66,$60,$60,$66,$3c,$00 ;'C'
+	dcb     $00,$78,$6c,$66,$66,$6c,$78,$00 ;'D'
+	dcb     $00,$7e,$60,$78,$60,$60,$7e,$00 ;'E'
+	dcb     $00,$7e,$60,$78,$60,$60,$60,$00 ;'F'
+	dcb     $00,$3c,$66,$60,$6e,$66,$3c,$00 ;'G'
+	dcb     $00,$66,$66,$7e,$66,$66,$66,$00 ;'H'
+	dcb     $00,$3c,$18,$18,$18,$18,$3c,$00 ;'I'
+	dcb     $00,$1e,$0c,$0c,$0c,$6c,$38,$00 ;'J'
+	dcb     $00,$6c,$78,$70,$78,$6c,$66,$00 ;'K'
+	dcb     $00,$60,$60,$60,$60,$60,$7e,$00 ;'L'
+	dcb     $00,$63,$77,$7f,$6b,$63,$63,$00 ;'M'
+	dcb     $00,$66,$76,$7e,$7e,$6e,$66,$00 ;'N'
+	dcb     $00,$3c,$66,$66,$66,$66,$3c,$00 ;'O'
+	dcb     $00,$7c,$66,$66,$7c,$60,$60,$00 ;'P'
+	dcb     $00,$3c,$66,$66,$66,$3c,$0e,$00 ;'Q'
+	dcb     $00,$7c,$66,$66,$7c,$6c,$66,$00 ;'R'
+	dcb     $00,$3e,$60,$3c,$06,$66,$3c,$00 ;'S'
+	dcb     $00,$7e,$18,$18,$18,$18,$18,$00 ;'T'
+	dcb     $00,$66,$66,$66,$66,$66,$3c,$00 ;'U'
+	dcb     $00,$66,$66,$66,$66,$3c,$18,$00 ;'V'
+	dcb     $00,$63,$63,$6b,$7f,$77,$63,$00 ;'W'
+	dcb     $00,$66,$3c,$18,$3c,$66,$66,$00 ;'X'
+	dcb     $00,$66,$66,$3c,$18,$18,$18,$00 ;'Y'
+	dcb     $00,$7e,$0c,$18,$30,$60,$7e,$00 ;'Z'
+	dcb     $08,$00,$00,$00,$00,$00,$00,$00 ;'['    
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;'\'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;']'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;'^'
+	dcb     $00,$08,$00,$00,$00,$00,$00,$00 ;'_'  
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;' '  
+	dcb     $00,$7E,$7E,$3C,$18,$00,$18,$00 ;'!'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;'"'
+	dcb     $80,$80,$80,$80,$80,$80,$80,$80 ;'#'
+	dcb     $FC,$FE,$FF,$F7,$F7,$FF,$FE,$FC ;'$'
+	dcb     $3E,$42,$4E,$5C,$5C,$4E,$42,$3E ;'%'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$01 ;'&'
+	dcb     $00,$00,$00,$07,$00,$00,$00,$00 ;'''
+	dcb     $00,$04,$08,$08,$08,$08,$04,$00 ;'('
+	dcb     $00,$20,$10,$10,$10,$10,$20,$00 ;')'
+	dcb     $08,$08,$08,$F8,$08,$08,$08,$08 ;'*'
+	dcb     $10,$10,$10,$1F,$10,$10,$10,$10 ;'+'
+	dcb     $10,$10,$20,$C0,$00,$00,$00,$00 ;','
+	dcb     $00,$00,$00,$FF,$00,$00,$00,$00 ;'-'
+	dcb     $00,$00,$00,$00,$00,$18,$18,$00 ;'.'
+	dcb     $00,$00,$00,$FF,$80,$80,$80,$80 ;'/'  
+	dcb     $00,$3c,$66,$6e,$76,$66,$3c,$00 ;'0'
+	dcb     $00,$18,$38,$18,$18,$18,$7e,$00 ;'1'
+	dcb     $00,$7c,$06,$0c,$30,$60,$7e,$00 ;'2'
+	dcb     $00,$7e,$06,$1c,$06,$66,$3c,$00 ;'3'
+	dcb     $00,$0e,$1e,$36,$7f,$06,$06,$00 ;'4'
+	dcb     $00,$7e,$60,$7c,$06,$66,$3c,$00 ;'5'
+	dcb     $00,$3e,$60,$7c,$66,$66,$3c,$00 ;'6'
+	dcb     $00,$7e,$06,$0c,$0c,$0c,$0c,$00 ;'7'
+	dcb     $00,$3c,$66,$3c,$66,$66,$3c,$00 ;'8'
+	dcb     $00,$3c,$66,$3e,$06,$66,$3c,$00 ;'9'
+	dcb     $00,$00,$00,$03,$04,$08,$08,$08 ;':' 
+	dcb     $00,$80,$80,$F0,$80,$80,$00,$00 ;';'
+	dcb     $80,$80,$80,$FF,$00,$00,$00,$00 ;'<'
+	dcb     $00,$00,$00,$C0,$20,$10,$10,$10 ;'='
+	dcb     $08,$08,$04,$03,$00,$00,$00,$00 ;'>'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;'?'
+
+charset2 
+	dcb     $00,$3C,$4E,$5E,$5E,$40,$3C,$00 ;'@'  
+	dcb     $00,$3c,$66,$7e,$66,$66,$66,$00 ;'A'
+	dcb     $00,$7c,$66,$7c,$66,$66,$7c,$00 ;'B'
+	dcb     $00,$3c,$66,$60,$60,$66,$3c,$00 ;'C'
+	dcb     $00,$78,$6c,$66,$66,$6c,$78,$00 ;'D'
+	dcb     $00,$7e,$60,$78,$60,$60,$7e,$00 ;'E'
+	dcb     $00,$7e,$60,$78,$60,$60,$60,$00 ;'F'
+	dcb     $00,$3c,$66,$60,$6e,$66,$3c,$00 ;'G'
+	dcb     $00,$66,$66,$7e,$66,$66,$66,$00 ;'H'
+	dcb     $00,$3c,$18,$18,$18,$18,$3c,$00 ;'I'
+	dcb     $00,$1e,$0c,$0c,$0c,$6c,$38,$00 ;'J'
+	dcb     $00,$6c,$78,$70,$78,$6c,$66,$00 ;'K'
+	dcb     $00,$60,$60,$60,$60,$60,$7e,$00 ;'L'
+	dcb     $00,$63,$77,$7f,$6b,$63,$63,$00 ;'M'
+	dcb     $00,$66,$76,$7e,$7e,$6e,$66,$00 ;'N'
+	dcb     $00,$3c,$66,$66,$66,$66,$3c,$00 ;'O'
+	dcb     $00,$7c,$66,$66,$7c,$60,$60,$00 ;'P'
+	dcb     $00,$3c,$66,$66,$66,$3c,$0e,$00 ;'Q'
+	dcb     $00,$7c,$66,$66,$7c,$6c,$66,$00 ;'R'
+	dcb     $00,$3e,$60,$3c,$06,$66,$3c,$00 ;'S'
+	dcb     $00,$7e,$18,$18,$18,$18,$18,$00 ;'T'
+	dcb     $00,$66,$66,$66,$66,$66,$3c,$00 ;'U'
+	dcb     $00,$66,$66,$66,$66,$3c,$18,$00 ;'V'
+	dcb     $00,$63,$63,$6b,$7f,$77,$63,$00 ;'W'
+	dcb     $00,$66,$3c,$18,$3c,$66,$66,$00 ;'X'
+	dcb     $00,$66,$66,$3c,$18,$18,$18,$00 ;'Y'
+	dcb     $00,$7e,$0c,$18,$30,$60,$7e,$00 ;'Z'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;'[' 
+	dcb     $09,$09,$00,$00,$00,$00,$00,$00 ;'\'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;']'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;'^'
+	dcb     $00,$08,$00,$00,$00,$00,$00,$00 ;'_'  
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;' '  
+	dcb     $00,$7E,$7E,$3C,$18,$00,$18,$00 ;'!'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;'"'
+	dcb     $80,$80,$80,$80,$80,$80,$80,$80 ;'#'
+	dcb     $FC,$FE,$FF,$F7,$F7,$FF,$FE,$FC ;'$'
+	dcb     $3E,$42,$4E,$5C,$5C,$4E,$42,$3E ;'%'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$01 ;'&'
+	dcb     $00,$00,$00,$07,$00,$00,$00,$00 ;'''
+	dcb     $00,$04,$08,$08,$08,$08,$04,$00 ;'('
+	dcb     $00,$20,$10,$10,$10,$10,$20,$00 ;')'
+	dcb     $08,$08,$08,$F8,$08,$08,$08,$08 ;'*'
+	dcb     $10,$10,$10,$1F,$10,$10,$10,$10 ;'+'
+	dcb     $10,$10,$20,$C0,$00,$00,$00,$00 ;','
+	dcb     $00,$00,$00,$FF,$00,$00,$00,$00 ;'-'
+	dcb     $00,$00,$00,$00,$00,$18,$18,$00 ;'.'
+	dcb     $00,$00,$00,$FF,$80,$80,$80,$80 ;'/'  
+	dcb     $00,$3c,$66,$6e,$76,$66,$3c,$00 ;'0'
+	dcb     $00,$18,$38,$18,$18,$18,$7e,$00 ;'1'
+	dcb     $00,$7c,$06,$0c,$30,$60,$7e,$00 ;'2'
+	dcb     $00,$7e,$06,$1c,$06,$66,$3c,$00 ;'3'
+	dcb     $00,$0e,$1e,$36,$7f,$06,$06,$00 ;'4'
+	dcb     $00,$7e,$60,$7c,$06,$66,$3c,$00 ;'5'
+	dcb     $00,$3e,$60,$7c,$66,$66,$3c,$00 ;'6'
+	dcb     $00,$7e,$06,$0c,$0c,$0c,$0c,$00 ;'7'
+	dcb     $00,$3c,$66,$3c,$66,$66,$3c,$00 ;'8'
+	dcb     $00,$3c,$66,$3e,$06,$66,$3c,$00 ;'9'
+	dcb     $00,$00,$00,$03,$04,$08,$08,$08 ;':' 
+	dcb     $00,$80,$80,$F0,$80,$80,$00,$00 ;';'
+	dcb     $80,$80,$80,$FF,$00,$00,$00,$00 ;'<'
+	dcb     $00,$00,$00,$C0,$20,$10,$10,$10 ;'='
+	dcb     $08,$08,$04,$03,$00,$00,$00,$00 ;'>'
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;'?'
+
+TEXT  dcb     " THIS IS YOUR ENTIRE SCREEN     "
+	dcb     " HERE... IF YOU REMOVE ONE OF   "
+	dcb     " THE LINES WHICH IS BLANK, THE  "
+	dcb     " SCREEN ENDS UP BEING FUNKY     "
+	dcb     " DOWN AT THE BOTTOM OF THE      "
+	dcb     " SCREEN.                        "
+	dcb     "                                "
+	dcb     " SO MAKE SURE YOU ALWAYS LEAVE  "
+	dcb     " ALL OF THIS TEXT THINGS IN!    "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "         YOSHI THE DINO         "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "                                "
+	dcb     "********************************"
+	dcb     "                                "
+	dcb     "                                "
+-----------                              
+	Well there's some code for those whom want to rip it :-).
+	
+	I hope I haven't confused you yet: If I have, go back and re-read
+	the code. I've been working with the SNES for awhile, so I under-
+	stand a little more than a beginner.
+
+	You're probably wondering how the heck the following line ends
+	up being an "@" on your TV, or whatever you have your SNES
+	hooked up to.
+
+	Lets look at charset and charset2.
+
+charset 
+	dcb     $00,$00,$00,$00,$00,$00,$00,$00 ;'@'  
+
+charset2 
+	dcb     $00,$3C,$4E,$5E,$5E,$40,$3C,$00 ;'@'  
+
+	Convert charsets hex-statements into binary. Consider each
+	new "$xx" statement a new pixel line. Tile size is 8x8.
+
+	00000000          = $00
+	00000000          = $00
+	00000000          = $00
+	00000000          = $00
+	00000000          = $00
+	00000000          = $00
+	00000000          = $00
+	00000000          = $00
+
+	Convert charset2s hex-statements into binary. 
+
+	00000000          = $00
+	00111100          = $3C
+	01001110          = $4E
+	01011110          = $5E
+	01011110          = $5E
+	01000000          = $40
+	00111100          = $3C
+	00000000          = $00
+
+	*NOW* do you see the at-symbol? (and yes, I -DID- draw all
+	of the font by hand. It took me HOURS, but I did it).
+
+	You're probably now asking: "Well, that tells me how to define
+	where a pixel IS: but how do I define it's color?"
+
+	This is the fun part. It's sort-of hard to explain:
+	If you have a 0 for bitplane 0, a 0 for bitplane 1, a 0 for
+	bitplane 2, and a 0 for bitplane 3, you get the color 0.
+		i.e.: 0000 = Color #0
+			||||___________Bitplane 0
+			|||__________Bitplane 1
+			||_________Bitplane 2
+			|________Bitplane 3
+
+	So, think about a 0 for bitplane 0, a 1 for bitplane 1 & 2
+	and a 0 for bitplane 3.
+		i.e.: 0110 = Color #6
+			||||___________Bitplane 0
+			|||__________Bitplane 1
+			||_________Bitplane 2
+			|________Bitplane 3
+
+	This is probably the best explaination i've ever seen done about
+	SNES pixel-color definition, so don't plan on seeing one any
+	better anytime soon :-).
+
+	Anyway, the result above gives you the color # per pixel; it's
+	fairly interesting... it's like an "overlay" type of method.
+
+	I mentioned in the source above that you should check near the
+	end of the Section for info on why I "stz $2119". Well, here's
+	why: The bits in the tile-data are fairly "silly": The tile
+	"character" itself is 10 bits, while the other 6 are "fun bits,"
+	as I call them. Here's the explaination:
+		    yx?cccNN | NNNNNNNN
+						y: Flip the tile vertically.
+						x: Flip the tile horiztonally.
+						?: Dunno! Set it to 1 and find out. 
+						c: Pallete # (0-7).
+						N: Character itself.
+						
+	So, I STZ there: Yes, I leave the top bits "unset," which means
+	you could get messed up data, but as far as I have checked, the
+	SNES has "clear memory" when you start it up: So the bits I don't
+	zero-out should be zeros anyways! :-) If you want to set them,
+	feel free to do so! The results of flipping Y and X are sortof
+	fun to play with. "To read this scrolly, you must stand on your
+	head" :-)
+=-=-=
+5)    SNES Screen mode definitions.
+-----------                              
+MODE   # of bitplanes  Colors per plane  Palletes      Max. # of colors
+---------------------------------------------------------------------------
+0      2               4               8               32
+1      4               16              8               128
+2      ?               ???             ?               ??? 
+3      8               256             1               256
+4      ?               ???             ?               ??? 
+5      ?               ???             ?               ??? 
+6      ?               16              8               128 (Interlaced mode)
+7      ?               256             1               256 (Yes, MODE 7)
+---------------------------------------------------------------------------
+
+	The parms which have "?" or "???" mean I don't know what they REALLY
+	are: I got a document which explained them, but it was bogus: It
+	said a 16 color mode had -1- bitplane. Weird... I'm not even sure
+	about MODE 6. But, we know what MODE 7 is, even if I'm not sure how
+	many bitplanes it DOES use (the doc says 1, I say 8).
+
+	I've tested MODE 0 and 1 myself. MODE 3 I might test in the future,
+	but i've never had the desire to draw up 8 bitplanes of data by
+	hand ( I don't have a SNES-graphics-generator for the PC! :-( ).
+=-=-=
+6)    SNES OAM/Sprite explaination.
+-----------                              
+	The sprites use a lookup table that contains info on their X and
+	Y position on the screen, their size, if they're flipped horizontally
+	or vertically, their color, and the actual character.
+
+	The format you need to make the table in is as follows:
+
+Size  Address/Offset          Explaination
+---------------------------------------------------------------------------
+*** SPRITE 0 ***
+BYTE  0                      
+					xxxxxxxx
+							x: X location.
+BYTE  1                       
+					yyyyyyyy
+							y: Y location.
+WORD  2+3         
+				  abcdeeex | xxxxxxxx
+							a: Vertical flip.
+							b: Horizontal flip.
+							c: Playfield priority.
+							d: Playfield priority.
+							e: Pallete #.
+							x: Character #.
+*** SPRITE 0 ***
+BYTE  4                       
+					xxxxxxxx
+							x: X location.
+BYTE  5                       
+					yyyyyyyy
+							y: Y location.
+....... and so on .......
+---------------------------------------------------------------------------
+	Continue this table all the way down to sprite #127 (the 128th
+	sprite).
+	
+	Don't think you're

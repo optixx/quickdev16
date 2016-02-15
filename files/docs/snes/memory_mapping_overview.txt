@@ -1,0 +1,139 @@
+SNES Memory Mapping
+by
+Duncanthrax of ShadowCraft
+
+Version: 1.0
+Date:	August 28, 1997
+
+Introduction:
+
+This is a little document I'm throwing together as I go. It probably has a few innacuracies, but it's certainly better than nothing. I became frustrated with the lack of solid knowledge and documentation regarding memory in the SNES, all the other maps were very incomplete. So, since I'm building an emulator at the moment, I figured I'd write all this down for posterity.
+
+If you find anything in here that is wrong, or if you have an additions or questions, or suggestions... or if you want to help with the emulator, mail me at:
+
+odin@ccs.neu.edu
+
+Or check out ShadowCraft's web page at:
+
+http://shadowguild.home.ml.org
+
+Have fun, and I hope this is helpful.
+
+*---------------------------------------------------*
+
+SNES Memory Map in LoROM Mode (Mode 0x20):
+
+Bank:	Address:	Purpose:
+-----	--------	--------
+00-3F	0000-1FFF	Shadow RAM
+	2000-5FFF	Hardware Registers
+	6000-7FFF	Expansion RAM
+	8000-FFFF	32k ROM Chunk
+40-7C	0000-7FFF	32k ROM Chunk
+	8000-FFFF	32k ROM Chunk
+7D	0000-FFFF	SRAM
+7E	0000-1FFF	Shadow RAM
+	2000-FFFF	System RAM
+7F	0000-FFFF	System RAM
+
+80-BF	0000-1FFF	Shadow RAM
+	2000-5FFF	Hardware Registers
+	6000-7FFF	Expansion RAM
+	8000-FFFF	32k ROM Chunk
+C0-FC	0000-7FFF	32k ROM Chunk
+	8000-FFFF	32k ROM Chunk
+FD	0000-FFFF	SRAM
+FE	0000-1FFF	Shadow RAM
+	2000-FFFF	System RAM
+FF	0000-FFxx	System RAM
+	FFxx-FFFF	Reset and NMI Vectors
+
+SNES Memory Map in HiROM Mode (Mode 0x21):
+
+Bank:	Address:	Purpose:
+-----	--------	--------
+00-3F	0000-1FFF	Shadow RAM
+	2000-5FFF	Hardware Registers
+	6000-7FFF	SRAM
+	8000-FFFF	32k ROM Chunk
+40-7D	0000-FFFF	64k ROM Chunk
+7E	0000-1FFF	Shadow RAM
+	2000-FFFF	System RAM
+7F	0000-FFFF	System RAM
+
+80-BF	0000-1FFF	Shadow RAM
+	2000-5FFF	Hardware Registers
+	6000-7FFF	SRAM
+	8000-FFFF	32k ROM Chunk
+C0-FE	0000-FFFF	64k ROM Chunk
+FF	0000-FFxx	64k ROM Chunk
+	FFxx-FFFF	Reset and NMI Vectors
+
+*--------------------------------------------*
+
+Now that I've given you the overview of the memory layout, perhaps a little explanation would be in order. We'll start at 00.0000 and work our way up... in LoROM first, then HiROM - to avoid confusion.
+
+00-3F	0000-1FFF	Shadow RAM
+
+What's going on here? Well, this is RAM that is the same in every bank up to and including 7E. It's the first 8k of System RAM. So, if you write 0x42 to 00.1001, you'll read a 0x42 from 7E.1001. Simple, huh?
+
+00-3F	2000-5FFF	Hardware Registers
+
+This is where you do graphics hardware calls, BIOS calls, DMA calls, and all that stuff. There are lots and lots of documents on this, all of them confusing. I may write one later on that clarifies a bunch of stuff, but for now I won't go into greater detail, as this is pretty straightforward... read and write values that interact with hardware.
+
+00-3F	6000-7FFF	Expansion RAM
+
+This is one of those areas in which I draw a blank. I'm not certain where this RAM is supposed to map, whether it is part of system RAM or what. Anybody who wants to clarify the purpose of this area of RAM can feel free. I've seen at least two cartridges that access this area...
+
+00-3F	8000-FFFF	32k ROM Chunk
+40-7C	0000-7FFF	32k ROM Chunk
+	8000-FFFF	32k ROM Chunk
+
+This bears a little explanation. When the LoROM is loaded into memory, this is where it is mapped (in a real SNES it isn't "loaded" at all - just mapped). The first 64 32k chunks are loaded into the upper half of banks 00-3F. Then, you continue at 40, mapping two (2!) 32k chunks in each bank from 40-7C. This should take care of an entire LoROM. I know that theoretically a LoROM could be slightly bigger than this, but I've never seen one that is...
+
+7D	0000-FFFF	SRAM
+
+OK, this is pretty obvious. This is where the battery-backed SRAM on cartridges is mapped. Very simple. Most have 64kb. DOOM, I've heard, has 256kb. Copiers have 256kb. Simple.
+
+7E	0000-1FFF	Shadow RAM
+	2000-FFFF	System RAM
+7F	0000-FFFF	System RAM
+
+Also very simple. This is the SNES's 128k of RAM. There, that was easy, right?
+
+80-FF	0000-FFFF	MIRROR!
+
+The upper area of the SNES's addressing space is for "Fast ROM". Games will use this area instead of the lower area (they're mapped exactly the same) when they want to run faster. The SNES gains 1Mhz of speed this way.
+
+The only thing that is different about the upper area is that the vectors for reset and NMI get stored in the FF.FFxx last 32 bytes...
+
+*-------------------------------------------*
+
+LoROM vs. HiROM!
+
+OK, this is the most interesting part of SNES mapping, and also the part where I'm most likely to get something wrong. As always, if this is incorrect or confusing, let me know!
+
+00-3F	0000-5FFF	Same as LoROM
+
+00-3F	6000-7FFF	8k SRAM Chunk
+
+00-3F	8000-FFFF	32k ROM Chunk
+40-7D	0000-FFFF	64k ROM Chunk
+
+Ok, this is not too hard, with one caveat... the first 64 32k chunks of the HiROM cartridge get loaded into 00-3F, and then it REPEATS FROM THE BEGINNING starting at 40.0000, this time going in 64k chunks until the end of the file. Now, people are about to start yelling about how this doesn't leave room for the last 2 64k chunks of a 32mb ROM. Yes, I know... keep reading.
+
+7E-7F	0000-FFFF	Same as LoROM
+
+Note 7D is no longer the SRAM, which is now in the expansion ram area.
+
+80-FD	0000-FFFF	Same as LoROM
+
+FE-FF	0000-FFFF	64k ROM Chunk
+
+Aha! Here it is... the last two chunks of a 32mb ROM (i.e. Chrono Trigger, etc.) get loaded here. Remember as always that the last 16 bytes are for vectors, and you're all set!
+
+*--------------------------------------------*
+
+Ok kiddies! That was a quick tour through the SNES memory map. Tune in next time for "Dr. Duncanthrax teaches CPU!" - same Bat Time, same Bat Channel!
+
+Fin

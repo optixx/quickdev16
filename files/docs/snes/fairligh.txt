@@ -1,0 +1,759 @@
+                        This fine text file came from...
+
+              /\____     __/\____           /\ _______/\__/\________
+             / __  //\   \_\/___ \  /\      \// _____/ /_/ /__  _  /
+         ___/ /__\//  \  /\  __/ / / / ___/\_/ /_   / /_/ /  / / \/ 
+         \_/ /__/ / /\ \/ / / __/ / /  \_/ // /_ \ / /_  /  / /     
+         _/ /    / /  \ \/__\ \__/ /_/\ / // /_/ / \/ / /  / /      
+         \_/[SP] \/   /\_____\ \_\____/ \/ \__  /    / /   \/       
+                      \/      \/            _/ /     \/             
+                                            \_/			    
+                                                               S.H.Q
+                          Far Out Multi Node System
+                          					
+        Node1 +46-46-133489   Node2 +46-46-133482   Node3 +46-46-133424
+								
+    If you want to read this then download it!  No free loaders here!!
+									
+··············································································
+-------->      a SMaSHiNG 100% SUPER NiNTENDo oNLY SYSTEM        <----------
+   ___/\____/\____    /\______    /\       /\_____/\__________  /\  /\
+   \____   / __   \  /   __   \  /  \ /\  /     _    ______   \/  \/  \
+    / _/ _/  _/\/\ \/   / /\   \/   // / /   /\//   /   / /\   \ _ \   \
+   /  \  \_     \ \    /  \/       /_\ \/   /  /   /   /  \/   /  \    /
+   \  /\  /______\ \  /\______/\___  /\____/   \  /\  /\__________/\  /
+    \/  \/          \/             \/           \/  \/              \/
+---------> +46-431-51557 ----- SYSoP: SY-KLoNE - CoSYSoP: HiTMaN <-----------
+²
+
+; Corsair presents an example of how to drive the hardware - basically I used this intro
+
+; cos everyone knows how it looks and thus it seemed a good bit of code to do..
+
+; the comments outside the hardware stuff are a bit sparse - i'm not teaching you how
+
+; Fairlight write code , just their use of hardware!!
+
+;
+
+; questions as usual leave on GRAVEYARD, Treasure Island or Oasis..
+
+;
+
+
+
+
+
+Start Of Intro From Fairlight
+
+------------------------------------------------
+
+00E000 78                     SEI			; disable irq ints  
+
+00E001 A9 8F                  LDA #$8F			;
+
+00E003 8D 00 21               STA Screen_Fader		; turn screen on at full brightness
+
+00E006 9C 00 42               STZ $4200			;
+
+00E009 9C 0C 42               STZ Start_DMA_Hi		; disable all 8 DMA channels
+
+00E00C 9C 0B 42               STZ Start_DMA_Lo		;
+
+00E00F 18                     CLC 			;
+
+00E010 FB                     XCE 			; place in native (16 bit) mode
+
+00E011 C2 30                  REP #$30			; set x,y,a all to 16 bit
+
+00E013 A9 00 00               LDA #$0000		; 
+
+00E016 5B                     TCD 			; set direct register to bank zero
+
+00E017 64 07                  STZ $07			; clear memory loc. 7
+
+00E019 A9 20 00               LDA #$0020		;
+
+00E01C 85 0B                  STA $0B			; set $0b.w = $0020
+
+00E01E E2 20                  SEP #$20			; set accum. to 8 bit
+
+00E020 A9 80                  LDA #$80			;
+
+00E022 8D 15 21               STA Video_Port_Control	; initialise Video Port Controller
+
+00E025 A2 00 10               LDX #$1000		;
+
+00E028 8E 16 21               STX Video_Port_Address	; Point Vram Pointer To $1000
+
+
+
+00E02B A9 5B                  LDA #$5B        		;
+
+00E02D 85 0D                  STA $0D         		; Copies $5bx8 bytes of char
+
+00E02F A2 00 00               LDX #$0000      		; data into Video Ram via the port
+
+outer_loop:						; thus giving 2
+
+00E032 A0 08 00               LDY #$0008      		;
+
+inner_loop:						;
+
+00E035 BD D3 E2               LDA CHAR_SET,X  		; .: Character set for intro
+
+00E038 8D 18 21               STA Video_Port_Lo		;    and FLT logo.
+
+00E03B 9C 19 21               STZ Video_Port_Hi		;
+
+00E03E E8                     INX             		;
+
+00E03F 88                     DEY             		;
+
+00E040 D0 F3                  BNE inner_loop   		;
+
+00E042 C6 0D                  DEC $0D         		;
+
+00E044 D0 EC                  BNE outer_loop   		;
+
+
+
+00E046 9C 05 21               STZ $2105			; clear Video Reg. unknown
+
+00E049 A9 04                  LDA #$04        		; set Playfield 0 To $400 and 32x32 chars
+
+00E04B 8D 07 21               STA Playfield_0_Addr	; 
+
+00E04E A9 08                  LDA #$08        		; set Playfield 1 to $800 and 32x32 chars
+
+00E050 8D 08 21               STA Playfield_1_Addr	;
+
+00E053 A9 11                  LDA #$11        		; Set Playfield 0+1 Tile Addr To $100
+
+00E055 8D 0B 21               STA Tile01_Vram_Addr	;
+
+
+
+00E058 A2 07 00               LDX #$0007      		;
+
+00E05B 9E 0D 21               STZ Plane_0_Scroll_X,X	; Clear All The Scroll Pointers
+
+00E05E 9E 0D 21               STZ Plane_0_Scroll_X,X 	;
+
+00E061 CA                     DEX 			;
+
+00E062 10 F7                  BPL $00E05B		;
+
+
+
+00E064 A2 07 00               LDX #$0007		;
+
+00E067 9E 23 21               STZ $2123,X		; Clear Video Registers $2123-$212a
+
+00E06A CA                     DEX 			;
+
+00E06B 10 FA                  BPL $00E067		;
+
+
+
+00E06D A9 03                  LDA #$03			;
+
+00E06F 8D 2C 21               STA Playfield_Enable	; Enable playfields 0 & 1
+
+00E072 A2 04 00               LDX #$0004		;
+
+00E075 9E 2D 21               STZ $212D,X		; Clear Video Registers $212d-$2130
+
+00E078 CA                     DEX 			;
+
+00E079 10 FA                  BPL $00E075		;
+
+
+
+00E07B 9C 33 21               STZ Interlace_Flags	; Disable Interlace Mode
+
+00E07E A9 04                  LDA #$04			;
+
+00E080 9C 16 21               STZ Video_Port_Address	; Set Video Port Address to $400
+
+00E083 8D 17 21               STA Video_Port_Address+1	;
+
+00E086 A9 80                  LDA #$80			;
+
+00E088 8D 15 21               STA Video_Port_Controller	; Initialise Video Controller
+
+
+
+00E08B A2 00 08               LDX #$0800		;
+
+00E08E 9C 19 21               STZ Video_Port_Data+1	; Clear $800 bytes of Vram from $400 upwards
+
+00E091 CA                     DEX             		;
+
+00E092 D0 FA                  BNE $00E08E		;
+
+
+
+00E094 A2 AB E5               LDX #$E5AB      		; Display Text From $e5ab on..
+
+00E097 20 3E E2               JSR DO_TEXT     		; 
+
+00E09A A9 08                  LDA #$08			;
+
+00E09C 9C 16 21               STZ Video_Port_Address	; Set Video Port Address to $800 
+
+00E09F 8D 17 21               STA Video_Port_Address+1	; 
+
+00E0A2 9C 15 21               STZ Video_Port_Controller	; Clear Video Port Controller
+
+
+
+00E0A5 A2 00 00               LDX #$0000		;
+
+00E0A8 BD 91 E6               LDA $E691,X     		; Copy $a0 bytes down into Vram location
+
+00E0AB 8D 18 21               STA Video_Port_Data	; $800 onwards
+
+00E0AE E8                     INX 			; 
+
+00E0AF E0 A0 00               CPX #$00A0		;
+
+00E0B2 D0 F4		      BNE $E0A8			;
+
+
+
+00E0B4 A9 20		      LDA #$20			;
+
+00E0B6 8D 18 21               STA Video_Port_Data	; Fill One Screen Worth of VRAM with 
+
+00E0B9 E8                     INX 			; spaces
+
+00E0BA E0 00 04               CPX #$400			;
+
+00E0BD D0 F7		      BNE $E0B6			;
+
+
+
+00E0BF A9 A8		      LDA #$A8			;
+
+00E0C1 8D 00 0C               STA $0C00			; $c00 = $a8
+
+00E0C4 8D 00 0D               STA $0D00			; $d00 = $a8
+
+
+
+00E0C7 A9 21                  LDA #$21			;
+
+00E0C9 A2 00 00               LDX #$0000		; set $c01-$c028 = $21
+
+00E0CC 9D 01 0C               STA $0C01,X		;
+
+00E0CF E8                     INX 			; ie set up the color pointer table
+
+00E0D0 E0 28 00               CPX #$0028		;
+
+00E0D3 D0 F7		      BNE $E0CC			;
+
+
+
+00E0D5 A9 F8		      LDA #$F8			;
+
+00E0D6 F8                     SED 			; set decimal flag on
+
+00E0D7 9D 01 0C               STA $0C01,X		;
+
+00E0DA A9 01                  LDA #$01			; set more low memory
+
+00E0DC 9D 02 0C               STA $0C02,X		;
+
+00E0DF E8                     INX 			;
+
+00E0E0 E0 A0 00               CPX #$00A0		; and further color palette set-up
+
+00E0E3 D0 F7		      BNE $E0DC			;
+
+
+
+00E0E5 9e 02 0C		      STZ $C02,X		;
+
+00E0E8 A9 0B                  LDA #$0B			;
+
+00E0EA A2 00 00               LDX #$0000		; set even more low memory 
+
+00E0ED 9D 01 0D               STA $0D01,X		; - seems to set it to $b and then clear it??
+
+00E0F0 E8                     INX 			;
+
+00E0F1 9E 01 0D               STZ $0D01,X		;
+
+00E0F4 1A                     INC A			; pallete data set up
+
+00E0F5 E8                     INX 			;
+
+00E0F6 E0 28 00               CPX #$0028		;
+
+00E0F9 D0 F2		      BNE $E0ED			;
+
+
+
+00E0FB 9D 01 0D		      STA $0D01,X               ;   
+
+00E0FE E8                     INX 			;
+
+00E0FF 9E 01 0D               STZ $0D01,X		;
+
+00E102 3A                     DEC A			; and more 'irelevant' low mem stuff
+
+00E103 E8                     INX 			;
+
+00E104 E0 50                  CPX #$0050		; more palette data set-up
+
+00E107 D0 F2                  BNE $E0FB			;
+
+
+
+00E109 A9 F8		      LDA #$F8			;
+
+00E10B 9D 01 0D               STA $0D01,X		;
+
+00E10E A9 FF                  LDA #$FF			; and more 'irelevant' low mem stuff
+
+00E110 9D 02 0D               STA $0D02,X		;
+
+00E113 E8                     INX 			; more palette data set-up
+
+00E114 E0 40 01               CPX #$0140		;
+
+00E117 D0 F7		      BNE $E109			;
+
+00E119 9E 02 0D		      STZ $D02,X		;
+
+
+
+00E11C 9C 0C 42               STZ DMA_Enable		; Disable all DMA channels
+
+00E11F 9C 10 43               STZ DMA_Control_1		;
+
+00E122 A9 02                  LDA #$02       		; set up control regs for channel 1+2
+
+00E124 8D 20 43               STA DMA_Control_2		;
+
+00E127 A9 21                  LDA #$21       		; Select pallete pointer + color for
+
+00E129 8D 11 43               STA DMA_Destination_1	; DMA dump destination
+
+00E12C 1A                     INC A          		;
+
+00E12D 8D 21 43               STA DMA_Destination_2	;
+
+00E130 A2 00 0C               LDX #$0C00     		;
+
+00E133 8E 12 43               STX DMA_Source_Addr_1	; Palette numbers from $0c00 
+
+00E136 A2 00 0D               LDX #$0D00     		;
+
+00E139 8E 22 43               STX DMA_Source_Addr_2	; Palette data from $0d00
+
+00E13C 9C 14 43               STZ DMA_Source_Bank_1	;
+
+00E13F 9C 24 43               STZ DMA_Source_Bank_2	;
+
+00E142 A9 06                  LDA #$06			; turn on DMA channels 1+2
+
+00E144 8D 0C 42               STA DMA_Enable		;
+
+
+
+00E147 A9 0F                  LDA #$0F			; turn off screen
+
+00E149 8D 00 21               STA Screen_Fader		;
+
+00E14C A9 01                  LDA #$01			;
+
+00E14E 8D 00 42               STA $4200			; errmm
+
+00E151 20 C1 E1               JSR Pad_Poll_Hi		; Wait for poll hi
+
+00E154 9C 21 21               STZ Palette_Color_Pointer ; 
+
+00E157 9C 22 21               STZ Palette_Color_Data	; set background to black
+
+00E15A 9C 22 21               STZ Palette_Color_Data	;
+
+00E15D 4C 97 E1               JMP $00E197
+
+------------------------------------------------
+
+00E160 20 C1 E1               JSR Pad_Poll_Hi		; wait for poll hi
+
+00E163 20 13 E2               JSR PROC_B
+
+
+
+00E166 AD 12 42               LDA Pad_Poll		; Wait until a button has been
+
+00E169 4A                     LSR A			; pressed
+
+00E16A B0 FA                  BCS $00E166		;
+
+
+
+00E16C 20 CD E1               JSR PROC_A		;
+
+00E16F A9 F0                  LDA #$F0			;
+
+00E171 25 0A                  AND $0A			;
+
+00E173 F0 46                  BEQ $00E1BB		;
+
+00E175 5C 00 80 00            JMP GAME			; and run the game..
+
+------------------------------------------------
+
+00E179 A9 01                  LDA #$01			;
+
+00E17B A2 01 00               LDX #$0001		;
+
+00E17E 20 C1 E1               JSR Pad_Poll_Hi		;
+
+00E181 8D 06 21               STA Pixelation		;
+
+00E184 20 C7 E1               JSR Pad_Poll_Lo		;
+
+00E187 CA                     DEX 			;
+
+00E188 10 F4                  BPL $00E17E		;
+
+00E18A 18                     CLC 			;
+
+00E18B 69 10                  ADC #$10			;
+
+00E18D C9 01                  CMP #$01			;
+
+00E18F D0 EA                  BNE $00E17B		;
+
+
+
+00E191 20 40 E2               JSR $00E240		;
+
+00E194 20 C7 E1               JSR Pad_Poll_Lo		;
+
+
+
+00E197 20 C1 E1               JSR Pad_Poll_Hi		; wait for b7 pad_poll to go hi.
+
+00E19A 20 13 E2               JSR PROC_B		;
+
+
+
+00E19D A9 F1                  LDA #$F1       		;
+
+00E19F A2 01 00               LDX #$0001		; 'Reverse Pixelate' the text into vision
+
+00E1A2 20 C1 E1               JSR Pad_Poll_Hi   	;
+
+00E1A5 8D 06 21               STA Pixelation		;
+
+00E1A8 20 C7 E1               JSR Pad_Poll_Lo    	;
+
+00E1AB CA                     DEX            		;
+
+00E1AC 10 F4                  BPL $00E1A2    		;
+
+00E1AE 38                     SEC            		;
+
+00E1AF E9 10                  SBC #$10       		;
+
+00E1B1 C9 F1                  CMP #$F1       		;
+
+00E1B3 D0 EA                  BNE $00E19F    		;
+
+
+
+00E1B5 20 C1 E1               JSR Pad_Poll_Hi		;
+
+00E1B8 9C 06 21               STZ Pixelation 		; set pixels to normal.
+
+00E1BB 20 C7 E1               JSR Pad_Poll_Lo		;
+
+00E1BE 4C 60 E1               JMP $00E160		; and jump into the main loop
+
+------------------------------------------------
+
+00E1C1 2C 12 42 Pad_Poll_Hi   BIT Pad_Poll		; wait until bit 7 of pad_ready goes hi
+
+00E1C4 10 FB                  BPL Pad_Poll_Hi		;
+
+00E1C6 60                     RTS			;
+
+------------------------------------------------
+
+00E1C7 2C 12 42 Pad_Poll_Lo   BIT Pad_Poll		;
+
+00E1CA 30 FB                  BMI Pad_Poll_Lo       	; wait until bit 7 of pad_ready goes lo
+
+00E1CC 60                     RTS 			;
+
+------------------------------------------------
+
+00E1CD C2 20    PROC_A        REP #$20			; 16 bit accum.
+
+00E1CF A2 00 00               LDX #$0000		;
+
+
+
+00E1D2 A9 FF 7F               LDA #$7FFF		;
+
+00E1D5 E4 0B                  CPX $0B			;
+
+00E1D7 F0 07                  BEQ $00E1E0		; set up table of $7fff in memory
+
+00E1D9 9D B0 0D               STA $0DB0,X		;
+
+00E1DC E8                     INX 			;
+
+00E1DD E8                     INX 			;
+
+00E1DE 80 F5                  BRA $00E1D5		;
+
+00E1E0 A0 00 00               LDY #$0000		; and then follow the table with 5 zeros
+
+00E1E3 B9 C3 E2               LDA $E2C3,Y   		;
+
+
+
+00E1E6 9D B0 0D               STA $0DB0,X		;
+
+00E1E9 C8                     INY 			;
+
+00E1EA C8                     INY 			;
+
+00E1EB E8                     INX 			;
+
+00E1EC E8                     INX 			;
+
+00E1ED C0 10 00               CPY #$0010		;
+
+00E1F0 D0 F1                  BNE $00E1E3		;
+
+
+
+00E1F2 A9 FF 7F               LDA #$7FFF		; and if x<>$90 then add more $7fff's
+
+00E1F5 E0 90 00               CPX #$0090		;
+
+00E1F8 F0 07                  BEQ $00E201		;
+
+00E1FA 9D B0 0D               STA $0DB0,X		;
+
+00E1FD E8                     INX 			;
+
+00E1FE E8                     INX 			;
+
+00E1FF 80 F4                  BRA $00E1F5		;
+
+------------------------------------------------
+
+00E201 A6 07                  LDX $07			; preserve old pad data
+
+00E203 AD 18 42               LDA Pad_0_Data_Lo		; get new data
+
+00E206 85 07                  STA $07			; and store it as the old
+
+00E208 8A                     TXA 			; wop it in accum.
+
+00E209 49 FF FF               EOR #$FFFF		; not the old data
+
+00E20C 25 07                  AND $07			; and then use as a mask on new data
+
+00E20E 85 09                  STA $09			; and then store in 9
+
+00E210 E2 20                  SEP #$20			; and back to 8 bit accum..
+
+00E212 60                     RTS 			; and back..
+
+------------------------------------------------
+
+00E213 9C 15 21 PROC_B        STZ Video_Port_Control	; Reset Video Port
+
+00E216 A9 04                  LDA #$04          	;
+
+00E218 9C 16 21               STZ Video_Port_Addr	; set video ram pointer to $400
+
+00E21B 8D 17 21               STA Video_Port_Addr_Hi	;
+
+00E21E 9C 19 21               STZ Video_Port_Data_Hi	;
+
+00E221 9C 00 43               STZ DMA_Control_0		; reset dma controller #0
+
+00E224 A9 18                  LDA #$18			;
+
+00E226 8D 01 43               STA DMA_Destination_0	; point dma #0 to vram
+
+00E229 A2 00 04               LDX #$0400		;
+
+00E22C 8E 02 43               STX DMA_Source_Addr_0	; copy from address $400 to vram
+
+00E22F 9C 04 43               STZ DMA_Source_Bank_0	;
+
+00E232 A2 00 04               LDX #$0400		; copy $400 bytes into vram
+
+00E235 8E 05 43               STX DMA_Size_0		;
+
+00E238 A9 01                  LDA #$01			; and enable dma #0
+
+00E23A 8D 0B 42               STA DMA_Enable		;
+
+00E23D 60                     RTS 
+
+------------------------------------------------
+
+00E23E 86 00    DO_TEXT       STX $00          		; store text location
+
+00E240 A2 00 04               LDX #$0400       		; set pointer to text
+
+00E243 86 02                  STX $02          		; store text location again
+
+00E245 64 06                  STZ $06			; clear 6
+
+00E247 A2 00 00               LDX #$0000		; 
+
+00E24A B2 00                  LDA ($00)			; get next char
+
+00E24C 30 55                  BMI $00E2A3      		; if bit 7 set then off we go..
+
+00E24E C9 20                  CMP #$20			; is it a space
+
+00E250 90 11                  BCC $00E263      		; branch if less than a space..
+
+00E252 92 02                  STA ($02)        		; store char
+
+00E254 E8                     INX 			;
+
+00E255 E6 00                  INC $00          		; next char
+
+00E257 D0 02                  BNE $00E25B		;
+
+00E259 E6 01                  INC $01			;
+
+00E25B E6 02                  INC $02          		; next dest spot
+
+00E25D D0 EB                  BNE $00E24A		;
+
+00E25F E6 03                  INC $03			; 
+
+00E261 80 E7                  BRA $00E24A		;
+
+------------------------------------------------
+
+00E263 E6 00                  INC $00          		; increment counter 
+
+00E265 D0 02                  BNE $00E269      		; if not end of 255 boundary skip
+
+00E267 E6 01                  INC $01			; increment hi byte of pointer
+
+00E269 48                     PHA 			;
+
+00E26A A9 20                  LDA #$20			;
+
+00E26C E0 20                  CPX #$0020		; 
+
+00E26F F0 0B                  BEQ $E27C			;
+
+00E271 92 02                  STA ($02)			; basically these routines strip
+
+00E273 E8                     INX 			; chars unnecessary and prepare the
+
+00E274 E6 02                  INC $02			; text for output..
+
+00E276 D0 F4                  BNE $00E26C		;
+
+00E278 E6 03                  INC $03			; these lines increment the 16 bit pointer
+
+00E27A 80 F0                  BRA $00E26C		; as 2 8 bit pointers
+
+------------------------------------------------
+
+00E27C 68                     PLA 			;
+
+00E27D A2 00 00               LDX #$0000		;
+
+00E280 E6 06                  INC $06			;
+
+00E282 C5 06                  CMP $06			;
+
+00E284 D0 E3                  BNE $00E269		;
+
+00E286 B2 00                  LDA ($00)			;
+
+00E288 E6 00                  INC $00			;
+
+00E28A D0 02                  BNE $00E28E		;
+
+00E28C E6 01                  INC $01			;
+
+00E28E 85 0D                  STA $0D			;
+
+00E290 64 0E                  STZ $0E			;
+
+00E292 A9 20                  LDA #$20			;
+
+00E294 E4 0D                  CPX $0D			;
+
+00E296 F0 B2                  BEQ $00E24A		;
+
+00E298 92 02                  STA ($02)			;
+
+00E29A E8                     INX 			;
+
+00E29B E6 02                  INC $02			;
+
+00E29D D0 02                  BNE $00E2A1		; and again increment pointer as 2 8 bit
+
+00E29F E6 03                  INC $03			;
+
+00E2A1 80 F1                  BRA $00E294		;
+
+------------------------------------------------
+
+00E2A3 A5 06                  LDA $06			;
+
+00E2A5 C9 20                  CMP #$20			;
+
+00E2A7 F0 19                  BEQ $00E2C2		;
+
+00E2A9 A9 20                  LDA #$20			;
+
+00E2AB E0 20                  CPX #$0020		;
+
+00E2AE F0 0B                  BEQ $E2BB			;
+
+00E2B0 92 02                  STA ($02)			;
+
+00E2B2 E8                     INX 			;
+
+00E2B3 E6 02                  INC $02			;
+
+00E2B5 D0 F4                  BNE $00E2AB		;
+
+00E2B7 E6 03                  INC $03			;
+
+00E2B9 80 F0                  BRA $00E2AB		;
+
+------------------------------------------------
+
+00E2BB A2 00 00               LDX #$0000		;
+
+00E2BE E6 06                  INC $06			;
+
+00E2C0 80 E1                  BRA $00E2A3		;
+
+00E2C2 60                     RTS 			;
+
+------------------------------------------------
+
+
+
+The End..
+
+ 

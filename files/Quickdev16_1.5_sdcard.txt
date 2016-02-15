@@ -1,0 +1,45 @@
+--------------------------------
+SDcard Board
+--------------------------------
+Connector 
+
+1  DO   -> 7  
+2  GND  -> 6 
+3  VCC  -> 4
+4  CS   -> 1
+5  DI   -> 2
+6  CLK  -> 5
+-
+SDcard
+------------------\
+|                  \
+| 8 7 6 5 4 3 2 1 9 |
+|                   |
+
+1 CS
+2 CMD/DI
+3 GND
+4 VCC
+5 CLK/SCLK
+6 GND
+7 DAT/DO
+8 --
+9 --	
+
+
+--------------------------------
+Quickdev Header
+--------------------------------
+top/usb
+1 GND                -> GND
+2 ISP RST  - RESET   -      
+3 ISP SCK  - PB7     - CLK
+4 ISP MISO - PB6     - DI
+5 ISP MOSI - PB5     - DO
+6 MMC CS   - PB4     - CS 
+7 VCC                -> VCC 
+
+
+
+#define SPI_DI				6		MISO
+#define SPI_DO				5		MOSI

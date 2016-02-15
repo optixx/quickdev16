@@ -1,0 +1,92 @@
+add  add adress for all instruction fetches 
+adc  add memory to accumulator with carry 
+and  'and' memory with accumulator 
+asl  arithmic shift left 1 bit (memory or accumulator) 
+bcc  branch on carry clear C=0 
+bcs  branch on carry set C=1 
+beq  branch if equal Z=1 
+bit  bit test 
+bmi  branch if result is negative N=1 
+bne  branch if not equal Z=0 
+bpl  branch if result is plus N=0 
+bra  branch always 
+brk  force break 
+brl  branch always long 
+bvc  branch on overflow clear V=0 
+bvs  branch on overflow set V=1 
+clc  clear carry flag C=0 
+cld  clear decimal mode D=0 
+cli  clear interrupt disable bit I=0 
+clv  clear overflow flag V=0 
+cmp  compare memory and accumulator 
+cop  coprocessor 
+cpx  compare memory and index x 
+cpy  compare memory and index y 
+dec  decrement memory or accumulator by one 
+dex  decrement index x by one 
+dey  decrement index y by one 
+eor  exclusive 'or' memory with accumulator 
+inc  increment memory or accumulator by one 
+inx  increment index x by one 
+iny  increment index y by one 
+jml  jump long other banks possible 
+jmp  jump to location in same bank 
+jsl  jump to subroutine long 
+jsr  jump to subroutine in same bank 
+lda  load accumulator with memory 
+ldx  load index x with memory 
+ldy  load index y with memory 
+lsr  logical shift right by one bit (memory or accu) 
+mvn  move block negative (uses x,y,a) 
+mvp  move block positive (uses x,y,a) 
+nop  no operation 
+ora  'or' memory with accumulator 
+pea  push effective adres (or data) on stack 
+pei  push effective indirect adres on stack 
+per  push effective program counter relative adres on stack 
+pha  push accumulator on stack 
+phb  push data bank register on stack 
+phd  push direct register on stack 
+phk  push program bank register on stack 
+php  push processor status on stack 
+phx  push index register x on stack 
+phy  push index register y on stack 
+pla  pull accumulator from stack 
+plb  pull data bank register from stack 
+pld  pull direct register from stack 
+plp  pull processor status from stack 
+plx  pull index x from stack 
+ply  pull index y from stack 
+rep  reset processor status bits 
+rol  rotate left one bit (memory or accu) 
+ror  rorate right one bit (memory or accu) 
+rti  return from interrupt 
+rtl  return from subroutine long 
+rts  return from subroutine 
+sbc  subtract memory from accumulator with borrow 
+sec  set carry flag C=1 
+sed  set decimal mode D=1 
+sei  set interrupt disable status I=1 
+sep  set processor status bits 
+sta  store accumulator in memory 
+stp  stop the clock (only reset will help) 
+stx  store index x in memory 
+sty  store index y in memory 
+stz  store zero in memory 
+tad  (tcd) transfer accumulator to direct register 
+tas  (tcs) transfer accumulator to stack pointer register 
+tax  transfer accumulator to index x 
+tay  transfer accumulator to index y 
+tda  (tdc) transfer direct register to accumulator 
+trb  test and reset bit 
+tsa  (tsc) transfer stack pointer register to accumulator 
+tsb  test and set bit 
+tsx  transfer stack pointer register to index x 
+txa  transfer index x to accumulator 
+txs  transfer index x to stack pointer register 
+txy  transfer index x to index y 
+tya  transfer index y to accumulator 
+tyx  transfer index y to index x 
+wai  wait for interrupt 
+xba  exchange accumulator high and low 8 bits 
+xce  exchange carry and emulation bits 

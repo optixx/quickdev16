@@ -1,0 +1,606 @@
+ ----------------------------------------------------------------------------
+|rwd2?|Address|Title & Explanation                                           |
+||||||-----------------------------------------------------------------------|
+||||||                                                                       |
+||||||__  ?: Don't know what the statistics on this register are             |
+|||||____ 2: 2 byte (1 word) length register                                 |
+||||_____ d: Double-byte write required when writing to this register        |
+|||______ w: Writable register                                               |
+||_______ r: Readable register                                               |
+|                                                                            |
+|Words in brackets ( [] ) are the official "names" of the registers          |
+|Words in braces ( {} ) are different from the "real" SNES manual            |
+|Bits define 1 as "ON/ENABLE" and 0 as "OFF/DISABLE," unless otherwise stated|
+|Registers without any bits/defined-data can be assumed to be 8 bits in size |
+|and should only be read once.                                               |
+|----------------------------------------------------------------------------|
+|NOTE! I have renamed all occurances of "Plane {x}" to "BG{x+1}." This means |
+|stuff like "Plane 2" is now referred to as "BG3" - This is how it is done   |
+|(so i'm told) in the official SNES documentation, so for compatibility and  |
+|comprehension, i've renamed everything.                                     |
+|                                                                            |
+|I have also renamed "Sprites" to "OBJ", "objects," or "OAM" for the same    |
+|reason that I renamed "Plane" to "BG."                                      |
+|----------------------------------------------------------------------------|
+|rwd2?|Address|Title & Explanation                                           |
+|----------------------------------------------------------------------------|
+| w   |$2100  |Screen display register [INIDISP]                             |
+|     |       |x000bbbb              x: 0 = Screen on.                       |
+|     |       |                         1 = Screen off.                      |
+|     |       |                   bbbb: Brightness ($0-$F).                  |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2101  |OAM size register [OBSEL]                                     |
+|     |       |sssnnbbb              s: 000 =  8x8  or 16x16.                |
+|     |       |                         001 =  8x8  or 32x32.                |
+|     |       |                         010 =  8x8  or 64x64.                |
+|     |       |                         011 = 16x16 or 32x32.                |
+|     |       |                         100 = 16x16 or 64x64.                |
+|     |       |                         101 = 32x32 or 64x64.                |
+|     |       |                      n: Name selection (upper 4k word addr). |
+|     |       |                      b: Base selection (8k word seg. addr).  |
+|     |       |                                                              |
+|     |       |                                                              |
+| w 2 |$2102  |OAM address register [OAMADDL/OAMADDH]                        |
+|     |       |aaaaaaaa r000000m     a: OAM address.                         |
+|     |       |                      r: OAM priority rotation.               |
+|     |       |                      m: OAM address MSB.                     |
+|     |       |                                                              |
+|     |       |                                                              |
+| wd  |$2104  |OAM data register [OAMDATA]                                   |
+|     |       |???????? ????????                                             |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2105  |Screen mode register [BGMODE]                                 |
+|     |       |abcdefff              a: BG4 tile size (0=8x8, 1=16x16).      |
+|     |       |                      b: BG3 tile size (0=8x8, 1=16x16).      |
+|     |       |                      c: BG2 tile size (0=8x8, 1=16x16).      |
+|     |       |                      d: BG1 tile size (0=8x8, 1=16x16).      |
+|     |       |                      e: Highest priority for BG3 in MODE 1.  |
+|     |       |                      f: MODE definition.                     |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2106  |Screen pixelation register [MOSAIC]                           |
+|     |       |xxxxabcd              x: Pixel size (0=Smallest, $F=Largest). |
+|     |       |                      a: Affect BG4.                          |
+|     |       |                      b: Affect BG3.                          |
+|     |       |                      c: Affect BG2.                          |
+|     |       |                      d: Affect BG1.                          |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2107  |BG1 VRAM location register [BG1SC]                            |
+|     |       |xxxxxxab              x: Base address                         |
+|     |       |                     ab: SC size                              |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2108  |BG2 VRAM location register [BG2SC] -|                         |
+| w   |$2109  |BG3 VRAM location register [BG3SC]  |- Same as $2107.         |
+| w   |$210A  |BG4 VRAM location register [BG4SC] -|                         |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$210B  |BG1 & BG2 VRAM location register [BG12NBA]                    |
+|     |       |aaaabbbb              a: Base address for BG2.                |
+|     |       |                      b: Base address for BG1.                |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$210C  |BG3 & BG4 VRAM location register [BG34NBA]                    |
+|     |       |aaaabbbb              a: Base address for BG4.                |
+|     |       |                      b: Base address for BG3.                |
+|     |       |                                                              |
+|     |       |                                                              |
+| wd  |$210D  |BG1 horizontal scroll register [BG1HOFS]                      |
+|     |       |mmmmmaaa aaaaaaaa              a: Horizontal offset.          |
+|     |       |                               m: Only set with MODE 7.       |
+|     |       |                                                              |
+|     |       |This is an intruiging register. Like the types define, it has |
+|     |       |to be written to twice: The first byte holds the first 8 bits,|
+|     |       |and the second byte holds the last 3 bits. This makes a total |
+|     |       |of 11 bits for information. This only proves true for MODes   |
+|     |       |0 to 6. MODE 7 uses 13 bits instead of 11. As long as you're  |
+|     |       |not in MODE 7, you can store $00 in the 2nd byte for a smooth |
+|     |       |scrolling background.                                         |
+|     |       |                                                              |
+|     |       |                                                              |
+| wd  |$210E  |BG1 vertical scroll register   [BG1VOFS] -|                   |
+| wd  |$210F  |BG2 horizontal scroll register [BG2HOFS]  |                   |
+| wd  |$2110  |BG3 vertical scroll register   [BG2VOFS]  |                   |
+| wd  |$2111  |BG3 horizontal scroll register [BG3HOFS]  |- Same as $210D.   |
+| wd  |$2112  |BG3 vertical scroll register   [BG3VOFS]  |                   |
+| wd  |$2113  |BG4 horizontal scroll register [BG4HOFS]  |                   |
+| wd  |$2114  |BG4 vertical scroll register   [BG4VOFS] -|                   |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2115  |Video port control [VMAIN]                                    |
+|     |       |i000abcd              i: 0 = Addr-inc after writing to $2118  |
+|     |       |                             or reading from $2139.           |
+|     |       |                         1 = Addr-inc after writing to $2119  |
+|     |       |                             or reading from $213A.           |
+|     |       |                     ab: Full graphic (see table below).      |
+|     |       |                     cd: SC increment (see table below).      |
+|     |       |abcd|Result                                                   |
+|     |       |----|---------------------------------------------------------|
+|     |       |0100|Increment by 8 for 32 times (2-bit formation).           |
+|     |       |1000|Increment by 8 for 64 times (4-bit formation).           |
+|     |       |1100|Increment by 8 for 128 times (8-bit formation).          |
+|     |       |0000|Address increments 1x1.                                  |
+|     |       |0001|Address increments 32x32.                                |
+|     |       |0010|Address increments 64x64.                                |
+|     |       |0011|Address increments 128x128.                              |
+|     |       |----|---------------------------------------------------------|
+|     |       |                                                              |
+|     |       |                                                              |
+| w 2 |$2116  |Video port address [VMADDL/VMADDH]                            |
+|     |       |???????? ????????                                             |
+|     |       |                                                              |
+|     |       |                                                              |
+| w 2 |$2118  |Video port data [VMDATAL/VMDATAH]                             |
+|     |       |???????? ????????                                             |
+|     |       |                                                              |
+|     |       |According to bit 7 of $2115, the data can be stored as:       |
+|     |       |                                                              |
+|     |       |Bit 7|Register                   |Result                      |
+|     |       |-----|---------------------------|----------------------------|
+|     |       |  0  |Write to $2118 only.       |Lower 8-bits written then   |
+|     |       |     |                           |address is increased.       |
+|     |       |  0  |Write to $2119 then $2118. |Address increased when both |
+|     |       |     |                           |are written to (in order).  |
+|     |       |  1  |Write to $2119 only.       |Upper 8-bits written, then  |
+|     |       |     |                           |address is increased.       |
+|     |       |  1  |Write to $2118 then $2119. |Address increased when both |
+|     |       |     |                           |are written to (in order).  |
+|     |       |-----|---------------------------|----------------------------|
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$211A  |MODE7 settings register [M7SEL]                               |
+|     |       |ab0000yx             ab: (see table below).                   |
+|     |       |                      y: Vertical screen flip (1=flip).       |
+|     |       |                      x: Horizontal screen flip (1=flip).     |
+|     |       |                                                              |
+|     |       |ab|Result                                                     |
+|     |       |--|-----------------------------------------------------------|
+|     |       |00|Screen repetition if outside of screen area.               |
+|     |       |10|Character 0x00 repetition if outside of screen area.       |
+|     |       |11|Outside of screen area is back-drop screen in 1 colour.    |
+|     |       |--|-----------------------------------------------------------|
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$211B  |COS (COSINE) rotate angle / X Expansion [M7A]                 |
+| w   |$211C  |SIN (SIN)    rotate angle / X Expansion [M7B]                 |
+| w   |$211D  |SIN (SIN)    rotate angle / Y Expansion [M7C]                 |
+| w   |$211E  |COS (COSINE) rotate angle / Y Expansion [M7D]                 |
+| wd  |$211F  |Center position X (13-bit data only)    [M7X]                 |
+| wd  |$2120  |Center position Y (13-bit data only)    [M7Y]                 |
+|     |       |                                                              |
+|     |       |MODE 7 formulae for rotation/enlargement/reduction:           |
+|     |       |                                                              |
+|     |       |X2 = AB * X1-X0 + X0                                          |
+|     |       |Y2 = CD * Y1-Y0 + Y0                                          |
+|     |       |                                                              |
+|     |       |A = COS(GAMMA)*(1/ALPHA)      B = SIN(GAMMA)*(1/ALPHA)        |
+|     |       |C = SIN(GAMMA)*(1/BETA)       D = COS(GAMMA)*(1/BETA)         |
+|     |       |                                                              |
+|     |       |  GAMMA: Rotation angle.                                      |
+|     |       |  ALPHA: Reduction rates for X (horizontal).                  |
+|     |       |   BETA: Reduction rates for Y (vertical).                    |
+|     |       |X0 & Y0: Center coordinate.                                   |
+|     |       |X1 & Y1: Display coordinate.                                  |
+|     |       |X2 & Y2: Coordinate before calculation.                       |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2121  |Colour # (or pallete) selection register [CGADD]              |
+|     |       |xxxxxxxx              x: Address (color #).                   |
+|     |       |                                                              |
+|     |       |                                                              |
+| wd  |$2122  |Colour data register [CGDATA]                                 |
+|     |       |xxxxxxxx              x: Value of colour.                     |
+|     |       |                                                              |
+|     |       |SNES colour is 15 bit; 5 bits for red, green, and blue. The   |
+|     |       |order isn't RGB though: It's BGR (RGB reversed!).             |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2123  |Window mask settings register [W12SEL]                        |
+|     |       |abcdefgh              a: Disable/enable BG2 Window 2.         |
+|     |       |                      b: BG2 Window 2 I/O (0=IN).             |
+|     |       |                      c: Disable/enable BG2 Window 1.         |
+|     |       |                      d: BG2 Window 1 I/O (0=IN).             |
+|     |       |                      e: Disable/enable BG1 Window 2.         |
+|     |       |                      f: BG1 Window 2 I/O (0=IN).             |
+|     |       |                      g: Disable/enable BG1 Window 1.         |
+|     |       |                      h: BG1 Window 1 I/O (0=IN).             |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2124  |Window mask settings register [W34SEL]                        |
+|     |       |abcdefgh              a: Disable/enable BG4 Window 2.         |
+|     |       |                      b: BG4 Window 2 I/O (0=IN).             |
+|     |       |                      c: Disable/enable BG4 Window 1.         |
+|     |       |                      d: BG4 Window 1 I/O (0=IN).             |
+|     |       |                      e: Disable/enable BG3 Window 2.         |
+|     |       |                      f: BG3 Window 2 I/O (0=IN).             |
+|     |       |                      g: Disable/enable BG3 Window 1.         |
+|     |       |                      h: BG3 Window 1 I/O (0=IN).             |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2125  |Window mask settings register [WOBJSEL]                       |
+|     |       |abcdefgh              a: Disable/enable colour Window 2.      |
+|     |       |                      b: Colour Window 2 I/O (0=IN).          |
+|     |       |                      c: Disable/enable colour Window 1.      |
+|     |       |                      d: Colour Window 1 I/O (0=IN).          |
+|     |       |                      e: Disable/enable OBJ Window 2.         |
+|     |       |                      f: OBJ Window 2 I/O (0=IN).             |
+|     |       |                      g: Disable/enable OBJ Window 1.         |
+|     |       |                      h: OBJ Window 1 I/O (0=IN).             |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2126  |Window 1 left position register [WH0]                         |
+|     |       |aaaaaaaa              a: Position.                            |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2127  |Window 1 right position register [WH1] -|                     |
+| w   |$2128  |Window 2 left position register [WH2]   |- Same as $2126.     |
+| w   |$2129  |Window 2 right position register [WH3] -|                     |
+|     |       |                                                              |
+|     |       |I may have the Window numbers reversed; as in, $2126 may be   |
+|     |       |for Window 2, not Window 1; $2127 may be for Window 2, not    |
+|     |       |Window 1... and so on...                                      |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$212A  |Mask logic settings for Window 1 & 2 per screen [WBGLOG]      |
+|     |       |aabbccdd              a: BG4 parms -|                         |
+|     |       |                      b: BG3 parms  |- See table in $212B.    |
+|     |       |                      c: BG2 parms  |                         |
+|     |       |                      d: BG1 parms -|                         |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$212B  |Mask logic settings for Colour Windows & OBJ Windows [WOBJLOG]|
+|     |       |0000aabb              a: Colour Window parms (see table below)|
+|     |       |                      b: OBJ Window parms (see table below).  |
+|     |       |                                                              |
+|     |       |Hi-bit|Lo-bit|Logic                                           |
+|     |       |------|------|------------------------------------------------|
+|     |       |   0  |   0  |OR                                              |
+|     |       |   0  |   1  |AND                                             |
+|     |       |   1  |   0  |XOR                                             |
+|     |       |   1  |   1  |XNOR                                            |
+|     |       |------|------|------------------------------------------------|
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$212C  |Main screen designation [TM]                                  |
+|     |       |000abcde              a: OBJ/OAM disable/enable.              |
+|     |       |                      b: Disable/enable BG4.                  |
+|     |       |                      c: Disable/enable BG3.                  |
+|     |       |                      d: Disable/enable BG2.                  |
+|     |       |                      e: Disable/enable BG1.                  |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$212D  |Sub-screen designation [TD]                                   |
+|     |       |*** Same as $212C, but for the sub-screens, not the main.     |
+|     |       |                                                              |
+|     |       |Remember: When screen addition/subtraction is enabled, the    |
+|     |       |sub screen is added/subtracted against the main screen.       |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$212E  |Window mask main screen designation register [TMW]            |
+|     |       |*** Same as $212C, but for window-masks.                      |
+|     |       |                                                              |
+| w   |$212F  |Window mask sub screen designation register [TSW]             |
+|     |       |*** Same as $212E, but for the sub screen.                    |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2130  |Fixed color addition or screen addition register [CGWSEL]     |
+|     |       |abcd00ef             ab: Main (see table below).              |
+|     |       |                     cd: Sub (see table below).               |
+|     |       |                      e: 0 = Enable +/- for fixed colour.     |
+|     |       |                         1 = Enable +/- for sub screen.       |
+|     |       |                      f: Colour & char-data = direct color    |
+|     |       |                         data (MODE 3, 4 & 7 only).           |
+|     |       |                                                              |
+|     |       |ab|Result                                                     |
+|     |       |--|-----------------------------------------------------------|
+|     |       |00|All the time.                                              |
+|     |       |01|Inside window only.                                        |
+|     |       |10|Outside window only.                                       |
+|     |       |11|All the time.                                              |
+|     |       |--|-----------------------------------------------------------|
+|     |       |                                                              |
+| w   |$2131  |Addition/subtraction for screens, BGs, & OBJs [CGADSUB]       |
+|     |       |mrgsabcd              m: 0 = Enable + colour-data mode.       |
+|     |       |                         1 = Enable - colour-data mode.       |
+|     |       |                      r: See below for more info.             |
+|     |       |                      g: Affect back-area.                    |
+|     |       |                      s: Affect OBJs.                         |
+|     |       |                      a: Affect BG4.                          |
+|     |       |                      b: Affect BG3.                          |
+|     |       |                      c: Affect BG2.                          |
+|     |       |                      d: Affect BG1.                          |
+|     |       |                                                              |
+|     |       |*** 'r' is some sort-of "1/2 of colour data" on/off bit. When |
+|     |       |    the colour constant +/- or screen +/- is performed, desig-|
+|     |       |    nate whether the RGB result in the +/- area should be 1/2 |
+|     |       |    or not; the back-area is not affected.                    |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2132  |Fixed colour data for fixed colour +/- [COLDATA]              |
+|     |       |bgrdddddd             b: Set to change blue.                  |
+|     |       |                      g: Set to change green.                 |
+|     |       |                      r: Set to change red.                   |
+|     |       |                      d: Set colour constant data for +/-.    |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$2133  |Screen mode/video select register [SETINI]                    |
+|     |       |sn00pvshi                                                     |
+|     |       |                      s: Super-impose SFX graphics over ex-   |
+|     |       |                         ternal video (usually 0).            |
+|     |       |                      n: External mode (screen expand). When  |
+|     |       |                         sing MODE 7, enable.                 |
+|     |       |                      p: 0 = 256 resolution.                  |
+|     |       |                         1 = 512 sub screen resolution.       |
+|     |       |                      v: 0 = 224 vertical resolution.         |
+|     |       |                         1 = 239 vertical resolution.         |
+|     |       |                      s: See below for more info.             |
+|     |       |                      i: 0 = No interlace.                    |
+|     |       |                         1 = Interlaced display.              |
+|     |       |                                                              |
+|     |       |*** When in interlace mode, select either the 1-dot per line  |
+|     |       |    mode or the 1-dot repeated every 2-lines mode. If '1' is  |
+|     |       |    set in this bit, the OBJ seems to be reduced vertically   |
+|     |       |    by 1/2.                                                   |
+|     |       |                                                              |
+|     |       |*** Interlaced mode is used in the SNES test cartridge. It    |
+|     |       |    does flicker, but it gives a FULL 480 vertical resolution.|
+|     |       |                                                              |
+|     |       |                                                              |
+|r    |$2134  |Multiplication result register (low) [MPYL]                   |
+|r    |$2135  |Multiplication result register (middle) [MPYM]                |
+|r    |$2136  |Multiplication result register (high) [MPYH]                  |
+|     |       |*** Result is 8 bits long for $2134, $2135, and $2136.        |
+|     |       |                                                              |
+|     |       |                                                              |
+|r    |$2137  |Software latch for horizontal/vertical counter [SLHV]         |
+|     |       |aaaaaaaa                 a: Result.                           |
+|     |       |                                                              |
+|     |       |The counter value at the point when $2137 is read can be      |
+|     |       |latched. Data read is meaningless.                            |
+|     |       |                                                              |
+|     |       |                                                              |
+|r    |$2138  |Read data from OAM {OAMDATAREAD}                              |
+|r  2 |$2139  |Read data from VRAM {VMDATALREAD/VMDATAHREAD}                 |
+|r    |$213B  |Read data from CG-RAM (colour) {CGDATAREAD}                   |
+|r d  |$213C  |Horizontal scanline location [OPHCT]                          |
+|r d  |$213D  |Vertical scanline location  [OPVCT]                           |
+|     |       |*** Registers $213C and $213D are 9-bits in length.           |
+|     |       |                                                              |
+|     |       |                                                              |
+|r    |$213E  |PPU status flag & version number [STAT77]                     |
+|     |       |trm0vvvv              t: Time over (see below).               |
+|     |       |                      r: Range over (see below).              |
+|     |       |                      m: Master/slave mode select. Usually 0. |
+|     |       |                      v: Version # ($5C77 (???)).             |
+|     |       |                                                              |
+|     |       |*** Range: When the quantity of the OBJ (size is non-relevant)|
+|     |       |           becomes 33 pieces or more, '1' is set.             |
+|     |       |     Time: When the quantity of the OBJ which is converted to |
+|     |       |           8x8 is 35 pieces or more, '1' will be set.         |
+|     |       |                                                              |
+|     |       |                                                              |
+|r    |$213F  |PPU status flag & version number [STAT78]                     |
+|     |       |fl0mvvvv              f: Field # scanned in int. mode (0=1st).|
+|     |       |                      l: Set if external signal (light pen,   |
+|     |       |                         etc.) is installed/applied.          |
+|     |       |                      m: NTSC/PAL mode (0=NTSC, 1=PAL).       |
+|     |       |                      v: Version # ($5C78 (???)).             |
+|     |       |                                                              |
+|     |       |                                                              |
+|rw   |$2140  |[APUI00] -|                                                   |
+|rw   |$2141  |[APUI01]  |- Audio registers. See sound.doc and sid-spc.src.  |
+|rw   |$2142  |[APUI02]  |                                                   |
+|rw   |$2143  |[APUI03] -|                                                   |
+|     |       |                                                              |
+|     |       |                                                              |
+|rw   |$2180  |Read/write WRAM register [WMDATA]                             |
+|rw   |$2181  |WRAM data register (low byte) [WMADDL]                        |
+|rw   |$2182  |WRAM data register (middle byte) [WMADDM]                     |
+|rw   |$2183  |WRAM data register (high byte) [WMADDH]                       |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$4200  |Counter enable [NMITIMEN]                                     |
+|     |       |a0yx000b              a: NMI/VBlank interrupt.                |
+|     |       |                      y: Vertical counter.                    |
+|     |       |                      x: Horizontal counter.                  |
+|     |       |                      b: Joypad read-enable.                  |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$4201  |Programmable I/O port (out-port) [WRIO]                       |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$4202  |Multiplicand 'A' [WRMPYA]                                     |
+| w   |$4203  |Multiplier 'B' [WRMPYB]                                       |
+|     |       |*** Absolute multiplication used when using the two above reg-|
+|     |       |    isters. Formulae is: 'A (8-bit) * B (8-bit) = C (16-bit)'.|
+|     |       |    Result can be read from $4216.                            |
+|     |       |                                                              |
+|     |       |                                                              |
+| w 2 |$4204  |Dividend C [WRDIVL/WRDIVH]                                    |
+| w   |$4205  |Divisor B [WRDIVB]                                            |
+|     |       |*** Absolute division used when using the two above registers.|
+|     |       |    Formulae is 'C (16-bit) / B (8-bit) = A (16-bit)'.        |
+|     |       |    Result can be read from $4214, and the remainder read from|
+|     |       |    $4216.                                                    |
+|     |       |*** Operation will start when $4205 is set, and will be com-  |
+|     |       |    pleted after 16 machine cycles.                           |
+|     |       |                                                              |
+|     |       |                                                              |
+| w 2 |$4207  |Video horizontal IRQ beam position/pointer [HTIMEL/HTIMEH]    |
+|     |       |0000000x xxxxxxxx     x: Beam position.                       |
+|     |       |                                                              |
+|     |       |Valid values for x range from 0 to 339, due to overscan. The  |
+|     |       |timer is reset every scanline, so unless it's disabled, you'll|
+|     |       |receive an interrupt every time the beam hits the value given.|
+|     |       |                                                              |
+|     |       |                                                              |
+| w 2 |$4209  |Video vertical IRQ beam position/pointer [VTIMEL/VTIMEH]      |
+|     |       |0000000y yyyyyyyy     y: Beam position.                       |
+|     |       |                                                              |
+|     |       |Same as $4207, but valid values for y are 0 to 261 (based from|
+|     |       |overscan at the top of the screen).                           |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$420B  |DMA enable register [MDMAEN]                                  |
+|     |       |abcdefgh              a: DMA channel #7.                      |
+|     |       |                      b: DMA channel #6.                      |
+|     |       |                      c: DMA channel #5.                      |
+|     |       |                      d: DMA channel #4.                      |
+|     |       |                      e: DMA channel #3.                      |
+|     |       |                      f: DMA channel #2.                      |
+|     |       |                      g: DMA channel #1.                      |
+|     |       |                      h: DMA channel #0.                      |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$420C  |HDMA enable register.                                         |
+|     |       |*** Same as $420B, virtually.                                 |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$420D  |Cycle speed register [MEMSEL]                                 |
+|     |       |0000000x              x: 0 = Normal (2.68MHz).                |
+|     |       |                         1 = Fast (3.58MHz).                  |
+|     |       |                                                              |
+|     |       |Note that using the fast mode requires 120ns or faster EPROMs.|
+|     |       |                                                              |
+|     |       |                                                              |
+|r    |$4210  |NMI register [RDNMI]                                          |
+|     |       |x000vvvv              x: Disable/enable NMI.                  |
+|     |       |                      v: Version # ($5A22 (???))              |
+|     |       |                                                              |
+|     |       |Bit 7 can be reset to 0 by reading this register.             |
+|     |       |                                                              |
+|     |       |                                                              |
+|rw   |$4211  |Video IRQ register [TIMEUP]                                   |
+|     |       |i0000000              i: 0 = IRQ is not enabled.              |
+|     |       |                         1 = IRQ is enabled.                  |
+|     |       |                                                              |
+|     |       |This location MUST be read to clear a horizontal or vertical  |
+|     |       |raster interrupt. It's all relative to $4200. If the horiz-   |
+|     |       |ontal timer interrupt (bit 4, $4200) is set then the interrupt|
+|     |       |will be generated according to the position in $4207. Same    |
+|     |       |thing is for vertical timing (bit 5, $4200) but the position  |
+|     |       |will be read from $4209, not $4207.                           |
+|     |       |                                                              |
+|     |       |                                                              |
+|rw   |$4212  |Status register [HVBJOY]                                      |
+|     |       |xy00000a              x: 0 = Not in VBlank state.             |
+|     |       |                         1 = In VBlank state.                 |
+|     |       |                      y: 0 = Not in HBlank state.             |
+|     |       |                         1 = In HBlank state.                 |
+|     |       |                      a: 0 = Joypad not ready.                |
+|     |       |                         1 = Joypad ready.                    |
+|     |       |                                                              |
+|     |       |                                                              |
+|r    |$4213  |Programmable I/O port (in-port) [RDIO]                        |
+|     |       |                                                              |
+|     |       |                                                              |
+|r  2 |$4214  |Quotient of divide result [RDDIVL/RDDIVH]                     |
+|     |       |                                                              |
+|     |       |                                                              |
+|r  2 |$4216  |Multiplication or divide result [RDMPYL/RDMPYH]               |
+|     |       |                                                              |
+|     |       |                                                              |
+|r    |$4218  |Joypad #1 status register [JOY1L]                             |
+|     |       |abcd0000              a: A button (1=pressed).                |
+|     |       |                      b: X button (1=pressed).                |
+|     |       |                      c: Top-Left (1=pressed).                |
+|     |       |                      d: Top-Rght (1=pressed).                |
+|     |       |                                                              |
+|r    |$4219  |Joypad #1 status register [JOY1H]                             |
+|     |       |abcdefgh              a: B button (1=pressed).                |
+|     |       |                      b: Y button (1=pressed).                |
+|     |       |                      c: Select   (1=pressed).                |
+|     |       |                      d: Start    (1=pressed).                |
+|     |       |                      e: Up       (1=pressed).                |
+|     |       |                      f: Down     (1=pressed).                |
+|     |       |                      g: Left     (1=pressed).                |
+|     |       |                      h: Right    (1=pressed).                |
+|     |       |                                                              |
+|r    |$421A  |Joypad #2 status register [JOY2L] -|                          |
+|r    |$421B  |Joypad #2 status register [JOY2H]  |                          |
+|r    |$421C  |Joypad #3 status register [JOY3L]  |- Same as $4218 & $4219.  |
+|r    |$421D  |Joypad #3 status register [JOY3H]  |                          |
+|r    |$421E  |Joypad #4 status register [JOY4L]  |                          |
+|r    |$421F  |Joypad #4 status register [JOY4H] -|                          |
+|     |       |*** Joypad registers can be read w/ a 16-bit accum/X/Y and    |
+|     |       |    both the high and low bytes will received valid data.     |
+|     |       |                                                              |
+|     |       |                                                              |
+|----------------------------------------------------------------------------|
+|The following data is for DMA-transfers. 'x' represents the DMA channel #,  |
+|which ranges from 0 to 7. So, the following would represent each section:   |
+|DMA #0: $4300-$4305.                                                        |
+|DMA #1: $4310-$4315.                                                        |
+|....................                                                        |
+|DMA #7: $4370-$4375.                                                        |
+|----------------------------------------------------------------------------|
+| w   |$43x0  |DMA Control register [DMAPX]                                  |
+|     |       |vh0cbaaa              v: 0 = CPU memory -> PPU.               |
+|     |       |                         1 = PPU -> CPU memory.               |
+|     |       |                      h: For HDMA only:                       |
+|     |       |                         0 = Absolute addressing.             |
+|     |       |                         1 = Indirect addressing.             |
+|     |       |                      c: 0 = Auto address inc/decrement.      |
+|     |       |                         1 = Fixed address (for VRAM, etc.).  |
+|     |       |                      b: 0 = Automatic increment.             |
+|     |       |                         1 = Automatic decrement.             |
+|     |       |                      a: Transfer type:
+|     |       |                         000 = 1 address write twice: LH.     |
+|     |       |                         001 = 2 addresses: LH.               |
+|     |       |                         010 = 1 address write once.          |
+|     |       |                         011 = 2 addresses write twice: LLHH  |
+|     |       |                         100 = 4 addresses: LHLH              |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$43x1  |DMA Destination register [BBADX]                              |
+|     |       |xxxxxxxx              x: Low-byte address.                    |
+|     |       |                                                              |
+|     |       |*** The upper-byte address is assumed to be $21, making your  |
+|     |       |    access addresses $2100 to $21FF.                          |
+|     |       |                                                              |
+|     |       |                                                              |
+| w 2 |$43x2  |Source address [A1TXL/A1TXH]                                  |
+| w   |$43x4  |Source bank address [A1BX]                                    |
+| w 2 |$43x5  |DMA transfer size & HDMA address register [DASXL/DASXH]       |
+|     |       |*** When using DMA, $43x5 defines the # of bytes to be trans- |
+|     |       |    ferred via DMA itself. When using HDMA, $43x5 defines the |
+|     |       |    data address ($43x5 = low byte, $43x6 = hi byte).         |
+|     |       |                                                              |
+|     |       |                                                              |
+| w   |$43xA  |Number of lines for HDMA transfer [NTRLX]                     |
+|     |       |cxxxxxxx              c: Continue (0=yes, 1=no (???)).        |
+|     |       |                      x: # of lines to transfer.              |
+|----------------------------------------------------------------------------|
+|Additional information follows.                                             |
+|Most of the following information is for SMC files, and where the header    |
+|info is kept in memory, etc. etc. etc...                                    |
+|----------------------------------------------------------------------------|
+|rw   |$FEED  |UNDOCUMENTED REGISTER: Felon's banana register [FBNANACNT]    |
+|     |       |rcnnnnnn              r: Ripe bit (0=ripe, 1=rotten).         |
+|     |       |                      c: Colour bit (0=yellow, 1=green).      |
+|     |       |                      n: Number of bananas.                   |
+|     |       |                                                              |
+|     |       |*** This register counts the number of bananas Felon currently|
+|     |       |    has in his possession... (Who the hell is Felon?!).       |
+|     |       |                                                              |
+|     |       |*** According to numerous sources, this register can be used  |
+|     |       |    to calculate pi to the 5-billionth digit in 20 clock      |
+|     |       |    cycles. The number of cycles corresponds to Felon's age,  |
+|     |       |    increasing by 1 every 365 days (1 year). It is increased  |
+|     |       |    by 2 every leap year.                                     |
+|     |       |                                                              |
+|     |       |                                                              |
+|rw   |$FFC0  |Cartridge title.                                              |
+|rw   |$FFD6  |ROM/RAM information on cart.                                  |
+|rw   |$FFD7  |ROM size.                                                     |
+|rw   |$FFD8  |RAM size.                                                     |
+|rw   |$FFD9  |Developer ID code.                                            |
+|rw   |$FFDB  |Version number.                                               |
+|rw   |$FFDC  |Checksum complement.                                          |
+|rw   |$FFDE  |Checksum.                                                     |
+|rw   |$FFEA  |NMI vector/VBL interrupt.                                     |
+|rw   |$FFEC  |Reset vector.                                                 |
+ ----------------------------------------------------------------------------

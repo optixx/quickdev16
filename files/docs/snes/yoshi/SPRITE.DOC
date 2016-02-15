@@ -1,0 +1,201 @@
+SPRITE DOC
+------------------------------------------------------------
+
+if you haven't already obtained "yoshi doc", get it and read it before you
+read this doc....
+
+
+Part I - the bitplane representation of a 16 color 8x8 pixel tile
+-----------------------------------------------------------------
+
+sprites are made of tiles, in particular 4-bitplane tiles, 4-bitplane 
+tiles, means that the tiles are made of 4-bit color values, so this means 
+that the tiles can have a maximum of 16 colors.
+
+in many graphics formats, this type of data would be stored as follows 
+(assuming a 8 pixel by 8 pixel tile)
+
+			$1 $0 $2 $8 $2 $4 $5
+			$2 $0 $6 $1 $f $e $1
+			$a $2 $2 $2 $6 $7 $0
+			$1 $0 $2 $8 $2 $4 $5
+			$1 $0 $2 $8 $2 $4 $5
+			$1 $0 $2 $8 $2 $4 $5
+			$1 $0 $2 $8 $2 $4 $5
+			$1 $0 $2 $8 $2 $4 $5
+
+where each hex number represents a color, so pixel (0,0) would be color 
+number "1", and pixel (4,2) would be color "6"....this is <not> the case 
+on the super nintendo....for reasons having to do with the implementation 
+of the graphics engine, the super nintendo represents its image data in 
+the "bitplane" format, assuming and 8 pixel by 8 pixel tile with 16 
+colors, this data would have four bitplanes (0-3) of monochrome, binary 
+image data:
+
+
+		   	0 0 0 0 0 0 0 0
+     			0 0 0 0 0 0 0 0 1
+     			0 0 0 0 0 0 0 0 1 2
+     			0 0 0 0 0 0 0 0 1 2 3
+     			0 0 0 0 0 0 0 0 1 2 3
+     			0 0 0 0 0 0 0 0 1 2 3
+     			0 0 0 0 0 0 0 0 1 2 3
+     			0 0 0 0 0 0 0 0 1 2 3
+       			  1 1 1 1 1 1 1 1 2 3
+         		    2 2 2 2 2 2 2 2 3
+           		      3 3 3 3 3 3 3 3
+
+
+four monochrome 8x8 pixel images stacked on top of each other. if you 
+wanted pixel (4,2) to have the color "6" you would have to put a "1" in 
+bitplane one, and a "1" in bitplane two, with the bitplane zero and three 
+having "0"'s.  this is because the binary representation of "6" is "0110".
+
+ok, so it is obviously possible to store each monochrome bitplane in 8 
+bytes, each byte representing a row in the bitplane. so a single tile 
+takes up 32 bytes (8 bytes per row * 8 rows * 4 bitplanes) of memory.
+
+
+Part II - the way tiles are stored in vram for sprite data
+---------------------------------------------------------
+
+in vram you store a tile 16 bits at a time as follows:
+
+		<-------2 bytes at a time------>
+		<--1 byte wide-><--1 byte wide->
+
+		[plane 0, row 0][plane 1, row 0]
+		[plane 0, row 1][plane 1, row 1] 
+		[plane 0, row 2][plane 1, row 2]
+               		       ..
+                               ..
+                               ..
+		[plane 0, row 7][plane 1, row 7]
+		[plane 2, row 0][plane 2, row 0]
+		[plane 2, row 1][plane 2, row 1]
+		[plane 2, row 2][plane 2, row 2]
+                               ..
+	                       ..
+                               ..
+		[plane 2, row 7][plane 2, row 7]
+
+
+the super nintendo can have two different sizes of sprite on the screen 
+at one time, you can choose from the following combinations:
+	
+      [value]      [sprite size 0][sprite size 1]
+	000	      8x8 pixel	    16x16 pixel
+	001	      8x8 pixel	    32x32 pixel
+        010	      8x8 pixel	    64x64 pixel
+        011          16x16 pixel    32x32 pixel
+        100          16x16 pixel    64x64 pixel
+        101	     32x32 pixel    64x64 pixel
+
+it is set in the upper three bits of address $2101....so to use 8x8 pixel 
+sprites, and 32x32 pixel sprites, you would load $2101 with the value
+"001xxxxx" (where x is don't care)
+
+the lower five bits of address $2101 are also very important, these bits 
+tell the super nintendo where in vram your sprites are located. the 
+lowest three bits are the "name base", and the fourth and fifth bits are the 
+"name". the "name" bits specify the upper 4k word of the sprite address, 
+and the "name base" specfies the offset. so if put you tile data in vram 
+$0000 you would set these bits all to zero.
+
+suppose you want to have four 32 pixel by 32 pixel sprites; each would be  
+composed of 16 tiles, each tile is numbered, tiles $0-$3f
+
+			[sprite 0]
+		        0  1  2  3
+			4  5  6  7
+			8  9  a  b
+		        c  d  e  f
+	
+			    ..		
+			    ..
+
+			[sprite 3]
+			30 31 32 33
+			34 35 36 37
+			38 39 3a 3b
+			3c 3d 3e 3f
+			
+in vram, these tiles, $0 through tile $3f would be store in an interlaced 
+fashion as follows:
+
+
+$0  $1  $2  $3  $10 $11 $12 $13 $20 $21 $22 $23 $30 $31 $32 $33
+$4  $5  $6  $7  $14 $15 $16 $17 $24 $25 $26 $27 $34 $35 $36 $37
+
+do you see the pattern? you must store the first row (four tiles) of each
+sprite, and then the second row, then the third, etc....
+
+if you were dealing with 8x8 sprites, you would have to store the first
+row of 16 sprites, then the second row of the 16 sprites, etc....
+
+if you were dealing with 16x16 sprites, you have to store the first row
+of 8 sprites, then the second, then the third, etc...
+
+with 64x64, yep, you guessed it, the first row of two sprites, then the
+second row, etc....
+
+
+
+Part III  - setting up the OAM table for your sprites
+-----------------------------------------------------
+
+for each sprite in the sprite table (maximum of 128 sprites, numbered 0-127)
+you must have four bytes of information, the first byte is the low 8 bits of
+the horizontal position of the sprite, the second byte is the vertical
+position of the sprite, the third byte is the "address" of the sprite...
+it is not the actual vram address, it is the tile number, that is to say,
+the physical vram address of the sprite can be obtained by the following:
+multiply the sprite "address" by 32 (because each tile is 32 bytes) and add it
+to the starting vram address that you set in the $2101 register.
+this tile number points to the first tile in the sprite...the snes expects the
+rest of tiles to follow in the order described in the previous section...
+the next byte containes the 9th bit of the tile "address" and a few attributes
+
+				bit 0   = 9th bit
+				bit 1-3 = palette number
+				bit 4,5 = playfield priority
+				bit 6   = horizontal flip
+				bit 7   = horizonal flip
+
+the palette number is not a 4 bit number, so obviously, you can only choose
+between 8 of the 16 palettes....if you set these bits to all 0, you will be
+selecting the eigth palette (palette 7), if you set them to "001" it is the
+ninth palette etc...it was trial and error, and some <serious> frustration
+before i figured this one out :) 
+
+to set these bytes in the OAM table, you must first setup the OAM "address"
+on the 16 bit register $2102 (and $2103). again this is not a real address,
+you use the 7 lowest bits of this address to select which sprite you
+would like to set the data for (sprite 0 to sprite 127)
+
+then you can write the four bytes discussed above to the register $2104, its
+like the color register, auto incrementing...
+
+so....what are all the other bits for??? (the remaining 9) well, i know about
+only two others, the highest bit (bit 15) is a sprite priority bit, it is
+basically the bit you set to "turn on" the sprite, and keep it being redrawn
+on the screen...its a little more than this, but thats all i know about its
+behavior.  so when you setup your table, (and periodically throughout the 
+sprites' display lifecycle) you must set this bit high....(for any sprite being
+displayed)
+
+there is another small table (32 bytes) that you must load into the OAM, these
+consist of two bits for every sprite, one of the bits being the 9th horizontal
+position bit, and the other is the size select bit (remember we can pick from
+two different size sprites on the screen at once) the first bit is the
+most significant horizontal location, and the second is the size toggle
+bit...
+
+to write this table the OAM, you must set the 9th bit of the "address" in $2103
+to one....then write the bytes, again it is an auto incrementing register 
+
+make sure that you have enabled the sprites to be on a particular plane (see
+the yoshi doc, on $212C....and make sure that you have set your palette
+correctly (remember sprite palette 0 is the 8th palette!!!)
+
+			good luck....

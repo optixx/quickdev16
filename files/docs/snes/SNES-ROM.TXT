@@ -1,0 +1,343 @@
+
+             ______  _____        _____    _______       ___  ___
+            /   __/ /. _  \   ___/  __/   |____   \___  /.  \/   \
+            \___ .\//  |.  \ / . \__ .\    |.    _/   \//        .\
+           /.     \\   |:  .\  __/    \\   || |  .\ !  \     \/.   \
+           \______ /___|____/____\____ /   |__|   \\___/____||:     \
+             By Mind Rape                      \___/         |______/
+             v1.5 (C) Damaged Cybernetics 1994-95
+
+
+   This document main goal is show where one can find the SNES ROM
+   information.  Most of this information was collected thru hacking
+   the rom to death and help from Norm/Yoshi/chp.
+
+   License codes are taken from SU and probably incorrect.
+
+   Source? None here, if you are going to screw with the bin,
+   you probably know what you are doing (HOPEFULLY).
+
+   If you have any questions, comments,corrections, additional information,
+   you can either find me on IRC as (MindRape) or you can send me email
+   (much prefered) mind@primenet.com.  Also if you write anything
+   interesting then send it to me!
+
+   You may distribute this document freely, but you may not change
+   the information here and redistribute.  If you use this information
+   please credit me.  You steal this information and say you did it,
+   you know it's a LIE and there you are.
+
+=[SNES ROM Makeup]===========================================================
+
+ROM Title     : 21 Bytes
+
+  * Titles are all in upper case
+  * Japanese titles are in high ascii values
+    good rule of thumb if you can't read the title and
+    it's country code is Japan and your American,
+    you probably can't play it. :>
+
+Rom Makeup    : 7654 3210
+                0000-0000
+                |__| |__|
+                |    |
+                |    |___Bank Size 0001 = HiROM   (64K Banks Mode 21)
+                |                  0000 = Low Rom (32K Banks Mode 20)
+                |
+                |________ROM Speed 0111 = Fast Rom
+                                   0000 = Slow Rom
+
+                                   * Could someone give the correct
+                                   * speeds of the ROMs?  I got
+                                   * conflicting answers.
+
+
+ROM Type      :  1 Byte
+
+  Hex   ROM Type
+  ---------------------
+   00   ROM
+   01   ROM/RAM
+   02   ROM/SRAM
+   03   ROM/DSP1
+   04   ROM/DSP1/RAM
+   05   ROM/DSP1/SRAM
+   06   FX
+
+   * SRAM = Save Ram
+   * DSP1 = Nintendo's 1st generation of DSP (Math coprocessor)
+   * FX   = RISC based math coprocessor
+            Only a couple of games support the FX Chip, Star Fox
+            is the most well known one.
+
+
+ROM Size      : 1 BYTE
+
+  Hex   Size
+  --------------
+   08    2 Mbit
+   09    4 Mbit
+   0A    8 Mbit
+   0B   16 Mbit
+   0C   32 Mbit
+
+  * As of this documentation 32MBit ROMs are the largest that
+    Nintendo currently uses.  Rumors of a 40+ kart are around,
+    but cannot be verified.
+
+  * 8MBit ROMs are the most common in the entire library of
+    SNES karts
+
+  * ROMs are always multiples 2, thus 2MBit ROMs are the smallest
+    Space Invaders (c) Taito is a 2MBit ROM (Japan only)
+
+  * Easy way to calc rom size without a lookup table
+
+      1 << (ROM_SIZE - 7) MBits
+
+      ie.   8Mbit ROMs = 0Ah = 10d
+            1 << (0A-7) = 8 Mbit
+
+SRAM Size      : 1 BYTE
+
+  Hex   Size
+  --------------
+   00   No SRAM
+   01   16 Kbit
+   02   32 Kbit
+   03   64 Kbit
+
+    * 64Kbit is the largest SRAM size that Nintendo currently uses.
+    * 256Kbit is standard for most copiers.
+
+    * Easy way to calc SRAM Size without a lookup table
+
+        1 << (3+SRAM_BYTE) Kbits
+
+        ie. 16Kbit = 01
+            1 << (3+1) = 16
+
+
+COUNTRY CODE  : 1 BYTE
+
+  Hex    Country                 Video Mode
+  ------------------------------------------
+   00    Japan                   (NTSC)
+   01    USA                     (NTSC)
+   02    Europe, Oceania, Asia    (PAL)
+   03    Sweden                   (PAL)
+   04    Finland                  (PAL)
+   05    Denmark                  (PAL)
+   06    France                   (PAL)
+   07    Holland                  (PAL)
+   08    Spain                    (PAL)
+   09    Germany, Austria, Switz  (PAL)
+   10    Italy                    (PAL)
+   11    Hong Kong, China         (PAL)
+   12    Indonesia                (PAL)
+   13    Korea                    (PAL)
+
+  * Country Codes are from SU.INI, could someone verify these?
+
+LICENSE       : 1 BYTE
+     0 <Invalid License Code>
+     1 Nintendo
+     5 Zamuse
+     8 Capcom
+     9 HOT B
+    10 Jaleco
+    11 STORM (Sales Curve) (1)
+    15 Mebio Software
+    18 Gremlin Graphics
+    21 COBRA Team
+    22 Human/Field
+    24 Hudson Soft
+    26 Yanoman
+    28 Tecmo (1)
+    30 Forum
+    31 Park Place Productions / VIRGIN
+    33 Tokai Engeneering (SUNSOFT?)
+    34 POW
+    35 Loriciel / Micro World
+    38 Enix
+    40 Kemco (1)
+    41 Seta Co.,Ltd.
+    45 Visit Co.,Ltd.
+    53 HECT
+    61 Loriciel
+    64 Seika Corp.
+    65 UBI Soft
+    71 Spectrum Holobyte
+    73 Irem
+    75 Raya Systems/Sculptured Software
+    76 Renovation Pruducts
+    77 Malibu Games (T*HQ Inc.) / Black Pearl
+    79 U.S. Gold
+    80 Absolute Entertainment
+    81 Acclaim
+    82 Activision
+    83 American Sammy
+    84 GameTek
+    85 Hi Tech
+    86 LJN Toys
+    90 Mindscape
+    93 Technos Japan Corp. (Tradewest)
+    95 American Softworks Corp.
+    96 Titus
+    97 Virgin Games
+    98 Maxis
+   103 Ocean
+   105 Electronic Arts
+   107 Laser Beam
+   110 Elite
+   111 Electro Brain
+   112 Infogrames
+   113 Interplay
+   114 LucasArts
+   115 Sculptured Soft
+   117 STORM (Sales Curve) (2)
+   120 THQ Software
+   121 Accolade Inc.
+   122 Triffix Entertainment
+   124 Microprose
+   127 Kemco (2)
+   130 Namcot/Namco Ltd. (1)
+   132 Koei/Koei! (second license?)
+   134 Tokuma Shoten Intermedia
+   136 DATAM-Polystar
+   139 Bullet-Proof Software
+   140 Vic Tokai
+   143 I'Max
+   145 CHUN Soft
+   146 Video System Co., Ltd.
+   147 BEC
+   151 Kaneco
+   153 Pack in Video
+   154 Nichibutsu
+   155 TECMO (2)
+   156 Imagineer Co.
+   160 Wolf Team
+   164 Konami
+   165 K.Amusement
+   167 Takara
+   169 Technos Jap. ????
+   170 JVC
+   172 Toei Animation
+   173 Toho
+   175 Namcot/Namco Ltd. (2)
+   177 ASCII Co. Activison
+   178 BanDai America
+   180 Enix
+   182 Halken
+   186 Culture Brain
+   187 Sunsoft
+   188 Toshiba EMI/System Vision
+   189 Sony (Japan) / Imagesoft
+   191 Sammy
+   192 Taito
+   194 Kemco (3) ????
+   195 Square
+   196 NHK
+   197 Data East
+   198 Tonkin House
+   200 KOEI
+   202 Konami USA
+   205 Meldac/KAZe
+   206 PONY CANYON
+   207 Sotsu Agency
+   209 Sofel
+   210 Quest Corp.
+   211 Sigma
+   214 Naxat
+   216 Capcom Co., Ltd. (2)
+   217 Banpresto
+   219 Hiro
+   221 NCS
+   222 Human Entertainment
+   223 Ringler Studios
+   224 K.K. DCE / Jaleco
+   226 Sotsu Agency
+   228 T&ESoft
+   229 EPOCH Co.,Ltd.
+   231 Athena
+   232 Asmik
+   233 Natsume
+   234 King/A Wave
+   235 Atlus
+   236 Sony Music
+   238 Psygnosis / igs
+   243 Beam Software
+   244 Tec Magik
+   255 Hudson Soft
+
+  * License Codes are from SU.INI, could someone verify these?
+
+  * I believe the # of licenses is low.  Is it possible that
+    License and Country codes are used in conjuction to produce
+    that many more licenses?
+
+VERSION - 1 byte
+
+  * The Version is interpeted this way.
+    1.?? - (thanks to yoshi for the correction)
+
+CHECKSUM COMPLEMENT - 2 bytes the complement of the checksum :>
+
+  The bits are reversed of the CHECKSUM
+
+CHECKSUM            - 2 bytes Checksum of the bin
+
+  * Anyone know how the checksum is calculated for the ROM?
+
+NMI/VBL Vector     - 2 bytes                            - OFFSET 81FAh  (lowrom)
+                                                          OFFSET 101FAh (hirom)
+
+RESET Vector       - 2 bytes where to start our code at - OFFSET 81FCh  (lowrom)
+                                                        - OFFSET 101FAh (hirom)
+  * 8000h is common for Low Roms
+
+=[READING THE CORRECT BIN INFORMATION]==================================
+
+ The bin information can be found in 2 possible places,
+
+    a) End of the 1st 32K bank (Low ROM)  (81c0h/w 512 byte header)
+    b) End of the 1st 64K bank (HiROM)    (101c0h/w 512 byte header)
+
+ You could use UCON's method (author chp).
+
+ The method is as followed:
+
+ UCON's method is to OR the Checksum and the Complement.  If the
+ resulting value is FFFFh, then we found the correct location of
+ to extract rest of the data out.  HOWEVER!  This fails on several
+ karts, such as Castle Wolfenstien 3D and Super Tetris 3 for example.
+
+ Reason being is that not all developers put the correct complement
+ or bother even to implement it.  I would suspect!  That this maybe
+ a ploy to keep other developers out of the bin, for if they can't
+ find the reset vector, disassembling becomes a bit difficult.
+
+=[Other Information on SNES?]================================================
+
+ Famicom Development FTP Site
+   busop.cit.wayne.edu - pub/famidev
+
+ Yoshi's SNES Documentation 2.3
+
+   This is considered the BEST source of SNES hardware information,
+   and the most complete!
+
+   busop.cit.wayne.edu - pub/famidev/incoming/sndoc230.lzh
+
+=[w0rd!]=====================================================================
+
+w0rd to all following console dudes
+
+GoosE_,yoshi,sir jinx,chp,SHORYUKEN,_bubsy,felon,archimede
+rugalz,SinZ,dragonz,procyon,royce,hoodlem,bri_acid,kamikitty,
+norm,ZillionZ Members,grayarea,Victor,drunkfux(h0h0h0h0),dmessiah,
+piratendo
+
+<insert your favorite group(s) greet here> (heh)
+
+Later Mind Rape

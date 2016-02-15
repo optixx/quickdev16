@@ -1,0 +1,850 @@
+
+ SNES hardware notes
+ by Charles MacDonald
+ WWW: http://cgfm2.emuviews.com
+
+ Unpublished work Copyright 2003  Charles MacDonald
+
+ This document is in a very preliminary state and is subject to change.
+ Most everything within has been tested and verified on a SNES but
+ please be aware that my testing methods or interpretations of results
+ could be flawed. I can't guarantee that everything is 100% accurate.
+
+ Last updated 09/17/03
+
+ [09/17/03]
+ - Added the cartridge information section.
+ - Added some details on the screen layout.
+
+ [08/27/03]
+ - Fixed some typos
+ - Added CGRAM information
+ - Added notes about valid times to access OAM
+
+ [08/25/03]
+ - Added some sprite information
+
+ [08/22/03]
+ - Added mouse information
+ - Added multitap information
+ - Changed joypad section
+
+ [08/20/03]
+ - Initial release
+
+ Table of contents
+
+ 1. Various notes
+ 2. CGRAM
+ 3. Sprites
+ 3. Hardware version registers
+ 4. I/O hardware
+ 5. Register reference
+ 6. Cartridge information
+ 7. Assistance needed
+ 8. Credits and acknowledgements
+ 9. Disclaimer
+
+ ----------------------------------------------------------------------------
+ Various notes
+ ----------------------------------------------------------------------------
+
+ V-Blank occurance flag
+
+ - Bit 7 of $4212 is set at line $00E1 and cleared at line $0000 in 224-line
+   mode.
+
+ - Bit 7 of $4212 is set at line $00F0 and cleared at line $0000 in 239-line
+   mode.
+
+ Joypad automatic scanning flag
+
+ - Bit 0 of $4212 is set at line $00E1 and cleared at line $00E4 in 224-line
+   mode.
+
+ - Bit 0 of $4212 is set at line $00F0 and cleared at line $00F3 in 239-line
+   mode.
+
+ Non-maskable interrupts
+
+ According to the 65816 manual, the NMI signal is an edge-sensitive input,
+ so that only a high to low transition on the NMI pin will cause an interrupt
+ to occur. Leaving it high, low, or having a low to high transition has no
+ effect. I'm going to assume the PPU normally holds NMI high and brings it
+ low to trigger an interrupt.
+
+ The PPU will pull NMI low at line $00E8 in 224-line mode or line $00F7 in
+ 239-line mode. It will remain low until either $4210 is read, or a new
+ frame starts, at which point the PPU will bring NMI high again.
+
+ The inverted state of the NMI signal from the PPU can be read through bit 7
+ of $4210, where 0= no NMI has been requested, 1= an NMI is pending. After
+ reading this register, the PPU resets the NMI signal by pulling it high.
+
+ Bit 7 of $4200 doesn't affect how the PPU manages NMIs at all, it is just
+ a gate between the NMI output of the PPU and the NMI input of the CPU.
+ When set, NMIs can be generated. When cleared, the CPU ignores the state of
+ the NMI pin.
+
+ Here are some details of specific situations:
+
+ When there is a pending NMI, toggling bit 7 of $4200 does not create any
+ additional interrupts.
+
+ Bit 7 of $4210 will be set in the NMI routine when it executes.
+
+ After the NMI routine finishes, bit 7 will remain set (assuming $4210 wasn't
+ read) until the start of the next frame. This will not cause more NMIs to
+ occur as they are only triggered by high-to-low transitions, having the NMI
+ pin remain low does not do anything.
+
+ Bit 7 of $4210 reflects the NMI status independantly of bit 7 of $4200.
+
+ Interlaced display
+
+ When bit 0 of $2133 is set, the screen becomes interlaced regardless of
+ the BG mode setting. When the screen is interlaced, the following applies:
+
+ - For BG modes 0,1,2,3,4,7 each line of the background is repeated in the
+   even and odd frames for single-density interlace. (224 or 239 lines shown)
+
+ - For BG modes 5,6 each line of the background is unique for the even and
+   odd frames for double-density interlace. (448 or 478 lines shown)
+
+ Screen layout
+
+ For an NTSC non-interlaced display, each frame consists of 262 lines.
+ Depending on the screen height, these lines are divided into the following
+ groups:
+
+ Section            224-line mode   239-line mode
+
+ Active display         224          239
+ Bottom blanking         12           15
+ Vertical sync            3            3
+ Top blanking            23            5
+ Total                  262          262
+
+ Active display is the portion of the screen where graphics are displayed.
+
+ Bottom blanking is the bottom border after the active display shown at the
+ very bottom of the display. Lines are filled with black.
+
+ Vertical sync is the period between the bottom and top borders which is
+ off-screen. Lines are filled with a darker black color than in the blanking
+ areas.
+
+ Top blanking is the border after the vertical sync period shown at the very
+ top of the display. Lines are filled with black.
+
+ ----------------------------------------------------------------------------
+ CGRAM
+ ----------------------------------------------------------------------------
+
+ Overview
+
+ The PPU has 512 bytes of on-chip RAM called CGRAM which holds palette data.
+ CGRAM is divided into 256 2-byte entries that define a single color.
+
+ Each entry has the following format:
+
+ MSB          LSB
+ -bbbbbgggggrrrrr
+
+ b = Blue component (0=black, 31=bright)
+ g = Green component (0=black, 31=bright)
+ r = Red component (0=black, 31=bright)
+ - = Unused bit.
+
+ The background can use the first 128 colors in BG modes 0,1,2,5,6, and all
+ 256 colors in BG modes 3,4,7 when not in direct color mode. Sprites always
+ use the latter 128 colors. Specific details about palette use and selection
+ for each mode will be described later.
+
+ The PPU provides several registers for using CGRAM:
+
+ $2121 - CGRAM address
+ $2122 - CGRAM data port (write)
+ $213B - CGRAM data port (read)
+
+ CGRAM access
+
+ The PPU has a 9-bit address register which gives a byte offset into CGRAM.
+ Writing to $2121 loads the CPU data into bits 8-1 of the address register
+ and clears bit 0, forcing an even address to be set.
+
+ Each time $213B is read, the byte at the current offset pointed to by the
+ address register is returned to the CPU, and the address register is
+ incremented by one.
+
+ Each time $2122 is written to the address register is incremented by one.
+ If the address register is even during a write, the CPU data is stored in
+ a latch. If the address register is odd, the latched data becomes the LSB
+ and the new data written becomes the MSB of a 16-bit word. This word is
+ written to the current address, with bit 0 of the address register ignored.
+
+ The address register will wrap from $01FF to $0000 due to reading $213B or
+ writing to $2122. You can mix reads and writes freely.
+
+ Valid access times
+
+ When the screen is forcibly blanked or in the V-Blank period, CGRAM can be
+ read and written. I haven't tested access during H-Blank yet.
+
+ Here are my observations about CGRAM access during the active display
+ period:
+
+ - Writing to CGRAM always results in the last word written to the data port
+   being written to address 0,1 regardless of the address register setting.
+   You could think of address bits 8-1 as always being fixed to zero during
+   this time.
+
+ - Reading from CGRAM returns a random mix of bytes from CGRAM and data that
+   wasn't stored in CGRAM. The address register has no effect on where the
+   data comes from.
+
+ - When the screen is turned on, the previously set value in the address
+   register not changed. Following reads or writes with the screen off
+   affect the address originally selected.
+
+ CGRAM access examples
+
+ Here are some examples of unexpected behavior. Assume CGRAM contains the
+ bytes $AA, $BB, $CC, $DD at address $0000 for each test:
+
+ - Set address to $0000
+ - Write $45
+
+ CGRAM is not updated, and the LSB latch contains $45
+
+ - Set address to $0000
+ - Read $2138
+ - Write #$45
+
+ The bytes $CC, $45 are written to address $0000. $CC was the last value
+ in the LSB latch, and a single byte write triggers a write to CGRAM as the
+ previous read made the address register odd.
+
+ ----------------------------------------------------------------------------
+ Sprites
+ ----------------------------------------------------------------------------
+
+ The PPU can manage up to 128 sprites. Sprites use 16-color 8x8 tiles, the
+ same as used by the backgrounds. The sprite size can range from 1x1 tiles
+ up to 8x8 tiles, with several variations in between.
+
+ The attributes for each sprite are stored in 544 bytes of on-chip RAM called
+ OAM or "Object Attribute Memory". The OAM can be thought of having two
+ sections, a 512-byte table that has 128 x 4-byte entries, and a 32-byte
+ table used as 128 x 2-bit entries.
+
+ The PPU provides several registers for sprite control:
+
+ $2101 - OAM control
+ $2102 - OAM address LSB
+ $2103 - OAM address MSB
+ $2104 - OAM data port (write)
+ $2138 - OAM data port (read)
+
+ The OAM control register defines various aspects about the sprites:
+
+ D7 : Sprite size, bit 2
+ D6 : Sprite size, bit 1
+ D5 : Sprite size, bit 0
+ D4 : Sprite name offset, bit 1
+ D3 : Sprite name offset, bit 0
+ D2 : Sprite pattern table base, bit 2
+ D1 : Sprite pattern table base, bit 1
+ D0 : Sprite pattern table base, bit 0
+
+ The sprite pattern table is where the tile data for sprites is fetched from.
+ The table is 16K in size and can be positioned on 16K boundaries. Bits 2-0
+ of this register correspond to bits 16-14 of the VRAM address.
+
+ As there is only 64K of VRAM, bit 2 has no effect. Pattern data read from
+ $10000-$1FFFF is instead read from $00000-$0FFFF due to mirroring.
+
+ When a sprite has bit 8 of it's name field set so that it reads patterns
+ out of the upper 8K of the 16K table (tiles 256-511), bits 4, 3 of this
+ register are added to bits 14 and 13 of the VRAM address.
+
+ If the resulting address is bigger than $10000 then data is read from
+ $00000 onwards due to mirroring. The same holds true if the address is
+ bigger than $20000, due to wrapping.
+
+ The sprite sizes are as follows:
+
+ D7 D6 D5       Small           Large
+
+  0  0  0       8x8             16x16
+  0  0  1       8x8             32x32 
+  0  1  0       8x8             64x64
+  0  1  1       16x16           32x32
+  1  0  0       16x16           64x64
+  1  0  1       32x32           64x64
+  1  1  0       16x32           32x64
+  1  1  1       16x32           32x32
+
+ The last two settings are undocumented but appear to function normally.
+
+ Overview
+
+ The CPU interface to the OAM appears as a 1024-byte array. Here's a memory
+ map:
+
+ $0000-$01FF : 512 bytes, used as 128 x 4-byte entries
+ $0200-$03FF : 32 bytes, mirrored every 32 bytes (so mirrored 16 times)
+
+ Reading and writing from the mirrored areas are valid.
+
+ OAM access
+
+ The PPU has a 10-bit address register which gives a byte offset into OAM.
+ Writing to $2102 will load the CPU data into bits 8-1 of the address
+ register. Writing to $2103 will load bit 0 of the CPU data into bit 9 of
+ the address register. Writing to $2102 or $2103 will clear bit 0 of the
+ address register so an even address is always selected. You can write to
+ $2102 and $2103 in any order, or write to just one or the other to update
+ part or all of the address.
+
+ Each time $2138 is read, the byte at the current offset pointed to by the
+ address register is returned to the CPU, and the address register is
+ incremented by one.
+
+ Each time $2104 is written to the address register is incremented by one.
+ If the address register is even during a write, the CPU data is stored in
+ a latch. If the address register is odd, the latched data becomes the LSB
+ and the new data written becomes the MSB of a 16-bit word. This word is
+ written to the current address, with bit 0 of the address register ignored.
+
+ This only affects writing to offsets $0000-$01FF. The 32 byte table at
+ $0200-$03FF will be updated for a write to even or odd addresses. Writes
+ to even addresses still update the LSB latch, however.
+
+ The address register will wrap from $03FF to $0000 due to reading $2138 or
+ writing to $2104. You can mix reads and writes freely.
+
+ Valid access times
+
+ When the screen is forcibly blanked or in the V-Blank period, OAM can be
+ read and written. I haven't tested access during H-Blank yet.
+
+ It would seem that the address register is used for some internal operation
+ during the active display period, which involves incrementing it. Here are
+ my observations:
+
+ - Writing to OAM during this time results in the data being written to
+   consecutively larger addresses, starting at a random offset and with
+   a random amount of skipped bytes between the data. The address register
+   has no effect on where the data goes.
+
+ - Reading from OAM returns data from consecutively larger addresses,
+   starting at a random offset and with a random amount of skipped bytes
+   between the data. The address register has no effect on where the data
+   goes.
+
+ - Setting the address register to a known value and waiting a few scanlines
+   with the screen turned on results in data being read or written to a
+   larger address than the one originally set.
+
+ - Writing to the address register on the same scanline where a sprite is
+   being displayed has no effect on the sprite. I would assume during the
+   active display period, the address register can't be updated by the CPU
+   as it is being used by the PPU exclusively.
+
+ OAM access examples
+
+ Here are some examples of unexpected behavior. Assume OAM contains the
+ bytes $AA, $BB, $CC, $DD at address $0000 for each test:
+
+ - Set address to $0000
+ - Write $45
+
+ OAM is not updated, and the LSB latch contains $45
+
+ - Set address to $0000
+ - Read $2138
+ - Write #$45
+
+ The bytes $CC, $45 are written to address $0000. $CC was the last value
+ in the LSB latch, and a single byte write triggers a write to OAM as the
+ previous read made the address register odd.
+
+ - Set address to $0000
+ - Write #$12
+ - Write #$00 to $2103
+ - Write #$34
+
+ OAM is not updated. The second write only loads the LSB latch as the
+ write to $2103 cleared bit 0 of the address register.
+
+ ----------------------------------------------------------------------------
+ Hardware version registers
+ ----------------------------------------------------------------------------
+
+ Here are the version register return values and chip markings for my
+ original model NTSC SNES:
+
+ Register       Value           Chip
+
+ $4210          $01             Nintendo S-CPU  5A22-01
+ $213E          $01             Nintendo S-PPU1 5C77-01
+ $213F          $01             Nintendo S-PPU2 5C78-01
+
+ ----------------------------------------------------------------------------
+ I/O hardware
+ ----------------------------------------------------------------------------
+
+ The SNES has two 7-pin joypad ports. Here's a diagram of the faceplate of
+ the SNES to show the pin configuration:
+
+                 1P port                2P port
+ (Power light)   ( o o o | o o o o ]    [ o o o o | o o o )
+                   7 6 5   4 3 2 1        1 2 3 4   5 6 7
+
+ Pin #  Description     S-CPU pin (1P)    S-CPU pin (2P)
+
+ Pin 1  +5V             n/a               n/a
+ Pin 2  Output strobe   35                36
+ Pin 3  Output          37                37 (common between both ports)
+ Pin 4  Serial input 1  32                28
+ Pin 5  Serial input 2  33                27
+ Pin 6  Bidirectional   25                26
+ Pin 7  Ground          n/a               n/a
+
+ Each pin is accessible through the various hardware registers as follows:
+
+ 1P port
+
+ - Read $4016 to pulse pin 2.
+ - Writing to bit 0 of $4016 controls pin 3.
+ - Reading bit 0 of $4016 returns data from pin 4.
+ - Reading bit 1 of $4016 returns data from pin 5.
+ - Pin 6 is connected to bit 6 of $4201 (WRIO) and $4213 (RDIO).
+
+ 2P port
+
+ - Read $4017 to pulse pin 2.
+ - Writing to bit 0 of $4016 controls pin 3.
+ - Reading bit 0 of $4017 returns data from pin 4.
+ - Reading bit 1 of $4017 returns data from pin 5.
+ - Pin 6 is connected to bit 7 of $4201 (WRIO) and $4213 (RDIO).
+
+ 2P pin 6 is also connected to S-PPU2 pin 29. This is most likely the
+ external input signal that can be used to latch the H/V counter. A lightgun
+ such as the Super Scope or Konami Justifier would use pulse pin 6 of the 2P
+ port to make the PPU2 latch the H/V counter when it detects the raster beam.
+
+ The second serial input from pin 5 and bidirectional pin 6 are unused by
+ the joypad and mouse. The Hudson Super Multitap may be the only peripheral
+ to use them, see the multitap section for more details.
+
+ The standard way most peripherals work is to write 1 then 0 to bit 0 of
+ $4016 to reset the devices in the 1P and 2P ports. You can then read bit 0
+ of $4016 and $4017 multiple times to return data serially, starting with
+ the MSB down to the LSB.
+
+ I/O port
+
+ The SNES is described as having an 8-bit bidirectional I/O port. I don't
+ know if this physically corresponds to the expansion port on the bottom of
+ the control deck, or if the CPU just has an I/O port built in and some or
+ all of the port pins are used.
+
+ Writing to $4201 (WRIO) sets the data to be output through the I/O port.
+ Any bit that is also set to 1 will allow the corresponding pin to act
+ as an input, and data from that pin can be read through $4213 (RDIO).
+
+ The only uses I know of for the I/O port are as follows:
+
+ - Any value written to $4201 can be read back through $4213.
+
+ - As bit 7 of $4201 controls pin 6 of the 2P port, which is also shared with
+   the external signal input of the PPU to latch the H/V counter, writing 1
+   then 0 to bit 7 of $4201 will latch the H/V counter.
+
+   While bit 7 is set to 0, the latch will always hold the same value and
+   reading $2137 will not change the latched value. If you want to poll
+   the H/V counter using $2137, set bit 7 back to 1 for it to work properly.
+
+ - Pin 6 of the 1P or 2P port is used as an output to control the Hudson
+   Super Multitap. See the multitap section for more details.
+
+ ----------------------------------------------------------------------------
+ Automatic reading
+ ----------------------------------------------------------------------------
+
+ The SNES has a feature to automatically read the four serial input pins
+ and store them into a set of registers during V-Blank. This can be done
+ without the CPU having to manually write and read $4016 / $4017, saving
+ time for other tasks.
+
+ When bit 0 of $4200 is set, at the start of V-Blank (depending on the screen
+ height) the SNES will automatically do the following steps:
+
+ - Write 1 then 0 to bit 0 of $4016.
+
+ - Read $4016 and $4017 sixteen times, storing the return values from bits
+   0 and 1 into eight registers like so:
+
+ - 16 bits from bit 0 of $4016 are stored in $4218 (LSB) and $4219 (MSB)
+ - 16 bits from bit 1 of $4016 are stored in $421C (LSB) and $421D (MSB)
+ - 16 bits from bit 0 of $4017 are stored in $421A (LSB) and $421B (MSB)
+ - 16 bits from bit 1 of $4017 are stored in $421E (LSB) and $421F (MSB)
+
+ This process takes three scanlines to complete. Bit 0 of $4212 shows the
+ scanning status, where 1= the SNES is still reading data, 0= the SNES has
+ finished or automatic scanning was not enabled.
+
+ The use I've seen in games and demos is to wait for this bit to be set, and
+ then cleared in the NMI handler.
+
+ ----------------------------------------------------------------------------
+ Hudson Super Multitap
+ ----------------------------------------------------------------------------
+
+ The multitap plugs into the 1P or 2P port. It has four connectors to plug
+ additional joypads into, and has a switch for selecting a multiplayer or
+ compatability mode.
+
+ In compatability mode (switch = 2P) the joypad plugged in to connector #1
+ works like a standard pad. All remaining connectors are ignored, pin 6
+ is ignored in terms of selecting which set of joypad data to return, and
+ no extra data is returned in the second serial input.
+
+ In multiplayer mode (switch = 3P-5P) the first serial input returns data
+ from the joypad in connector #1 or #3, and the second serial input returns
+ data from the joypad in connector #2 or #4. Pin 6 of the 1P or 2P port
+ is used to select connectors #1 and #3 when set to 1, or #2 and #4 when
+ set to 0.
+
+ ----------------------------------------------------------------------------
+ SNES joypad
+ ----------------------------------------------------------------------------
+
+ The SNES joypad uses two 4021 ICs, which are 8-stage static shift registers.
+ They are cascaded together to form a 16-bit shift register that stores the
+ state of the directional pad and buttons, allowing the SNES to read out
+ the state of the joypad serially.
+
+ The button states will be loaded into the shift register when bit 0 of
+ $4016 is set to 1 and then 0. This happens to both control pads as they
+ share a common pin. Each time $4016 or $4017 is read, the shift register
+ for the 1P or 2P pad advances by one, outputting a bit which can be read
+ in bit 0 of $4016 or $4017 respectively.
+
+ The tail end of the shift register is filled with a one on each shift. After
+ the sixteenth time $4016 or $4017 has been read, all consecutive reads will
+ return one due to the shift register being completely filled with ones.
+ This will go on forever until the shift register is loaded again by writing
+ 1 then 0 to $4016.
+
+ If at any time $4016 is left at 1, reading either joypad will always return
+ the state of the first input, which is the 'B' button. This won't stop until
+ $4016 is set to zero again.
+
+ Here is the order of button states read out through $4016 or $4017:
+
+ Read  1 - Button B             Read  9 - Button A
+ Read  2 - Button Y             Read 10 - Button X
+ Read  3 - Button Select        Read 11 - Button L
+ Read  4 - Button Start         Read 12 - Button R
+ Read  5 - Up                   Read 13 - '0'
+ Read  6 - Down                 Read 14 - '0'
+ Read  7 - Left                 Read 15 - '0'
+ Read  8 - Right                Read 16 - '0'
+
+ All reads after read 16 will return 1.
+
+ All buttons are 1= pressed, 0= released.
+
+ If no joypad is plugged in, then zero is always read from $4016 or $4017.
+ A game can check if a joypad is connected by seeing if any reads beyond
+ the 16th one return '1', otherwise there is no joypad.
+
+ As far as I can tell, the joypad does not return any data through pin 5
+ (which always returns zero) and any setting of pin 6 will not affect the
+ joypad operation.
+
+ ----------------------------------------------------------------------------
+ SNES mouse
+ ----------------------------------------------------------------------------
+
+ The SNES mouse works in a similar fashion to the joypad. It has a custom
+ 18-pin chip called the "SFM1" which returns data about the mouse status
+ serially to the SNES.
+
+ Writing 1, then 0 to bit 0 of $4016 will reset the SFM1 and subsequent reads
+ from $4016 or $4017 (depending on which port the mouse is plugged into) will
+ return the mouse state data. Leaving bit 0 of $4016 set to 1 will result
+ in zero always being read back.
+
+ The mouse data is as follows:
+
+ Read  1 - '0'                  Read 17 - Y sign
+ Read  2 - '0'                  Read 18 - Y movement bit 6 (?)
+ Read  3 - '0'                  Read 19 - Y movement bit 5
+ Read  4 - '0'                  Read 20 - Y movement bit 4
+ Read  5 - '0'                  Read 21 - Y movement bit 3
+ Read  6 - '0'                  Read 22 - Y movement bit 2
+ Read  7 - '0'                  Read 23 - Y movement bit 1
+ Read  8 - '0'                  Read 24 - Y movement bit 0
+ Read  9 - Right button         Read 25 - X sign
+ Read 10 - Left button          Read 26 - X movement bit 6 (?)
+ Read 11 - '0'                  Read 27 - X movement bit 5
+ Read 12 - '0'                  Read 28 - X movement bit 4
+ Read 13 - '0'                  Read 29 - X movement bit 3
+ Read 14 - '0'                  Read 30 - X movement bit 2
+ Read 15 - '0'                  Read 31 - X movement bit 1
+ Read 16 - '1'                  Read 32 - X movement bit 0
+
+ All reads after read 32 will return 1.
+
+ The left/right buttons are 1= pressed, 0= released.
+
+ The Y and X sign are 1= up/left movement, 0= down/right movement. The sign
+ bits do not change until the mouse is moved in a opposite direction. So
+ moving the mouse up, and leaving it stationary would keep the Y sign bit
+ set to 1.
+
+ The Y and X movement fields indicate how rapidly the mouse was moved in a
+ particular direction. This is usually $00-$1F, but extremely rapid movements
+ can yield higher values. I haven't been able to get values large enough
+ to indicate there is a seventh movement bit, but there may likely be one.
+ Both fields are zero when there is no movement.
+
+ As far as I can tell, the mouse does not return any data through pin 5
+ (which always returns zero) and any setting of pin 6 will not affect the
+ mouse operation.
+
+ ----------------------------------------------------------------------------
+ Register reference
+ ----------------------------------------------------------------------------
+
+ $2180 - WRAM data port
+ $2181 - WRAM offset (bits 7-0 are offset bits 7-0)
+ $2182 - WRAM offset (bits 7-0 are bits 15-8)
+ $2183 - WRAM offset (bit 0 is offset bit 16, bits 7-1 are unused)
+
+ Registers $2181-$2183 define a 17-bit offset in WRAM. Reading or writing
+ $2180 will return a byte from or write a byte to WRAM, and automatically
+ increment the WRAM offset by one. The offset wraps from $01FFFF to $000000.
+
+ Reading $2180, $2181, or $2183 returns the last value on the data bus,
+ which is usually the last byte of the opcode fetched. For example, this
+ value would be $21 for 'lda $2181', or $00 for 'lda [$00]' when the pointer
+ at $00 is $2181.
+
+ ----------------------------------------------------------------------------
+ Cartridge information
+ ----------------------------------------------------------------------------
+
+ Cartridge pinout
+
+      Solder side   Component side
+
+     MCK     - 01   32 - /RAMSEL
+     EXPAND  - 02   33 - REFRESH
+     PA6     - 03   34 - PA7
+     /PARD   - 04   35 - /PAWR
+                <key>
+     GND     - 05   36 - GND
+     A11     - 06   37 - A12
+     A10     - 07   38 - A13
+     A9      - 08   39 - A14
+     A8      - 09   40 - A15
+     A7      - 10   41 - A16
+     A6      - 11   42 - A17
+     A5      - 12   43 - A18
+     A4      - 13   44 - A19
+     A3      - 14   45 - A20
+     A2      - 15   46 - A21
+     A1      - 16   47 - A22
+     A0      - 17   48 - A23
+     /IRQ    - 18   49 - /ROMSEL
+     D0      - 19   50 - D4
+     D1      - 20   51 - D5
+     D2      - 21   52 - D6
+     D3      - 22   53 - D7
+     /RD     - 23   54 - /WR
+     CIC0    - 24   55 - CIC1
+     CIC2    - 25   56 - CIC3
+     /RESET  - 26   57 - SYSCK
+     +5V     - 27   58 - +5V
+                <key>
+     PA0     - 28   59 - PA1
+     PA2     - 29   60 - PA3
+     PA4     - 30   61 - PA5
+     SOUND-L - 31   62 - SOUND-R
+
+ Pin assignments
+
+ A23-0   - CPU address bus
+ D7-0    - CPU data bus
+ /WR     - CPU write strobe
+ /RD     - CPU read strobe
+ /IRQ    - CPU IRQ input. Allows on-cart hardware to interrupt the CPU.
+ /RESET  - When the system is reset (power-up or hard reset) this goes low.
+           Could be used to reset additional on-cart hardware.
+ /RAMSEL - Goes low on accesses to WRAM at the following addresses:
+           00-3F:0000-1FFF
+           80-BF:0000-1FFF
+           7E-7F:0000-FFFF
+ /ROMSEL - Goes low on access to cartridge ROM at the following addresses:
+           00-3F:8000-FFFF
+           40-7D:0000-FFFF
+           80-BF:8000-FFFF
+           C0-FF:0000-FFFF
+ PA7-0   - Address bus for $2100-$21FF range in banks $00-$3F/$80-$BF (B-Bus)
+ /PAWR   - Write strobe for B-Bus
+ /PARD   - Read strobe for B-Bus
+ MCK     - 21.47727 MHz master clock
+ SYSCK   - Unknown, is an output from the CPU.
+ SOUND-L - Audio input to be mixed with left channel output
+ SOUND-R - Audio input to be mixed with right channel output
+ THROUGH - Connected to pin 24 of the expansion port.
+ REFRESH - Unknown, is an output from the CPU also connected to WRAM.
+           This is most likely to manage DRAM refresh.
+ CIC3-0  - To CIC chip on cartridge
+
+ Details
+
+ For more information about the CIC chip, please see the following:
+
+ - U.S. Patent no. 4,799,635 (NES specific)
+ - http://home.freeuk.com/markk/Consoles/SNES_Lockout.txt
+
+ The only hardware I know of which uses the two sound input pins is the
+ Super Gameboy and Super Gameboy 2.
+
+ The SNES has two address busses, the A-Bus which is used by the CPU, ROM,
+ WRAM, etc. and the B-Bus which is used by the PPU1, PPU2, APU I/O ports,
+ and WRAM. When the SNES does DMA, it can transfer data from the A-Bus to
+ the B-Bus or vice-versa, but not to the same bus. This holds true even
+ for WRAM, which is connected to both the A-Bus and B-Bus.
+
+ I would guess the B-Bus signals are brought out to the cartridge connector
+ so any on-cart hardware could map it's own registers within that region,
+ allowing for DMA from the A-Bus to it. Exactly what range of B-Bus addresses
+ are open for expansion purposes is unknown.
+
+ Cartridge information
+
+ Here's some information about several cartridges I've examined:
+
+ Name:  Lagoon
+ Board: SHVC-1A3B-12
+ Type:  LoROM / 16 megabits / 8K SRAM
+
+ This cartridge has a 74LS139 for address decoding and a 8K SRAM chip.
+
+ 00-1F:8000-FFFF : Program ROM
+ 20-3F:8000-FFFF : Unmapped
+ 40-6F:0000-FFFF : Unmapped
+ 70-7D:0000-FFFF : SRAM
+ 7E-7F:0000-FFFF : Work RAM
+ 80-9F:8000-FFFF : Program ROM
+ A0-BF:8000-FFFF : Unmapped
+ C0-EF:0000-FFFF : Unmapped
+ F0-FF:0000-FFFF : SRAM
+
+ - A23 and A15 are ignored, so banks $80-FF are a mirror of $00-7F.
+ - SRAM is mirrored repeatedly in the areas it's assigned to.
+ - When accessing an unmapped region, neither the ROM or SRAM are enabled.
+
+ Name:  Pilotwings
+ Board: SHVC-1BON-02
+ Type:  LoROM / 8 megabits / DSP-1
+
+ This cartridge has a 74LS139 for address decoding and a NEC uPD77C25 DSP
+ which Nintendo labels as the "DSP-1" custom chip. It also has a oscillator
+ and 74HCU04 to provide a clock signal, but I don't know what speed the DSP
+ actually runs at.
+
+ 00-1F:8000-FFFF : Program ROM
+ 20-2F:8000-FFFF : Unmapped
+ 30-3F:8000-BFFF : DSP data register (r/w)
+ 30-3F:C000-FFFF : DSP status register (r/o)
+ 40-7D:0000-FFFF : Unmapped
+ 7E-7F:0000-FFFF : Work RAM
+ 80-9F:8000-FFFF : Program ROM
+ A0-AF:8000-FFFF : Unmapped
+ 80-BF:8000-BFFF : DSP data register (r/w)
+ 80-BF:C000-FFFF : DSP status register (r/o)
+ C0-FF:0000-FFFF : Unmapped
+
+ - A23 and A15 are ignored, so banks $80-FF are a mirror of $00-7F.
+ - DSP pins INT, SCK, /SIEN, /SOEN are all tied to +5V and are unused.
+ - When accessing an unmapped region, neither the ROM or DSP are enabled.
+
+ Name:  Killer Instinct
+ Board: SHVC-1JON-20
+ Type:  HiROM / 32 megabits
+
+ The mask ROM socket on the PCB has the following pin assignments:
+
+         +---\/---+
+    A20 -|01    36|- +5V
+    A21 -|02    35|- A23
+    A17 -|03    34|- +5V
+    A18 -|04    33|- /ROMSEL (ROM /CS)
+    A15 -|05    32|- A19
+    A12 -|06    31|- A14
+     A7 -|07    30|- A13
+     A6 -|08    29|- A8 
+     A5 -|09    28|- A9 
+     A4 -|10    27|- A11
+     A3 -|11    26|- A16
+     A2 -|12    25|- A10
+     A1 -|13    24|- /RD (ROM /OE)
+     A0 -|14    23|- D7 
+     D0 -|15    22|- D6 
+     D1 -|16    21|- D5 
+     D2 -|17    20|- D4 
+    GND -|18    19|- D3 
+         +--------+
+
+ - A22 is unconnected.
+ - This game uses a MX23C3201 4096Kx8 mask ROM. I can't find a datasheet for
+   this chip, so I'm not sure what pin 35 (A23) is used for. It could be
+   an inverted chip select so the ROM is only mapped to banks $40-$7E and
+   $C0-$FF, but that's just a guess.
+
+ ----------------------------------------------------------------------------
+ Assistance needed
+ ----------------------------------------------------------------------------
+
+ If any games have a legitimate use of writing to OAM or reading OAM or CGRAM
+ during the active display period, I'd like to hear about the details of how
+ the data is used. So far it's been confirmed that Uniracers writes to OAM
+ this way, maybe there are others.
+
+ ----------------------------------------------------------------------------
+ Credits and acknowlegements
+ ----------------------------------------------------------------------------
+
+ - ToToTek Multimedia for the Game Doctor SF7. (www.tototek.com)
+ - neviksti for the SNES starter kit. (available at nesdev.parodius.com)
+ - John Weidman, CaitSith2, neviksti, for the SNES schematic scans.
+ - Gilligan for the SNES documentation.
+ - Qwertie for the SNES documentation.
+ - anomie for the post about SNES peripherals at the SNES9X development forum,
+   pointing out errors, and suggesting tests.
+ - Overload for clarifying some details about the mouse.
+ - Chris MacDonald for testing and support.
+
+ ----------------------------------------------------------------------------
+ Disclaimer
+ ----------------------------------------------------------------------------
+
+ If you use any information from this document, please credit me
+ (Charles MacDonald) and optionally provide a link to my webpage
+ (http://cgfm2.emuviews.com/) so interested parties can access it.
+
+ The credit text should be present in the accompanying documentation of
+ whatever project which used the information, or even in the program
+ itself (e.g. an about box).
+
+ Regarding distribution, you cannot put this document on another
+ website, nor link directly to it.
+

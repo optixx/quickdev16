@@ -1,0 +1,35 @@
+Here's the pinout to a 4Mbit/*Mbit mask Rom used in SNES carts as I've
+deduced from various specs and actual testing.
+
+1	A17   ------\__/------	+5v	32	
+2	A18   |		     |	*OE	31
+3	A15			A19	30
+4	A12			A14	29
+5	A7			A13	28
+6	A6			A8	27
+7	A5			A9	26
+8	A4			A11	25
+9	A3			A16	24
+10	A2			A10	23
+11	A1			*CE	22
+12	A0			D7	21
+13	D0			D6	20
+14	D1			D5	19
+15	D2			D4	18
+16	GND  |---------------|	D3	17
+
+The design approximates std EPROM/SRAM pinouts except for the upper address
+lines (A16-A19), and OE which sits where VPP or PRGM usually is for an EPROM.
+This pinout approximates Fujitsu's tentative mask ROM pinouts (a package
+called GAMEMEDC.ZIP seems to base itself on this and is consequently wrong). 
+Nintendo uses Fujitsu chips in some carts, but from my testing and card-edge
+pinouts provided by other users, I conclude that Fujitsu must have modified
+the designs. 
+
+NOTE!: Card-edge pin #40, address line 15 (A15) is not used by any cart I've
+seen. And ROM pin #3 (see above) that I've determined to be A15 is connected
+to card-edge pin#41, labeled on many pinouts schems as A16..not A15!!!
+Would some one please verify this inconsistency.
+
+PS: How many Megabits can the Snes address?
+
