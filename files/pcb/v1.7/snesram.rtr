@@ -1,0 +1,25 @@
+#
+# RTR file created by ELECTRA V2.3 made 03/02/2010 at 13:29:21
+# 
+set run_memory 1
+set run_fanout 0
+set run_init_route 1
+set run_init_clean 1
+set run_final_route 1
+set run_final_clean 1
+set run_filter 1
+set run_miter 1
+set via_at_smd 1
+set via_at_smd_grid 4
+set via_at_smd_fit 0
+set sharing_pin 0
+set sharing_via 0
+set fanout_dir 2
+set fanout_dist 0
+set share_dist 0
+set init_route_passes 10
+set init_clean_passes 2
+set final_route_passes 10
+set final_clean_passes 2
+set fanout_passes 5
+set filter_passes 5

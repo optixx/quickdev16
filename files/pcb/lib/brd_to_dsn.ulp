@@ -1,0 +1,2718 @@
+//=====================================
+//
+// Converter of CadSoft-Eagle board designs to the Specctra DSN-Textformat.
+//
+// Created by ConnectEDA extended and modified by Thomas Kaeubler and Alfons Wirtz.
+//
+// Many thanks to ConnectEDA for allowing us to use their pcb_to_dsn ulp-file.
+//
+//
+// Last change November 23th 2008
+//
+//=====================================
+
+int preprotect = 0;
+int string_quote = 1;
+real polyline_endpoint_tolerance = 0.001; // The tolerance for regarding 2 line endpoints as equal.
+
+enum  {false,true};
+int Units;
+
+string layer_name[];
+string TopLayer, BotLayer;
+real default_wire_width, default_via_size, default_drill_size, default_clearance, rv_pad_inner, min_via_inner, min_pad_inner, max_pad_inner;
+real clearance_wire_pad, clearance_wire_smd, clearance_wire_via, clearance_pad_pad, clearance_pad_via;
+real clearance_via_via, clearance_smd_pad, clearance_smd_via, clearance_smd_smd;
+
+
+
+
+
+void write_Db2Unit(int Length)
+//----------------------------
+{
+	real Value;
+	switch (Units)
+	{
+		case GRID_UNIT_MM :
+		Value = u2mm(Length);
+		break;
+
+		case GRID_UNIT_MIL :
+		Value = u2mil(Length);
+		break;
+
+		case GRID_UNIT_INCH :
+		Value = u2inch(Length);
+		break;
+
+		case GRID_UNIT_MIC :
+		Value = u2mic(Length);
+		break;
+
+	}
+	string String;
+	sprintf(String,"%f",Value);
+	printf(String);
+}
+
+void write_Int(int Val)
+//---------------------
+{
+	string String;
+	sprintf(String,"%d",Val);
+	printf(String);
+}
+
+void write_Real(real Val)
+//-----------------------
+{
+	string String;
+	sprintf(String,"%f",Val);
+	printf(String);
+}
+
+void write_qStr(string String)
+//----------------------------
+{
+	if (string_quote)
+		printf("\"");
+	printf(String);
+	if (string_quote)
+		printf("\"");
+}
+
+void write_Str(string String)
+//---------------------------
+{
+	printf(String);
+}
+
+
+real Db2Unit(int Length)
+//---------------------
+{
+	real Value = 0;
+	switch (Units)
+	{
+		case GRID_UNIT_MM :
+		Value = u2mm(Length);
+		break;
+
+		case GRID_UNIT_MIL :
+		Value = u2mil(Length);
+		break;
+
+		case GRID_UNIT_INCH :
+		Value = u2inch(Length);
+		break;
+
+		case GRID_UNIT_MIC :
+		Value = u2mic(Length);
+		break;
+
+	}
+
+	return Value;
+}
+
+real mm2u(real val)
+//-----------------
+{
+	real Value = 0;
+	switch (Units)
+	{
+		case GRID_UNIT_MM :
+		Value = val;
+		break;
+
+		case GRID_UNIT_MIL :
+		Value = val*39.3700787402;
+		break;
+
+		case GRID_UNIT_INCH :
+		Value = val*0.0393700787402;
+		break;
+
+		case GRID_UNIT_MIC :
+		Value = val*0.001;
+		break;
+
+	}
+
+
+	return Value;
+}
+
+real mil2u(real val)
+//-----------------
+{
+	real Value = 0;
+	switch (Units)
+	{
+		case GRID_UNIT_MM :
+		Value = val*0.0254;
+		break;
+
+		case GRID_UNIT_MIL :
+		Value = val;
+		break;
+
+		case GRID_UNIT_INCH :
+		Value = val*0.001;
+		break;
+
+		case GRID_UNIT_MIC :
+		Value = val*0.0000254;
+		break;
+
+	}
+
+	return Value;
+}
+
+real inch2u(real val)
+//-----------------
+{
+	real Value = 0;
+	switch (Units)
+	{
+		case GRID_UNIT_MM :
+		Value = val*25.4;
+		break;
+
+		case GRID_UNIT_MIL :
+		Value = val*1000;
+		break;
+
+		case GRID_UNIT_INCH :
+		Value = val;
+		break;
+
+		case GRID_UNIT_MIC :
+		Value = val*0.0254;
+		break;
+
+	}
+
+	return Value;
+}
+
+real mic2u(real val)
+//-----------------
+{
+	real Value = 0;
+	switch (Units)
+	{
+		case GRID_UNIT_MM :
+		Value = val*0.001;
+		break;
+
+		case GRID_UNIT_MIL :
+		Value = val*0.0393700787402;
+		break;
+
+		case GRID_UNIT_INCH :
+		Value = val*0.0000393700787402;
+		break;
+
+		case GRID_UNIT_MIC :
+		Value = val;
+		break;
+
+	}
+
+
+	return Value;
+}
+
+int u2int_u(real val)
+//-----------------
+{
+	int Value = 0;
+	switch (Units)
+	{
+		case GRID_UNIT_MM :
+		Value = val*10000;
+		break;
+
+		case GRID_UNIT_MIL :
+		Value = val*254;
+		break;
+
+		case GRID_UNIT_INCH :
+		Value = val*254000;
+		break;
+
+		case GRID_UNIT_MIC :
+		Value = val;
+		break;
+
+	}
+
+	return Value;
+}
+
+real Unit2Value(real val, string s)
+//---------------------
+{
+	real Value = 0;
+	if( s=="m" )
+	{
+		Value = mm2u(val);
+	}
+	else
+	if( s=="l" )
+	{
+		Value = mil2u(val);
+	}
+	else
+	if( s=="h" )
+	{
+		Value = inch2u(val);
+	}
+	else
+	if( s=="c" )
+	{
+		Value = mic2u(val);
+	}
+	else
+	{
+		Value = val;
+	}
+	return Value;
+}
+
+// Returns the new x coordinate of the point (p_x, p_y) after rotating around the zero point by p_degree degrees.
+real rotate_x( real p_x, real p_y, real p_degree)
+{
+    real angle = p_degree *  PI / 180.0;
+    real rotated_x = p_x * cos(angle) - p_y * sin(angle);
+    return rotated_x;
+}
+
+// Returns the new x coordinate of the point (p_x, p_y) after rotating around the zero point by p_degree degrees.
+real rotate_y( real p_x, real p_y, real p_degree)
+{
+    real angle = p_degree *  PI / 180.0;
+    real rotated_y = p_x * sin(angle) + p_y * cos(angle);
+    return rotated_y;
+}
+
+
+//=================================================================
+
+int NumberPadTypes = 0;
+numeric string PadTypeName[];
+string ViaTypeName[];
+int PadTypeshape[];
+int PadTypeDrill[];
+int PadTypeX[];
+int PadTypeY[];
+int PadTypeE[];
+int PadTypeAngle[];
+int PadTypeLayer[];
+int PadShapeRectangle=99;
+//Erweiterung---------------------------------------
+int ViaTypeStart[];
+int ViaTypeEnd[];
+
+//--------------------------------------------------
+int ViaType = 0;
+
+string	layer_setup; // = "(1*16)";
+int		Layer_No[];
+int		Layer_count=0;
+string 	LayerSetup[];
+int		LayerSetup_rk[];
+int		LayerSetup_ek[];
+int		NumberLayer=0;
+
+int ViaBracketLevel[];
+int ViaBracketPos[];
+int ViaTypeDrill[];
+
+int rgw;
+
+
+int read_layer_setup(UL_BOARD B)
+//----------------------------
+{
+	int i;
+	int n = strlen(layer_setup);
+	int ek=0;
+	int rk=0;
+	int no=0;
+	int count=0;
+
+	for (i=0; i<n; i++)
+	{
+		string tmp_s = strsub(layer_setup, i, 1);
+		if (tmp_s == "[")
+		{
+			ek++;
+			LayerSetup_ek[count]=ek;
+		}
+	      if (tmp_s == "(")
+		{
+			rk++;
+			LayerSetup_rk[count]=rk;
+		}
+		if (tmp_s == "]")
+		{
+			LayerSetup_ek[count]=ek;
+			ek--;
+		}
+		if (tmp_s == ")")
+		{
+			LayerSetup_rk[count]=rk;
+			rk--;
+		}
+		if (tmp_s=="0"||tmp_s=="1"||tmp_s=="2"||tmp_s=="3"||tmp_s=="4"||tmp_s=="5"||
+				tmp_s=="6"||tmp_s=="7"||tmp_s=="8"||tmp_s=="9")
+		{
+			if(no==1)
+			{
+				tmp_s = strsub(layer_setup, i-1, 2);
+				count--;
+			}
+			no=1;
+				
+		}
+		else
+		{
+			no=0;
+		}
+			
+		LayerSetup[count]=tmp_s;
+		count++;
+	}	
+	return count;
+}
+
+string NewPadTypeName(int ShapeType)
+//----------------------------------
+{
+	string Name;
+	int i=0;
+	int Highest=-1;
+	if (ShapeType == PAD_SHAPE_SQUARE)
+	{
+		Name = "Square";
+	}
+	else
+	if (ShapeType == PAD_SHAPE_ROUND)
+	{
+		Name = "Round";
+	}
+	else
+	if (ShapeType == PAD_SHAPE_OCTAGON)
+	{
+		Name = "Octagon";
+	}	
+	else
+	if (ShapeType == PadShapeRectangle)
+	{
+		Name = "Rectangle";
+	}
+  	else
+	if (ShapeType == PAD_SHAPE_LONG)
+	{
+		Name = "Oblong";
+	}
+	if (ShapeType == PAD_SHAPE_OFFSET)
+	{
+		Name = "Offset";
+	}
+	for (i = 0; i < NumberPadTypes; i++)
+	{		
+		if (PadTypeshape[i] == ShapeType)
+		{
+			Highest = i;
+		}
+	}
+
+	int Index = 1;
+	if (Highest >= 0)
+	{
+		string IndexString = strsub(PadTypeName[Highest], strlen(Name));
+		Index = strtol(IndexString) + 1;
+	}
+
+	sprintf(Name, "%s%d", Name, Index);
+
+	return(Name);
+}
+
+int write_ViaType(UL_BOARD B, int n)
+//----------------------------
+{
+	int i=0;
+	
+//----Blinde Via from Top
+	for (i=0; i<n; i++)
+	{
+		if (LayerSetup[i] == "[" && LayerSetup[i+1]!="[" && LayerSetup[i+1]!="(")
+		{
+			if (LayerSetup[i+2]==":") 
+			{
+				ViaTypeEnd[ViaType++]=strtol(LayerSetup[i+1]);
+				
+				for (int j=i+1; j<n; j++)
+				{
+					if	(	
+							LayerSetup[j]==":" 
+							&&	
+							(strtol(LayerSetup[j+1])>0 && strtol(LayerSetup[j+1])<17)
+							&&
+							(LayerSetup[j+2]=="+" || LayerSetup[j+2]=="*")
+						)
+					{
+						ViaTypeStart[ViaType-1]=strtol(LayerSetup[j+1]);
+							break;
+					}
+					if	(	
+							LayerSetup[j]==":" 
+							&&	
+							( LayerSetup[j+1]=="[" || LayerSetup[j+1]=="(" )
+							&&
+							(strtol(LayerSetup[j+2])>0 && strtol(LayerSetup[j+2])<17)
+							&&
+							(LayerSetup[j+3]=="+" || LayerSetup[j+3]=="*")
+						)
+					{
+						ViaTypeStart[ViaType-1]=strtol(LayerSetup[j+2]);
+						break;
+					}
+				}
+			}
+		}			
+	}
+		
+//----Blinde Via from Bottom
+	for (i=n; i>0; i--)
+	{
+		if (LayerSetup[i] == "]" && LayerSetup[i-1]!="]" && LayerSetup[i-1]!=")")
+		{
+			if (LayerSetup[i-2]==":") 
+			{
+				ViaTypeStart[ViaType++]=strtol(LayerSetup[i-1]);
+				
+				for (int j=i-1; j>=0; j--)
+				{
+					if	(	
+							LayerSetup[j]==":" 
+							&&	
+							(strtol(LayerSetup[j-1])>0 && strtol(LayerSetup[j-1])<17)
+							&&
+							(LayerSetup[j-2]=="+" || LayerSetup[j-2]=="*")
+						)
+					{
+						ViaTypeEnd[ViaType-1]=strtol(LayerSetup[j-1]);
+						break;
+					}
+					if	(	
+							LayerSetup[j]==":" 
+							&&	
+							( LayerSetup[j-1]=="]" || LayerSetup[j-1]==")" )
+							&&
+							(strtol(LayerSetup[j-2])>0 && strtol(LayerSetup[j-2])<17)
+							&&
+							(LayerSetup[j-3]=="+" || LayerSetup[j-3]=="*")
+						)
+					{
+						ViaTypeEnd[ViaType-1]=strtol(LayerSetup[j-2]);
+						break;
+					}
+				}
+			}
+		}			
+	}
+
+//----Buried Via from Top
+	int BracketStart[];
+	int BracketEnd[];
+		
+	// Offene Klammern zu denen noch keine passende geschlossene Klammer gefunden wurde.
+	// Temporärer Array, der nur während der Berechnung benötigt wird.
+	int unhandeled_open_brackets [];
+	int unhandeled_open_bracket_count = 0;
+		
+	// Arrays der gefundenen Positionen der zueinander passenen offenen und geschlossenen Klammern.
+	int bracket_count;
+	int open_brackets[];
+ 	int closed_brackets[];
+		
+	// Berechnet Paare von offenen und geschlossenen Klammern und speichert das Ergebnis in
+	// den Arrays open_brackets und closed_brackets
+
+	// Schleife über den ganzen String
+	for (i=0; i<n ; i++)
+	{
+		// gehe bis zur nächsten geschlossenen Klammer und paare sie mit der letzen
+		// offenen Klammer im Array unhandeled_open_brackets.
+		if(LayerSetup[i]=="(")
+		{
+			unhandeled_open_brackets[unhandeled_open_bracket_count] = i;
+			++unhandeled_open_bracket_count;
+		}
+		else if(LayerSetup[i]==")")
+		{
+			// Geschlossene Klammer gefunden. 
+			closed_brackets[bracket_count] = i;
+				
+			if (unhandeled_open_bracket_count <= 0)
+			{
+				// Fehler, der geschlossenen Klammer geht keine offene Klammer vorous
+			}
+			// Die passende offenne Klammer ist die letzte im Array unhandeled_open_brackets
+			// Füge sie zum Array open_brackets hinzu und entferne sie aus dem Array unhandeled_open_brackets
+			--unhandeled_open_bracket_count;
+			open_brackets[bracket_count] = unhandeled_open_brackets [unhandeled_open_bracket_count];	
+			++bracket_count;
+		}
+	}
+				
+	if (unhandeled_open_bracket_count != 0)   
+	{
+		// Fehler, Anzahl der offenen und geschlossenen Klammern ist nicht gleich
+	}
+	for( i=0; i<bracket_count; i++)
+	{
+		int  j;
+		for( j=open_brackets[i]; j<=closed_brackets[i]; j++)
+		{
+			if( LayerSetup[j]=="(" && (strtol(LayerSetup[j+1])>0 && strtol(LayerSetup[j+1])<17))
+			{
+				ViaTypeStart[ViaType]=strtol(LayerSetup[j+1]);
+				break;
+			}
+		}
+		for(j=closed_brackets[i]; j>=open_brackets[i]; j--)
+		{
+			if( LayerSetup[j]==")" && (strtol(LayerSetup[j-1])>0 && strtol(LayerSetup[j-1])<17))
+			{
+				ViaTypeEnd[ViaType++]=strtol(LayerSetup[j-1]);
+				break;
+			}
+
+		}
+	}
+
+	NumberPadTypes = ViaType;
+	
+	for (i=0; i<ViaType; i++)
+	{
+		PadTypeshape[i]=1;
+		PadTypeX[i] = u2int_u(default_via_size);
+		PadTypeDrill[i] = u2int_u(default_drill_size);
+		PadTypeY[i] = 0;
+		PadTypeE[i] = 0;
+		PadTypeAngle[i] = 0;
+		PadTypeLayer[i] = 0;
+		sprintf(PadTypeName[i], "%s%d$%f", "Round", i+1, Db2Unit(PadTypeDrill[i]));
+		ViaTypeName[i] = PadTypeName[i];
+	}
+	return n;
+}
+
+
+int find_layer(UL_BOARD B,int n)
+//----------------------------
+{
+	string tmp;
+		for (int i=0; i<n; i++)
+		{
+			int Found=-1;	
+			if(strtol(LayerSetup[i])>0 && strtol(LayerSetup[i])<17)
+			{
+				for (int j=0; (j<Layer_count); j++)
+				{
+					if (Layer_No[j]==strtol(LayerSetup[i]))
+					{
+						Found=j;
+						break;
+					}
+				}
+				if(Found==-1)	
+				{
+					Layer_No[Layer_count++]=strtol(LayerSetup[i]);
+				}
+			}
+		}
+		
+		sort( Layer_count, Layer_No);
+		
+		for (int j=0; (j<Layer_count); j++)
+		{
+			sprintf(tmp, "%d", Layer_No[j]);
+		}
+	return Layer_count;
+}
+
+void PTHPadType(UL_PAD Pad)
+//-------------------------
+{  
+	int i=0;
+	int Found=-1;
+
+	for (i=0; (i<NumberPadTypes) && (Found==-1); i++)
+	{
+		if (PadTypeshape[i] == Pad.shape[LAYER_TOP] &&
+			  	PadTypeX[i] == Pad.diameter[LAYER_TOP] &&
+ 				PadTypeE[i] == Pad.elongation &&
+        		PadTypeAngle[i] == Pad.angle &&
+		    	PadTypeDrill[i] == Pad.drill &&
+			  	PadTypeY[i] == 0 &&
+			  	PadTypeLayer[i] == 0)
+		{
+			Found = i;
+		}
+	}
+
+	if (Found==-1)
+	{
+		PadTypeName[NumberPadTypes] = NewPadTypeName(Pad.shape[LAYER_TOP]);
+		PadTypeshape[NumberPadTypes] = Pad.shape[LAYER_TOP];
+		PadTypeX[NumberPadTypes] = Pad.diameter[LAYER_TOP];
+    	      PadTypeE[NumberPadTypes] = Pad.elongation;
+    	      PadTypeAngle[NumberPadTypes] = Pad.angle;
+		PadTypeDrill[NumberPadTypes] = Pad.drill;
+		PadTypeY[NumberPadTypes] = 0;
+		PadTypeLayer[NumberPadTypes] = 0;
+		NumberPadTypes++;
+	}
+}
+
+
+void SMDPadType(UL_SMD Pad)
+//-------------------------
+{
+	int i=0;
+	int Found=-1;
+	int ShapeType = PadShapeRectangle;
+  
+// Fehlerhaft bei rechteckigen SMD-Pads mit Roundness 100 20050620 thk
+	if (Pad.roundness == 100)
+		ShapeType = PAD_SHAPE_ROUND;
+
+	for (i=0; (i<NumberPadTypes) && (Found==-1); i++)
+	{
+		if (PadTypeshape[i] == ShapeType &&
+			PadTypeX[i] == Pad.dx &&
+			PadTypeY[i] == Pad.dy &&
+      	PadTypeAngle[i] == Pad.angle &&
+			PadTypeLayer[i] == Pad.layer)
+		{
+			Found = i;
+		}
+	}
+
+	if (Found == -1)
+	{
+		PadTypeName[NumberPadTypes] = NewPadTypeName(ShapeType);
+		PadTypeshape[NumberPadTypes] = ShapeType;
+		PadTypeX[NumberPadTypes] = Pad.dx;
+		PadTypeY[NumberPadTypes] = Pad.dy;
+    		PadTypeE[NumberPadTypes] = 0;
+    		PadTypeAngle[NumberPadTypes] = Pad.angle;
+		PadTypeDrill[NumberPadTypes] = 0;
+		PadTypeLayer[NumberPadTypes] = Pad.layer;
+		NumberPadTypes++;
+	}
+		 
+}
+
+void ViaPadType(UL_VIA Via)
+//-------------------------
+{
+	int i=0;
+	int Found=-1;
+
+	for (i=0; (i<NumberPadTypes) && (Found==-1); i++)
+	{
+		if (PadTypeshape[i] == Via.shape[LAYER_TOP] &&
+			PadTypeX[i] == Via.diameter[LAYER_TOP] &&
+			PadTypeDrill[i] == Via.drill &&
+//Erweiterung---------------------------------------
+			ViaTypeStart[i] == Via.start &&
+			ViaTypeEnd[i] == Via.end &&
+//--------------------------------------------------
+			PadTypeY[i] == 0 &&
+			PadTypeLayer[i] == 0)
+		{
+			Found = i;
+		}
+	}
+
+	if (Found==-1)
+	{
+//Erweiterung---------------------------------------
+		ViaTypeStart[NumberPadTypes] 	= Via.start;
+		ViaTypeEnd[NumberPadTypes] 	= Via.end;
+//--------------------------------------------------
+		PadTypeshape[NumberPadTypes] = Via.shape[LAYER_TOP];
+		PadTypeX[NumberPadTypes] = Via.diameter[LAYER_TOP];
+		PadTypeDrill[NumberPadTypes] = Via.drill;
+		PadTypeY[NumberPadTypes] = 0;
+		PadTypeE[NumberPadTypes] = 0;
+		PadTypeAngle[NumberPadTypes] = 0;
+		PadTypeLayer[NumberPadTypes] = 0;
+		sprintf(PadTypeName[NumberPadTypes], "%s$%f", NewPadTypeName(Via.shape[LAYER_VIAS]), Db2Unit(PadTypeDrill[NumberPadTypes]));
+		ViaTypeName[ViaType] = PadTypeName[NumberPadTypes];
+		ViaType++;
+		NumberPadTypes++;
+	}
+}
+
+
+
+
+string FindPadType(int ShapeType, int XSize, int YSize, int drill, int Layer, int Elongation, int Angle)
+//------------------------------------------------------------------------------------------------------
+{
+	int i=0;
+	int Found=-1;
+
+	for (i=0; (i<NumberPadTypes) && (Found==-1); i++)
+	{
+		if (PadTypeshape[i] == ShapeType &&
+				PadTypeX[i] == XSize &&
+				PadTypeY[i] == YSize &&
+				PadTypeAngle[i] == Angle &&
+				PadTypeDrill[i] == drill &&
+				PadTypeE[i] == Elongation &&
+				PadTypeLayer[i] == Layer)
+		{
+			Found = i;
+		}
+	}
+
+	return(PadTypeName[Found]);
+}
+
+string FindViaType(int ShapeType, int XSize, int YSize, int drill, int Layer, int Elongation, int Angle, int start, int end)
+//--------------------------------------------------------------------------------------------------------------------------
+{
+	int i=0;
+	int Found=-1;
+
+	for (i=0; (i<NumberPadTypes) && (Found==-1); i++)
+	{
+		if (PadTypeshape[i] == ShapeType &&
+				ViaTypeStart[i] == start &&
+				ViaTypeEnd[i] == end &&
+				PadTypeX[i] == XSize &&
+				PadTypeY[i] == YSize &&
+				PadTypeAngle[i] == Angle &&
+				PadTypeDrill[i] == drill &&
+				PadTypeE[i] == Elongation &&
+				PadTypeLayer[i] == Layer)
+		{
+			Found = i;
+		}
+	}
+
+	return(PadTypeName[Found]);
+}
+
+void FPPadTypes(UL_PACKAGE FP)
+//----------------------------
+{
+	FP.contacts(C)
+	{
+		if (C.pad)
+		{
+			PTHPadType(C.pad);
+		}
+		if (C.smd)
+		{
+			SMDPadType(C.smd);
+		}
+	}
+}
+
+
+string LayerFromId_old(int Id)
+//------------------------
+{
+	string LayerName;
+	
+	if ((Id < 1) || (Id > 16)) 
+		return "signal";
+	
+	board(Board)
+	{
+		Board.layers(Layer)
+		{
+			if (Layer.number == Id)
+			{
+				LayerName = Layer.name;				
+				return LayerName;
+
+			}
+		}
+	}
+	return "signal";
+}
+
+
+
+string LayerFromId(int Id)
+//------------------------
+{
+	string LayerName;
+	
+	if ((Id < 1) || (Id > 16)) 
+		return "signal";
+	
+	for (int i = 0; i < rgw; i++)
+	{
+		if (Layer_No[i] == Id)
+		{
+			sprintf(LayerName,"%d#%s", Layer_No[i], LayerFromId_old(Layer_No[i]));
+			if(string_quote)
+				sprintf(LayerName,"%c%s%c",'"', LayerName, '"');
+			return LayerName;
+		}
+	}
+	return "signal";
+}
+
+
+void write_Octagon(int o, int i, real a, real b)
+//------------------
+{
+		printf("\n      (shape ");
+		printf("(polygon ");
+		printf(LayerFromId(o));
+		printf(" 0 ");
+		printf("%f %f ",  a,  b );//	1
+		printf("%f %f ",  b,  a );//	2
+		printf("%f %f ", -b,  a );//	3
+		printf("%f %f ", -a,  b );//	4
+		printf("%f %f ", -a, -b );//	5
+		printf("%f %f ", -b, -a );//	6
+		printf("%f %f ",  b, -a );//	7
+		printf("%f %f ",  a, -b );//	8
+		printf("))");
+}
+
+
+
+void Padstacks()
+//--------------
+{
+	int i, j, l;
+	real a, b;
+	string tmp;
+	
+	printf("    (padstack ");
+	sprintf(tmp, "ViaDefault$%f", default_drill_size);
+
+	write_qStr(tmp); printf("\n");
+	printf("      (shape (circle signal %f", default_via_size);
+	printf(" 0 0))\n");
+	printf("    )\n");
+	
+	for (i=0; i<NumberPadTypes; i++)
+	{
+		l=0;
+		printf("    (padstack ");
+		write_qStr(PadTypeName[i]); printf(" ");// "\n"
+		if (PadTypeshape[i]==PAD_SHAPE_ROUND)
+		{
+			if (PadTypeLayer[i]==0)
+			{
+				for( j=0; j <rgw; j++)
+				{
+					if(ViaTypeStart[i] <= Layer_No[j])
+					{
+						if(Layer_No[j] > ViaTypeEnd[i])
+						{
+							if(l==0)
+							{
+								printf("\n      (shape ");
+								printf("(circle ");
+								printf(LayerFromId(ViaTypeStart[i]));
+								printf(" ");
+								write_Db2Unit(PadTypeX[i]);
+								printf(" 0 0))");
+							}
+							break;
+						}
+						else
+						{
+							l=1;
+							printf("\n      (shape ");
+							printf("(circle ");
+							printf(LayerFromId(Layer_No[j]));
+							printf(" ");
+							write_Db2Unit(PadTypeX[i]);
+							printf(" 0 0))");
+						}
+					}
+				}
+			}
+			else
+			{
+				printf("      (shape ");
+				printf("(circle ");
+				printf(LayerFromId(PadTypeLayer[i]));
+				printf(" ");
+				write_Db2Unit(PadTypeX[i]);
+				printf(" 0 0))");
+			}
+		}
+		else
+		if (PadTypeshape[i]==PAD_SHAPE_OCTAGON)
+		{
+			a=Db2Unit(PadTypeX[i])/2;
+			b=(Db2Unit(PadTypeX[i])/2)*0.4142135;
+			
+			if (PadTypeLayer[i]==0)
+			{
+                		for( j=0; j <rgw; j++)
+                		{
+                    		if(ViaTypeStart[i] <= Layer_No[j])
+                    		{
+                        		if(Layer_No[j] > ViaTypeEnd[i])
+                        		{
+                            			if(l==0)
+                            			{
+                                			if(Layer_No[j]==Layer_No[0])
+                                    			write_Octagon(Layer_No[j], i, a, b);
+                                			if((j > 0) && (j < rgw-1))
+                                			{
+                                    			printf("\n      (shape ");
+                                    			printf("(circle ");
+                                    			printf(LayerFromId(Layer_No[j]));
+                                    			printf(" ");
+							if(Db2Unit(PadTypeDrill[i])+(min_pad_inner*2) >= Db2Unit(PadTypeDrill[i])*(1+rv_pad_inner*2))
+							{
+								printf("%f",Db2Unit(PadTypeDrill[i])+(min_pad_inner*2));
+							}
+							else if(Db2Unit(PadTypeDrill[i])*(1+rv_pad_inner*2) <= Db2Unit(PadTypeDrill[i])+(max_pad_inner*2))
+							{
+								printf("%f",Db2Unit(PadTypeDrill[i])*(1+rv_pad_inner*2));
+							}
+							else
+							{
+								printf("%f",Db2Unit(PadTypeDrill[i])+(max_pad_inner*2));
+                                    			}
+                                    			printf(" 0 0))");
+                                			}
+                                			if(Layer_No[j]==Layer_No[rgw-1])
+                                    			write_Octagon(Layer_No[j], i, a, b);
+                            			}
+//                            		break;
+                        		}
+                        		else
+                        		{
+                            			l=1;
+                                		if(Layer_No[j]==Layer_No[0])
+                                    		write_Octagon(Layer_No[j], i, a, b);
+                                		if((j > 0) && (j < rgw-1))
+                                		{
+                                    		printf("\n      (shape ");
+                                    		printf("(circle ");
+                                    		printf(LayerFromId(Layer_No[j]));
+                                    		printf(" ");
+                                    		printf("%f",Db2Unit(PadTypeDrill[i])+(min_via_inner*2));
+                                    		printf(" 0 0))");
+                                		}
+                                		if(Layer_No[j]==Layer_No[rgw-1])
+                                    		write_Octagon(Layer_No[j], i, a, b);
+                        		}
+                    		}
+                		}
+			}
+			else
+			{
+                		write_Octagon(Layer_No[0], i, a, b);
+                		for( j=1; j < (rgw-1); j++)
+                		{
+                   		 printf("\n      (shape ");
+                    		printf("(circle ");
+                    		printf(LayerFromId(Layer_No[j]));
+                    		printf(" ");
+                    		write_Db2Unit(PadTypeX[i]);
+                    		printf(" 0 0))");
+                		}
+                		write_Octagon(Layer_No[j], i, a, b);
+			}
+		}
+		else
+		if (PadTypeshape[i]==PAD_SHAPE_LONG || PadTypeshape[i]==PAD_SHAPE_OFFSET)
+		{
+			printf("\n      (shape ");
+			printf("(path ");
+			if (PadTypeLayer[i]==0)
+			{
+				printf("signal");
+			}
+			else
+			{
+				printf(LayerFromId(PadTypeLayer[i]));
+			}
+			printf(" ");
+		
+			l = PadTypeX[i];
+			if (l < PadTypeY[i])
+				l = PadTypeY[i];       
+
+                  real Side = (0.02 * PadTypeE[i] - 1) * l; 
+
+                  write_Db2Unit(l);
+                  printf(" ");
+                  real x1, x2, y1, y2;
+                  if (PadTypeshape[i]==PAD_SHAPE_LONG)
+                  {
+                        real half_widht = Side / 2;
+				if (PadTypeAngle[i] == 90 || PadTypeAngle[i] == 270)
+				{
+                        	   x1 = 0;
+                        	   y1 = -half_widht;
+                        	   x2 = 0;
+                        	   y2 = half_widht;
+				}
+				else if (PadTypeAngle[i] == 0 || PadTypeAngle[i] == 180)
+				{
+                        	   x1 = -half_widht;
+                        	   y1 = 0;
+                        	   x2 = half_widht;
+                        	   y2 = 0;
+				}
+                                else
+				{
+                        	   x2 = rotate_x (half_widht, 0, PadTypeAngle[i]);
+                        	   y2 = rotate_y (half_widht, 0, PadTypeAngle[i]);
+                       	           x1 = -x2;
+                        	   y1 = y2;
+				}
+                  }
+                  else
+                  {
+                     if (PadTypeAngle[i] == 0)
+			   {
+                        	x1 = 0;
+                        	y1 = 0;
+                        	x2 = Side;
+                        	y2 = 0;
+		         }
+                     else if (PadTypeAngle[i] == 180)
+			   {
+                        	x1 = -Side;
+                        	y1 = 0;
+                        	x2 = 0;
+                        	y2 = 0;
+		         }
+                     if (PadTypeAngle[i] == 90)
+			   {
+                        	x1 = 0;
+                        	y1 = 0;
+                        	x2 = 0;
+                        	y2 = Side;
+		         }
+                     else if (PadTypeAngle[i] == 270)
+			   {
+                        	x1 = 0;
+                        	y1 = -Side;
+                        	x2 = 0;
+                        	y2 = 0;
+		         }
+                     else
+                     {
+                                x1 = 0;
+                        	y1 = 0;
+                        	x2 = rotate_x (Side, 0, PadTypeAngle[i]);
+                        	y2 = rotate_y (Side, 0, PadTypeAngle[i]);
+                     }
+                  }
+                  write_Db2Unit(x1);
+                  printf(" ");
+                  write_Db2Unit(y1);
+                  printf(" ");
+                  write_Db2Unit(x2);
+                  printf(" ");
+                  write_Db2Unit(y2);
+                  printf("))");
+                  
+                  
+
+		}
+		else
+		if (PadTypeshape[i]==PAD_SHAPE_SQUARE)
+		{
+			if (PadTypeLayer[i]==0)
+			{
+				for( j=0; j <rgw; j++)
+				{
+					if(ViaTypeStart[i] <= Layer_No[j])
+					{
+						if(Layer_No[j] > ViaTypeEnd[i])
+						{
+							if(l==0)
+							{
+								printf("\n      (shape ");
+								printf("(rect ");
+								printf(LayerFromId(ViaTypeStart[i]));
+								printf(" ");
+								write_Db2Unit(-(PadTypeX[i]/2));
+								printf(" ");
+								write_Db2Unit(-(PadTypeX[i]/2));
+								printf(" ");
+								write_Db2Unit(PadTypeX[i]/2);
+								printf(" ");
+								write_Db2Unit(PadTypeX[i]/2);
+								printf("))");
+							}
+							break;
+						}
+						else
+						{
+							l=1;
+							printf("\n      (shape ");
+							printf("(rect ");
+							printf(LayerFromId(Layer_No[j]));
+							printf(" ");
+							write_Db2Unit(-(PadTypeX[i]/2));
+							printf(" ");
+							write_Db2Unit(-(PadTypeX[i]/2));
+							printf(" ");
+							write_Db2Unit(PadTypeX[i]/2);
+							printf(" ");
+							write_Db2Unit(PadTypeX[i]/2);
+							printf("))");
+						}
+					}
+				}
+			}
+			else
+			{
+				printf("\n      (shape ");
+				printf("(rect ");
+				printf(LayerFromId(PadTypeLayer[i]));
+				printf(" ");
+				write_Db2Unit(-(PadTypeX[i]/2));
+				printf(" ");
+				write_Db2Unit(-(PadTypeX[i]/2));
+				printf(" ");
+				write_Db2Unit(PadTypeX[i]/2);
+				printf(" ");
+				write_Db2Unit(PadTypeX[i]/2);
+				printf("))");
+			}
+		}
+		else			
+		if (PadTypeshape[i]==PadShapeRectangle)
+		{
+			printf("\n      (shape ");
+			printf("(rect ");
+			if (PadTypeLayer[i]==0)
+			{
+				printf("signal");
+			}
+			else
+			{
+				printf(LayerFromId(PadTypeLayer[i]));
+			}
+			if (PadTypeAngle[i] == 90 || PadTypeAngle[i] == 270)
+			{
+				printf(" ");
+				write_Db2Unit(-(PadTypeY[i]/2));
+				printf(" ");
+				write_Db2Unit(-(PadTypeX[i]/2));
+				printf(" ");
+				write_Db2Unit(PadTypeY[i]/2);
+				printf(" ");
+				write_Db2Unit(PadTypeX[i]/2);
+				printf("))");
+			}
+			else
+			{
+				printf(" ");
+				write_Db2Unit(-(PadTypeX[i]/2));
+				printf(" ");
+				write_Db2Unit(-(PadTypeY[i]/2));
+				printf(" ");
+				write_Db2Unit(PadTypeX[i]/2);
+				printf(" ");
+				write_Db2Unit(PadTypeY[i]/2);
+				printf("))");
+			}
+		}
+		else
+		{
+			printf("\n      (shape ");
+			printf("(rect ");
+			if (PadTypeLayer[i]==0)
+			{
+				printf("signal");
+			}
+			else
+			{
+				printf(LayerFromId(PadTypeLayer[i]));
+			}
+			if (PadTypeAngle[i] == 90 || PadTypeAngle[i] == 270)
+			{
+				printf(" ");
+				write_Db2Unit(-(PadTypeY[i]/2));
+				printf(" ");
+				write_Db2Unit(-(PadTypeX[i]/2));
+				printf(" ");
+				write_Db2Unit(PadTypeY[i]/2);
+				printf(" ");
+				write_Db2Unit(PadTypeX[i]/2);
+				printf("))");
+			}
+			else
+			{
+				printf(" ");
+				write_Db2Unit(-(PadTypeX[i]/2));
+				printf(" ");
+				write_Db2Unit(-(PadTypeY[i]/2));
+				printf(" ");
+				write_Db2Unit(PadTypeX[i]/2);
+				printf(" ");
+				write_Db2Unit(PadTypeY[i]/2);
+				printf("))");
+			}
+		}
+		
+		printf("\n");
+		printf("      (attach off)\n");
+		printf("    )\n");
+	}
+}
+
+
+char IsKeepoutLayer(int LayerNumber)
+//----------------------------------
+{
+	if (LayerNumber >= 39 &&  LayerNumber <= 43)
+	{
+		return true;
+	}
+	return false;
+}
+
+string KeepoutType(int LayerNumber)
+//---------------------------------
+{
+	if (LayerNumber == 43)
+	{
+		return "via_keepout";
+	}
+	if (LayerNumber == 41 || LayerNumber == 42)
+	{
+		return "wire_keepout";
+	}
+	if (LayerNumber == 39 || LayerNumber == 40)
+	{
+		return "place_keepout";
+	}
+
+	return "keepout";
+}
+
+
+// Calculates the square of the distance between the points (x1, y1) and (x2, y2).
+real dist_square ( int x1, int y1, int x2, int y2)
+//---------------------------------
+{
+    real dx = x2 - x1;
+    real dy = y2 - y1;
+    return (dx * dx + dy * dy);
+}
+
+// Calculates the distance between the points (x1, y1) and (x2, y2).
+real distance ( int x1, int y1, int x2, int y2)
+//---------------------------------
+{
+    real d2 = dist_square (x1, y1, x2, y2);
+    return sqrt (d2);
+}
+
+
+int boundary_lines_a_x[], boundary_lines_a_y[]; // The coordinates of the start points of the lines of the boundary.
+int boundary_lines_b_x[], boundary_lines_b_y[]; // The coordinates of the end points of the lines of the boundary.
+int line_handeled[];                            // Describes, if a line is already handeled while creating
+                                                // the polygons of the boundary.
+
+int approximate_boundary_arc(UL_ARC arc, int line_no)
+//---------------------------------
+{
+      real max_piece_length = 1000;
+
+      real arc_length = distance(arc.x1, arc.y1, arc.x2, arc.y2);
+      int approx_count = arc_length / max_piece_length;
+      approx_count = max (approx_count, 1);
+      real delta_angle = arc.angle2 - arc.angle1;
+      if (delta_angle < 0)
+      {
+         delta_angle += 360;
+      }
+      real angle_inc = delta_angle / approx_count;
+      int prev_x = arc.x1;
+      int prev_y = arc.y1;   
+      for (int i = 1; i <= approx_count; ++i)
+      {
+         int next_x; 
+         int next_y;
+         if (i == approx_count)
+         {
+            next_x = arc.x2;
+            next_y = arc.y2;
+         }
+         else
+         {
+            real curr_angle = arc.angle1 + i * angle_inc;
+            if (curr_angle > 360)
+            {
+               curr_angle -= 360;
+            }
+            real radian_angle = curr_angle *  PI / 180.0;
+            next_x = arc.xc + arc.radius * cos(radian_angle);
+            next_y = arc.yc + arc.radius * sin(radian_angle);
+         }
+         boundary_lines_a_x[line_no]= prev_x;
+	   boundary_lines_a_y[line_no]= prev_y;
+	   boundary_lines_b_x[line_no]= next_x;
+	   boundary_lines_b_y[line_no]= next_y;
+         ++line_no;
+         prev_x = next_x;
+         prev_y = next_y;
+      }
+     return line_no;
+}
+
+
+int process_next_wire (UL_WIRE p_wire, int p_corner_count)
+{
+      int new_corner_count;
+	if (p_wire.arc)
+      {
+           	new_corner_count = approximate_boundary_arc(p_wire.arc, p_corner_count);
+      }
+      else
+    	{
+		boundary_lines_a_x[p_corner_count] = p_wire.x1;
+		boundary_lines_a_y[p_corner_count] = p_wire.y1;
+		boundary_lines_b_x[p_corner_count] = p_wire.x2;
+		boundary_lines_b_y[p_corner_count] = p_wire.y2;
+		new_corner_count = p_corner_count + 1;
+      }
+	return new_corner_count;
+}
+
+// Collects the lines of the board outline.
+int collectOutlineLines(UL_BOARD Board)
+//-------------------------
+{
+      int i=0;
+	Board.wires(W) 
+	{
+		if (W.layer == LAYER_DIMENSION) 
+		{
+                  i = process_next_wire(W, i);
+		}
+	}
+	return i;
+}
+
+int polygon_corner_count;                               // The numer of corners of the polygon.
+int polygon_part_corners_x[], polygon_part_corners_y[]; // A connected part of a keepout described as a polygon.
+int polygon_part_corner_count;                          // The number of corners of the connected part.
+
+// Combines all connected unhandeled lines of a list of lines to a polygon.
+// Returns false, if there are no more unhandled lines.
+
+int combineLines(real p_end_point_tolerance)
+{
+      int index_of_first_unhandeled_line = -1;
+      for (int j = 0; j < polygon_corner_count; ++j)
+      {
+           if (!line_handeled[j])
+           {
+               index_of_first_unhandeled_line = j; 
+           }
+      }
+      if (index_of_first_unhandeled_line < 0)
+      {
+           return false;
+      }
+	int searchx = boundary_lines_b_x[index_of_first_unhandeled_line];
+	int searchy = boundary_lines_b_y[index_of_first_unhandeled_line];
+	polygon_part_corners_x[0] = boundary_lines_a_x[index_of_first_unhandeled_line];
+	polygon_part_corners_y[0] = boundary_lines_a_y[index_of_first_unhandeled_line];
+      line_handeled[index_of_first_unhandeled_line] = true;
+	int resultcornercount = 1;
+	
+	for (j = 0; j < polygon_corner_count; ++j)
+	{
+            real min_distance = p_end_point_tolerance;
+            int next_line_found = false;
+            int nearest_line_index;
+		char nearest_point_is_start;
+            // Search the nearest endpoint of the other lines to (searchx, searchy)
+            // and add it to the result polygon.
+            // In general this point should be equal to (searchx, searchy).
+		for (int i = 0; i < polygon_corner_count; ++i)
+		{
+                  if (line_handeled[i])
+                  {
+                        continue;
+                  }
+                  real curr_distance = dist_square(searchx, searchy, boundary_lines_a_x[i], boundary_lines_a_y [i]);
+	            if ( curr_distance < min_distance)
+		      {
+                        min_distance = curr_distance;
+                        nearest_line_index = i;
+                        nearest_point_is_start = true;
+                        next_line_found = true;
+		      }
+                  curr_distance = dist_square(searchx, searchy, boundary_lines_b_x[i], boundary_lines_b_y[i]);
+		      if ( curr_distance < min_distance)
+		      {
+                        min_distance = curr_distance;
+                        nearest_line_index = i;
+                        nearest_point_is_start = false;
+                        next_line_found = true;
+		      }
+		}
+            if (!next_line_found)
+            {
+                 break;
+            }
+            polygon_part_corners_x[resultcornercount] = searchx;
+	      polygon_part_corners_y[resultcornercount] = searchy;
+	      ++resultcornercount;
+            // Take the other endpoint of the line of the found nearestpoint
+            // as new seach point.
+            if (nearest_point_is_start)
+            {
+               searchx = boundary_lines_b_x[nearest_line_index];
+               searchy = boundary_lines_b_y[nearest_line_index];
+            }
+            else           
+            {
+               searchx = boundary_lines_a_x[nearest_line_index];
+               searchy = boundary_lines_a_y[nearest_line_index];
+            }
+            line_handeled[nearest_line_index] = true;
+	}
+      if (resultcornercount == 1)
+      {
+         // no matching lines found, descripe the result shape as line with a width
+	    polygon_part_corners_x[1] = boundary_lines_b_x[index_of_first_unhandeled_line];
+	    polygon_part_corners_y[1] = boundary_lines_b_y[index_of_first_unhandeled_line];
+          resultcornercount = 2;
+      }
+      polygon_part_corner_count = resultcornercount;
+      return true;
+}
+
+void MakeBoundary	() 
+//-------------------------
+{
+      board(Board)
+      {
+	    polygon_corner_count = collectOutlineLines(Board);
+      }
+      for (int i = 0; i < polygon_corner_count; ++i)
+      {
+	     printf("    (boundary ");
+	     printf("(path ");
+	     printf("signal 0 ");
+             write_Db2Unit(boundary_lines_a_x[i]);
+	     printf(" ");
+             write_Db2Unit(boundary_lines_a_y[i]);
+	     printf(" ");
+             write_Db2Unit(boundary_lines_b_x[i]);
+	     printf(" ");
+             write_Db2Unit(boundary_lines_b_y[i]);
+     	     printf("))\n");
+      }
+}
+
+void board_dimension()  
+//-------------------------
+{
+	int i=0;
+	int ox=0;
+	int oy=0;
+	int mx=0;
+	int my=0;
+	int dimx1[], dimy1[];	// coordinate od Dimension
+	int dimx2[], dimy2[];	// coordinate od Dimension
+	int index[];
+	board(B)
+	{
+		B.wires(W) 
+		{
+			if (W.layer==LAYER_DIMENSION) 
+			{
+				dimx1[i]=W.x1;
+				dimy1[i]=W.y1;
+				dimx2[i]=W.x2;
+				dimy2[i]=W.y2;
+				i++;
+			}
+		}
+	}
+	sort(i, index, dimx1, dimx2, dimy1, dimy2);
+	ox=dimx1[0];
+	oy=dimy1[0];  
+	for (int n = 0; n < i; n++) 
+	{
+		if (dimx1[n]<ox) {ox=dimx1[n];}
+		if (dimy1[n]<oy) {oy=dimy1[n];}
+		if (dimx2[n]>mx) {mx=dimx2[n];}
+		if (dimy2[n]>my) {my=dimy2[n];}
+	}
+	printf("    (boundary \n");
+	printf("      (rect pcb ");
+	printf(" "); write_Db2Unit(ox);
+	printf(" "); write_Db2Unit(oy);
+	printf(" "); write_Db2Unit(mx);
+	printf(" "); write_Db2Unit(my);
+	printf(")\n    )\n"); 
+}
+
+void LineDesc(UL_WIRE Line)
+//-------------------------
+{	
+	write_Db2Unit(Line.width);
+  	printf(" ");
+	write_Db2Unit(Line.x1);
+  	printf(" ");
+	write_Db2Unit(Line.y1);
+  	printf(" ");
+	write_Db2Unit(Line.x2);
+  	printf(" ");
+	write_Db2Unit(Line.y2);
+}
+
+void ArcDesc(UL_ARC Arc)
+//-------------------------
+{	
+	write_Db2Unit(Arc.width);
+  	printf(" ");
+	write_Db2Unit(Arc.x1);
+  	printf(" ");
+	write_Db2Unit(Arc.y1);
+  	printf(" ");
+	write_Db2Unit(Arc.x2);
+  	printf(" ");
+	write_Db2Unit(Arc.y2);
+}
+
+void CircleDesc(UL_CIRCLE Circle)
+//-------------------------------
+{
+	write_Db2Unit(Circle.radius * 2);
+	printf(" ");
+	write_Db2Unit(Circle.x);
+	printf(" ");
+	write_Db2Unit(Circle.y);
+}
+
+
+void RectangleDesc(UL_RECTANGLE Rectangle)
+//----------------------------------------
+{
+	write_Db2Unit(Rectangle.x1);
+	printf(" ");
+	write_Db2Unit(Rectangle.y1);
+	printf(" ");
+	write_Db2Unit(Rectangle.x2);
+	printf(" ");
+	write_Db2Unit(Rectangle.y2);	
+}
+
+
+void PolygonDesc(UL_POLYGON Polygon)
+//----------------------------------
+{
+  printf(" ");
+  write_Db2Unit(Polygon.width);
+	Polygon.wires(Wire)
+	{
+		printf(" ");
+		write_Db2Unit(Wire.x1);
+		printf(" ");
+		write_Db2Unit(Wire.y1);		
+	}
+}
+
+void PTHPad(UL_PAD Pad)
+//---------------------
+{
+	string Style;
+
+	Style = FindPadType(Pad.shape[LAYER_TOP], Pad.diameter[LAYER_TOP], 0, Pad.drill, 0, Pad.elongation, Pad.angle);
+	write_qStr(Style); printf(" ");
+}
+
+
+void SMDPad(UL_SMD Pad)
+//---------------------
+{
+	string Style;
+
+  if (Pad.roundness == 100)
+    Style = FindPadType(PAD_SHAPE_ROUND, Pad.dx, Pad.dy, 0, Pad.layer, 0, Pad.angle);
+  else    
+	  Style = FindPadType(PadShapeRectangle, Pad.dx, Pad.dy, 0, Pad.layer, 0, Pad.angle);
+	write_qStr(Style); printf(" ");
+}
+
+
+void make_component_keepout(int p_layer, string p_layer_name)
+{
+      if (polygon_corner_count <= 0 || !IsKeepoutLayer(p_layer))
+	{
+		return;
+	}
+      for (int i = 0; i < polygon_corner_count; ++i)
+      {
+         line_handeled[i] = false;
+      }
+      for (;;)
+      {
+  	     	int more_parts = combineLines(polyline_endpoint_tolerance);
+           	if (!more_parts)
+            {
+     	          break;
+     	      }
+			printf("      (%s", KeepoutType(p_layer));
+			p_layer_name = "signal";
+			if (p_layer == 39 || p_layer == 41)
+				p_layer_name = TopLayer;
+			if (p_layer == 40 || p_layer == 42)
+				p_layer_name = BotLayer;
+	   printf("(path ");
+           write_Str(p_layer_name); 
+           printf(" 0 ");
+           
+	     for (i = 0; i< polygon_part_corner_count; ++i)
+	     {
+	         write_Db2Unit(polygon_part_corners_x[i]);
+	         printf(" ");
+	         write_Db2Unit(polygon_part_corners_y[i]);
+	         printf(" ");
+	     }
+     	     printf("))\n");
+      }
+}
+
+void FPOutline(UL_PACKAGE FP, UL_LAYER Layer)
+//-------------------------------------------
+{
+	string LayerName;
+
+	if (Layer.number == LAYER_TPLACE || IsKeepoutLayer(Layer.number))
+	{		  
+		LayerName = LayerFromId(Layer.number);    
+		board(Board)
+		{
+			Board.layers(Layer)
+			{
+				if (Layer.number == 1) 
+					LayerName = LayerFromId(Layer.number);
+			}
+		}
+
+		polygon_corner_count = 0;
+  	      int width = 0;
+
+		FP.wires(W) 
+		{
+			if (W.layer == Layer.number) 
+			{
+               	     polygon_corner_count = process_next_wire (W, polygon_corner_count);
+             	     width = W.width;
+			}
+		}
+		
+            make_component_keepout(Layer.number, LayerName);
+
+		FP.circles(Circle)
+		{
+			if (Circle.layer==Layer.number)
+			{      
+				if (IsKeepoutLayer(Layer.number))
+				{
+					printf("      (%s", KeepoutType(Layer.number));
+					LayerName ="signal";
+					if (Layer.number == 39 || Layer.number == 41)
+						LayerName = TopLayer;
+					if (Layer.number == 40 || Layer.number == 42)
+						LayerName = BotLayer;
+				}
+				else 
+					printf("      (outline");
+				printf("(circ ");
+				write_Str(LayerName); printf(" ");
+				CircleDesc(Circle);
+				printf("))\n");
+			}
+		}
+		FP.rectangles(Rectangle)
+		{
+			if (Rectangle.layer==Layer.number)
+			{       
+ 				if (IsKeepoutLayer(Layer.number))
+				{
+					printf("      (%s", KeepoutType(Layer.number));
+					LayerName ="signal";
+					if (Layer.number == 39 || Layer.number == 41)
+						LayerName = TopLayer;
+					if (Layer.number == 40 || Layer.number == 42)
+						LayerName = BotLayer;
+				}
+				else 
+					printf("      (outline");
+				printf("(rect ");
+				write_Str(LayerName); printf(" ");
+				RectangleDesc(Rectangle);
+				printf("))\n");
+			}
+		}
+		FP.polygons(Polygon)
+		{
+			if (Polygon.layer == Layer.number)
+			{
+				Polygon.wires(W)
+				{
+              	 	             polygon_corner_count = process_next_wire (W, polygon_corner_count);
+             		             width = W.width;
+				}
+      				for (int i = 0; i < polygon_corner_count; ++i)
+      				{
+	     				printf("    (outline ");
+	     				printf("(path ");
+	     				printf("signal 0 ");
+             				write_Db2Unit(boundary_lines_a_x[i]);
+	     				printf(" ");
+             				write_Db2Unit(boundary_lines_a_y[i]);
+	     				printf(" ");
+             				write_Db2Unit(boundary_lines_b_x[i]);
+	     				printf(" ");
+             				write_Db2Unit(boundary_lines_b_y[i]);
+     	     				printf("))\n");
+      				}
+			}
+		}
+	}
+}
+
+
+void Image(UL_PACKAGE FP)
+//-----------------------
+{
+  int hi = 1;
+  string HName;
+
+	printf("    (image ");
+	write_qStr(FP.name + "$" + FP.library); printf("\n");
+
+	
+	board(Board)
+	{
+		Board.layers(Layer)
+		{
+			FPOutline(FP,Layer);
+		}
+	}
+
+	FP.holes(Hole)
+	{
+		printf("      (keepout (circ signal ");
+
+		write_Db2Unit(Hole.diameter[LAYER_TSTOP]);
+		printf(" ");
+		write_Db2Unit(Hole.x);
+		printf(" ");
+		write_Db2Unit(Hole.y);
+		printf("))\n");
+	}
+
+	FP.contacts(Pad)
+	{
+		printf("      (pin ");
+
+		if (Pad.pad)
+		{
+			PTHPad(Pad.pad);
+		}
+
+	if (Pad.smd)
+		{
+			SMDPad(Pad.smd);
+		}
+
+	write_qStr(Pad.name);
+	printf(" ");
+
+		write_Db2Unit(Pad.x);
+		printf(" ");
+		write_Db2Unit(Pad.y);
+		printf(")\n");
+	}
+
+	printf("    )\n");
+}
+
+
+void GetUsedFPs()
+//---------------
+{
+  int UsedFPCount=0;
+  numeric string UsedFPs[];
+
+	board(Board)
+	{
+		Board.elements(Component)
+		{
+			string FPName=Component.package.name;
+			char Found=false;
+			int i;
+			for (i=0; (i<UsedFPCount) &&!Found; i++)
+			{
+				if (UsedFPs[i] == FPName)
+				{
+					Found = true;
+				}
+			}
+			if (!Found)
+			{
+				UsedFPs[UsedFPCount++]=FPName;
+			}
+		}
+	}
+}
+
+
+void PadTypes(void)
+//------------------
+{
+	board(Board)
+	{
+		Board.libraries(Library)
+		{
+			Library.packages(FP)
+			{
+			  FPPadTypes(FP);
+			}
+		}
+		Board.signals(Net)
+		{
+			Net.vias(Via)
+			{
+				ViaPadType(Via);
+			}
+		}
+	}
+}
+
+
+void Images()
+//----------
+{
+	GetUsedFPs();
+
+	printf("  (library\n");
+	   
+  board(Board)
+	{
+		Board.libraries(Library)
+		{
+			Library.packages(FP)
+			{
+				Image(FP);
+			}
+		}
+	}
+
+  Padstacks();
+
+	printf("  )\n");
+}
+
+void Header()
+//-----------
+{
+	board(Board)
+	{
+		Units = Board.grid.unit;
+
+		printf("(PCB ");
+		printf("\"");
+		printf(Board.name);
+		printf("\"");
+		printf("\n");
+
+		printf("  (parser\n"); 
+		printf("    (string_quote \")\n");
+		printf("    (space_in_quoted_tokens on)\n");
+		printf("    (host_cad CadSoft)\n");
+		printf("    (host_version '%s')\n", EAGLE_SIGNATURE);
+		printf("  )\n");
+
+		printf("  (resolution ");		
+
+		if (Units == GRID_UNIT_MM)
+		{
+		  printf("mm 10000)");
+		  printf("\n  (unit mm)");
+		}
+		else
+		if (Units == GRID_UNIT_MIL)
+		{
+		  printf("mil 254)");
+		  printf("\n  (unit mil)");
+		}
+		else
+		if (Units == GRID_UNIT_INCH)
+		{
+		  printf("inch 254000)");
+		  printf("\n  (unit inch)");
+		}
+		else
+		if (Units == GRID_UNIT_MIC)
+		{
+		  printf("um 10)");
+		  printf("\n  (unit mm)");
+		}
+
+		printf("\n");
+	}
+}
+
+void FromTo(UL_CONTACTREF Node)
+//-----------------------------
+{
+/*
+	printf(" \"");
+	printf(Node.element.name);
+	printf("\"-");
+	printf("\"");
+	printf(Node.contact.name);
+	printf("\"");*/
+	printf(" ");
+	write_qStr(Node.element.name);
+	printf("-");
+	write_qStr(Node.contact.name);
+}
+
+int net_count = 0;
+string net_name_arr[];
+int net_class_no_arr[];
+
+void Network()
+//------------
+{
+	printf("  (network\n");
+	board(Board)
+	{
+            // write the nets
+		Board.signals(Net)
+		{
+			printf("    (net ");
+			write_qStr(Net.name); 
+			printf("\n");
+			printf("      (pins ");
+			Net.contactrefs(Node)
+			{
+				FromTo(Node);
+			}
+			printf(")\n");
+
+			printf("    )\n");
+
+                  net_name_arr[net_count] = Net.name;
+                  net_class_no_arr[net_count] = Net.class.number;
+                  ++net_count;
+		}
+
+            // write the classes
+            Board.classes(curr_class)
+            {
+			if ((curr_class.width == 0) && (curr_class.clearance == 0)) 
+                  {
+				continue;
+                  }
+            	printf("    (class ");
+                  write_qStr(curr_class.name);
+                  printf("\n      ");
+                  for(int i = 0; i < net_count; ++i)
+			{
+				if (net_class_no_arr[i] == curr_class.number)
+				{
+					printf(" ");
+					write_qStr(net_name_arr[i]);
+				}
+			}
+			printf("\n      (rule");
+                  if (curr_class.width != 0)
+			{
+				printf("\n        (width ");
+                        real wire_width = curr_class.width;
+                        if (wire_width <= 0)
+				{
+					wire_width = default_wire_width;
+				}
+				write_Db2Unit(wire_width);
+				printf(")");
+			}
+                  if (curr_class.clearance != 0)
+			{
+				printf("\n        (clearance ");
+                        real clearance = curr_class.clearance;
+                        if (clearance <= 0)
+				{
+					clearance = default_clearance;
+				}
+				write_Db2Unit(clearance);
+				printf(")");
+			}
+                  printf("\n      )\n");
+			printf("    )\n");
+            }
+	}
+  	printf("  )\n");
+}
+
+int arc_approx_corners_x[], arc_approx_corners_y[];
+
+int approximate_wire_arc(UL_ARC arc)
+//---------------------------------
+{
+      real max_piece_length = 10000;
+
+      real arc_length = distance(arc.x1, arc.y1, arc.x2, arc.y2);
+      int approx_count = arc_length / max_piece_length;
+      approx_count = max (approx_count, 1);
+      real delta_angle = arc.angle2 - arc.angle1;
+      if (delta_angle < 0)
+      {
+         delta_angle += 360;
+      }
+      real angle_inc = delta_angle / approx_count;
+      arc_approx_corners_x[0] = arc.x1;
+      arc_approx_corners_y[0] = arc.y1;
+      int corner_no = 1;  
+      for (int i = 1; i <= approx_count; ++i)
+      {
+         int next_x; 
+         int next_y;
+         if (i == approx_count)
+         {
+            next_x = arc.x2;
+            next_y = arc.y2;
+         }
+         else
+         {
+            real curr_angle = arc.angle1 + i * angle_inc;
+            if (curr_angle > 360)
+            {
+               curr_angle -= 360;
+            }
+            real radian_angle = curr_angle *  PI / 180.0;
+            next_x = arc.xc + arc.radius * cos(radian_angle);
+            next_y = arc.yc + arc.radius * sin(radian_angle);
+         }
+         arc_approx_corners_x[corner_no]= next_x;
+	   arc_approx_corners_y[corner_no]= next_y;
+         ++corner_no;
+      }
+     return corner_no;
+}
+
+
+void Wiring()
+//-----------
+{
+  int hi = 1;
+  string Name;
+
+	printf("  (wiring\n");
+	board(Board)
+	{		         
+    		Board.signals(Net)
+		{
+      		Net.wires(Wire)
+		  	{
+        			if ((Wire.layer >= 1) && (Wire.layer <= 16))
+        			{
+          				if (Wire.arc)
+          				{
+                                    int corner_count = approximate_wire_arc(Wire.arc);
+                                    printf("    (wire\n");
+            				printf("      (path "); 
+            				printf("%s ", LayerFromId(Wire.layer));
+						write_Db2Unit(Wire.arc.width);
+                                    for (int i = 0; i < corner_count; ++i)
+						{
+							printf(" ");
+							write_Db2Unit(arc_approx_corners_x[i]);
+  							printf(" ");
+							write_Db2Unit(arc_approx_corners_y[i]);
+						}
+          				}
+          				else
+          				{
+            				printf("    (wire\n");
+            				printf("      (path "); 
+            				printf("%s ", LayerFromId(Wire.layer));          
+            				LineDesc(Wire);
+          				}
+          				printf(") \n");
+          				printf("      (net ");
+					write_qStr(Net.name);
+          				if (preprotect)
+            				printf(") (type protect)\n");
+          				else
+            				printf(")\n"); 
+          				printf("    )\n"); 
+        			}
+		  	}
+
+      		Net.polygons(Poly)
+      		{
+        			if ((Poly.layer >= 1) && (Poly.layer <= 16))
+        			{
+          				printf("    (wire\n");
+          				printf("      (poly ");
+          				printf("%s ", LayerFromId(Poly.layer));          
+          				PolygonDesc(Poly);
+
+          				printf(") \n");
+          				printf("      (net ");
+					write_qStr(Net.name);
+          				if (preprotect)
+            				printf(") (type protect)\n");
+          				else
+            				printf(")\n"); 
+          				printf("    )\n"); 
+        			}
+      		}
+          
+      		Net.vias(Via)
+			{
+				printf("    (via\n      ");
+        
+				write_qStr(FindViaType(Via.shape[LAYER_TOP], Via.diameter[LAYER_TOP], 0, Via.drill, 0, 0, 0, Via.start, Via.end));
+				printf(" ");
+
+				write_Db2Unit(Via.x);
+				printf(" ");
+				write_Db2Unit(Via.y);         
+				printf("\n      (net ");
+				write_qStr(Net.name);
+				if (preprotect)
+					printf(") (type protect)\n");
+				else
+					printf(")\n"); 
+					printf("    )\n"); 
+			}	    
+		}
+	}
+	printf("  )\n");
+}
+
+
+
+void Layers(UL_BOARD p_board)
+//---------------------
+{
+	int IsSignal;
+	string tmp;
+	int i;
+
+	for (i = 0; i < rgw; i++)
+	{
+	
+
+			tmp = LayerFromId(Layer_No[i]);
+			printf("    (layer ");
+			printf("%s ", tmp);
+		
+			if (!strchr(LayerFromId(Layer_No[i]),'$'))
+			{
+				printf(" (type power)");
+				printf(" (use_net ");
+				printf(strsub(LayerFromId(Layer_No[i]) , 1));
+				printf(")");
+			}
+			else
+			{
+				printf(" (type signal))\n");
+			}
+	}
+}
+
+void Vias(UL_SIGNAL Net)
+//----------------------
+{
+
+	Net.vias(Via)
+	{
+		printf("(via ");
+
+		write_qStr(FindPadType(Via.shape[LAYER_TOP], Via.diameter[LAYER_TOP], 0, Via.drill, 0, 0, 0));
+		printf(" ");
+
+		write_Db2Unit(Via.x);
+		printf(" ");
+		write_Db2Unit(Via.y);
+
+		printf("\n");
+	}
+
+}
+
+
+void CmpInstance(UL_ELEMENT Component)
+//------------------------------------
+{
+	printf("    (component ");
+
+	write_qStr(Component.package.name + "$" + Component.package.library); printf(" \n");
+	
+	printf("      (place ");
+	write_qStr(Component.name);
+	printf(" ");
+
+	write_Db2Unit(Component.x);
+	printf(" ");
+	write_Db2Unit(Component.y);
+	printf(" ");
+
+	if (Component.mirror)
+	{
+		printf("Back");
+	}
+  else
+	{
+		printf("Front");
+	}
+
+	printf(" ");
+	write_Real(Component.angle);
+	printf(")\n    )\n");	
+}
+
+void Placement()
+//--------------
+{
+	board(Board)
+	{
+		printf("  (placement\n");
+
+		printf("    (place_control (flip_style rotate_first))\n");
+
+		Board.elements(Component)
+		{
+			CmpInstance(Component);
+		}
+		printf("  )\n");
+	}
+}
+
+
+// Creates an keepout, which is made  by lines.
+// If p_polygon != null, the wires of p_polygon are processed, else all wires on p_board on layer p_layer
+
+void make_keepout_shape(int p_layer, string p_layer_name, int p_width)
+{
+      if (polygon_corner_count <= 0)
+      {
+		return;
+	}
+      for (int i = 0; i < polygon_corner_count; ++i)
+      {
+         line_handeled[i] = false;
+      }
+      for (;;)
+      {
+  	     	int more_parts = combineLines(polyline_endpoint_tolerance);
+           	if (!more_parts)
+            {
+     	          break;
+     	      }
+
+		printf("      (%s", KeepoutType(p_layer));
+		p_layer_name = "signal";
+		if (p_layer == 39 || p_layer == 41)
+			p_layer_name = TopLayer;
+		if (p_layer == 40 || p_layer == 42)
+			p_layer_name = BotLayer;
+
+	     printf("(path ");
+           write_Str(p_layer_name); 
+           printf(" ");
+           write_Db2Unit(p_width);
+           printf(" ");
+
+	     for (i = 0; i< polygon_part_corner_count; ++i)
+	     {
+	         write_Db2Unit(polygon_part_corners_x[i]);
+	         printf(" ");
+	         write_Db2Unit(polygon_part_corners_y[i]);
+	         printf(" ");
+	     }
+     	     printf("))\n");
+      }
+}
+
+
+void Structure()
+//--------------
+{
+	board(Board)
+	{
+		// print the vias
+
+    		printf("    (via");       
+    		for (int i = 0; i < ViaType; i++)
+    		{
+    			printf("\n       "); 
+			write_qStr(ViaTypeName[i]);		
+    		}
+    		if (ViaType == 0)
+    		{
+      		// create a default via padstack
+			string tmp;
+			sprintf(tmp, "ViaDefault$%f", default_drill_size);
+    			printf("\n       "); write_qStr(tmp);
+            }
+    		printf("\n    )\n");
+
+		// print the rules
+
+    		printf("    (rule (width %f", default_wire_width);
+    		printf(")(clearance %f", default_clearance);
+    		printf("))\n");
+      	if (clearance_wire_pad > 0 && clearance_wire_pad != default_clearance)
+		{
+      		printf("    (rule (clearance %f", clearance_wire_pad);
+      		printf(" (type wire_pin)))\n");
+		} 
+      	if (clearance_wire_smd > 0 && clearance_wire_smd != default_clearance)
+		{
+      		printf("    (rule (clearance %f", clearance_wire_smd);
+      		printf(" (type wire_smd)))\n");
+		} 
+      	if (clearance_wire_via > 0 && clearance_wire_via != default_clearance)
+		{
+      		printf("    (rule (clearance %f", clearance_wire_via);
+      		printf(" (type wire_via)))\n");
+		} 
+      	if (clearance_pad_pad > 0 && clearance_pad_pad != default_clearance)
+		{
+      		printf("    (rule (clearance %f", clearance_pad_pad);
+      		printf(" (type pin_pin)))\n");
+		} 
+      	if (clearance_pad_via > 0 && clearance_pad_via != default_clearance)
+		{
+      		printf("    (rule (clearance %f", clearance_pad_via);
+      		printf(" (type pin_via)))\n");
+		} 
+      	if (clearance_via_via > 0 && clearance_via_via != default_clearance)
+		{
+      		printf("    (rule (clearance %f", clearance_via_via);
+      		printf(" (type via_via)))\n");
+		} 
+      	if (clearance_smd_pad > 0 && clearance_smd_pad != default_clearance)
+		{
+      		printf("    (rule (clearance %f", clearance_smd_pad);
+      		printf(" (type smd_pin)))\n");
+		} 
+      	if (clearance_smd_via > 0 && clearance_smd_via != default_clearance)
+		{
+      		printf("    (rule (clearance %f", clearance_smd_via);
+      		printf(" (type smd_via)))\n");
+		} 
+      	if (clearance_smd_smd > 0 && clearance_smd_smd != default_clearance)
+		{
+      		printf("    (rule (clearance %f", clearance_smd_smd);
+      		printf(" (type smd_smd)))\n");
+		} 
+
+            // print the keepouts
+
+		Board.layers(Layer)
+		{      
+			if (Layer.number == LAYER_TOP)
+				TopLayer = LayerFromId(Layer.number);
+			else
+				if (Layer.number == LAYER_BOTTOM)
+					BotLayer = LayerFromId(Layer.number);  
+
+			if (IsKeepoutLayer(Layer.number))
+			{
+				string LayerName;
+
+				LayerName = LayerFromId(Layer.number); // Layer.name;
+				if (Layer.number == LAYER_DIMENSION)
+					LayerName = "signal";
+				else
+					if (Layer.number == LAYER_TSTOP)
+						LayerName = TopLayer;
+					else
+						LayerName = BotLayer;
+
+      			int width = 0;
+      			polygon_corner_count = 0;
+
+				Board.wires(W) 
+				{
+					if (W.layer == Layer.number) 
+					{
+						polygon_corner_count = process_next_wire(W, polygon_corner_count);
+           					width = W.width;
+					}
+				}
+
+                        make_keepout_shape(Layer.number, LayerName, width);
+
+				Board.circles(Circle)
+				{
+
+					if (Circle.layer == Layer.number)
+					{						
+              				printf("    (%s", KeepoutType(Layer.number));
+              				LayerName = "signal";
+              				if (Layer.number == 39 || Layer.number == 41)
+              					LayerName = TopLayer;
+              				if (Layer.number == 40 || Layer.number == 42)
+                				LayerName = BotLayer;
+            
+            				printf("(circ ");
+						write_Str(LayerName); printf(" ");
+						
+            				CircleDesc(Circle);
+            				printf("))\n");
+					}
+				}
+
+				Board.rectangles(Rectangle)
+				{
+
+					if (Rectangle.layer == Layer.number)
+					{
+             				printf("    (%s", KeepoutType(Layer.number));
+              				LayerName = "signal";
+              				if (Layer.number == 39 || Layer.number == 41)
+              					LayerName = TopLayer;
+              				if (Layer.number == 40 || Layer.number == 42)
+                				LayerName = BotLayer;           
+            
+            				printf("(rect ");
+						write_Str(LayerName); printf(" ");
+						RectangleDesc(Rectangle);
+            				printf("))\n");
+					}
+				}
+
+        			Board.polygons(Polygon)
+				{
+
+					if (Polygon.layer==Layer.number)
+					{
+              				LayerName = TopLayer;
+             				if (Layer.number == 40 || Layer.number == 42)
+                					LayerName = BotLayer;
+                                    Polygon.wires(W)
+						{
+							polygon_corner_count = process_next_wire(W, polygon_corner_count);
+           						width = W.width;
+ 						}
+						make_keepout_shape(Layer.number, LayerName, width);
+	  				}
+				}
+    			}
+            }
+
+    		Board.holes(Hole)
+	  	{
+
+		  	printf("    (keepout (circ signal ");
+
+		  	write_Db2Unit(Hole.diameter[LAYER_TSTOP]);
+      		printf(" ");
+		  	write_Db2Unit(Hole.x);
+      		printf(" ");
+		  	write_Db2Unit(Hole.y);
+		 	 printf("))\n");
+    		}  
+  	}
+}
+
+
+
+real get_drufile_value(string p_line, string  p_separator)
+{
+	return Unit2Value( strtod(strsub(p_line, strrstr(p_line, p_separator)+2, strlen(p_line))), strsub(p_line, strlen(p_line)-1, 1) );
+}
+
+board(Board)
+//----------
+{
+	string DruFile = filesetext(Board.name, ".dru");
+
+	if(argv[1]!="f")
+	{	
+
+	
+		string ScrFile = filesetext(Board.name, "_gen_drufile.scr");	
+	
+            // Because the dru_file cannot be read from an ulp-file,
+            // a script file is created, which creates  the dru_file
+            // and then calls this ulp-file again with the option f.
+ 
+		output(ScrFile, "wtD")
+		{
+			string tmp;
+			tmp = filename(argv[0]);
+			printf("DRC SAVE '%s';\n", DruFile);
+			printf("RUN %s f;", tmp);
+		
+			exit("script '" + ScrFile + "';");
+		}
+	}
+	clearance_wire_pad = clearance_wire_smd = clearance_wire_via = clearance_pad_pad = clearance_pad_via
+		= clearance_via_via = clearance_smd_pad = clearance_smd_via 
+            = clearance_smd_smd = -1;
+
+	Units = Board.grid.unit;
+
+	string default_name = filesetext(Board.name, ".dsn");
+	string Filename = dlgFileSave("Eagle to DSN Format", default_name, "*.dsn");
+	
+	if (filesize(DruFile))
+	{
+		string Lines[];
+		int nLines = fileread(Lines, DruFile);
+            string separator = "= ";
+            int line_no;
+            real min_via_outer;
+            for (line_no == 0; line_no < nLines; ++line_no)
+            {
+                  string curr_line = Lines[line_no];
+                  if (strstr(curr_line, "layerSetup") == 0)
+                  {
+		            layer_setup = strsub( curr_line, strrstr(curr_line, separator)+2, strlen(curr_line) );
+                  }
+			else if (strstr(curr_line, "msWidth") == 0)
+                  {
+				default_wire_width = get_drufile_value(curr_line, separator);
+
+			}
+			else if (strstr(curr_line, "mdWireWire") == 0)
+                  {
+				default_clearance = get_drufile_value(curr_line, separator);
+
+			}
+			else if (strstr(curr_line, "mdWirePad") == 0)
+                  {
+				clearance_wire_pad = get_drufile_value(curr_line, separator);
+                        clearance_wire_smd = clearance_wire_pad;
+			}
+			else if (strstr(curr_line, "mdWireVia") == 0)
+                  {
+				clearance_wire_via = get_drufile_value(curr_line, separator);
+			}
+			else if (strstr(curr_line, "mdPadPad") == 0)
+                  {
+				clearance_pad_pad = get_drufile_value(curr_line, separator);
+			}
+			else if (strstr(curr_line, "mdPadVia") == 0)
+                  {
+				clearance_pad_via = get_drufile_value(curr_line, separator);
+			}
+			else if (strstr(curr_line, "mdViaViaSameLayer") == 0)
+                  {
+                        ; // not implemented
+                  }
+			else if (strstr(curr_line, "mdViaVia") == 0)
+                  {
+				clearance_via_via = get_drufile_value(curr_line, separator);
+			}
+			else if (strstr(curr_line, "mdSmdPad") == 0)
+                  {
+				clearance_smd_pad = get_drufile_value(curr_line, separator);
+			}
+			else if (strstr(curr_line, "mdSmdVia") == 0)
+                  {
+				clearance_smd_via = get_drufile_value(curr_line, separator);
+			}
+			else if (strstr(curr_line, "mdSmdSmd") == 0)
+                  {
+				clearance_smd_smd = get_drufile_value(curr_line, separator);
+			}
+			else if (strstr(curr_line, "msDrill") == 0)
+                  {
+				default_drill_size = get_drufile_value(curr_line, separator);
+			}
+			else if (strstr(curr_line, "rvPadInner") == 0)
+                  {
+				rv_pad_inner = get_drufile_value(curr_line, separator);
+            	}
+			else if (strstr(curr_line, "rlMaxPadInner") == 0)
+                  {
+				max_pad_inner = get_drufile_value(curr_line, separator);
+            	}
+			else if (strstr(curr_line, "rlMinViaOuter") == 0)
+                  {
+				min_via_outer = get_drufile_value(curr_line, separator);
+			}
+			else if (strstr(curr_line, "rlMinViaInner") == 0)
+                  {
+				min_via_inner = get_drufile_value(curr_line, separator);
+            	}
+			else if (strstr(curr_line, "rlMinPadInner") == 0)
+                  {
+				min_pad_inner = get_drufile_value(curr_line, separator);
+            	}
+            }
+            default_via_size = default_drill_size + 2 * min_via_outer;
+	}
+	else
+	{
+		string Tmp;
+		sprintf(Tmp, "%s%s%s", "File ", DruFile, "  not exists!"); 
+		if (dlgMessageBox(Tmp, "&Close") == 0) 
+			exit(0);
+	}
+
+	if (strlen(Filename))
+	{		
+		
+		rgw=read_layer_setup(Board);
+            rgw=write_ViaType(Board, rgw);
+		rgw=find_layer(Board, rgw);
+		
+		
+		output(Filename)
+		{
+			Header();
+			PadTypes();
+			printf("  (structure\n");
+			Layers(Board);
+			board_dimension();
+			MakeBoundary();
+			Structure();
+			printf("    (control\n      (via_at_smd on)\n    )\n");
+			printf("  )\n");
+			Placement();
+			Images();
+			Network();
+			Wiring();
+			printf(")");
+		}
+	}
+}
