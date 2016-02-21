@@ -1,31 +1,32 @@
-import binascii
 import os
 import sys
 import time
 import shutil
 
 LEN = 2 ** 16
+huffman = False
 TARGET = os.getcwd()
 SOURCE = sys.argv[1]
 NAME = os.path.basename(sys.argv[1])
+COMPRESSED = NAME + ".fastlz"
 LOC = os.path.dirname(os.path.realpath(__file__))
+FASTLZ = os.path.join(LOC, "..", "tools", "fastlz", "pack")
 
-data = open(SOURCE, "r").read()
-print "Load %s, %i bytes" % (SOURCE, len(data))
-data = data[:LEN]
-print "Use %i bytes" % (len(data))
-data = binascii.rlecode_hqx(data)
-print "RLE crunch (%i) bytes" % (len(data))
+os.system("%s %s %s" % (FASTLZ, SOURCE, COMPRESSED))
+data = open(COMPRESSED).read()
+os.unlink(COMPRESSED)
 
-rle_size = len(data)
+fastlz_size = len(data)
 cfile = open("/tmp/loader.c", "w")
 hfile = open("/tmp/loader.h", "w")
+
 parts = []
 cnt = len(data) / ((2 ** 15) - 1)
 r = len(data) - (cnt * ((2 ** 15) - 1))
 for i in range(0, cnt):
     parts.append(((2 ** 15) - 1))
 parts.append(r)
+
 hfile.write('''/*
 File: %s
 Time: %s
@@ -34,17 +35,18 @@ Time: %s
 #define __FIFO_H__
 
 #define LOADER_NAME "%s"
-#define LOADER_COMPRESS "RLE"
-#define ROM_RLE_SIZE     %i
+#define LOADER_COMPRESS "FASTLZ"
+#define ROM_FASTLZ_SIZE     %i
 #define ROM_BUFFER_CNT   %i
 
 ''' % (
     os.path.basename(SOURCE),
     time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()),
     NAME,
-    rle_size,
+    fastlz_size,
     len(parts)
 ))
+
 
 for idx, val in enumerate(parts):
     hfile.write('#define ROM_BUFFER_SIZE%02i  %i\n' % (idx + 1, val))
@@ -57,7 +59,6 @@ Time: %s
 #include <avr/pgmspace.h>
 #include <loader.h>
 ''')
-
 addr = 0
 for idx, val in enumerate(parts):
     cfile.write('''
@@ -77,7 +78,6 @@ const char _rom%02i[ROM_BUFFER_SIZE%02i] PROGMEM = {
     cfile.write('''
     };
 ''')
-
 cfile.write('PGM_VOID_P _rom[ROM_BUFFER_CNT]= {')
 for idx, val in enumerate(parts):
     if idx < len(parts) - 1:

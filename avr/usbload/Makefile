@@ -23,23 +23,39 @@ F_CPU   = 20000000
 TARGET  = main
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 SIZE    = avr-size
+BOOT_LOADER = 1
+BOOT_COMPRESS = rle
 BOOT_ROM01  = ../../roms/qd16boot01.smc
 BOOT_ROM02  = ../../roms/qd16boot02.smc
-CONVERT_RLE = ../../scripts/conv_rle.py
-CONVERT_ZIP = ../../scripts/conv_zip.py
 
+ifeq ($(BOOT_LOADER), 1)
+	BOOT_ROM = $(BOOT_ROM01)
+else
+	BOOT_ROM = $(BOOT_ROM02)
+endif 
 
+ifeq ($(BOOT_COMPRESS), rle)
+	BOOT_CONVERTER = python ../../scripts/conv_rle.py
+endif 
+
+ifeq ($(BOOT_COMPRESS), zip)
+	BOOT_CONVERTER = python ../../scripts/conv_zip.py
+endif 
+
+ifeq ($(BOOT_COMPRESS), fastlz)
+	BOOT_CONVERTER = python ../../scripts/conv_fastlz.py
+endif 
 
 ifeq ($(DEBUG),1)
     LDFLAGS =-Wl,-u,vfprintf  
-    CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 
+    CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DCOMPRESS_METHOD=$(BOOT_COMPRESS)
     OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o \
                main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o \
                dump.o timer.o watchdog.o rle.c loader.o info.o shared_memory.o \
                system.o pwm.o util.o shell.o irq.o command.o testing.o
 else 
     LDFLAGS =-Wl,-u
-    CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG -DNO_INFO
+    CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG -DNO_INFO -DCOMPRESS_METHOD=$(BOOT_COMPRESS)
     OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o \
               sram.o crc.o debug.o dump.o rle.c loader.o \
               system.o util.o info.o shared_memory.o command.o irq.o \
@@ -60,7 +76,6 @@ all: hex
 help:
 	@echo "This Makefile has no default rule. Use one of the following:"
 	@echo "make hex ....... to build main.hex"
-	@echo "make program ... to flash fuses and firmware"
 	@echo "make fuse ...... to flash the fuses"
 	@echo "make flash ..... to flash the firmware (use this on metaboard)"
 	@echo "make clean ..... to delete objects and hex file"
@@ -68,8 +83,6 @@ help:
 hex: main.hex
 	@echo "$(TARGET) compiled for: $(DEVICE)"
 	@./checksize $(TARGET).elf
-
-program: flash fuse
 
 # rule for programming fuse bits:
 fuse:
@@ -80,11 +93,11 @@ fuse:
 flash: main.hex
 	$(AVRDUDE) -U flash:w:main.hex:i
 
-loader01:
-	python $(CONVERT_RLE) $(BOOT_ROM01)
+bootconvert:
+	$(BOOT_CONVERTER) $(BOOT_ROM) 
 
-loader02:
-	python $(CONVERT_ZIP) $(BOOT_ROM02)
+release: main.hex
+	cp -v main.hex ../../files/firmware/firmware-loader0$(BOOT_LOADER)-$$(date +%Y%m%d).hex 
 
 .c.o:
 	$(COMPILE) -c $< -o $@
@@ -99,7 +112,7 @@ loader02:
 usbdrv:
 	cp -r ../../../usbdrv .
 
-main.elf: usbdrv $(OBJECTS)	# usbdrv dependency only needed because we copy it
+main.elf: bootconvert usbdrv $(OBJECTS)	# usbdrv dependency only needed because we copy it
 	$(COMPILE) -o main.elf $(OBJECTS) $(LDFLAGS) 
 
 main.hex: main.elf

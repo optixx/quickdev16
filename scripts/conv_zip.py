@@ -4,10 +4,10 @@ import time
 import shutil
 
 LEN = 2 ** 16
-huffman = False
 TARGET = os.getcwd()
 SOURCE = sys.argv[1]
-DEFLATE = os.path.basename(sys.argv[1]) + ".deflate"
+NAME = os.path.basename(sys.argv[1])
+DEFLATE = NAME + ".deflate"
 PATH = os.path.dirname(os.path.realpath(__file__))
 WINE = "wine"
 KZIP = os.path.join(PATH, "kzip.exe")
@@ -44,12 +44,15 @@ Time: %s
 #ifndef __FIFO_H__
 #define __FIFO_H__
 
+#define LOADER_NAME "qd16boot02.smc"
+#define LOADER_COMPRESS "ZIP"
 #define ROM_ZIP_SIZE     %i
 #define ROM_BUFFER_CNT   %i
 
 ''' % (
     os.path.basename(SOURCE),
     time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()),
+    NAME,
     zip_size,
     len(parts)
 ))

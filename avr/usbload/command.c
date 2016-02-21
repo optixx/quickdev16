@@ -62,7 +62,7 @@ void boot_startup_rom(uint16_t init_delay)
 {
     uint8_t i;
     uint32_t addr = 0x000000;
-    info_P(PSTR("Fetch loader rom\n"));
+    info_P(PSTR("Fetch Loader: %s from AVR PROGMEM\n"), LOADER_NAME);
 
     system_set_bus_avr();
     // snes_irq_lo();
@@ -76,6 +76,8 @@ void boot_startup_rom(uint16_t init_delay)
     // snes_irq_off();
     // snes_lorom();
 
+    
+    info_P(PSTR("Unpack Loader with using method: %s\n"), LOADER_COMPRESS);
     for (i = 0; i < ROM_BUFFER_CNT; i++) {
         addr += rle_decode(_rom[i], _rom_size[i], addr);
     }
