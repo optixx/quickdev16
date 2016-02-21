@@ -28,6 +28,23 @@ BOOT_COMPRESS = rle
 BOOT_ROM01  = ../../roms/qd16boot01.smc
 BOOT_ROM02  = ../../roms/qd16boot02.smc
 
+
+ifeq ($(DEBUG),1)
+    LDFLAGS =-Wl,-u,vfprintf  
+    CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 
+    OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o \
+               main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o \
+               dump.o timer.o watchdog.o loader.o info.o shared_memory.o \
+               system.o pwm.o util.o shell.o irq.o command.o testing.o
+else 
+    LDFLAGS =-Wl,-u
+    CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG -DNO_INFO 
+    OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o \
+              sram.o crc.o debug.o dump.o loader.o \
+              system.o util.o info.o shared_memory.o command.o irq.o \
+              pwm.o
+endif
+
 ifeq ($(BOOT_LOADER), 1)
 	BOOT_ROM = $(BOOT_ROM01)
 else
@@ -36,31 +53,21 @@ endif
 
 ifeq ($(BOOT_COMPRESS), rle)
 	BOOT_CONVERTER = python ../../scripts/conv_rle.py
+	CFLAGS += -DBOOT_COMPRESS_RLE 
+	OBJECTS += rle.o 
 endif 
 
 ifeq ($(BOOT_COMPRESS), zip)
 	BOOT_CONVERTER = python ../../scripts/conv_zip.py
+	CFLAGS += -DBOOT_COMPRESS_ZIP
+	OBJECTS += neginf/neginf.o
 endif 
 
 ifeq ($(BOOT_COMPRESS), fastlz)
 	BOOT_CONVERTER = python ../../scripts/conv_fastlz.py
+	CFLAGS += -DBOOT_COMPRESS_FASTLZ
+	OBJECTS += fastlz.o 
 endif 
-
-ifeq ($(DEBUG),1)
-    LDFLAGS =-Wl,-u,vfprintf  
-    CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DCOMPRESS_METHOD=$(BOOT_COMPRESS)
-    OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o \
-               main.o usb_bulk.o uart.o fifo.o sram.o crc.o debug.o \
-               dump.o timer.o watchdog.o rle.c loader.o info.o shared_memory.o \
-               system.o pwm.o util.o shell.o irq.o command.o testing.o
-else 
-    LDFLAGS =-Wl,-u
-    CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG -DNO_INFO -DCOMPRESS_METHOD=$(BOOT_COMPRESS)
-    OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o \
-              sram.o crc.o debug.o dump.o rle.c loader.o \
-              system.o util.o info.o shared_memory.o command.o irq.o \
-              pwm.o
-endif
 
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 
@@ -112,7 +119,7 @@ release: main.hex
 usbdrv:
 	cp -r ../../../usbdrv .
 
-main.elf: bootconvert usbdrv $(OBJECTS)	# usbdrv dependency only needed because we copy it
+main.elf: usbdrv $(OBJECTS)	# usbdrv dependency only needed because we copy it
 	$(COMPILE) -o main.elf $(OBJECTS) $(LDFLAGS) 
 
 main.hex: main.elf

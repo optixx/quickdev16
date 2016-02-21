@@ -28,7 +28,20 @@
 #include "info.h"
 #include "irq.h"
 #include "usbdrv.h"
+
+#if defined(BOOT_COMPRESS_RLE) 
 #include "rle.h"
+#endif 
+
+#if defined(BOOT_COMPRESS_ZIP) 
+#include "neginf/neginf.h"
+#include "inflate.h"
+#endif 
+
+#if defined(BOOT_COMPRESS_FASTLZ) 
+#include "fastlz.h"
+#endif 
+
 #include "loader.h"
 #include "system.h"
 
@@ -61,7 +74,17 @@ void usb_connect()
 void boot_startup_rom(uint16_t init_delay)
 {
     uint8_t i;
+
+#if defined(BOOT_COMPRESS_RLE) 
     uint32_t addr = 0x000000;
+#endif 
+
+#if defined(BOOT_COMPRESS_ZIP) 
+    uint8_t c;
+    uint16_t j;
+    PGM_VOID_P p_addr;
+#endif 
+    
     info_P(PSTR("Fetch Loader: %s from AVR PROGMEM\n"), LOADER_NAME);
 
     system_set_bus_avr();
@@ -76,12 +99,34 @@ void boot_startup_rom(uint16_t init_delay)
     // snes_irq_off();
     // snes_lorom();
 
-    
     info_P(PSTR("Unpack Loader with using method: %s\n"), LOADER_COMPRESS);
+#if defined(BOOT_COMPRESS_RLE) 
     for (i = 0; i < ROM_BUFFER_CNT; i++) {
         addr += rle_decode(_rom[i], _rom_size[i], addr);
     }
+#endif 
+
+#if defined(BOOT_COMPRESS_ZIP) 
+    //inflate_init();
+    neginf_init(0);
+    for (i=0; i<ROM_BUFFER_CNT; i++){
+        p_addr = _rom[i];
+        info_P(PSTR("idx=%i addr=%lx %s\n"), i, p_addr);
+        for (j=0; j<_rom_size[i]; j++){
+            c = pgm_read_byte((PGM_VOID_P)p_addr++); 
+            neginf_process_byte(c);
+            
+        }
+    }
+#endif 
+
+#if defined(BOOT_COMPRESS_FASTLZ) 
+    for (i = 0; i < ROM_BUFFER_CNT; i++) {
+    }
+#endif 
+
     info_P(PSTR("\n"));
+    
 
 #if DO_CRC_CHECK_LOADER
     dump_memory(0x010000 - 0x100, 0x010000);

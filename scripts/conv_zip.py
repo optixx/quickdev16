@@ -44,7 +44,7 @@ Time: %s
 #ifndef __FIFO_H__
 #define __FIFO_H__
 
-#define LOADER_NAME "qd16boot02.smc"
+#define LOADER_NAME "%s"
 #define LOADER_COMPRESS "ZIP"
 #define ROM_ZIP_SIZE     %i
 #define ROM_BUFFER_CNT   %i
