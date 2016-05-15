@@ -1205,7 +1205,7 @@ consoles in general.
                                   [Image]
 
 Questions, comments or complaints can be sent to DiskDude via e-mail.
-Copyright © 1995-1996 DiskDude of Damaged Cybernetics. All rights reserved.
+Copyright Â© 1995-1996 DiskDude of Damaged Cybernetics. All rights reserved.
 
 Last updated 1st January 1997
 
