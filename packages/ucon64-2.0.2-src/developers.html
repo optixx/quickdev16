@@ -1,0 +1,596 @@
+<html><head>
+<link rel="icon" href="images/icon.png" type="image/png">
+<title>uCON64 - Developers</title></head><body bgcolor="#ffffff"><tt><br>
+Q1: <a href="#1">Who develops uCON64?</a><br>
+<br>
+Q2: <a href="#2">How can I take part?</a><br>
+<br>
+Q3: <a href="#3">How do I get the source of uCON64, using CVS as an anonymous user?</a><br>
+<br>
+Q4: <a href="#4">How do I connect to the CVS repository as developer with read/write access?</a><br>
+<br>
+Q5: <a href="#5">How do I create a patch from the CVS repository?</a><br>
+<br>
+Q6: <a href="#6">How is the source of uCON64 organized?</a><br>
+<br>
+Q7: <a href="#7">What coding style is preferred?</a><br>
+<br>
+<br>
+<p><!-- <p> instead of <br> to make lynx display a blank line between questions -->
+<a name="1"><b>Q1</b>: Who develops uCON64?</a><br>
+<b>A</b>: Written/modified by:<br>
+   1999 - 2009 NoisyB<br>
+   2001 - 2005, 2015 dbjh<br>
+<br>
+   Additional developers:<br>
+   2002 - 2004 John Weidman <a href="mailto:jweidman AT sonic.net">&#60;jweidman AT sonic.net&#62;</a><br>
+   Contributed several SNES-related features like Game Doctor &amp; Super UFO
+   support, the second version of the BS (Broadcast Satellaview) detection code,
+   SNES cracks &amp; NTSC/PAL fixes.<br>
+<br>
+   2002 - 2004 Jan-Erik Karlsson<br>
+   Maintainer of the Amiga ports.<br>
+<br>
+   2003 - 2004 JohnDie<br><!--  It's a nick name, no space between John and Die -->
+   Also contributed several SNES-related features like Pro Fighter support and
+   Super Wild Card transfer code improvements.<br>
+<br>
+<br>
+   uCON64 uses code (or at least ideas) from:<br>
+<br>
+<table>
+<tr>
+  <td><tt>Chicken&nbsp;&amp;&nbsp;chp</tt></td>
+  <td><a href="mailto:ronaldm AT netcom.com"><tt>ronaldm AT netcom.com</tt></a><tt> (chp)</tt></td>
+  <td><tt>original uCON</tt></td>
+</tr>
+<tr>
+  <td><tt>Silo&nbsp;/&nbsp;BlackBag</tt></td>
+  <td></td>
+  <td><tt>APS patcher</tt></td>
+</tr>
+<tr>
+  <td><tt>madman</tt></td>
+  <td></td>
+  <td><tt>IPS patcher</tt></td>
+</tr>
+<tr>
+  <td><tt>The&nbsp;White&nbsp;Knight&nbsp;/ ATX</tt></td><!-- yes, breaking space -->
+  <td></td>
+  <td><tt>BSL patcher</tt></td>
+</tr>
+<tr>
+  <td><tt>Icarus&nbsp;/&nbsp;Paradox</tt></td>
+  <td></td>
+  <td><tt>PPF patcher</tt></td>
+</tr>
+<tr>
+  <td><tt>WyrmCorp</tt></td>
+  <td><a href="http://wyrmcorp.com"><tt>http://wyrmcorp.com</tt></a></td>
+  <td><tt>Game Genie "codec"</tt></td>
+</tr>
+<tr>
+  <td><tt>Marat&nbsp;Fayzullin</tt></td>
+  <td><a href="mailto:fms AT cs.umd.edu"><tt>fms AT cs.umd.edu</tt></a><br>
+      <a href="http://www.komkon.org/fms/">
+        <tt>http://www.komkon.org/fms/</tt></a></td>
+  <td><tt>some Famicom Disk System routines and NESLIST</tt></td>
+</tr>
+<tr>
+  <td><tt>Andreas&nbsp;Sterbenz</tt></td>
+  <td><a href="mailto:stan AT sbox.tu-graz.ac.at"><tt>stan AT sbox.tu-graz.ac.at</tt></a></td>
+  <td><tt>N64 checksum algorithm</tt></td>
+</tr>
+<tr>
+  <td><tt>Kami</tt></td>
+  <td><a href="mailto:m-kami AT da2.so-net.ne.jp"><tt>m-kami AT da2.so-net.ne.jp</tt></a><br>
+      <a href="http://www.playoffline.com">
+        <tt>http://www.playoffline.com</tt></a></td>
+  <td><tt>NES emulator for Game Boy</tt></td>
+</tr>
+<tr>
+  <td><tt>Gilligan&nbsp;/&nbsp;DC-S</tt></td>
+  <td></td>
+  <td><tt>show info for Neogeo Pocket</tt></td>
+</tr>
+<tr>
+  <td><tt>LaC</tt></td>
+  <td></td>
+  <td><tt>N64 makesram</tt></td>
+</tr>
+<tr>
+  <td><tt>Jeff&nbsp;Frohwein</tt></td>
+  <td><a href="mailto:info AT devrs.com"><tt>info AT devrs.com</tt></a><br>
+      <a href="http://www.devrs.com">
+        <tt>http://www.devrs.com</tt></a></td>
+  <td><tt>Flash Advance Linker transfer code</tt></td>
+</tr>
+<tr>
+  <td><tt>Omar&nbsp;Kilani</tt></td>
+  <td><a href="mailto:gbautil AT aurore.net"><tt>gbautil AT aurore.net</tt></a></td>
+  <td><tt>Game Boy Advance SRAM patching and "crash patching" code</tt></td>
+</tr>
+<tr>
+  <td><tt>Richard Davies</tt></td>
+  <td><a href="mailto:richard AT debaser.force9.co.uk"><tt>richard AT debaser.force9.co.uk</tt></a><br>
+      <a href="http://www.debaser.force9.co.uk">
+        <tt>http://www.debaser.force9.co.uk</tt></a></td>
+  <td><tt>PSX memory card code</tt></td>
+</tr>
+<tr>
+  <td><tt>Caz</tt></td>
+  <td><a href="mailto:turok2 AT currantbun.com"><tt>turok2 AT currantbun.com</tt></a><br>
+      <a href="http://www.infernal.currantbun.com">
+        <tt>http://www.infernal.currantbun.com</tt></a></td>
+  <td><tt>I/O port driver for BeOS, SWC help and Super UFO SRAM header format</tt></td>
+</tr>
+<tr>
+  <td><tt>Cowering</tt></td>
+  <td><a href="mailto:hotemu AT hotmail.com"><tt>hotemu AT hotmail.com</tt></a></td>
+  <td><tt>old BS ROM detection, BS checksum, some PC-Engine info &amp; code and more</tt></td>
+</tr>
+<tr>
+  <td><tt>Jerremy&nbsp;Koot</tt></td>
+  <td><a href="mailto:jkoot AT snes9x.com"><tt>jkoot AT snes9x.com</tt></a><br>
+      <a href="http://www.snes9x.com">
+        <tt>http://www.snes9x.com</tt></a></td>
+  <td><tt>old interleave detection and old deinterleave code (SNES)</tt></td>
+</tr>
+<tr>
+  <td><tt>Gary&nbsp;Henderson</tt></td>
+  <td><a href="mailto:gary AT snes9x.com"><tt>gary AT snes9x.com</tt></a><br>
+      <a href="http://www.snes9x.com">
+        <tt>http://www.snes9x.com</tt></a></td>
+  <td><tt>old interleave detection and old deinterleave code (SNES)</tt></td>
+</tr>
+<tr>
+  <td><tt>Evan&nbsp;Teran</tt></td>
+  <td><a href="mailto:emt3734 AT ritvax.isc.rit.edu"><tt>emt3734 AT ritvax.isc.rit.edu</tt></a></td>
+  <td><tt>lib_unif (NES)</tt></td>
+</tr>
+<tr>
+  <td><tt>NSRT&nbsp;authors</tt></td>
+  <td><a href="mailto:joecool22us AT yahoo.com"><tt>joecool22us AT yahoo.com</tt></a><br>
+      <a href="http://nsrt.edgeemu.com"><tt>http://nsrt.edgeemu.com</tt></a></td>
+  <td><tt>checksum algorithm for Momotaro Dentetsu Happy, their SNES add-on
+          chip information page, SNES cracks (thanks to CL), third version of
+          BS detection code (thanks to Nach) and general help and ideas</tt></td>
+</tr>
+<tr>
+  <td><tt>Gilles&nbsp;Vollant</tt></td>
+  <td><a href="mailto:info AT winimage.com"><tt>info AT winimage.com</tt></a></td>
+  <td><tt>unzip.c &amp; unzip.h</tt></td>
+</tr>
+<tr>
+  <td><tt>Tiptonium</tt></td>
+  <td><tt><a href="http://www.tiptonium.com">http://www.tiptonium.com</a></td>
+  <td><tt>donated a Super Magic Drive (SMD)</tt></td>
+</tr>
+<tr>
+  <td><tt>FluBBa</tt></td>
+  <td></td><!-- private -->
+  <td><tt>maker (publisher) info for SNES, GB, CGB &amp; GBA</tt></td>
+</tr>
+<tr>
+  <td><tt>gc-nfo.com</tt></td>
+  <td></td><!-- private -->
+  <td><tt>GameCube image specs</tt></td>
+</tr>
+<tr>
+  <td><tt>ToToTEK Multi Media</tt></td>
+  <td><a href="mailto:rayman AT tototek.com"><tt>rayman AT tototek.com</tt></a><br>
+      <a href="http://www.tototek.com">
+        <tt>http://www.tototek.com</tt></a></td>
+  <td><tt>MD-PRO, SMS-PRO/GG-PRO &amp; PCE-PRO transfer code (Delphi) and help
+          with that code</tt></td>
+</tr>
+<tr>
+  <td><tt>timofonic</tt></td>
+  <td></td><!-- private? -->
+  <td><tt>uCON64 PR work ;-)</tt></td>
+</tr>
+<tr>
+  <td><tt>Felipe&nbsp;XnaK</tt></td>
+  <td><a href="mailto:felipe AT ComPorts.com"><tt>felipe AT ComPorts.com</tt></a><br>
+      <a href="http://www.classicgaming.com/launchtool">
+        <tt>http://www.classicgaming.com/launchtool</tt></a></td>
+  <td><tt>some info from his Genesis ROM format document</tt></td>
+</tr>
+<tr>
+  <td><tt>Ulrich&nbsp;Hecht</tt></td>
+  <td><a href="mailto:uli AT emulinks.de"><tt>uli AT emulinks.de</tt></a><br>
+      <a href="http://www.emulinks.de/software.html">
+        <tt>http://www.emulinks.de/software.html</tt></a></td>
+  <td><tt>F2A (USB) code</tt></td>
+</tr>
+<tr>
+  <td><tt>David&nbsp;Voswinkel</tt></td>
+  <td><a href="mailto:d.voswinkel AT netcologne.de"><tt>d.voswinkel AT netcologne.de</tt></a></td>
+  <td><tt>F2A parallel port &amp; Quickdev16 code</tt></td>
+</tr>
+<tr>
+  <td><tt>Ryan&nbsp;Underwood</tt></td>
+  <td></td><!-- private? -->
+  <td><tt>libcd64</tt></td>
+</tr>
+<tr>
+  <td><tt>Mike&nbsp;Pavone</tt></td>
+  <td><a href="mailto:mask_of_destiny AT hotmail.com"><tt>mask_of_destiny AT hotmail.com</tt></a><br>
+      <a href="http://www.retrodev.com">
+        <tt>http://www.retrodev.com</tt></a></td>
+  <td><tt>Genesis/Sega CD transfer code</tt></td>
+</tr>
+<tr>
+  <td><tt>Cyan&nbsp;Helkaraxe</tt></td>
+  <td><a href="mailto:cyan AT emulationzone.org"><tt>cyan AT emulationzone.org</tt></a><br>
+      <a href="http://www.emulationzone.org/projects/cyan/docs">
+        <tt>http://www.emulationzone.org/projects/cyan/docs</tt></a></td>
+  <td><tt>Cyan's Megadrive ROM copier transfer code</tt></td>
+</tr>
+<tr>
+ <td><tt>Parasyte</tt></td>
+  <td></td><!-- private -->
+  <td><tt>Support for remaining N64 CIC algorithms (6101, 6103, and 6106)</tt></td>
+</tr>
+</table><br>
+   and others...<br>
+<br>
+<p>
+<a name="2"><b>Q2</b>: How can I take part?</a><br>
+<b>A</b>: Install <a href="http://www.cvshome.org">CVS</a> and
+   checkout the latest version from
+   <a href="http://ucon64.sourceforge.net">http://ucon64.sourceforge.net</a>.
+   Then make your changes, email
+   <a href="mailto:ucon64-main AT lists.sourceforge.net">ucon64-main AT lists.sourceforge.net</a>
+   and you will be named in this file and in the sources of course. Just the
+   typical way of open source software development.<br>
+<br>
+<p>
+<a name="3"><b>Q3</b>: How do I get the source of uCON64, using CVS as an
+   anonymous user?</a><br>
+<b>A</b>: For read-only access you must have CVS installed. First you have to
+   login. To login, type:<br>
+   &nbsp;&nbsp;cvs -d:pserver:anonymous@ucon64.cvs.sourceforge.net:/cvsroot/ucon64 login<br>
+   Then CVS will ask you for a password. Since you are logged in as anonymous
+   you do not have a password, so just press the enter key at the password
+   prompt. To download the uCON64 source, type:<br>
+   &nbsp;&nbsp;cvs -d:pserver:anonymous@ucon64.cvs.sourceforge.net:/cvsroot/ucon64 checkout -PR ucon64<br>
+   The uCON64 source will then be downloaded to the directory ./ucon64.<br>
+   It can be very busy at SourceForge which may result in a message like:<br>
+   &nbsp;&nbsp;cvs [login aborted]: recv() from server ucon64.cvs.sourceforge.net: EOF<br>
+   or<br>
+   &nbsp;&nbsp;cvs [checkout aborted]: recv() from server ucon64.cvs.sourceforge.net: EOF<br>
+   If you get that message simply try again.<br>
+   You can speed up the download by using the option -z with a compression level
+   parameter. For example:<br>
+   &nbsp;&nbsp;cvs -z 9 -d:pserver:anonymous@ucon64.cvs.sourceforge.net:/cvsroot/ucon64 checkout -PR ucon64<br>
+   If you want to get up to date with the newest source code later, enter the
+   directory ucon64 and type:<br>
+   &nbsp;&nbsp;cvs update -PRd<br>
+<br>
+<p>
+<a name="4"><b>Q4</b>: How do I connect to the CVS repository as developer with
+   read/write access?</a><br>
+<b>A</b>: For read/write access you must have CVS and SSH installed and set the
+   environment variable CVS_RSH=ssh. To download the source code, type:<br>
+   &nbsp;&nbsp;cvs -z 9 -d:ext:&#60;username&#62;@ucon64.cvs.sourceforge.net:/cvsroot/ucon64 checkout -PR ucon64<br>
+   &#60;enter password at prompt&#62;<br>
+   If you never logged on to ucon64.cvs.sourceforge.net before you may get a message
+   (from SSH) like:<br>
+   &nbsp;&nbsp;The authenticity of host 'ucon64.cvs.sourceforge.net (66.35.250.88)' can't be established.<br>
+   &nbsp;&nbsp;RSA key fingerprint is 13:f1:65:c3:6c:b7:7e:a5:f0:f3:f5:19:f4:42:9c:4a.<br>
+   &nbsp;&nbsp;Are you sure you want to continue connecting (yes/no)?<br>
+   Type yes (the whole word). SSH will respond with a message like:<br>
+   &nbsp;&nbsp;Warning: Permanently added 'ucon64.cvs.sourceforge.net,66.35.250.88' (RSA) to the list of known hosts.<br>
+   Now all files will be downloaded. Afterwards you can simply cd into the top
+   level directory and continue by just typing:<br>
+   &nbsp;&nbsp;cvs update -PRd<br>
+   &nbsp;&nbsp;cvs commit -R<br>
+   &nbsp;&nbsp;cvs add &#60;file&#62;<br>
+   &nbsp;&nbsp;cvs remove -f &#60;file&#62;<br>
+   You don't need to specify
+   -d:ext:&#60;username&#62;@ucon64.cvs.sourceforge.net:/cvsroot/ucon64 anymore, because
+   that information is stored in the CVS directories then.<br>
+   If you use the update command in combination with (-)d, never forget to also
+   use the option -P or you will get a lot of crap.<br>
+<br>
+<p>
+<a name="5"><b>Q5</b>: How do I create a patch from the CVS repository?</a><br>
+<b>A</b>: As developer:<br>
+   &nbsp;&nbsp;cvs -d:ext:&#60;username&#62;@ucon64.cvs.sourceforge.net:/cvsroot/ucon64 diff -Nau &#62;mychanges.patch<br>
+   &#60;enter password at prompt&#62;<br>
+   As anonymous:<br>
+   &nbsp;&nbsp;cvs -d:pserver:anonymous@ucon64.cvs.sourceforge.net:/cvsroot/ucon64 login<br>
+   &#60;just press enter at password prompt&#62;<br>
+   &nbsp;&nbsp;cvs -d:pserver:anonymous@ucon64.cvs.sourceforge.net:/cvsroot/ucon64 diff -Nau &#62;mychanges.patch<br>
+<br>
+<p>
+<a name="6"><b>Q6</b>: How is the source code of uCON64 organized?</a><br>
+<b>A</b>: The heart of uCON64 is ucon64.h/st_ucon64_t. This <i>struct</i> is
+   designed to hold all workflow relevant informations and it has pointers
+   to different structs which will be != NULL depending on which type or
+   format uCON64 did detect for the current ROM. libdiscmage (if compiled)
+   is involved in this process as well.<br><br>
+   uCON64 starts with the name of a ROM and possibly some arguments. Then it
+   checks if a configuration file exists and creates one if that is not the
+   case. For example the value of
+   ucon64.parport, the variable that contains the I/O address of the parallel
+   port, will initially be set to the value that is found in the configuration
+   file.<br>
+   After these initial functions every ROM will be processed.<br><br>
+   Processing a ROM.<br>
+   The command line will be scanned for switches. Switches are command line
+   arguments that will not result in an action by themselves, but they
+   influence the other type of command line arguments, options. <br>
+   uCON64 sets some other values in ucon64.h/st_ucon64_t, based on the
+   switches. This code can be found in ucon64_opts.c/ucon64_switches().
+   This is also the place where ucon64.c/ucon64.quiet is set. This variable
+   determines whether or not uCON64 displays ROM information.<br>
+   Then uCON64 starts scanning the command line for options. This code can be
+   found in ucon64_opts.c/ucon64_options(). From this code almost all
+   operations of uCON64 are executed. On UNIX this is also the point where root
+   privileges are given up with a call to misc.c/drop_privileges().<br>
+   First uCON64 tries to find out what console system the ROM belongs to using
+   for example the init function for SNES (console/snes.c/snes_init() or
+   console/nes.c/nes_init() for NES). Each init function tries to determine if the
+   ROM file belongs to its console type. If that is the case it returns 0,
+   otherwise -1.<br>
+   Some ROM file types contain information such as the internal name, country
+   and creator of the game that can be used to fill ucon64.c/main()/rom. SNES
+   ROM files are an example of this type of file. For other ROM file types this
+   information is not present inside the ROM file. NES ROMs are an example of
+   that type. In that case uCON64 uses the DAT files in the data file
+   directory. That makes it possible to display the full name of the game.
+   ucon64.c/ucon64_rom_handling() calls the function
+   ucon64_dat.c/ucon64_dat_search() that uses the CRC32 of the ROM file data to
+   find the required information in the DAT files. If the information could be
+   found ucon64_dat.c/ucon64_dat_search() fills ucon64.c/ucon64.dat with it.
+   ucon64.c/ucon64_rom_handling() copies the name to ucon64.rominfo->name.<br>
+   After that if ucon64.c/ucon64.quiet has a value smaller than 1 uCON64 will
+   call ucon64.c/ucon64_nfo() which displays the values and strings of ucon64.
+   For some options it doesn't make sense to display ROM info. If one of those
+   options has been specified on the command line
+   (ucon64.c/ucon64.flags &amp; WF_NFO) will be zero.<br>
+   After all this the option will be executed (ucon64_opts.c/ucon64_options()).<br>
+<br>
+<p>
+<a name="7"><b>Q7</b>: What coding style is preferred?</a><br>
+<b>A</b>:<br>
+<br>
+   <b>Keywords</b><br>
+   Always put a space after a keyword. That includes the keyword <i>sizeof</i>.<br>
+<br>
+   <b>Indentation</b><br>
+   Two spaces instead of a real tab. The curly braces of functions should not
+   be indented.<br>
+   If an <i>if</i> statement has an <i>else</i> part, that part should be
+   aligned with the <i>if</i> part. For a <i>do-while</i> compound statement,
+   <i>do</i> and <i>while</i> should also be aligned.<br>
+   If <i>else</i> is immediately followed by an <i>if</i> statement, the
+   <i>if</i> keyword together with the condition statement should be put on the
+   same line as the <i>else</i> keyword. Example: <br>
+<pre>
+   if (...)
+     {
+       ...
+     }
+   else if (...)
+     {
+       ...
+     }
+   else
+     {
+       ...
+     }
+</pre>
+   Note that this doesn't apply to the case where <i>else</i> is followed by a
+   curly brace.<br>
+<br>
+   <b>New lines</b><br>
+   The statement(s) for <i>if</i>, <i>while</i> and <i>for</i> should always
+   start on a new line. That also applies to one-line statements.<br>
+<br>
+   <b>Compound statements</b><br>
+   The curly braces should be indented and the code of the compound statement
+   should be indented again. The only exception is the <i>switch</i> statement.
+   The labels inside a <i>switch</i> statement should be aligned with the curly
+   braces. Example:<br>
+<pre>
+   int
+   function (int value)
+   {
+     if (value &#60; 0)
+       {
+         printf ("Invalid argument: %d\n", value);
+         exit (1);
+       }
+     switch (value)
+       {
+       case 0:
+       case 1:
+       case 2:                                     // falling through
+         puts ("lesser than or equal to 2\n");
+       case 3:
+       case 4:
+         puts ("lesser than or equal to 4\n");
+         break;
+       default:
+         puts ("greater than 4\n");
+         break;
+       }
+
+     return 0;
+   }
+</pre>
+   A <i>do-while</i> compound statement should have this layout:<br>
+<pre>
+   do
+     {
+       ...
+     }
+   while (...);
+</pre>
+<br>
+   <b>Functions</b><br>
+   Function calls should contain one space after the name of the function.
+   Every parameter of the function should be separated from a previous one with
+   a space after the comma.<br>
+   For a function implementation the return type should be specified on its own
+   line. This doesn't apply to function prototypes. If a function needn't be
+   known at global scope it should be declared or defined as <i>static</i>.
+   Function implementations should be separated from each other by two new
+   lines.<br>
+<br>
+   <b>Variables</b><br>
+   Variables of the same type should be defined in one group. Example:<br>
+<pre>
+   int x, y = 0, z;
+   char str1[] = "xyz", *str2;
+</pre>
+   Variables that need to be known at file scope but not at global scope should
+   be defined as <i>static</i>. Variables that do need to be known at global
+   scope should be defined in a source file, not in a header file. The header
+   file should contain an <i>extern</i> statement for the variable.<br>
+<br>
+   <b>Types (<i>struct</i>s)</b><br>
+   A <i>struct</i> tag of a <i>struct</i> should have the prefix "st_". A new
+   type based on a <i>struct</i> should have the same prefix and the suffix
+   "_t". Example:<br>
+<pre>
+   typedef struct st_unif_chunk
+   {
+     unsigned long id;
+     unsigned long length;
+     void *data;
+   } st_unif_chunk_t;
+</pre>
+<br>
+   <b>Line length</b><br>
+   The length of lines shouldn't be much longer than 90 characters. This
+   doesn't necessarily include the length of comment. Longer lines should be
+   broken into several shorter ones. Example:<br>
+<pre>
+   static const int unif_prg_ids[] = {PRG0_ID, PRG1_ID, PRG2_ID, PRG3_ID,
+                                      PRG4_ID, PRG5_ID, PRG6_ID, PRG7_ID,
+                                      PRG8_ID, PRG9_ID, PRGA_ID, PRGB_ID,
+                                      PRGC_ID, PRGD_ID, PRGE_ID, PRGF_ID};
+</pre>
+<br>
+   <b>Comment</b><br>
+   Single or two-line comments should use //. Comments that need more lines
+   should use the pair /* and */. A two-line comment should signify that it is
+   one two-line comment instead of two one-line comments by putting one extra
+   space after the //. Single or two-line comments should start at column 49 if
+   that's possible. Example:<br>
+<pre>
+   char buf[SIZE_INFO], number[80];              // 4 should be enough, but don't
+                                                 //  be too sensitive to errors
+</pre>
+   Long comments should use the same indentation as the code that follows it:<br>
+<pre>
+   if (deinterleave)
+     /*
+       This is a bit of a hack, i.e., putting the following code in this
+       ...
+     */
+     {
+       unsigned char *data;
+       int size, n = 0, prg = 0, chr = 0;
+       ...
+</pre>
+<br>
+   <b>Preprocessor directives</b><br>
+   Preprocessor directives should not be indented. This does not only apply to
+   #include, but to all preprocessor directives.<br>
+   For #if and #ifdef blocks that are complex or enclose many lines of code the
+   corresponding #else, #elif or #endif should contain a comment that signifies
+   to which #if or #ifdef it belongs. <a name="multiplatform">Example:</a><br>
+<pre>
+   #ifdef  __unix__                                // wait 32 milliseconds
+     usleep (32000);
+     ...
+   #elif   defined __MSDOS__                       // __unix__
+     delay (32);
+     ...
+   #elif   defined __BEOS__                        // __MSDOS__
+     snooze (32000);
+     ...
+   #endif                                          // __BEOS__
+</pre>
+   Standard system header files should be included by specifying the name of
+   the header file between angle brackets. Non-standard header files should be
+   included with the name between double quotes. Example:<br>
+<pre>
+   #include &#60;stdio.h&#62;
+   #ifdef  __unix__
+   #include &#60;unistd.h&#62;
+   #endif
+   #include "ucon64.h"
+</pre>
+<br>
+   <b>Header files</b><br>
+   Header files should be protected against being included multiple times by
+   putting the entire file inside an #ifndef block. Define the constant for
+   which the #ifndef checks inside the #ifndef block. For example, for the file
+   swc.h:<br>
+<pre>
+   #ifndef SWC_H
+   #define SWC_H
+   ...
+   #endif // SWC_H
+</pre>
+   Header files should only contain information about their corresponding
+   source file that may be needed by other source files. They should not
+   include information about variables or function definitions that are used
+   only inside the source file.<br>
+<br>
+   <b>Portability</b><br>
+   Platform-specific function calls, variable types and #includes of header
+   files should be put inside #ifdef or #if blocks. For an example see the
+   <a href="#multiplatform">first code example</a> in the section Preprocessor
+   directives.<br>
+<br>
+<p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br></tt></body></html>
