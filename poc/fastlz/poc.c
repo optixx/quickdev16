@@ -71,10 +71,11 @@ int main(int argc, char** argv){
     for(i = 0; i < MD5_DIGEST_LENGTH; i++) printf("%02x", c[i]);
     printf("\n");
     rlen = fastlz_compress(unpacked, len, packed);
-    hexdump(packed, rlen);
+    //hexdump(packed, rlen);
     printf("packed len=%i\n", rlen);
     memset(unpacked, 0, len);
     printf("-----\n");
+#if 0
     fastlz_decompress(packed, rlen, unpacked);
     MD5_Init (&md5_context); 
     MD5_Update (&md5_context, unpacked, len);
@@ -87,6 +88,7 @@ int main(int argc, char** argv){
     printf("Wrote out01.smc %l bytes\n", len);
     fclose(fp);
     memset(unpacked, 0, len);
+#endif 
     printf("-----\n");
     fastlz_decompress2(packed, rlen, unpacked);
     MD5_Init (&md5_context); 

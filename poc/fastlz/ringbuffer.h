@@ -41,8 +41,15 @@
  *
  */
 
+
 #ifndef _ringbuffer_h
 #define _ringbuffer_h
+
+int __mod(int a, int b)
+{
+    int r = a % b;
+    return r < 0 ? r + b : r;
+}
 
 #define ringBuffer_typedef(T, NAME) \
   typedef struct { \
@@ -64,6 +71,7 @@
 #define nextEndIndex(BUF) ((BUF->end + 1) % BUF->size)
 #define isBufferEmpty(BUF) (BUF->end == BUF->start)
 #define isBufferFull(BUF) (nextEndIndex(BUF) == BUF->start)
+#define bufferGet(BUF, INDEX) (BUF->elems[__mod(BUF->end - INDEX, BUF->size)])
 
 #define bufferWrite(BUF, ELEM) \
   BUF->elems[BUF->end] = ELEM; \

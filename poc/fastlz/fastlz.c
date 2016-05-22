@@ -328,10 +328,12 @@ int fastlz_decompress(const void* input, int length, void* output)
   return op - (flzuint8*)output;
 
 }
+
 #include <stdlib.h>
+#include <assert.h>
 #include "ringbuffer.h"
 
-#define log2(NUM) printf("%i op=%i(%x) ip=%i(%x) ref=%i(%x) dist=%i len=%i ctrl=%i ofs=%i(%i) limit=%i\n",NUM, output_addr,output[output_addr], input_addr,input[input_addr],ref_addr,input[ref_addr],output_addr - ref_addr, len, ctrl, ofs, ofs>>6,input_addr < ip_limit); 
+#define log2(NUM) printf("%i op=%i(%x) ip=%i(%x) ref=%i(%x) dist=%i buf->end=%i len=%i ctrl=%i ofs=%i(%i) limit=%i\n",NUM, output_addr,output[output_addr], input_addr,input[input_addr],ref_addr,input[ref_addr],output_addr - ref_addr,buffer_ptr->end, len, ctrl, ofs, ofs>>6,input_addr < ip_limit); 
 
 #define OUTPUT_INC(B)  do { \
     flzuint8 __b = B;\
@@ -340,6 +342,17 @@ int fastlz_decompress(const void* input, int length, void* output)
     output_addr++;\
 } while (0)
 
+#define OUTPUT_INC_FROM_REFINC()  do { \
+    flzuint8 __b = output[ref_addr]; \
+    flzuint16 __dist = (output_addr-ref_addr); \
+    flzuint8 __c = bufferGet(buffer_ptr, __dist); \
+    printf("output_addr=%i ref_addr=%i(%x) dist=%i(%x) buf->end=%i buf->size=%i position=%i\n", output_addr, ref_addr, __b, __dist, __c, buffer_ptr->end, buffer_ptr->size, __mod(buffer_ptr->end - __dist, buffer_ptr->size)); \
+    assert(__c == __b); \
+    output[output_addr] = __c;\
+    bufferWrite(buffer_ptr, __c);\
+    output_addr++;\
+    ref_addr++;\
+} while (0)
 
 
 ringBuffer_typedef(unsigned char, charBuffer);
@@ -396,11 +409,11 @@ int fastlz_decompress2(unsigned char* input, int length, unsigned char* output)
       {
         log2(3)
         ref_addr--;
-        OUTPUT_INC(output[ref_addr++]);
-        OUTPUT_INC(output[ref_addr++]);
-        OUTPUT_INC(output[ref_addr++]);
+        OUTPUT_INC_FROM_REFINC();
+        OUTPUT_INC_FROM_REFINC();
+        OUTPUT_INC_FROM_REFINC();
         for(; len; --len)
-          OUTPUT_INC(output[ref_addr++]);
+            OUTPUT_INC_FROM_REFINC();
       }
     }
     else
