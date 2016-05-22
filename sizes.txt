@@ -1,0 +1,26 @@
+Debug
+ROM: 20060 bytes (data=154)
+RAM: 792 bytes
+
+No Debug
+ROM: 6336 bytes (data=102)
+RAM: 372 bytes
+
+
+#define LOADER_NAME "qd16boot01.smc"
+#define LOADER_COMPRESS "RLE"
+#define ROM_RLE_SIZE     31091
+
+#define LOADER_NAME "qd16boot02.smc"
+#define LOADER_COMPRESS "RLE"
+#define ROM_RLE_SIZE     58046
+
+
+
+#define LOADER_NAME "qd16boot01.smc"
+#define LOADER_COMPRESS "ZIP"
+#define ROM_ZIP_SIZE     17897
+
+#define LOADER_NAME "qd16boot02.smc"
+#define LOADER_COMPRESS "ZIP"
+#define ROM_ZIP_SIZE     33654

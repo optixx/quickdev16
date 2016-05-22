@@ -34,5 +34,10 @@ tmtags
 bsnes
 web
 ucon64.exe
+project
+huffman-decode
+huffman-encode
+unpack
+pack
 
 

@@ -16,20 +16,21 @@
 #         Author:  Christian Starkjohann 
 # =====================================================================================
 
-DEBUG   = 1
+DEBUG   = 0
 TTY     = /dev/tty.PL2303-00002126
 DEVICE  = atmega644
 F_CPU   = 20000000
 TARGET  = main
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 SIZE    = avr-size
-BOOT_LOADER = 1
+BOOT_LOADER = 2
 BOOT_COMPRESS = rle
 BOOT_ROM01  = ../../roms/qd16boot01.smc
 BOOT_ROM02  = ../../roms/qd16boot02.smc
 
 
 ifeq ($(DEBUG),1)
+    BOOT_DEBUG = debug
     LDFLAGS =-Wl,-u,vfprintf  
     CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 
     OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o \
@@ -37,7 +38,8 @@ ifeq ($(DEBUG),1)
                dump.o timer.o watchdog.o loader.o info.o shared_memory.o \
                system.o pwm.o util.o shell.o irq.o command.o testing.o
 else 
-    LDFLAGS =-Wl,-u
+    BOOT_DEBUG = nodebug
+    LDFLAGS =
     CFLAGS  =-Iusbdrv -I. -DDEBUG_LEVEL=0 -DNO_DEBUG -DNO_INFO 
     OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o  main.o usb_bulk.o \
               sram.o crc.o debug.o dump.o loader.o \
@@ -104,7 +106,7 @@ bootconvert:
 	$(BOOT_CONVERTER) $(BOOT_ROM) 
 
 release: main.hex
-	cp -v main.hex ../../files/firmware/firmware-loader0$(BOOT_LOADER)-$$(date +%Y%m%d).hex 
+	cp -v main.hex ../../files/firmware/firmware-loader0$(BOOT_LOADER)-$(BOOT_COMPRESS)-$(BOOT_DEBUG)-$$(date +%Y%m%d).hex 
 
 .c.o:
 	$(COMPILE) -c $< -o $@
