@@ -23,7 +23,9 @@ void init(long len){
 int main(int argc, char** argv){
     
     char *source = NULL;
-    int len, rlen, i;
+    char *source_part1 = NULL;
+    char *source_part2 = NULL;
+    int len, len1, len2, rlen, rlen1, rlen2, i;
     FILE *fp = fopen("/Users/david/Devel/arch/avr/code/quickdev16/roms/qd16boot02.smc", "r");
     if (fp != NULL) {
         /* Go to the end of the file. */
@@ -54,15 +56,9 @@ int main(int argc, char** argv){
 
     MD5_CTX md5_context;
     unsigned char c[MD5_DIGEST_LENGTH];
-
-#if 0
-    len = strlen(sample);
-    init(len);
-    memcpy(unpacked, sample, len);
-#else 
     init(len);
     memcpy(unpacked, source, len);
-#endif
+
 
     MD5_Init (&md5_context); 
     MD5_Update (&md5_context, unpacked, len);
@@ -72,25 +68,26 @@ int main(int argc, char** argv){
     printf("\n");
     rlen = fastlz_compress(unpacked, len, packed);
     //hexdump(packed, rlen);
-    printf("packed len=%i\n", rlen);
-    memset(unpacked, 0, len);
-    printf("-----\n");
-#if 0
-    fastlz_decompress(packed, rlen, unpacked);
+    printf("packed len=%i md5=", rlen);
     MD5_Init (&md5_context); 
-    MD5_Update (&md5_context, unpacked, len);
+    MD5_Update (&md5_context, packed, rlen);
     MD5_Final (c,&md5_context);
-    printf("unpacked len=%i md5=", len);
     for(i = 0; i < MD5_DIGEST_LENGTH; i++) printf("%02x", c[i]);
     printf("\n");
-    fp = fopen("out01.smc", "wb");
-    fwrite(unpacked, len, 1, fp);
-    printf("Wrote out01.smc %l bytes\n", len);
-    fclose(fp);
     memset(unpacked, 0, len);
-#endif 
     printf("-----\n");
-    fastlz_decompress2(packed, rlen, unpacked);
+    
+
+   
+    unsigned char *packed1;
+    unsigned char *packed2;
+    rlen1 = 32768;
+    packed1 = malloc(rlen1);
+    packed2 = malloc(rlen1);
+    memcpy(packed1, packed, rlen1);
+    memcpy(packed2, packed + rlen1, (rlen - rlen1));
+    
+    fastlz_decompress2(packed1, packed2, rlen, unpacked);
     MD5_Init (&md5_context); 
     MD5_Update (&md5_context, unpacked, len);
     MD5_Final (c,&md5_context);
@@ -101,11 +98,6 @@ int main(int argc, char** argv){
     fwrite(unpacked, len, 1, fp);
     printf("Wrote out02.smc %l bytes\n", len);
     fclose(fp);
-    printf("s1=%s\n\n", sample);
-    printf("s2=%s\n", unpacked);
-
-
-    return 0;
 }
 
 void hexdump(void *mem, unsigned int len){

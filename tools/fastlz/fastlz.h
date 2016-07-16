@@ -67,7 +67,7 @@ int fastlz_compress(const void* input, int length, void* output);
   more than what is specified in maxout.
  */
 
-int fastlz_decompress(const void* input, int length, void* output, int maxout); 
+int fastlz_decompress(const void* input, int length, void* output); 
 
 /**
   Compress a block of data in the input buffer and returns the size of 
@@ -91,7 +91,6 @@ int fastlz_decompress(const void* input, int length, void* output, int maxout);
   decompressed using the function fastlz_decompress above.
 */  
 
-int fastlz_compress_level(int level, const void* input, int length, void* output);
 
 #if defined (__cplusplus)
 }

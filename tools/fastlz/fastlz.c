@@ -24,14 +24,6 @@
   THE SOFTWARE.
 */
 
-#if !defined(FASTLZ__COMPRESSOR) && !defined(FASTLZ_DECOMPRESSOR)
-
-/*
- * Always check for bound when decompressing.
- * Generally it is best to leave it defined.
- */
-#define FASTLZ_SAFE
-
 /*
  * Give hints to the compiler for branch prediction optimization.
  */
@@ -54,116 +46,27 @@
 #define FASTLZ_INLINE
 #endif
 
-/*
- * Prevent accessing more than 8-bit at once, except on x86 architectures.
- */
-#if !defined(FASTLZ_STRICT_ALIGN)
-#define FASTLZ_STRICT_ALIGN
-#if defined(__i386__) || defined(__386)  /* GNU C, Sun Studio */
-#undef FASTLZ_STRICT_ALIGN
-#elif defined(__i486__) || defined(__i586__) || defined(__i686__) /* GNU C */
-#undef FASTLZ_STRICT_ALIGN
-#elif defined(_M_IX86) /* Intel, MSVC */
-#undef FASTLZ_STRICT_ALIGN
-#elif defined(__386)
-#undef FASTLZ_STRICT_ALIGN
-#elif defined(_X86_) /* MinGW */
-#undef FASTLZ_STRICT_ALIGN
-#elif defined(__I86__) /* Digital Mars */
-#undef FASTLZ_STRICT_ALIGN
-#endif
-#endif
-
-/*
- * FIXME: use preprocessor magic to set this on different platforms!
- */
 typedef unsigned char  flzuint8;
 typedef unsigned short flzuint16;
 typedef unsigned int   flzuint32;
 
 /* prototypes */
 int fastlz_compress(const void* input, int length, void* output);
-int fastlz_compress_level(int level, const void* input, int length, void* output);
-int fastlz_decompress(const void* input, int length, void* output, int maxout);
+int fastlz_decompress(const void* input, int length, void* output);
 
 #define MAX_COPY       32
 #define MAX_LEN       264  /* 256 + 8 */
-#define MAX_DISTANCE 8192
+#define MAX_DISTANCE  256
 
-#if !defined(FASTLZ_STRICT_ALIGN)
-#define FASTLZ_READU16(p) *((const flzuint16*)(p)) 
-#else
 #define FASTLZ_READU16(p) ((p)[0] | (p)[1]<<8)
-#endif
 
 #define HASH_LOG  13
 #define HASH_SIZE (1<< HASH_LOG)
 #define HASH_MASK  (HASH_SIZE-1)
 #define HASH_FUNCTION(v,p) { v = FASTLZ_READU16(p); v ^= FASTLZ_READU16(p+1)^(v>>(16-HASH_LOG));v &= HASH_MASK; }
 
-#undef FASTLZ_LEVEL
-#define FASTLZ_LEVEL 1
 
-#undef FASTLZ_COMPRESSOR
-#undef FASTLZ_DECOMPRESSOR
-#define FASTLZ_COMPRESSOR fastlz1_compress
-#define FASTLZ_DECOMPRESSOR fastlz1_decompress
-static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* output);
-static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void* output, int maxout);
-#include "fastlz.c"
-
-#undef FASTLZ_LEVEL
-#define FASTLZ_LEVEL 2
-
-#undef MAX_DISTANCE
-#define MAX_DISTANCE 8191
-#define MAX_FARDISTANCE (65535+MAX_DISTANCE-1)
-
-#undef FASTLZ_COMPRESSOR
-#undef FASTLZ_DECOMPRESSOR
-#define FASTLZ_COMPRESSOR fastlz2_compress
-#define FASTLZ_DECOMPRESSOR fastlz2_decompress
-static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* output);
-static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void* output, int maxout);
-#include "fastlz.c"
-
-int fastlz_compress(const void* input, int length, void* output)
-{
-  /* for short block, choose fastlz1 */
-  if(length < 65536)
-    return fastlz1_compress(input, length, output);
-
-  /* else... */
-  return fastlz2_compress(input, length, output);
-}
-
-int fastlz_decompress(const void* input, int length, void* output, int maxout)
-{
-  /* magic identifier for compression level */
-  int level = ((*(const flzuint8*)input) >> 5) + 1;
-
-  if(level == 1)
-    return fastlz1_decompress(input, length, output, maxout);
-  if(level == 2)
-    return fastlz2_decompress(input, length, output, maxout);
-
-  /* unknown level, trigger error */
-  return 0;
-}
-
-int fastlz_compress_level(int level, const void* input, int length, void* output)
-{
-  if(level == 1)
-    return fastlz1_compress(input, length, output);
-  if(level == 2)
-    return fastlz2_compress(input, length, output);
-
-  return 0;
-}
-
-#else /* !defined(FASTLZ_COMPRESSOR) && !defined(FASTLZ_DECOMPRESSOR) */
-
-static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* output)
+FASTLZ_INLINE int fastlz_compress(const void* input, int length, void* output)
 {
   const flzuint8* ip = (const flzuint8*) input;
   const flzuint8* ip_bound = ip + length - 2;
@@ -215,15 +118,6 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
     const flzuint8* anchor = ip;
 
     /* check for a run */
-#if FASTLZ_LEVEL==2
-    if(ip[0] == ip[-1] && FASTLZ_READU16(ip-1)==FASTLZ_READU16(ip+1))
-    {
-      distance = 1;
-      ip += 3;
-      ref = anchor - 1 + 3;
-      goto match;
-    }
-#endif
 
     /* find potential match */
     HASH_FUNCTION(hval,ip);
@@ -238,25 +132,10 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
 
     /* is this a match? check the first 3 bytes */
     if(distance==0 || 
-#if FASTLZ_LEVEL==1
     (distance >= MAX_DISTANCE) ||
-#else
-    (distance >= MAX_FARDISTANCE) ||
-#endif
     *ref++ != *ip++ || *ref++!=*ip++ || *ref++!=*ip++)
       goto literal;
 
-#if FASTLZ_LEVEL==2
-    /* far, needs at least 5-byte match */
-    if(distance >= MAX_DISTANCE)
-    {
-      if(*ip++ != *ref++ || *ip++!= *ref++) 
-        goto literal;
-      len += 2;
-    }
-    
-    match:
-#endif
 
     /* last matched byte */
     ip = anchor + len;
@@ -304,48 +183,6 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
     len = ip - anchor;
 
     /* encode the match */
-#if FASTLZ_LEVEL==2
-    if(distance < MAX_DISTANCE)
-    {
-      if(len < 7)
-      {
-        *op++ = (len << 5) + (distance >> 8);
-        *op++ = (distance & 255);
-      }
-      else
-      {
-        *op++ = (7 << 5) + (distance >> 8);
-        for(len-=7; len >= 255; len-= 255)
-          *op++ = 255;
-        *op++ = len;
-        *op++ = (distance & 255);
-      }
-    }
-    else
-    {
-      /* far away, but not yet in the another galaxy... */
-      if(len < 7)
-      {
-        distance -= MAX_DISTANCE;
-        *op++ = (len << 5) + 31;
-        *op++ = 255;
-        *op++ = distance >> 8;
-        *op++ = distance & 255;
-      }
-      else
-      {
-        distance -= MAX_DISTANCE;
-        *op++ = (7 << 5) + 31;
-        for(len-=7; len >= 255; len-= 255)
-          *op++ = 255;
-        *op++ = len;
-        *op++ = 255;
-        *op++ = distance >> 8;
-        *op++ = distance & 255;
-      }
-    }
-#else
-
     if(FASTLZ_UNEXPECT_CONDITIONAL(len > MAX_LEN-2))
       while(len > MAX_LEN-2)
       {
@@ -366,7 +203,6 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
       *op++ = len - 7;
       *op++ = (distance & 255);
     }
-#endif
 
     /* update the hash at match boundary */
     HASH_FUNCTION(hval,ip);
@@ -409,74 +245,46 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
   else
     op--;
 
-#if FASTLZ_LEVEL==2
-  /* marker for fastlz2 */
-  *(flzuint8*)output |= (1 << 5);
-#endif
-
   return op - (flzuint8*)output;
 }
 
-static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void* output, int maxout)
+
+#include <stdio.h>
+#define log1(NUM) printf("%i op=%i(%x) ip=%i(%x) len=%i ctrl=%i ofs=%i(%i) limit=%i\n",NUM,  (((int)op - (int)output)), *op, (((int)ip - (int)input)),*ip,  len, ctrl, ofs, (ofs >> 8),ip < ip_limit);
+
+int fastlz_decompress(const void* input, int length, void* output)
 {
   const flzuint8* ip = (const flzuint8*) input;
   const flzuint8* ip_limit  = ip + length;
   flzuint8* op = (flzuint8*) output;
-  flzuint8* op_limit = op + maxout;
   flzuint32 ctrl = (*ip++) & 31;
   int loop = 1;
-
   do
   {
     const flzuint8* ref = op;
     flzuint32 len = ctrl >> 5;
     flzuint32 ofs = (ctrl & 31) << 8;
-
+    printf("-------------------\n");
+    log1(1)
     if(ctrl >= 32)
     {
-#if FASTLZ_LEVEL==2
-      flzuint8 code;
-#endif
       len--;
       ref -= ofs;
       if (len == 7-1)
-#if FASTLZ_LEVEL==1
         len += *ip++;
       ref -= *ip++;
-#else
-        do
-        {
-          code = *ip++;
-          len += code;
-        } while (code==255);
-      code = *ip++;
-      ref -= code;
-
-      /* match from 16-bit distance */
-      if(FASTLZ_UNEXPECT_CONDITIONAL(code==255))
-      if(FASTLZ_EXPECT_CONDITIONAL(ofs==(31 << 8)))
-      {
-        ofs = (*ip++) << 8;
-        ofs += *ip++;
-        ref = op - ofs - MAX_DISTANCE;
-      }
-#endif
       
-#ifdef FASTLZ_SAFE
-      if (FASTLZ_UNEXPECT_CONDITIONAL(op + len + 3 > op_limit))
-        return 0;
 
-      if (FASTLZ_UNEXPECT_CONDITIONAL(ref-1 < (flzuint8 *)output))
-        return 0;
-#endif
-
+      log1(1)
       if(FASTLZ_EXPECT_CONDITIONAL(ip < ip_limit))
         ctrl = *ip++;
       else
         loop = 0;
+      log1(1)
 
       if(ref == op)
       {
+        log1(2)
         /* optimize copy for a run */
         flzuint8 b = ref[-1];
         *op++ = b;
@@ -487,65 +295,185 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
       }
       else
       {
-#if !defined(FASTLZ_STRICT_ALIGN)
-        const flzuint16* p;
-        flzuint16* q;
-#endif
+        log1(3)
         /* copy from reference */
         ref--;
         *op++ = *ref++;
         *op++ = *ref++;
         *op++ = *ref++;
 
-#if !defined(FASTLZ_STRICT_ALIGN)
-        /* copy a byte, so that now it's word aligned */
-        if(len & 1)
-        {
-          *op++ = *ref++;
-          len--;
-        }
-
-        /* copy 16-bit at once */
-        q = (flzuint16*) op;
-        op += len;
-        p = (const flzuint16*) ref;
-        for(len>>=1; len > 4; len-=4)
-        {
-          *q++ = *p++;
-          *q++ = *p++;
-          *q++ = *p++;
-          *q++ = *p++;
-        }
-        for(; len; --len)
-          *q++ = *p++;
-#else
         for(; len; --len)
           *op++ = *ref++;
-#endif
       }
     }
     else
     {
       ctrl++;
-#ifdef FASTLZ_SAFE
-      if (FASTLZ_UNEXPECT_CONDITIONAL(op + ctrl > op_limit))
-        return 0;
-      if (FASTLZ_UNEXPECT_CONDITIONAL(ip + ctrl > ip_limit))
-        return 0;
-#endif
-
+      log1(4)
       *op++ = *ip++; 
-      for(--ctrl; ctrl; ctrl--)
+      for(--ctrl; ctrl; ctrl--){
+        log1(5)
         *op++ = *ip++;
+     }
 
       loop = FASTLZ_EXPECT_CONDITIONAL(ip < ip_limit);
-      if(loop)
+      if(loop){
         ctrl = *ip++;
+      }
+      log1(6)
     }
   }
   while(FASTLZ_EXPECT_CONDITIONAL(loop));
 
   return op - (flzuint8*)output;
+
 }
 
-#endif /* !defined(FASTLZ_COMPRESSOR) && !defined(FASTLZ_DECOMPRESSOR) */
+#include <stdlib.h>
+#include <assert.h>
+#include "ringbuffer.h"
+
+//#define log2(NUM) printf("%i op=%i(%x) ip=%i(%x) ref=%i(%x) dist=%i buf->end=%i len=%i ctrl=%i ofs=%i(%i) limit=%i\n",NUM, output_index,output[output_index], input_index,input[input_index],ref_index,input[ref_index],output_index - ref_index,ref_buffer_ptr->end, len, ctrl, ofs, ofs>>6,input_index < ip_limit); 
+
+#define log2(NUM) printf("%i op=%i(%x) ip=%i ref=%i dist=%i buf->end=%i len=%i ctrl=%i ofs=%i(%i) limit=%i\n",NUM, output_index,output[output_index], input_index,ref_index,output_index - ref_index,ref_buffer_ptr->end, len, ctrl, ofs, ofs>>6,input_index < ip_limit); 
+
+#define OUTPUT_INC(B)  do { \
+    __b = B;\
+    output[output_index] = __b;\
+    bufferWrite(ref_buffer_ptr, __b);\
+    output_index++;\
+} while (0)
+
+#define OUTPUT_INC_FROM_REFINC()  do { \
+    __dist = (output_index-ref_index); \
+    __c = buffer_get(ref_buffer_ptr, __dist); \
+    printf("output_index=%i ref_index=%i(%x) dist=%i(%x) buf->end=%i buf->size=%i position=%i\n", output_index, ref_index, __c, __dist, __c, ref_buffer_ptr->end, ref_buffer_ptr->size, __mod(ref_buffer_ptr->end - __dist, ref_buffer_ptr->size)); \
+    output[output_index] = __c;\
+    bufferWrite(ref_buffer_ptr, __c);\
+    output_index++;\
+    ref_index++;\
+} while (0)
+
+
+#define FROM_REF(OUT)  do { \
+    flzuint16 __dist = (output_index-ref_index+1); \
+    OUT = buffer_get(ref_buffer_ptr, __dist); \
+} while (0)
+
+#define INPUT_INC(OUT)  do { \
+    if (input_index<32768) { \
+        OUT = input1[input_index++]; \
+    } else { \
+        OUT = input2[input_index-32768]; \
+        input_index++; \
+    }\
+} while (0)
+
+ring_buffer_typedef(unsigned char, byte_buffer);
+
+int fastlz_decompress2(unsigned char* input1, unsigned char* input2, int length, unsigned char* output)
+{
+  flzuint32 input_index = 0;
+  flzuint32 ip_limit = length;
+  flzuint32 output_index = 0;
+  flzuint32 ref_index = 0;
+  //flzuint32 ctrl = (input[input_index++]) & 31;
+  flzuint32 ctrl;
+  INPUT_INC(ctrl);
+  ctrl = ctrl & 31;
+
+
+
+  int loop = 1;
+
+  byte_buffer ref_buffer;
+  buffer_init(ref_buffer, MAX_DISTANCE, unsigned char);
+  byte_buffer* ref_buffer_ptr;
+  ref_buffer_ptr = &ref_buffer;
+
+  do
+  {
+    flzuint8 __b;
+    flzuint16 __dist;
+    flzuint8 __c; 
+    flzuint8 tmp;
+
+    ref_index = output_index;
+    flzuint32 len = ctrl >> 5;
+    flzuint32 ofs = (ctrl & 31) << 6;
+    printf("-------------------\n");
+    log2(1)
+    if(ctrl >= 32)
+    {
+      len--;
+      ref_index -= ofs;
+      if (len == 7-1){
+        INPUT_INC(tmp);
+        len += tmp;
+        //len += input[input_index++];
+      }
+      INPUT_INC(tmp);
+      ref_index -= tmp;
+      //ref_index -= input[input_index++];
+      
+      log2(1)
+
+      if(FASTLZ_EXPECT_CONDITIONAL( input_index < ip_limit))
+        INPUT_INC(ctrl);
+        //ctrl = input[input_index++];
+      else
+        loop = 0;
+      
+      log2(1)
+
+      if(ref_index == output_index)
+      {
+        log2(2)
+        //flzuint8 b = output[ref_index-1];
+        flzuint8 b;
+        FROM_REF(b);
+        
+
+        OUTPUT_INC(b);
+        OUTPUT_INC(b);
+        OUTPUT_INC(b);
+        for(; len; --len)
+            OUTPUT_INC(b);
+      }
+      else
+      {
+        log2(3)
+        ref_index--;
+        OUTPUT_INC_FROM_REFINC();
+        OUTPUT_INC_FROM_REFINC();
+        OUTPUT_INC_FROM_REFINC();
+        for(; len; --len)
+            OUTPUT_INC_FROM_REFINC();
+      }
+    }
+    else
+    {
+      ctrl++;
+      log2(4)
+      INPUT_INC(tmp);
+      OUTPUT_INC(tmp);
+      //OUTPUT_INC(input[input_index++]);
+      for(--ctrl; ctrl; ctrl--){
+        log2(5)
+        INPUT_INC(tmp);
+        OUTPUT_INC(tmp);
+        //OUTPUT_INC(input[input_index++]);
+    } 
+
+      loop = FASTLZ_EXPECT_CONDITIONAL(input_index < ip_limit);
+      if (loop){
+        INPUT_INC(ctrl);
+        //ctrl = input[input_index++];
+     }
+      log2(6)
+    }
+  }
+  while(FASTLZ_EXPECT_CONDITIONAL(loop));
+  buffer_destroy(ref_buffer_ptr);
+  return 0;
+}

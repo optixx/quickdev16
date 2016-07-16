@@ -24,7 +24,7 @@ TARGET  = main
 AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 SIZE    = avr-size
 BOOT_LOADER = 2
-BOOT_COMPRESS = rle
+BOOT_COMPRESS = fastlz
 BOOT_ROM01  = ../../roms/qd16boot01.smc
 BOOT_ROM02  = ../../roms/qd16boot02.smc
 
