@@ -1,46 +1,32 @@
-
-
 import sqlite3
 import os
-import re
-import string
-import stat
-import popen2
-import glob
 import sys
-import os
-import pprint
-import base64
 import getpass
-import os
 import socket
-import sys
 import traceback
 import paramiko
-import socket
-
-from subprocess import Popen
 
 
-def distance(a,b):
+def distance(a, b):
     c = {}
-    n = len(a); m = len(b)
+    n = len(a)
+    m = len(b)
 
-    for i in range(0,n+1):
-        c[i,0] = i
-    for j in range(0,m+1):
-        c[0,j] = j
+    for i in range(0, n + 1):
+        c[i, 0] = i
+    for j in range(0, m + 1):
+        c[0, j] = j
 
-    for i in range(1,n+1):
-        for j in range(1,m+1):
-            x = c[i-1,j]+1
-            y = c[i,j-1]+1
-            if a[i-1] == b[j-1]:
-                z = c[i-1,j-1]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            x = c[i - 1, j] + 1
+            y = c[i, j - 1] + 1
+            if a[i - 1] == b[j - 1]:
+                z = c[i - 1, j - 1]
             else:
-                z = c[i-1,j-1]+1
-            c[i,j] = min(x,y,z)
-    return c[n,m]
+                z = c[i - 1, j - 1] + 1
+            c[i, j] = min(x, y, z)
+    return c[n, m]
 
 paramiko.util.log_to_file('rom_sftp.log')
 
@@ -53,9 +39,12 @@ elif socket.gethostname() == 'box':
     username = "david"
     hostname = "burst"
 else:
-   sys.exit() 
+    sys.exit()
+
+
 def shellquote(s):
     return "'" + s.replace("'", "'\\''") + "'"
+
 
 def main():
 
@@ -63,7 +52,8 @@ def main():
     password = getpass.getpass('Password for %s@%s: ' % (username, hostname))
     hostkeytype = None
     hostkey = None
-    host_keys = paramiko.util.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
+    host_keys = paramiko.util.load_host_keys(
+        os.path.expanduser('~/.ssh/known_hosts'))
     if host_keys.has_key(hostname):
         hostkeytype = host_keys[hostname].keys()[0]
         hostkey = host_keys[hostname][hostkeytype]
@@ -78,11 +68,10 @@ def main():
         dirlist = sftp.listdir('.')
         print "Dirlist:", dirlist
 
-
         conn = sqlite3.connect('roms_cleanup.sqlite3')
         c = conn.cursor()
-        for i in [(1,),(2,),(4,),(8,),(16,)]:
-            dirname = os.path.join(path,"%02i" % i)
+        for i in [(1,), (2,), (4,), (8,), (16,)]:
+            dirname = os.path.join(path, "%02i" % i)
             if not os.path.isdir(dirname):
                 os.mkdir(dirname)
             print "#" * 60
@@ -105,21 +94,22 @@ def main():
                           AND
                               rom_region like "Europe%"
                           ORDER BY file_name
-                          ''',i)
-            
-            
-            last_name = str()     
+                          ''', i)
+
+            last_name = str()
             for row in c:
-                name,size,filename =  row
-                d = distance(os.path.basename(filename),os.path.basename(last_name)) 
-                if d < 7:    
-                    print "Skip ",filename
+                name, size, filename = row
+                d = distance(
+                    os.path.basename(filename), os.path.basename(last_name))
+                if d < 7:
+                    print "Skip ", filename
                     continue
-                filename_dst = os.path.join(dirname,os.path.basename(filename))
-                print "Remote: %s -> %s" % ( filename,filename_dst)
+                filename_dst = os.path.join(
+                    dirname, os.path.basename(filename))
+                print "Remote: %s -> %s" % (filename, filename_dst)
                 last_name = filename
                 try:
-                    sftp.get(filename,filename_dst)
+                    sftp.get(filename, filename_dst)
                 except Exception, e:
                     print '*** Caught exception: %s: %s' % (e.__class__, e)
                     traceback.print_exc()
@@ -137,11 +127,4 @@ def main():
 
 
 if __name__ == '__main__':
-      main()
-
-
-
-
-
-
-
+    main()
