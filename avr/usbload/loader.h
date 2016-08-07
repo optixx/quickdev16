@@ -1,11 +1,11 @@
 /*
-File: qd16boot02.smc
-Time: Sat, 16 Jul 2016 17:06:14
+File: qd16boot_ver02.smc
+Time: Sun, 07 Aug 2016 20:21:45
 */
 #ifndef __FIFO_H__
 #define __FIFO_H__
 
-#define LOADER_NAME "qd16boot02.smc"
+#define LOADER_NAME "qd16boot_ver02.smc"
 #define LOADER_COMPRESS "FASTLZ"
 #define ROM_FASTLZ_SIZE     48271
 #define ROM_BUFFER_CNT   2

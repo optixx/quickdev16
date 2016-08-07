@@ -121,8 +121,8 @@ void boot_startup_rom(uint16_t init_delay)
 #endif 
 
 #if defined(BOOT_COMPRESS_FASTLZ) 
-    for (i = 0; i < ROM_BUFFER_CNT; i++) {
-    }
+    uint32_t rlen = _rom_size[0]+ _rom_size[1];
+    fastlz_decompress2(_rom[0], _rom[0], rlen);
 #endif 
 
     info_P(PSTR("\n"));

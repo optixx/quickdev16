@@ -25,8 +25,8 @@ AVRDUDE = avrdude -c usbasp -p $(DEVICE)
 SIZE    = avr-size
 BOOT_LOADER = 2
 BOOT_COMPRESS = fastlz
-BOOT_ROM01  = ../../roms/qd16boot01.smc
-BOOT_ROM02  = ../../roms/qd16boot02.smc
+BOOT_ROM01  = ../../roms/qd16boot_ver01.smc
+BOOT_ROM02  = ../../roms/qd16boot_ver02.smc
 
 
 ifeq ($(DEBUG),1)
@@ -102,7 +102,7 @@ fuse:
 flash: main.hex
 	$(AVRDUDE) -U flash:w:main.hex:i
 
-bootconvert:
+convert-boot-rom:
 	$(BOOT_CONVERTER) $(BOOT_ROM) 
 
 release: main.hex
