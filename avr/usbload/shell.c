@@ -199,7 +199,9 @@ enum cmds {
     CMD_DUMP,
     CMD_DUMPVEC,
     CMD_DUMPHEADER,
+#if DO_CRC_CHECK
     CMD_CRC,
+#endif
     CMD_EXIT,
     CMD_RESET,
     CMD_RESETSNIFF,
@@ -223,7 +225,9 @@ const uint8_t cmdlist[][CMD_HELP] PROGMEM = {
     {"DUMP"},
     {"DUMPVEC"},
     {"DUMPHEADER"},
+#if DO_CRC_CHECK
     {"CRC"},
+#endif
     {"EXIT"},
     {"RESET"},
     {"RESETSNIFF"},
@@ -284,12 +288,14 @@ void shell_run(void)
         else
             info_P(PSTR("DUMP <start addr> <end addr>\n"));
 
+#if DO_CRC_CHECK
     } else if (strcmp_P((char *) t, (PGM_P) cmdlist[CMD_CRC]) == 0) {
         if (get_hex_arg2(&arg1, &arg2)) {
             crc = crc_check_bulk_memory(arg1, arg2, 0x8000);
             info_P(PSTR("0x%06lx - 0x%06lx crc=0x%04x\n"), arg1, arg2, crc);
         } else
             info_P(PSTR("CRC <start addr> <end addr>\n"));
+#endif
     } else if (strcmp_P((char *) t, (PGM_P) cmdlist[CMD_EXIT]) == 0) {
         leave_application();
     } else if (strcmp_P((char *) t, (PGM_P) cmdlist[CMD_RESET]) == 0) {
@@ -344,17 +350,17 @@ void shell_run(void)
         else
             offset = 0x0000;
 
-        info_P(PSTR("ABORT	0x%04x 0x%04x\n"), (0xFFE8 - offset),
+        info_P(PSTR("ABORT  0x%04x 0x%04x\n"), (0xFFE8 - offset),
                sram_read16_be(0xFFE8 - offset));
-        info_P(PSTR("BRK	0x%04x 0x%04x\n"), (0xFFE6 - offset),
+        info_P(PSTR("BRK    0x%04x 0x%04x\n"), (0xFFE6 - offset),
                sram_read16_be(0xFFE6 - offset));
-        info_P(PSTR("COP	0x%04x 0x%04x\n"), (0xFFE4 - offset),
+        info_P(PSTR("COP    0x%04x 0x%04x\n"), (0xFFE4 - offset),
                sram_read16_be(0xFFE4 - offset));
-        info_P(PSTR("IRQ	0x%04x 0x%04x\n"), (0xFFEE - offset),
+        info_P(PSTR("IRQ    0x%04x 0x%04x\n"), (0xFFEE - offset),
                sram_read16_be(0xFFEE - offset));
-        info_P(PSTR("NMI	0x%04x 0x%04x\n"), (0xFFEA - offset),
+        info_P(PSTR("NMI    0x%04x 0x%04x\n"), (0xFFEA - offset),
                sram_read16_be(0xFFEA - offset));
-        info_P(PSTR("RES	0x%04x 0x%04x\n"), (0xFFFC - offset),
+        info_P(PSTR("RES    0x%04x 0x%04x\n"), (0xFFFC - offset),
                sram_read16_be(0xFFFC - offset));
 
     } else if (strcmp_P((char *) t, (PGM_P) cmdlist[CMD_DUMPHEADER]) == 0) {
@@ -372,7 +378,7 @@ void shell_run(void)
          * $00. # $ffdc..$ffdd => Checksum complement, which is the bitwise-xor of the checksum and $ffff. # $ffde..$ffdf => SNES checksum, 
          * an unsigned 16-bit checksum of bytes. # $ffe0..$ffe3 => Unknown. 
          */
-        info_P(PSTR("NAME	0x%04x "), (0xffc0 - offset));
+        info_P(PSTR("NAME   0x%04x "), (0xffc0 - offset));
         for (arg1 = (0xffc0 - offset); arg1 < (0xffc0 - offset + 21); arg1++) {
             c = sram_read(arg1);
             if (c > 0x1f && c < 0x7f)
@@ -380,7 +386,7 @@ void shell_run(void)
         }
         printf("\n");
         c = sram_read(0xffd5 - offset);
-        info_P(PSTR("LAYOUT	0x%04x "), (0xffd5 - offset));
+        info_P(PSTR("LAYOUT 0x%04x "), (0xffd5 - offset));
 
         switch (c) {
             case 0x20:
@@ -401,7 +407,7 @@ void shell_run(void)
         }
 
         c = sram_read(0xffd6 - offset);
-        info_P(PSTR("TYPE	0x%04xc"), (0xffd6 - offset), c);
+        info_P(PSTR("TYPE   0x%04xc"), (0xffd6 - offset), c);
         switch (c) {
             case 0x00:
                 info_P(PSTR("Rom\n"));
@@ -435,12 +441,12 @@ void shell_run(void)
                 break;
         }
         arg1 = (2 << (sram_read(0xffd7 - offset) - 1));
-        info_P(PSTR("ROM	0x%04x %li MBit ( %li KiB)\n"),
+        info_P(PSTR("ROM    0x%04x %li MBit ( %li KiB)\n"),
                (0xffd7 - offset), (arg1 / 128), arg1);
         arg1 = (2 << (sram_read(0xffd8 - offset) - 1));
-        info_P(PSTR("RAM	0x%04x %li KiB\n"), (0xffd8 - offset), arg1);
+        info_P(PSTR("RAM    0x%04x %li KiB\n"), (0xffd8 - offset), arg1);
 
-        info_P(PSTR("CCODE	0x%04x "), (0xffd9 - offset));
+        info_P(PSTR("CCODE  0x%04x "), (0xffd9 - offset));
         c = sram_read(0xffd9 - offset);
         if (c == 0x00 || c == 0x01 || 0x0d)
             info_P(PSTR("NTSC\n"));
@@ -449,13 +455,13 @@ void shell_run(void)
         else
             info_P(PSTR("Unkown 0x%02x\n"), c);
 
-        info_P(PSTR("LIC	0x%04x 0x%02x\n"), (0xffda - offset),
+        info_P(PSTR("LIC    0x%04x 0x%02x\n"), (0xffda - offset),
                sram_read(0xffda - offset));
-        info_P(PSTR("VER	0x%04x 0x%02x\n"), (0xffdb - offset),
+        info_P(PSTR("VER    0x%04x 0x%02x\n"), (0xffdb - offset),
                sram_read(0xffdb - offset));
-        info_P(PSTR("SUM1	0x%04x 0x%04x\n"), (0xffdc - offset),
+        info_P(PSTR("SUM1   0x%04x 0x%04x\n"), (0xffdc - offset),
                sram_read16_be(0xffdc - offset));
-        info_P(PSTR("SUM2	0x%04x 0x%04x\n"), (0xffde - offset),
+        info_P(PSTR("SUM2   0x%04x 0x%04x\n"), (0xffde - offset),
                sram_read16_be(0xffde - offset));
 
 

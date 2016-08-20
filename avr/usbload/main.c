@@ -19,7 +19,6 @@
  */
 
 
-
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdlib.h>
@@ -198,8 +197,10 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
         usb_trans.req_addr = usb_trans.req_addr | rq->wIndex.word;
         debug_P(DEBUG_USB, PSTR("USB_CRC: addr=0x%08lx \n"),
                 usb_trans.req_addr);
+#if DO_CRC_CHECK
         crc_check_bulk_memory(0x000000, usb_trans.req_addr,
                               usb_trans.req_bank_size);
+#endif
         ret_len = 0;
         /*
          * -------------------------------------------------------------------------

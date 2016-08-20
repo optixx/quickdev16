@@ -52,7 +52,6 @@ int fastlz_decompress(const void* input, int length, void* output);
 #define OUTPUT_INC_FROM_REFINC()  do { \
     __dist = (output_index-ref_index); \
     __c = buffer_get(ref_buffer_ptr, __dist); \
-    info_P(PSTR("output_index=%i ref_index=%i(%x) dist=%i(%x) buf->end=%i buf->size=%i position=%i\n"), output_index, ref_index, __c, __dist, __c, ref_buffer_ptr->end, ref_buffer_ptr->size, __mod(ref_buffer_ptr->end - __dist, ref_buffer_ptr->size)); \
     sram_bulk_write(__c);\
     sram_bulk_write_next();\
     output_index++;\
@@ -121,7 +120,7 @@ int fastlz_decompress2(unsigned char* input1, unsigned char* input2, int length)
     ref_index = output_index;
     flzuint32 len = ctrl >> 5;
     flzuint32 ofs = (ctrl & 31) << 6;
-    log2(1)
+    //log2(1)
     if(ctrl >= 32)
     {
       len--;
@@ -135,7 +134,7 @@ int fastlz_decompress2(unsigned char* input1, unsigned char* input2, int length)
       ref_index -= tmp;
       //ref_index -= input[input_index++];
       
-      log2(1)
+      //log2(1)
 
       if(FASTLZ_EXPECT_CONDITIONAL( input_index < ip_limit))
         INPUT_INC(ctrl);
@@ -143,11 +142,11 @@ int fastlz_decompress2(unsigned char* input1, unsigned char* input2, int length)
       else
         loop = 0;
       
-      log2(1)
+      //log2(1)
 
       if(ref_index == output_index)
       {
-        log2(2)
+        //log2(2)
         //flzuint8 b = output[ref_index-1];
         flzuint8 b;
         FROM_REF(b);
@@ -161,7 +160,7 @@ int fastlz_decompress2(unsigned char* input1, unsigned char* input2, int length)
       }
       else
       {
-        log2(3)
+        //log2(3)
         ref_index--;
         OUTPUT_INC_FROM_REFINC();
         OUTPUT_INC_FROM_REFINC();
@@ -173,12 +172,12 @@ int fastlz_decompress2(unsigned char* input1, unsigned char* input2, int length)
     else
     {
       ctrl++;
-      log2(4)
+      //log2(4)
       INPUT_INC(tmp);
       OUTPUT_INC(tmp);
       //OUTPUT_INC(input[input_index++]);
       for(--ctrl; ctrl; ctrl--){
-        log2(5)
+        //log2(5)
         INPUT_INC(tmp);
         OUTPUT_INC(tmp);
         //OUTPUT_INC(input[input_index++]);
@@ -189,7 +188,7 @@ int fastlz_decompress2(unsigned char* input1, unsigned char* input2, int length)
         INPUT_INC(ctrl);
         //ctrl = input[input_index++];
      }
-      log2(6)
+      //log2(6)
     }
   }
   while(FASTLZ_EXPECT_CONDITIONAL(loop));

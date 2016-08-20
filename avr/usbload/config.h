@@ -46,13 +46,13 @@
 #define FORMAT_BUFFER_LEN           0x080
 #define RECEIVE_BUF_LEN             0x030
 #define HW_VERSION                  "2.6"
-#define SW_VERSION                  "1.1"
+#define SW_VERSION                  "1.2"
 
 #define DO_CRC_CHECK_LOADER         0
-#define DO_CRC_CHECK                0
+#define DO_CRC_CHECK                1
 #define DO_SHM_SCRATCHPAD           0
 #define DO_SHM                      0
-#define DO_TIMER                    0
+#define DO_TIMER                    1
 #define DO_SHELL                    1
 
 #endif

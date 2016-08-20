@@ -104,7 +104,7 @@
 /* #undef USE_PPDEV */
 
 /* build with (lib)usb support (default: no) */
-/* #undef USE_USB */
+#define USE_USB 1
 
 /* build with gzip and zip support (default: yes) */
 #define USE_ZLIB 1
